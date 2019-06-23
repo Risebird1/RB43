@@ -1,0 +1,12 @@
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.deps.json
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.Entities.dll
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.Entities.pdb
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CopyComplete
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
+C:\Sample Sol\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache

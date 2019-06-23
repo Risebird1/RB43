@@ -1,0 +1,65 @@
+﻿//@using Newtonsoft.Json;
+//@using Microsoft.AspNetCore.Http
+@using  Risebird.Entities.Data
+@inject IHttpContextAccessor HttpContextAccessor
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- START PAGE SIDEBAR -->
+<div class="page-sidebar">
+    <!-- START X-NAVIGATION -->
+    <ul class="x-navigation">
+        <li class="xn-logo">
+            <a href="#">
+                <img src="~/images/risebird.png" alt="RisebirdLogo" width="50px" height="50px"/>
+            </a>
+            <a href="#" class="x-navigation-control"></a>
+        </li>
+        @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
+        {
+            var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
+            var adminMenuList = menuList.Where(a => a.idParentFunction == 1).ToList();
+            menuList = menuList.Where(a => a.idParentFunction != 1).ToList();
+            foreach (var m in menuList)
+            {
+
+                if (!string.IsNullOrEmpty(m.sUrl))
+                {
+                    <li>
+                        <a href="@m.sUrl">
+                            <i data-toggle="tooltip" data-placement="bottom" title="@m.functionName" data-original-title="Tooltip on bottom">
+                                <span class="@m.sIcon"></span>
+                            </i>
+                            <span class="xn-text">@m.functionName</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="xn-openable">
+                        <a href="@m.sUrl">
+                            <i data-toggle="tooltip" data-placement="bottom" title="@m.functionName" data-original-title="Tooltip on bottom">
+                                <span class="@m.sIcon"></span>
+                            </i>
+                            <span class="xn-text">@m.functionName</span>
+                        </a>
+                        <ul>
+                            @foreach (var item in adminMenuList)
+                            {
+                                <li>
+                                    <a href="@item.sUrl">
+                                        <i data-toggle="tooltip" data-placement="bottom" title="@item.functionName" data-original-title="Tooltip on bottom">
+                                            <span class="@item.sIcon"></span>
+                                        </i>
+                                        @item.functionName
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                }
+            }
+        }
+    </ul>
+    <!-- END X-NAVIGATION -->
+</div>
+<!-- END PAGE SIDEBAR -->

@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Signed out";
+    Layout = null;
+}
+
+<h2 style="text-align:center;">@ViewData["Title"]</h2>
+<p style="text-align:center;">
+    You have successfully signed out.
+</p>
+<div style="text-align:center;font-family:Vani;font:200;">
+   <input type="button" title="Sign In" style="color:white;background-color:gray;font:medium;font-family:Vani;" value="Sign In" data-toggle="tooltip" data-placement="bottom"  data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SignIn", "Account")'" />
+</div>

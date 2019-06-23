@@ -1,0 +1,14 @@
+﻿PRINT 'Start: Updating tables...'
+
+PRINT 'Table Function...'
+:r $(path)\Tables\Function.sql
+
+PRINT 'Table Profile...'
+:r $(path)\Tables\Profile.sql
+PRINT 'Table InterviewMeetings...'
+:r $(path)\Tables\InterviewMeetings.sql
+PRINT 'Table UserList...'
+:r $(path)\Tables\UserList.sql
+
+PRINT 'End: Updating tables...'
+GO

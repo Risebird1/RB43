@@ -1,0 +1,17 @@
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.deps.json
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.dll
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.pdb
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.csproj.CoreCompileInputs.cache
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.AssemblyInfoInputs.cache
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.AssemblyInfo.cs
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.dll
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.pdb
+C:\Sample Sol\RisebirdPortal\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.csprojAssemblyReference.cache
+C:\Sample Sol\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.deps.json
+C:\Sample Sol\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.dll
+C:\Sample Sol\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.1\Risebird.Repository.pdb
+C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.csproj.CoreCompileInputs.cache
+C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.AssemblyInfoInputs.cache
+C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.AssemblyInfo.cs
+C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.dll
+C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.1\Risebird.Repository.pdb

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- META SECTION -->
+    <title>@ViewData["Title"] - Risebird</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!--[if IE]-->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!--[endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" href="~/favicon.ico" type="~/image/x-icon" />
+    <!-- END META SECTION -->
+    <!-- CSS INCLUDE -->
+    <link rel="stylesheet" type="text/css" id="theme" href="~/css/theme-default.css" />
+    <!-- EOF CSS INCLUDE -->
+    <link href="~/assets/sweetalert/lib/sweet-alert.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
+    <script src="~/js/angular/angular.js"></script>
+    <script src="~/js/angular-messages/angular-messages.min.js"></script>
+    <script src="~/js/dir_Pagination/dirPagination.js"></script>
+    <script src="~/js/layout.js"></script>
+    <link href="~/assets/MultiSelect/Newfolder/isteven-multi-select.css" rel="stylesheet" />
+    <script src="~/assets/MultiSelect/Newfolder/isteven-multi-select.js"></script>
+    <script src="~/js/angular/InfiniteScroll.js"></script>
+</head>
+<body>
+    <!-- START PAGE CONTAINER -->
+    <div class="page-container" ng-app="MyApp">
+        @Html.AntiForgeryToken()
+        <!-- Navigation -->
+        @Html.Partial("_Navigation")
+        <!-- Navigation end -->
+        <!-- PAGE CONTENT -->
+        <div class="page-content">
+            @Html.Partial("_Header")
+            <!-- PAGE CONTENT WRAPPER -->
+            <div style="margin-bottom:10px">
+                @RenderBody()
+            </div>
+            <!-- END PAGE CONTENT WRAPPER -->
+            <!-- END PAGE CONTENT -->
+        </div>
+        <style>
+            .footer {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                background-color: #1d2127;
+                color: white;
+                text-align: center;
+            }
+        </style>
+        <div class="footer">
+            <p style="margin-top:10px">Copyright © 2019 Risebird All Rights Reserved</p>
+        </div>
+    </div>
+    <!-- END PAGE CONTAINER -->
+    <!-- START PRELOADS -->
+    <audio id="audio-alert" src="~/audio/alert.mp3" preload="auto"></audio>
+    <audio id="audio-fail" src="~/audio/fail.mp3" preload="auto"></audio>
+    <!-- END PRELOADS -->
+    <!-- START SCRIPTS -->
+    <!-- START PLUGINS -->
+    <script type="text/javascript" src="~/js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap.min.js"></script>
+    <script src="~/js/plugins/datatables/jquery.dataTables.min.js"></script>
+    <!-- END PLUGINS -->
+    <!-- START THIS PAGE PLUGINS-->
+    <script type='text/javascript' src='~/js/plugins/icheck/icheck.min.js'></script>
+    <script type="text/javascript" src="~/js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/scrolltotop/scrolltopcontrol.js"></script>
+    @*<script type="text/javascript" src="~/js/plugins/morris/raphael-min.js"></script>*@
+    @*<script type="text/javascript" src="~/js/plugins/morris/morris.min.js"></script>*@
+    <script type="text/javascript" src="~/js/plugins/rickshaw/d3.v3.js"></script>
+    <script type="text/javascript" src="~/js/plugins/rickshaw/rickshaw.min.js"></script>
+    <script type='text/javascript' src='~/js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js'></script>
+    <script type='text/javascript' src='~/js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js'></script>
+    <script type='text/javascript' src='~/js/plugins/bootstrap/bootstrap-datepicker.js'></script>
+    <script type="text/javascript" src="~/js/plugins/owl/owl.carousel.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap-file-input.js"></script>
+    <script type="text/javascript" src="~/assets/sweetalert/lib/sweet-alert.js"></script>
+    <script type="text/javascript" src="~/js/plugins/moment.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/js/plugins/bootstrap/bootstrap-timepicker.min.js"></script>
+    <script type="text/javascript" src="~/js/plugins/bootstrap/bootstrap-select.js"></script>
+    <script src="~/assets/Common.js"></script>
+    <!-- END THIS PAGE PLUGINS-->
+    <!-- START TEMPLATE -->
+    @*<script type="text/javascript" src="~/js/settings.js"></script>*@
+    <script type="text/javascript" src="~/js/plugins.js"></script>
+    <script type="text/javascript" src="~/js/actions.js"></script>
+    <script type="text/javascript" src="~/js/demo_dashboard.js"></script>
+    <!-- END TEMPLATE -->
+    <!-- END SCRIPTS -->
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
