@@ -1,0 +1,22 @@
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'TransSkill')
+BEGIN  
+CREATE TABLE [dbo].[TransSkill](					
+			[id] [int] IDENTITY(1,1) NOT NULL,
+			[IRFId] [int] NOT NULL,
+			[SkillId] [int] NOT NULL,
+			[LevelId] [int] NOT NULL,
+			[Weightage] [int] NULL,
+			[SampleQuestion] [varchar](MAX) NULL,				
+			CONSTRAINT [FK_TSIRFId] FOREIGN KEY (IRFId) REFERENCES IRF(id),
+			CONSTRAINT [FK_TSSkillId] FOREIGN KEY (SkillId) REFERENCES Skill(id),
+			CONSTRAINT [FK_TSLevelId] FOREIGN KEY (LevelId) REFERENCES Level(id),
+ CONSTRAINT [PK_TransSkill] PRIMARY KEY CLUSTERED 					
+(					
+	[id] ASC				
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)					
+)					
+
+END
+
+GO
