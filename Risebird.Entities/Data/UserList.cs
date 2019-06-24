@@ -12,6 +12,9 @@ namespace Risebird.Entities.Data
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int IsActive { get; set; }
-        public int ProfileId { get; set; }
+        public DateTime LastLogin { get; set; }
+        public DateTime LastLogout { get; set; }
+        public string ImageURL { get; set; }
+        public int IdProfile { get; set; }
     }
 }

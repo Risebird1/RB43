@@ -682,11 +682,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Sample Sol\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
+      "projectUniqueName": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj",
       "projectName": "Risebird.Entities",
-      "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
+      "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj",
       "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "C:\\Sample Sol\\Risebird\\Risebird.Entities\\obj\\",
+      "outputPath": "C:\\FIles\\Risebird.Entities\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

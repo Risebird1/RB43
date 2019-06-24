@@ -6,3 +6,11 @@ C:\Sample Sol\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.Co
 C:\Sample Sol\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.AssemblyInfo.cs
 C:\Sample Sol\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.dll
 C:\Sample Sol\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.pdb
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.deps.json
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.dll
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.pdb
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.csproj.CoreCompileInputs.cache
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.AssemblyInfoInputs.cache
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.AssemblyInfo.cs
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.dll
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.pdb

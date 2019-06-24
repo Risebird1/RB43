@@ -694,11 +694,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Sample Sol\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "C:\\FIles\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectPath": "C:\\FIles\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "C:\\Sample Sol\\Risebird\\Risebird.CommonHelper\\obj\\",
+      "outputPath": "C:\\FIles\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

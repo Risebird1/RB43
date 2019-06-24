@@ -694,11 +694,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Sample Sol\\Risebird\\Risebird.DB\\Risebird.DB.csproj",
+      "projectUniqueName": "C:\\FIles\\Risebird.DB\\Risebird.DB.csproj",
       "projectName": "Risebird.DB",
-      "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.DB\\Risebird.DB.csproj",
+      "projectPath": "C:\\FIles\\Risebird.DB\\Risebird.DB.csproj",
       "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "C:\\Sample Sol\\Risebird\\Risebird.DB\\obj\\",
+      "outputPath": "C:\\FIles\\Risebird.DB\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

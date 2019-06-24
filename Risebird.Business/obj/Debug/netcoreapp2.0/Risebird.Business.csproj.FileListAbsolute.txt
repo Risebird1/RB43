@@ -14,3 +14,19 @@ C:\Sample Sol\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Busine
 C:\Sample Sol\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\Sample Sol\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Sample Sol\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.deps.json
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.dll
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csprojAssemblyReference.cache
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CoreCompileInputs.cache
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfoInputs.cache
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfo.cs
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
+C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
