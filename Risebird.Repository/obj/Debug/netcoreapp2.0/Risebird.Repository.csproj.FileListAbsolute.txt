@@ -12,3 +12,17 @@ C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repo
 C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\Sample Sol\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.deps.json
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\FIles\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csprojAssemblyReference.cache
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CoreCompileInputs.cache
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfoInputs.cache
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfo.cs
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb

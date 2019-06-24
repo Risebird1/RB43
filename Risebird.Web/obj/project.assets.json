@@ -13533,11 +13533,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Sample Sol\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
+      "projectUniqueName": "C:\\FIles\\Risebird.Web\\Risebird.Web.csproj",
       "projectName": "Risebird.Web",
-      "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
+      "projectPath": "C:\\FIles\\Risebird.Web\\Risebird.Web.csproj",
       "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "C:\\Sample Sol\\Risebird\\Risebird.Web\\obj\\",
+      "outputPath": "C:\\FIles\\Risebird.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -13557,20 +13557,20 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Sample Sol\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\Sample Sol\\Risebird\\Risebird.Business\\Risebird.Business.csproj": {
-              "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Business\\Risebird.Business.csproj"
+            "C:\\FIles\\Risebird.Business\\Risebird.Business.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Business\\Risebird.Business.csproj"
             },
-            "C:\\Sample Sol\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj"
             },
-            "C:\\Sample Sol\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\FIles\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             },
-            "C:\\Sample Sol\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj": {
-              "projectPath": "C:\\Sample Sol\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj"
+            "C:\\FIles\\Risebird.Repository\\Risebird.Repository.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Repository\\Risebird.Repository.csproj"
             }
           }
         }

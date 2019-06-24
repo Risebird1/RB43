@@ -8,8 +8,11 @@
         $(document).ready(function () {
             //var allowDateConvert = true;
             $('#meeting').DataTable({
-                "lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-                "order": [[5, "desc"]]
+                "lengthMenu": [[15,20,25,50, -1], [15,20,25,50, "All"]],
+                "order": [[15, "desc"]],
+                fixedColumns:   {
+                    leftColumns: 2
+                }
             });
         });
 
@@ -32,6 +35,14 @@
             -moz-opacity: 0.8;
             min-height: 100%;
             width: 100%;
+        }
+        th, td {
+            white-space: nowrap;
+        }
+
+        div.dataTables_wrapper {
+            width: 800px;
+            margin: 0 auto;
         }
 
         .loader {
@@ -77,7 +88,7 @@
                     </div>*@
                     <div class="panel-body">
                         <div class=" table-responsive">
-                            <table class="table datatable" id="meeting">
+                            <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
                                 <thead>
                                     <tr>
                                         <th>Client Name</th>
