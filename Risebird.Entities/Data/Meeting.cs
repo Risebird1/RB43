@@ -5,6 +5,7 @@ namespace Risebird.Entities.Data
     public class Meeting
     {
         public int id { get; set; }
+        public string IRFName { get; set; }
         public string clientName { get; set; }
         public string JobRole { get; set; }
         public string interviewDate { get; set; }

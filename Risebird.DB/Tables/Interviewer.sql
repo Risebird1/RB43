@@ -3,8 +3,7 @@ WHERE TABLE_NAME = N'Interviewer')
 BEGIN  
 CREATE TABLE [dbo].[Interviewer](					
 			[id] [int] IDENTITY(1,1) NOT NULL,			
-			[UserId] [int] NOT NULL,
-			[MobileNumber][BIGINT] NULL,			
+			[UserId] [int] NOT NULL,					
 			[PrimarySkill] [VARCHAR](MAX) NULL,
 			[ResumeLink][VARCHAR](MAX) NULL,
 			[IsApproved][BIT] NULL,

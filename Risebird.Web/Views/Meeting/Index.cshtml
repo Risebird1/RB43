@@ -81,48 +81,50 @@
             <div class="col-md-12 dataloading">
                 <!-- START DEFAULT DATATABLE -->
                 <div class="panel panel-default">
-                    @*<div class="panel-heading">
+                    <div class="panel-heading">
                         <ul class="panel-controls">
-                            <li><a href="#" class="panel-refresh" title="Refresh"><span class="fa fa-refresh" onclick="javascript:InterviewRefresh();"></span></a></li>
+                            <li><a href="#"  title="Refresh"><span class="fa fa-refresh" onclick="location.href='@Url.Action("Index", "Meeting")'"></span></a></li>
+                            <button type="button" class="btn btn-default mb-control"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Meeting")'" data-original-title="Tooltip on top"> Add Interview</span></button>
                         </ul>
-                    </div>*@
+                    </div>
                     <div class="panel-body">
+                        
                         <div class=" table-responsive">
                             <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
                                 <thead>
-                                    <tr>
-                                        <th>Client Name</th>
-                                        <th>Client HR</th>
-                                        <th>Job Role</th>
-                                        <th>Interview Date</th>
-                                        <th>Interview Slot</th>
-                                        <th>Interview Duration</th>
-                                        <th>Primary Skill</th>
-                                        <th>Candidate Email</th>
-                                        <th>Resume Detail</th>
-                                        <th>Confrimation Status</th>
-                                        <th>Zoom Link</th>
-                                        <th>Risebird HR</th>
-                                        <th>Interviewer</th>
-                                        <th>Interview Status</th>
-                                        <th>Selection Status</th>
-                                        <th>Interviewer Comment</th>
-                                        <th>Video Link</th>
-                                        <th>Report Link</th>
-                                        <th>Fraud SyncComment</th>
-                                        <th>Risebird Comment</th>
-                                        <th>Trainable Comment</th>
-                                    </tr>
+                                <tr>
+                                    <th>IRF Name</th>
+                                    <th>Client Name</th>
+                                    <th>Client HR</th>
+                                    <th>Job Role</th>
+                                    <th>Interview Date</th>
+                                    <th>Interview Duration</th>
+                                    <th>Primary Skill</th>
+                                    <th>Candidate Email</th>
+                                    <th>Resume Detail</th>
+                                    <th>Confrimation Status</th>
+                                    <th>Zoom Link</th>
+                                    <th>Risebird HR</th>
+                                    <th>Interviewer</th>
+                                    <th>Interview Status</th>
+                                    <th>Selection Status</th>
+                                    <th>Interviewer Comment</th>
+                                    <th>Video Link</th>
+                                    <th>Report Link</th>
+                                    <th>Fraud SyncComment</th>
+                                    <th>Risebird Comment</th>
+                                    <th>Trainable Comment</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
-                                    {
+                                @foreach (var item in Model)
+                                {
                                     <tr id=@item.id>
+                                        <td> @item.IRFName </td>
                                         <td> @item.clientName </td>
                                         <td> @item.ClientHrContact </td>
                                         <td> @item.JobRole </td>
                                         <td> @item.interviewDate </td>
-                                        <td> @item.interviewSlot </td>
                                         <td> @item.interviewDuration </td>
                                         <td> @item.primaryskill</td>
                                         <td> @item.candidateEmail</td>
@@ -140,7 +142,7 @@
                                         <td> @item.hrCoordinatorComment</td>
                                         <td> @item.trainableComment</td>
                                     </tr>
-                                    }
+                                }
                                 </tbody>
                             </table>
                         </div>

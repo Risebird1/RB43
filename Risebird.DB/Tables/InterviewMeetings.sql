@@ -3,7 +3,8 @@ IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_NAME = N'InterviewMeetings')
 BEGIN  
 CREATE TABLE [dbo].[InterviewMeetings](		
-	[id] [int] IDENTITY(1,1) NOT NULL,	
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[IRFId] [int] NULL,	
 	[clientName] [varchar](200) NOT NULL,	
 	[JobRole] [varchar](200)  NULL,	
 	[interviewDate] [varchar](200) NOT NULL,	
