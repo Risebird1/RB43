@@ -83,10 +83,12 @@ namespace Risebird.Web
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IMeetingService, MeetingService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<ISkillRepository, SkillRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
         }
     }

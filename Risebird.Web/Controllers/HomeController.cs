@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace Risebird.Web.Controllers
                 if (menus != null)
                 {
                     //var Menu = _userService.GetProfileMenuList(userAuthentication.ProfileName);
-                   HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                   HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus.OrderBy(x=> x.iDisplayOrder)));
                     return RedirectToAction("Index", "Meeting");
                 }
                 else

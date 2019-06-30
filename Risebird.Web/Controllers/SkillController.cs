@@ -14,7 +14,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
         }
 
-        public IActionResult Skill()
+        public IActionResult List()
         {
             try
             {
