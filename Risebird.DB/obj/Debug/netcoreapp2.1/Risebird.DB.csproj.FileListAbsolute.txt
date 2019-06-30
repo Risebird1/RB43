@@ -23,4 +23,3 @@ C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.AssemblyInfoInputs.cach
 C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.AssemblyInfo.cs
 C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.dll
 C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.pdb
-C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.csprojAssemblyReference.cache

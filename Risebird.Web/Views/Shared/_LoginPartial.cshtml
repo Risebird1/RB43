@@ -1,11 +1,25 @@
+//@using Newtonsoft.Json;
+//@using Microsoft.AspNetCore.Http
 @using System.Security.Principal
-
+@inject IHttpContextAccessor HttpContextAccessor
 @if (User.Identity.IsAuthenticated)
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li class="navbar-text">@User.Identity.Name</li>
-        <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
-    </ul>
+    @if (JsonConvert.DeserializeObject<string>(@HttpContextAccessor.HttpContext.Session.GetString("email")) != null)
+    {
+        var emailid = JsonConvert.DeserializeObject<string>(HttpContextAccessor.HttpContext.Session.GetString("email"));
+   
+        <ul class="nav navbar-nav navbar-right">
+            <li class="navbar-text">emailid</li>
+            <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+        </ul>
+    }
+     else
+     {
+         <ul class="nav navbar-nav navbar-right">
+             <li class="navbar-text">@User.Identity.Name</li>
+             <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+         </ul>
+     }
 }
 else
 {

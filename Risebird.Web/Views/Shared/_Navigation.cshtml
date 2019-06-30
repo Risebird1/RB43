@@ -17,9 +17,9 @@
         @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
         {
             var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
-            var adminMenuList = menuList.Where(a => a.idParentFunction == 1).ToList();
-            menuList = menuList.Where(a => a.idParentFunction != 1).ToList();
-            foreach (var m in menuList)
+            var adminMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
+            var menuList1= menuList.Where(a => a.idParentFunction != 6).ToList();
+            foreach (var m in menuList1)
             {
 
                 if (!string.IsNullOrEmpty(m.sUrl))

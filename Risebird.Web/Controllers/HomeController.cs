@@ -25,11 +25,12 @@ namespace Risebird.Web.Controllers
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username                
                 string emailId = userClaims?.FindFirst(ClaimTypes.Email)?.Value;
-                var menus = _userService.GetMenuBasedOnUserEmailld( emailId);
+                var menus = _userService.GetMenuBasedOnUserEmailld(emailId);
                 if (menus != null)
                 {
                     //var Menu = _userService.GetProfileMenuList(userAuthentication.ProfileName);
-                   HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus.OrderBy(x=> x.iDisplayOrder)));
+                   HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                   HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
                     return RedirectToAction("Index", "Meeting");
                 }
                 else
