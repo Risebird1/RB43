@@ -21,4 +21,3 @@ C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.Common
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
-C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache

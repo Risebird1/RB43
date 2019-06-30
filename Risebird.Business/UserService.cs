@@ -4,6 +4,7 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Risebird.Entities.ViewModel;
 
 namespace Risebird.Business
 {
@@ -17,7 +18,50 @@ namespace Risebird.Business
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
         {
-            return _userRepository.GetMenuBasedOnUserEmailld(emailId).ToList();
+            try
+            {
+                return _userRepository.GetMenuBasedOnUserEmailld(emailId).ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<UserList> GetRisebirdUsers()
+        {
+            try
+            {
+                return _userRepository.GetRisebirdUsers().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<InterviewerVM> GetInterviewers()
+        {
+            try
+            {
+                return _userRepository.GetInterviewers().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public List<ClientUserVM> GetClientUsers()
+        {
+            try
+            {
+                return _userRepository.GetClientUsers().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Risebird.Entities.Data
         public string EmailId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public long MobileNumber { get; set; }
         public int IsActive { get; set; }
         public DateTime LastLogin { get; set; }
         public DateTime LastLogout { get; set; }

@@ -80,9 +80,13 @@ namespace Risebird.Web
         private static void DependencyMapping(IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<ISkillService, SkillService>();
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IMeetingService, MeetingService>();
-            services.AddScoped<IUserRepository, UserRepository>(); 
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<ISkillRepository, SkillRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
         }
     }

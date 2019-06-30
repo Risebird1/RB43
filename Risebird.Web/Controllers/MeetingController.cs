@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
-using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 
 namespace Risebird.Web.Controllers
 {
@@ -20,7 +16,15 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Index()
         {
-            return View(_meetingService.GetMeetingList());
+            try
+            {
+                return View(_meetingService.GetMeetingList());
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            
         }
 
        
@@ -29,13 +33,10 @@ namespace Risebird.Web.Controllers
             try
             {
                    var model = new MeetingVM();
-                    
                     return View(model);
-               
             }
             catch (Exception ex)
             {
-                
                 return View();
             }
         }

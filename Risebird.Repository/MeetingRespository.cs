@@ -5,7 +5,6 @@ using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using static System.Data.CommandType;
 
 namespace Risebird.Repository
