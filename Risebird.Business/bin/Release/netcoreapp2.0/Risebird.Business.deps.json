@@ -1,0 +1,63 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.0",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.0": {
+      "Risebird.Business/1.0.0": {
+        "dependencies": {
+          "Risebird.Business.Interface": "1.0.0",
+          "Risebird.Repository.Interface": "1.0.0"
+        },
+        "runtime": {
+          "Risebird.Business.dll": {}
+        }
+      },
+      "Risebird.Business.Interface/1.0.0": {
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "runtime": {
+          "Risebird.Business.Interface.dll": {}
+        }
+      },
+      "Risebird.Entities/1.0.0": {
+        "runtime": {
+          "Risebird.Entities.dll": {}
+        }
+      },
+      "Risebird.Repository.Interface/1.0.0": {
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "runtime": {
+          "Risebird.Repository.Interface.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Risebird.Business/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Risebird.Business.Interface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Risebird.Entities/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Risebird.Repository.Interface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

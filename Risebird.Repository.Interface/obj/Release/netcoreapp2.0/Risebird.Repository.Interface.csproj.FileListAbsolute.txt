@@ -1,0 +1,12 @@
+C:\FIles\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.deps.json
+C:\FIles\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\FIles\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\FIles\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.dll
+C:\FIles\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.pdb
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csproj.CoreCompileInputs.cache
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfoInputs.cache
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfo.cs
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\FIles\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.pdb
