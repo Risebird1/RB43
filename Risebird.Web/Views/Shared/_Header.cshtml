@@ -1,4 +1,6 @@
-﻿@using System.Security.Principal
+﻿@using Microsoft.AspNetCore.Http
+@using System.Security.Principal
+@inject IHttpContextAccessor HttpContextAccessor
 <style>
     .abcprofile {
         /* width: 100px; */
@@ -43,8 +45,22 @@
         <div class="profile-data abccolor">
             @if (User.Identity.IsAuthenticated)
             {
-                <div class="profile-data-name">@User.Identity.Name</div>
-                <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>
+                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
+                {
+                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                    <div class="profile-data-name">@emailid</div>
+                    <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>
+
+
+                }
+                else
+                {
+                    <div class="profile-data-name">@User.Identity.Name</div>
+                    <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>
+
+                }
+                @*<div class="profile-data-name">@User.Identity.Name</div>
+            <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>*@
             }
             else
             {

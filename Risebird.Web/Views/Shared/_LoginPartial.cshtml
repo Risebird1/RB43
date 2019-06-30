@@ -4,9 +4,9 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @if (User.Identity.IsAuthenticated)
 {
-    @if (JsonConvert.DeserializeObject<string>(@HttpContextAccessor.HttpContext.Session.GetString("email")) != null)
+    @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
     {
-        var emailid = JsonConvert.DeserializeObject<string>(HttpContextAccessor.HttpContext.Session.GetString("email"));
+        var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
    
         <ul class="nav navbar-nav navbar-right">
             <li class="navbar-text">emailid</li>
