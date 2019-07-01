@@ -92,29 +92,30 @@
                         <div class=" table-responsive">
                             <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
                                 <thead>
-                                <tr>
-                                    <th>IRF Name</th>
-                                    <th>Client Name</th>
-                                    <th>Client HR</th>
-                                    <th>Job Role</th>
-                                    <th>Interview Date</th>
-                                    <th>Interview Duration</th>
-                                    <th>Primary Skill</th>
-                                    <th>Candidate Email</th>
-                                    <th>Resume Detail</th>
-                                    <th>Confrimation Status</th>
-                                    <th>Zoom Link</th>
-                                    <th>Risebird HR</th>
-                                    <th>Interviewer</th>
-                                    <th>Interview Status</th>
-                                    <th>Selection Status</th>
-                                    <th>Interviewer Comment</th>
-                                    <th>Video Link</th>
-                                    <th>Report Link</th>
-                                    <th>Fraud SyncComment</th>
-                                    <th>Risebird Comment</th>
-                                    <th>Trainable Comment</th>
-                                </tr>
+                                    <tr>
+                                        <th>IRF Name</th>
+                                        <th>Client Name</th>
+                                        <th>Client HR</th>
+                                        <th>Job Role</th>
+                                        <th>Interview Date</th>
+                                        <th>Interview Duration</th>
+                                        <th>Primary Skill</th>
+                                        <th>Candidate Email</th>
+                                        <th>Resume Detail</th>
+                                        <th>Confrimation Status</th>
+                                        <th>Zoom Link</th>
+                                        <th>Risebird HR</th>
+                                        <th>Interviewer</th>
+                                        <th>Interview Status</th>
+                                        <th>Selection Status</th>
+                                        <th>Interviewer Comment</th>
+                                        <th>Video Link</th>
+                                        <th>Report Link</th>
+                                        <th>Fraud SyncComment</th>
+                                        <th>Risebird Comment</th>
+                                        <th>Trainable Comment</th>
+                                        <th>Actions</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                 @foreach (var item in Model)
@@ -136,11 +137,17 @@
                                         <td> @item.intervieweStatus</td>
                                         <td> @item.selectionStatus</td>
                                         <td> @item.interviewerComment</td>
-                                        <td> @item.videoLink</td>
-                                        <td> @item.reportLink</td>
+                                        <td> <a id="videolinkId" target="_blank" title="Video Link" href=@item.videoLink>Video Link</a></td>
+                                        <td> <a id="reportlinkId" target="_blank" title="Report Link" href=@item.reportLink>Report Link</a></td>
                                         <td> @item.fraudSyncComment</td>
                                         <td> @item.hrCoordinatorComment</td>
                                         <td> @item.trainableComment</td>
+                                        <td>
+                                            <i type="submit" onclick="location.href = '@Url.Action("Edit", "Meeting", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                            <i type="submit" onclick="location.href = '@Url.Action("Comment", "Meeting", new { id = item.id})'" class="fa fa-comment" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Comment" data-original-title="Tooltip on bottom"></i>
+                                            <i type="submit" onclick="location.href = '@Url.Action("SendReport", "Meeting", new { id = item.id})'" class="fa fa-envelope" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Send Report" data-original-title="Tooltip on bottom"></i>
+                                            
+                                        </td>
                                     </tr>
                                 }
                                 </tbody>
