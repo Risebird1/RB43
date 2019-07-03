@@ -1,0 +1,12 @@
+C:\FIles\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.deps.json
+C:\FIles\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\FIles\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\FIles\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

@@ -1613,82 +1613,82 @@
           "lib/netcoreapp2.0/_._": {}
         }
       },
-      "Microsoft.Data.Edm/5.8.2": {
+      "Microsoft.Data.Edm/5.6.4": {
         "type": "package",
         "compile": {
-          "lib/netstandard1.1/Microsoft.Data.Edm.dll": {}
+          "lib/net40/Microsoft.Data.Edm.dll": {}
         },
         "runtime": {
-          "lib/netstandard1.1/Microsoft.Data.Edm.dll": {}
+          "lib/net40/Microsoft.Data.Edm.dll": {}
         },
         "resource": {
-          "lib/netstandard1.1/de/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/de/Microsoft.Data.Edm.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/es/Microsoft.Data.Edm.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/fr/Microsoft.Data.Edm.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/it/Microsoft.Data.Edm.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ja/Microsoft.Data.Edm.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ko/Microsoft.Data.Edm.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ru/Microsoft.Data.Edm.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/zh-Hans/Microsoft.Data.Edm.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/zh-Hant/Microsoft.Data.Edm.resources.dll": {
             "locale": "zh-Hant"
           }
         }
       },
-      "Microsoft.Data.OData/5.8.2": {
+      "Microsoft.Data.OData/5.6.4": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Data.Edm": "[5.8.2]",
-          "System.Spatial": "[5.8.2]"
+          "Microsoft.Data.Edm": "[5.6.4]",
+          "System.Spatial": "[5.6.4]"
         },
         "compile": {
-          "lib/netstandard1.1/Microsoft.Data.OData.dll": {}
+          "lib/net40/Microsoft.Data.OData.dll": {}
         },
         "runtime": {
-          "lib/netstandard1.1/Microsoft.Data.OData.dll": {}
+          "lib/net40/Microsoft.Data.OData.dll": {}
         },
         "resource": {
-          "lib/netstandard1.1/de/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/de/Microsoft.Data.OData.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/es/Microsoft.Data.OData.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/fr/Microsoft.Data.OData.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/it/Microsoft.Data.OData.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ja/Microsoft.Data.OData.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ko/Microsoft.Data.OData.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ru/Microsoft.Data.OData.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/zh-Hans/Microsoft.Data.OData.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/zh-Hant/Microsoft.Data.OData.resources.dll": {
             "locale": "zh-Hant"
           }
         }
@@ -2903,34 +2903,14 @@
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
       },
-      "Newtonsoft.Json/10.0.1": {
+      "Newtonsoft.Json/10.0.2": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
-          "System.Collections": "4.3.0",
+          "NETStandard.Library": "1.6.1",
           "System.ComponentModel.TypeConverter": "4.3.0",
-          "System.Diagnostics.Debug": "4.3.0",
-          "System.Dynamic.Runtime": "4.3.0",
-          "System.Globalization": "4.3.0",
-          "System.IO": "4.3.0",
-          "System.Linq": "4.3.0",
-          "System.Linq.Expressions": "4.3.0",
-          "System.ObjectModel": "4.3.0",
-          "System.Reflection": "4.3.0",
-          "System.Reflection.Extensions": "4.3.0",
-          "System.Resources.ResourceManager": "4.3.0",
-          "System.Runtime": "4.3.0",
-          "System.Runtime.Extensions": "4.3.0",
-          "System.Runtime.Numerics": "4.3.0",
           "System.Runtime.Serialization.Formatters": "4.3.0",
           "System.Runtime.Serialization.Primitives": "4.3.0",
-          "System.Text.Encoding": "4.3.0",
-          "System.Text.Encoding.Extensions": "4.3.0",
-          "System.Text.RegularExpressions": "4.3.0",
-          "System.Threading": "4.3.0",
-          "System.Threading.Tasks": "4.3.0",
-          "System.Xml.ReaderWriter": "4.3.0",
-          "System.Xml.XDocument": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
         },
         "compile": {
@@ -3204,6 +3184,18 @@
             "assetType": "native",
             "rid": "win-x86"
           }
+        }
+      },
+      "Sendgrid/9.11.0": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "9.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/SendGrid.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/SendGrid.dll": {}
         }
       },
       "SQLitePCLRaw.bundle_green/1.1.7": {
@@ -4768,40 +4760,40 @@
           }
         }
       },
-      "System.Spatial/5.8.2": {
+      "System.Spatial/5.6.4": {
         "type": "package",
         "compile": {
-          "lib/netstandard1.1/System.Spatial.dll": {}
+          "lib/net40/System.Spatial.dll": {}
         },
         "runtime": {
-          "lib/netstandard1.1/System.Spatial.dll": {}
+          "lib/net40/System.Spatial.dll": {}
         },
         "resource": {
-          "lib/netstandard1.1/de/System.Spatial.resources.dll": {
+          "lib/net40/de/System.Spatial.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/System.Spatial.resources.dll": {
+          "lib/net40/es/System.Spatial.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/System.Spatial.resources.dll": {
+          "lib/net40/fr/System.Spatial.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/System.Spatial.resources.dll": {
+          "lib/net40/it/System.Spatial.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/System.Spatial.resources.dll": {
+          "lib/net40/ja/System.Spatial.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/System.Spatial.resources.dll": {
+          "lib/net40/ko/System.Spatial.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/System.Spatial.resources.dll": {
+          "lib/net40/ru/System.Spatial.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/System.Spatial.resources.dll": {
+          "lib/net40/zh-Hans/System.Spatial.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/System.Spatial.resources.dll": {
+          "lib/net40/zh-Hant/System.Spatial.resources.dll": {
             "locale": "zh-Hant"
           }
         }
@@ -5104,13 +5096,11 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "WindowsAzure.Storage/8.1.4": {
+      "WindowsAzure.Storage/9.3.3": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Data.OData": "5.8.2",
-          "NETStandard.Library": "1.6.0",
-          "Newtonsoft.Json": "9.0.1",
-          "System.Spatial": "5.8.2"
+          "NETStandard.Library": "1.6.1",
+          "Newtonsoft.Json": "10.0.2"
         },
         "compile": {
           "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {}
@@ -5146,9 +5136,40 @@
           "bin/placeholder/Risebird.Business.Interface.dll": {}
         }
       },
+      "Risebird.CommonHelper/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.0",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "2.2.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
+          "Sendgrid": "9.11.0"
+        },
+        "compile": {
+          "bin/placeholder/Risebird.CommonHelper.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Risebird.CommonHelper.dll": {}
+        }
+      },
+      "Risebird.CommonHelper.Interface/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.0",
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        }
+      },
       "Risebird.Entities/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
+        "dependencies": {
+          "WindowsAzure.Storage": "9.3.3"
+        },
         "compile": {
           "bin/placeholder/Risebird.Entities.dll": {}
         },
@@ -6428,11 +6449,14 @@
         "version.txt"
       ]
     },
-    "Microsoft.Data.Edm/5.8.2": {
-      "sha512": "P/d8DxA6MFHroBEn/jW0LMQSIKnsRRibrZtRCLfov2boQfrQ1R1BVgkJ5oIhcQsOm0l4POv+I2ny6RBsclNbOw==",
+    "Microsoft.Data.Edm/5.6.4": {
+      "sha512": "I9ea/CEOufddjjyRYIowshdeFj5SIqfWZ5conK/UIaFx2/jJ+PDRhQ5jcJTqTg/ediCa1C22TeRl/MmL9zwBew==",
       "type": "package",
-      "path": "microsoft.data.edm/5.8.2",
+      "path": "microsoft.data.edm/5.6.4",
       "files": [
+        ".nupkg.metadata",
+        "Microsoft.Data.Edm.5.6.4.nupkg.sha512",
+        "Microsoft.Data.Edm.nuspec",
         "lib/net40/Microsoft.Data.Edm.dll",
         "lib/net40/Microsoft.Data.Edm.xml",
         "lib/net40/de/Microsoft.Data.Edm.resources.dll",
@@ -6444,17 +6468,6 @@
         "lib/net40/ru/Microsoft.Data.Edm.resources.dll",
         "lib/net40/zh-Hans/Microsoft.Data.Edm.resources.dll",
         "lib/net40/zh-Hant/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/Microsoft.Data.Edm.dll",
-        "lib/netstandard1.1/Microsoft.Data.Edm.xml",
-        "lib/netstandard1.1/de/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/es/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/fr/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/it/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/ja/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/ko/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/ru/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/zh-Hans/Microsoft.Data.Edm.resources.dll",
-        "lib/netstandard1.1/zh-Hant/Microsoft.Data.Edm.resources.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.Edm.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.Edm.xml",
         "lib/portable-net40+sl5+wp8+win8+wpa/de/Microsoft.Data.Edm.resources.dll",
@@ -6487,16 +6500,17 @@
         "lib/sl4/ko/Microsoft.Data.Edm.resources.dll",
         "lib/sl4/ru/Microsoft.Data.Edm.resources.dll",
         "lib/sl4/zh-Hans/Microsoft.Data.Edm.resources.dll",
-        "lib/sl4/zh-Hant/Microsoft.Data.Edm.resources.dll",
-        "microsoft.data.edm.5.8.2.nupkg.sha512",
-        "microsoft.data.edm.nuspec"
+        "lib/sl4/zh-Hant/Microsoft.Data.Edm.resources.dll"
       ]
     },
-    "Microsoft.Data.OData/5.8.2": {
-      "sha512": "oEIUtXcRiKogF0yZxA+QdgxoBJ34989qL/5xOSrTfxAhzNJV5Hw6DRdWgUCpeXFMoJUQx7ptbHCN+My/LCQfsg==",
+    "Microsoft.Data.OData/5.6.4": {
+      "sha512": "Te71LAvjYppmBCLWomHvhVzKes3q8L5tmmDMSyLP7YrJMYG5/Ded8uJgxWWkUX/Vh11ZDpN2WXRByOg+BAHCYw==",
       "type": "package",
-      "path": "microsoft.data.odata/5.8.2",
+      "path": "microsoft.data.odata/5.6.4",
       "files": [
+        ".nupkg.metadata",
+        "Microsoft.Data.OData.5.6.4.nupkg.sha512",
+        "Microsoft.Data.OData.nuspec",
         "lib/net40/Microsoft.Data.OData.dll",
         "lib/net40/Microsoft.Data.OData.xml",
         "lib/net40/de/Microsoft.Data.OData.resources.dll",
@@ -6508,17 +6522,6 @@
         "lib/net40/ru/Microsoft.Data.OData.resources.dll",
         "lib/net40/zh-Hans/Microsoft.Data.OData.resources.dll",
         "lib/net40/zh-Hant/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/Microsoft.Data.OData.dll",
-        "lib/netstandard1.1/Microsoft.Data.OData.xml",
-        "lib/netstandard1.1/de/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/es/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/fr/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/it/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/ja/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/ko/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/ru/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/zh-Hans/Microsoft.Data.OData.resources.dll",
-        "lib/netstandard1.1/zh-Hant/Microsoft.Data.OData.resources.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.OData.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/Microsoft.Data.OData.xml",
         "lib/portable-net40+sl5+wp8+win8+wpa/de/Microsoft.Data.OData.resources.dll",
@@ -6551,9 +6554,7 @@
         "lib/sl4/ko/Microsoft.Data.OData.resources.dll",
         "lib/sl4/ru/Microsoft.Data.OData.resources.dll",
         "lib/sl4/zh-Hans/Microsoft.Data.OData.resources.dll",
-        "lib/sl4/zh-Hant/Microsoft.Data.OData.resources.dll",
-        "microsoft.data.odata.5.8.2.nupkg.sha512",
-        "microsoft.data.odata.nuspec"
+        "lib/sl4/zh-Hant/Microsoft.Data.OData.resources.dll"
       ]
     },
     "Microsoft.Data.Services.Client/5.6.4": {
@@ -8260,13 +8261,16 @@
         "netstandard.library.nuspec"
       ]
     },
-    "Newtonsoft.Json/10.0.1": {
-      "sha512": "ZW+YuKl1cboRtYMY3wApHYT4C3vOdyUh6CcurxRQjx/aHNHRSRqE6v9dByksSjAizrdd/8N1UsoBHWg+D7KybA==",
+    "Newtonsoft.Json/10.0.2": {
+      "sha512": "iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
       "type": "package",
-      "path": "newtonsoft.json/10.0.1",
+      "path": "newtonsoft.json/10.0.2",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
+        "LICENSE.md",
+        "Newtonsoft.Json.10.0.2.nupkg.sha512",
+        "Newtonsoft.Json.nuspec",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
         "lib/net35/Newtonsoft.Json.dll",
@@ -8279,10 +8283,10 @@
         "lib/netstandard1.0/Newtonsoft.Json.xml",
         "lib/netstandard1.3/Newtonsoft.Json.dll",
         "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.xml",
         "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.dll",
         "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.xml",
-        "newtonsoft.json.10.0.1.nupkg.sha512",
-        "newtonsoft.json.nuspec",
         "tools/install.ps1"
       ]
     },
@@ -8594,6 +8598,26 @@
         "runtimes/win-x86/native/sni.dll",
         "useSharedDesignerContext.txt",
         "version.txt"
+      ]
+    },
+    "Sendgrid/9.11.0": {
+      "sha512": "I3VdLmsDbqazS5k8OsMAuKvnZz3YruNQxOACfVMDdrM5jjlQE/jOoaNJXcZEG+49TbanCVvOldE56pbKxdiVGA==",
+      "type": "package",
+      "path": "sendgrid/9.11.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net452/SendGrid.dll",
+        "lib/net452/SendGrid.pdb",
+        "lib/net452/SendGrid.xml",
+        "lib/netstandard1.3/SendGrid.dll",
+        "lib/netstandard1.3/SendGrid.pdb",
+        "lib/netstandard1.3/SendGrid.xml",
+        "lib/netstandard2.0/SendGrid.dll",
+        "lib/netstandard2.0/SendGrid.pdb",
+        "lib/netstandard2.0/SendGrid.xml",
+        "sendgrid.9.11.0.nupkg.sha512",
+        "sendgrid.nuspec"
       ]
     },
     "SQLitePCLRaw.bundle_green/1.1.7": {
@@ -12417,11 +12441,14 @@
         "version.txt"
       ]
     },
-    "System.Spatial/5.8.2": {
-      "sha512": "0RfZZJ8RlrfjoBPAF6pczX4Nd2kyLM8EX1PCP5Rqs/jOhJBUPYhpXjIsVAYN7kocj9IJ9XoJWAxWgXIDtJY2Ag==",
+    "System.Spatial/5.6.4": {
+      "sha512": "BoXUQ0mHyeAbkR3qlhwXqUFxzJ7rZuFOrvFM/jZRk+S6JLI2JxXRKby6bxuWbmwYv2o/eRPQPbAOvEk5hB2Gmg==",
       "type": "package",
-      "path": "system.spatial/5.8.2",
+      "path": "system.spatial/5.6.4",
       "files": [
+        ".nupkg.metadata",
+        "System.Spatial.5.6.4.nupkg.sha512",
+        "System.Spatial.nuspec",
         "lib/net40/System.Spatial.dll",
         "lib/net40/System.Spatial.xml",
         "lib/net40/de/System.Spatial.resources.dll",
@@ -12433,17 +12460,6 @@
         "lib/net40/ru/System.Spatial.resources.dll",
         "lib/net40/zh-Hans/System.Spatial.resources.dll",
         "lib/net40/zh-Hant/System.Spatial.resources.dll",
-        "lib/netstandard1.1/System.Spatial.dll",
-        "lib/netstandard1.1/System.Spatial.xml",
-        "lib/netstandard1.1/de/System.Spatial.resources.dll",
-        "lib/netstandard1.1/es/System.Spatial.resources.dll",
-        "lib/netstandard1.1/fr/System.Spatial.resources.dll",
-        "lib/netstandard1.1/it/System.Spatial.resources.dll",
-        "lib/netstandard1.1/ja/System.Spatial.resources.dll",
-        "lib/netstandard1.1/ko/System.Spatial.resources.dll",
-        "lib/netstandard1.1/ru/System.Spatial.resources.dll",
-        "lib/netstandard1.1/zh-Hans/System.Spatial.resources.dll",
-        "lib/netstandard1.1/zh-Hant/System.Spatial.resources.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/System.Spatial.dll",
         "lib/portable-net40+sl5+wp8+win8+wpa/System.Spatial.xml",
         "lib/portable-net40+sl5+wp8+win8+wpa/de/System.Spatial.resources.dll",
@@ -12476,9 +12492,7 @@
         "lib/sl4/ko/System.Spatial.resources.dll",
         "lib/sl4/ru/System.Spatial.resources.dll",
         "lib/sl4/zh-Hans/System.Spatial.resources.dll",
-        "lib/sl4/zh-Hant/System.Spatial.resources.dll",
-        "system.spatial.5.8.2.nupkg.sha512",
-        "system.spatial.nuspec"
+        "lib/sl4/zh-Hant/System.Spatial.resources.dll"
       ]
     },
     "System.Text.Encoding/4.3.0": {
@@ -13463,10 +13477,10 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
-    "WindowsAzure.Storage/8.1.4": {
-      "sha512": "SpcAYi5gkWLQTVQltkulSFLKsLM8BqHTFhKWQx+HYGKh7yaYy2YnVqJUWCIUpva3NUdGKpr/HKHx9WKu8h4LxQ==",
+    "WindowsAzure.Storage/9.3.3": {
+      "sha512": "VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
       "type": "package",
-      "path": "windowsazure.storage/8.1.4",
+      "path": "windowsazure.storage/9.3.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -13483,7 +13497,7 @@
         "lib/wp8/Microsoft.WindowsAzure.Storage.pdb",
         "lib/wpa/Microsoft.WindowsAzure.Storage.dll",
         "lib/wpa/Microsoft.WindowsAzure.Storage.pdb",
-        "windowsazure.storage.8.1.4.nupkg.sha512",
+        "windowsazure.storage.9.3.3.nupkg.sha512",
         "windowsazure.storage.nuspec"
       ]
     },
@@ -13496,6 +13510,16 @@
       "type": "project",
       "path": "../Risebird.Business.Interface/Risebird.Business.Interface.csproj",
       "msbuildProject": "../Risebird.Business.Interface/Risebird.Business.Interface.csproj"
+    },
+    "Risebird.CommonHelper/1.0.0": {
+      "type": "project",
+      "path": "../Risebird.CommonHelper/Risebird.CommonHelper.csproj",
+      "msbuildProject": "../Risebird.CommonHelper/Risebird.CommonHelper.csproj"
+    },
+    "Risebird.CommonHelper.Interface/1.0.0": {
+      "type": "project",
+      "path": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj",
+      "msbuildProject": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj"
     },
     "Risebird.Entities/1.0.0": {
       "type": "project",
@@ -13521,6 +13545,8 @@
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 2.0.4",
       "Risebird.Business >= 1.0.0",
       "Risebird.Business.Interface >= 1.0.0",
+      "Risebird.CommonHelper >= 1.0.0",
+      "Risebird.CommonHelper.Interface >= 1.0.0",
       "Risebird.Entities >= 1.0.0",
       "Risebird.Repository >= 1.0.0",
       "Risebird.Repository.Interface >= 1.0.0"
@@ -13562,6 +13588,12 @@
             },
             "C:\\FIles\\Risebird.Business\\Risebird.Business.csproj": {
               "projectPath": "C:\\FIles\\Risebird.Business\\Risebird.Business.csproj"
+            },
+            "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            },
+            "C:\\FIles\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
             },
             "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj": {
               "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj"
@@ -13612,16 +13644,6 @@
   },
   "logs": [
     {
-      "code": "NU1608",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: Microsoft.Data.Services.Client 5.6.4 requires Microsoft.Data.OData (= 5.6.4) but version Microsoft.Data.OData 5.8.2 was resolved.",
-      "libraryId": "Microsoft.Data.OData",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
@@ -13635,8 +13657,38 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
+      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Microsoft.Data.Edm",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Microsoft.Data.OData",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
       "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Services.Client",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "System.Spatial",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
       ]

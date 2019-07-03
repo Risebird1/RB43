@@ -15,3 +15,8 @@ C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Ass
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.dll
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.pdb
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.csprojAssemblyReference.cache
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.Entities.dll
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
+C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.1\Risebird.Entities.pdb
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.csproj.CopyComplete
