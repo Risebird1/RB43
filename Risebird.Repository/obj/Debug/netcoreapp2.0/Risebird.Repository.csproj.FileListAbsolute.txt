@@ -25,3 +25,4 @@ C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.Assembl
 C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csprojAssemblyReference.cache
