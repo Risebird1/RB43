@@ -12,3 +12,5 @@ C:\FIles\Risebird.Repository\obj\Release\netcoreapp2.0\Risebird.Repository.Assem
 C:\FIles\Risebird.Repository\obj\Release\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 C:\FIles\Risebird.Repository\obj\Release\netcoreapp2.0\Risebird.Repository.dll
 C:\FIles\Risebird.Repository\obj\Release\netcoreapp2.0\Risebird.Repository.pdb
+C:\FIles\Risebird.Repository\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.Repository\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.0",
-    "signature": "785a253628ea2bcb3f4c177eaf47bc99f7f54d8a"
+    "signature": "82423c128d838a0eb301d24f98bfa29c98ac9e7b"
   },
   "compilationOptions": {
     "defines": [
@@ -30,6 +30,8 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "2.0.4",
           "Risebird.Business": "1.0.0",
           "Risebird.Business.Interface": "1.0.0",
+          "Risebird.CommonHelper": "1.0.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Entities": "1.0.0",
           "Risebird.Repository": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0"
@@ -507,7 +509,7 @@
       "Microsoft.AspNetCore.Authentication.OAuth/2.0.3": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication": "2.0.3",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.Authentication.OAuth.dll": {
@@ -701,7 +703,7 @@
       "Microsoft.AspNetCore.DataProtection.AzureStorage/2.0.2": {
         "dependencies": {
           "Microsoft.AspNetCore.DataProtection": "2.0.2",
-          "WindowsAzure.Storage": "8.1.4"
+          "WindowsAzure.Storage": "9.3.3"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.DataProtection.AzureStorage.dll": {
@@ -967,7 +969,7 @@
       "Microsoft.AspNetCore.JsonPatch/2.0.0": {
         "dependencies": {
           "Microsoft.CSharp": "4.4.0",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.JsonPatch.dll": {
@@ -1279,7 +1281,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.Hosting.Abstractions": "2.0.2",
           "Microsoft.Extensions.Logging.Console": "2.0.1",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.NodeServices.dll": {
@@ -1649,10 +1651,10 @@
       },
       "Microsoft.Azure.ActiveDirectory.GraphClient/2.1.1": {
         "dependencies": {
-          "Microsoft.Data.Edm": "5.8.2",
-          "Microsoft.Data.OData": "5.8.2",
+          "Microsoft.Data.Edm": "5.6.4",
+          "Microsoft.Data.OData": "5.6.4",
           "Microsoft.Data.Services.Client": "5.6.4",
-          "System.Spatial": "5.8.2"
+          "System.Spatial": "5.6.4"
         },
         "runtime": {
           "lib/portable-net4+sl5+win+wpa+wp8/Microsoft.Azure.ActiveDirectory.GraphClient.dll": {
@@ -1670,7 +1672,7 @@
           "Microsoft.Rest.ClientRuntime": "2.3.8",
           "Microsoft.Rest.ClientRuntime.Azure": "3.3.7",
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json": "10.0.2",
           "System.Net.Http": "4.3.0"
         },
         "runtime": {
@@ -1687,7 +1689,7 @@
         "dependencies": {
           "Microsoft.NETCore.Platforms": "2.0.0",
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json": "10.0.2",
           "System.Collections": "4.3.0",
           "System.Collections.Concurrent": "4.3.0",
           "System.Linq": "4.3.0",
@@ -1823,93 +1825,93 @@
         }
       },
       "Microsoft.CSharp/4.4.0": {},
-      "Microsoft.Data.Edm/5.8.2": {
+      "Microsoft.Data.Edm/5.6.4": {
         "runtime": {
-          "lib/netstandard1.1/Microsoft.Data.Edm.dll": {
-            "assemblyVersion": "5.8.1.0",
-            "fileVersion": "5.8.1.62767"
+          "lib/net40/Microsoft.Data.Edm.dll": {
+            "assemblyVersion": "5.6.4.0",
+            "fileVersion": "5.6.4.62175"
           }
         },
         "resources": {
-          "lib/netstandard1.1/de/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/de/Microsoft.Data.Edm.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/es/Microsoft.Data.Edm.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/fr/Microsoft.Data.Edm.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/it/Microsoft.Data.Edm.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ja/Microsoft.Data.Edm.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ko/Microsoft.Data.Edm.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/ru/Microsoft.Data.Edm.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/zh-Hans/Microsoft.Data.Edm.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/Microsoft.Data.Edm.resources.dll": {
+          "lib/net40/zh-Hant/Microsoft.Data.Edm.resources.dll": {
             "locale": "zh-Hant"
           }
         },
         "compile": {
-          "lib/netstandard1.1/Microsoft.Data.Edm.dll": {}
+          "lib/net40/Microsoft.Data.Edm.dll": {}
         }
       },
-      "Microsoft.Data.OData/5.8.2": {
+      "Microsoft.Data.OData/5.6.4": {
         "dependencies": {
-          "Microsoft.Data.Edm": "5.8.2",
-          "System.Spatial": "5.8.2"
+          "Microsoft.Data.Edm": "5.6.4",
+          "System.Spatial": "5.6.4"
         },
         "runtime": {
-          "lib/netstandard1.1/Microsoft.Data.OData.dll": {
-            "assemblyVersion": "5.8.1.0",
-            "fileVersion": "5.8.1.62767"
+          "lib/net40/Microsoft.Data.OData.dll": {
+            "assemblyVersion": "5.6.4.0",
+            "fileVersion": "5.6.4.62175"
           }
         },
         "resources": {
-          "lib/netstandard1.1/de/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/de/Microsoft.Data.OData.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/es/Microsoft.Data.OData.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/fr/Microsoft.Data.OData.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/it/Microsoft.Data.OData.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ja/Microsoft.Data.OData.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ko/Microsoft.Data.OData.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/ru/Microsoft.Data.OData.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/zh-Hans/Microsoft.Data.OData.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/Microsoft.Data.OData.resources.dll": {
+          "lib/net40/zh-Hant/Microsoft.Data.OData.resources.dll": {
             "locale": "zh-Hant"
           }
         },
         "compile": {
-          "lib/netstandard1.1/Microsoft.Data.OData.dll": {}
+          "lib/net40/Microsoft.Data.OData.dll": {}
         }
       },
       "Microsoft.Data.Services.Client/5.6.4": {
         "dependencies": {
-          "Microsoft.Data.OData": "5.8.2"
+          "Microsoft.Data.OData": "5.6.4"
         },
         "runtime": {
           "lib/net40/Microsoft.Data.Services.Client.dll": {
@@ -2280,7 +2282,7 @@
         "dependencies": {
           "Microsoft.Extensions.Configuration": "2.2.0",
           "Microsoft.Extensions.Configuration.FileExtensions": "2.0.1",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Extensions.Configuration.Json.dll": {
@@ -2350,7 +2352,7 @@
       "Microsoft.Extensions.DependencyModel/2.0.3": {
         "dependencies": {
           "Microsoft.DotNet.PlatformAbstractions": "2.0.3",
-          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json": "10.0.2",
           "System.Diagnostics.Debug": "4.3.0",
           "System.Dynamic.Runtime": "4.3.0",
           "System.Linq": "4.3.0"
@@ -2612,7 +2614,7 @@
       "Microsoft.Extensions.Logging.EventSource/2.0.1": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "2.0.1",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Extensions.Logging.EventSource.dll": {
@@ -2800,7 +2802,7 @@
       "Microsoft.IdentityModel.Tokens/5.1.4": {
         "dependencies": {
           "Microsoft.IdentityModel.Logging": "1.1.4",
-          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json": "10.0.2",
           "System.Collections": "4.3.0",
           "System.Diagnostics.Tools": "4.3.0",
           "System.Runtime": "4.3.1",
@@ -2843,7 +2845,7 @@
       "Microsoft.Rest.ClientRuntime/2.3.8": {
         "dependencies": {
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard1.4/Microsoft.Rest.ClientRuntime.dll": {
@@ -2859,7 +2861,7 @@
         "dependencies": {
           "Microsoft.Rest.ClientRuntime": "2.3.8",
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard1.4/Microsoft.Rest.ClientRuntime.Azure.dll": {
@@ -2905,7 +2907,7 @@
       },
       "Microsoft.VisualStudio.Web.CodeGeneration.Contracts/2.0.4": {
         "dependencies": {
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGeneration.Contracts.dll": {
@@ -2921,7 +2923,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "2.0.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Templating": "2.0.4",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGeneration.Core.dll": {
@@ -2981,7 +2983,7 @@
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "2.3.1",
           "Microsoft.VisualStudio.Web.CodeGeneration.Contracts": "2.0.4",
-          "Newtonsoft.Json": "10.0.1",
+          "Newtonsoft.Json": "10.0.2",
           "NuGet.Frameworks": "4.0.0"
         },
         "runtime": {
@@ -3045,39 +3047,19 @@
           "ref/netstandard2.0/Microsoft.Win32.Registry.dll": {}
         }
       },
-      "Newtonsoft.Json/10.0.1": {
+      "Newtonsoft.Json/10.0.2": {
         "dependencies": {
           "Microsoft.CSharp": "4.4.0",
-          "System.Collections": "4.3.0",
+          "NETStandard.Library": "2.0.0",
           "System.ComponentModel.TypeConverter": "4.3.0",
-          "System.Diagnostics.Debug": "4.3.0",
-          "System.Dynamic.Runtime": "4.3.0",
-          "System.Globalization": "4.3.0",
-          "System.IO": "4.3.0",
-          "System.Linq": "4.3.0",
-          "System.Linq.Expressions": "4.3.0",
-          "System.ObjectModel": "4.3.0",
-          "System.Reflection": "4.3.0",
-          "System.Reflection.Extensions": "4.3.0",
-          "System.Resources.ResourceManager": "4.3.0",
-          "System.Runtime": "4.3.1",
-          "System.Runtime.Extensions": "4.3.0",
-          "System.Runtime.Numerics": "4.3.0",
           "System.Runtime.Serialization.Formatters": "4.3.0",
           "System.Runtime.Serialization.Primitives": "4.3.0",
-          "System.Text.Encoding": "4.3.0",
-          "System.Text.Encoding.Extensions": "4.3.0",
-          "System.Text.RegularExpressions": "4.3.0",
-          "System.Threading": "4.3.0",
-          "System.Threading.Tasks": "4.3.0",
-          "System.Xml.ReaderWriter": "4.3.0",
-          "System.Xml.XDocument": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
         },
         "runtime": {
           "lib/netstandard1.3/Newtonsoft.Json.dll": {
             "assemblyVersion": "10.0.0.0",
-            "fileVersion": "10.0.1.20720"
+            "fileVersion": "10.0.2.20802"
           }
         },
         "compile": {
@@ -3087,7 +3069,7 @@
       "Newtonsoft.Json.Bson/1.0.1": {
         "dependencies": {
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard1.3/Newtonsoft.Json.Bson.dll": {
@@ -3300,6 +3282,20 @@
             "assetType": "native",
             "fileVersion": "4.6.25512.1"
           }
+        }
+      },
+      "Sendgrid/9.11.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2"
+        },
+        "runtime": {
+          "lib/netstandard2.0/SendGrid.dll": {
+            "assemblyVersion": "9.11.0.0",
+            "fileVersion": "9.11.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/SendGrid.dll": {}
         }
       },
       "SQLitePCLRaw.bundle_green/1.1.7": {
@@ -4525,44 +4521,44 @@
           "ref/netstandard2.0/System.Security.Principal.Windows.dll": {}
         }
       },
-      "System.Spatial/5.8.2": {
+      "System.Spatial/5.6.4": {
         "runtime": {
-          "lib/netstandard1.1/System.Spatial.dll": {
-            "assemblyVersion": "5.8.1.0",
-            "fileVersion": "5.8.1.62767"
+          "lib/net40/System.Spatial.dll": {
+            "assemblyVersion": "5.6.4.0",
+            "fileVersion": "5.6.4.62175"
           }
         },
         "resources": {
-          "lib/netstandard1.1/de/System.Spatial.resources.dll": {
+          "lib/net40/de/System.Spatial.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard1.1/es/System.Spatial.resources.dll": {
+          "lib/net40/es/System.Spatial.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard1.1/fr/System.Spatial.resources.dll": {
+          "lib/net40/fr/System.Spatial.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard1.1/it/System.Spatial.resources.dll": {
+          "lib/net40/it/System.Spatial.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard1.1/ja/System.Spatial.resources.dll": {
+          "lib/net40/ja/System.Spatial.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard1.1/ko/System.Spatial.resources.dll": {
+          "lib/net40/ko/System.Spatial.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard1.1/ru/System.Spatial.resources.dll": {
+          "lib/net40/ru/System.Spatial.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard1.1/zh-Hans/System.Spatial.resources.dll": {
+          "lib/net40/zh-Hans/System.Spatial.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard1.1/zh-Hant/System.Spatial.resources.dll": {
+          "lib/net40/zh-Hant/System.Spatial.resources.dll": {
             "locale": "zh-Hant"
           }
         },
         "compile": {
-          "lib/netstandard1.1/System.Spatial.dll": {}
+          "lib/net40/System.Spatial.dll": {}
         }
       },
       "System.Text.Encoding/4.3.0": {
@@ -4757,17 +4753,15 @@
           "System.Xml.XPath": "4.3.0"
         }
       },
-      "WindowsAzure.Storage/8.1.4": {
+      "WindowsAzure.Storage/9.3.3": {
         "dependencies": {
-          "Microsoft.Data.OData": "5.8.2",
           "NETStandard.Library": "2.0.0",
-          "Newtonsoft.Json": "10.0.1",
-          "System.Spatial": "5.8.2"
+          "Newtonsoft.Json": "10.0.2"
         },
         "runtime": {
           "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {
-            "assemblyVersion": "8.1.4.0",
-            "fileVersion": "8.1.4.0"
+            "assemblyVersion": "9.3.2.0",
+            "fileVersion": "9.3.2.0"
           }
         },
         "compile": {
@@ -4777,6 +4771,7 @@
       "Risebird.Business/1.0.0": {
         "dependencies": {
           "Risebird.Business.Interface": "1.0.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0"
         },
         "runtime": {
@@ -4797,7 +4792,34 @@
           "Risebird.Business.Interface.dll": {}
         }
       },
+      "Risebird.CommonHelper/1.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "2.2.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
+          "Sendgrid": "9.11.0"
+        },
+        "runtime": {
+          "Risebird.CommonHelper.dll": {}
+        },
+        "compile": {
+          "Risebird.CommonHelper.dll": {}
+        }
+      },
+      "Risebird.CommonHelper.Interface/1.0.0": {
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "runtime": {
+          "Risebird.CommonHelper.Interface.dll": {}
+        },
+        "compile": {
+          "Risebird.CommonHelper.Interface.dll": {}
+        }
+      },
       "Risebird.Entities/1.0.0": {
+        "dependencies": {
+          "WindowsAzure.Storage": "9.3.3"
+        },
         "runtime": {
           "Risebird.Entities.dll": {}
         },
@@ -4810,6 +4832,7 @@
           "Dapper": "1.60.6",
           "Dapper.FluentMap": "1.8.0",
           "Microsoft.Extensions.Configuration": "2.2.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Entities": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0",
           "System.Data.SqlClient": "4.6.1",
@@ -5710,19 +5733,19 @@
       "path": "microsoft.csharp/4.4.0",
       "hashPath": "microsoft.csharp.4.4.0.nupkg.sha512"
     },
-    "Microsoft.Data.Edm/5.8.2": {
+    "Microsoft.Data.Edm/5.6.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-P/d8DxA6MFHroBEn/jW0LMQSIKnsRRibrZtRCLfov2boQfrQ1R1BVgkJ5oIhcQsOm0l4POv+I2ny6RBsclNbOw==",
-      "path": "microsoft.data.edm/5.8.2",
-      "hashPath": "microsoft.data.edm.5.8.2.nupkg.sha512"
+      "sha512": "sha512-I9ea/CEOufddjjyRYIowshdeFj5SIqfWZ5conK/UIaFx2/jJ+PDRhQ5jcJTqTg/ediCa1C22TeRl/MmL9zwBew==",
+      "path": "microsoft.data.edm/5.6.4",
+      "hashPath": "microsoft.data.edm.5.6.4.nupkg.sha512"
     },
-    "Microsoft.Data.OData/5.8.2": {
+    "Microsoft.Data.OData/5.6.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-oEIUtXcRiKogF0yZxA+QdgxoBJ34989qL/5xOSrTfxAhzNJV5Hw6DRdWgUCpeXFMoJUQx7ptbHCN+My/LCQfsg==",
-      "path": "microsoft.data.odata/5.8.2",
-      "hashPath": "microsoft.data.odata.5.8.2.nupkg.sha512"
+      "sha512": "sha512-Te71LAvjYppmBCLWomHvhVzKes3q8L5tmmDMSyLP7YrJMYG5/Ded8uJgxWWkUX/Vh11ZDpN2WXRByOg+BAHCYw==",
+      "path": "microsoft.data.odata/5.6.4",
+      "hashPath": "microsoft.data.odata.5.6.4.nupkg.sha512"
     },
     "Microsoft.Data.Services.Client/5.6.4": {
       "type": "package",
@@ -6249,12 +6272,12 @@
       "path": "microsoft.win32.registry/4.5.0",
       "hashPath": "microsoft.win32.registry.4.5.0.nupkg.sha512"
     },
-    "Newtonsoft.Json/10.0.1": {
+    "Newtonsoft.Json/10.0.2": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-ZW+YuKl1cboRtYMY3wApHYT4C3vOdyUh6CcurxRQjx/aHNHRSRqE6v9dByksSjAizrdd/8N1UsoBHWg+D7KybA==",
-      "path": "newtonsoft.json/10.0.1",
-      "hashPath": "newtonsoft.json.10.0.1.nupkg.sha512"
+      "sha512": "sha512-iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
+      "path": "newtonsoft.json/10.0.2",
+      "hashPath": "newtonsoft.json.10.0.2.nupkg.sha512"
     },
     "Newtonsoft.Json.Bson/1.0.1": {
       "type": "package",
@@ -6423,6 +6446,13 @@
       "sha512": "sha512-YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA==",
       "path": "runtime.win-x86.runtime.native.system.data.sqlclient.sni/4.4.0",
       "hashPath": "runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512"
+    },
+    "Sendgrid/9.11.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-I3VdLmsDbqazS5k8OsMAuKvnZz3YruNQxOACfVMDdrM5jjlQE/jOoaNJXcZEG+49TbanCVvOldE56pbKxdiVGA==",
+      "path": "sendgrid/9.11.0",
+      "hashPath": "sendgrid.9.11.0.nupkg.sha512"
     },
     "SQLitePCLRaw.bundle_green/1.1.7": {
       "type": "package",
@@ -7033,12 +7063,12 @@
       "path": "system.security.principal.windows/4.5.0",
       "hashPath": "system.security.principal.windows.4.5.0.nupkg.sha512"
     },
-    "System.Spatial/5.8.2": {
+    "System.Spatial/5.6.4": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-0RfZZJ8RlrfjoBPAF6pczX4Nd2kyLM8EX1PCP5Rqs/jOhJBUPYhpXjIsVAYN7kocj9IJ9XoJWAxWgXIDtJY2Ag==",
-      "path": "system.spatial/5.8.2",
-      "hashPath": "system.spatial.5.8.2.nupkg.sha512"
+      "sha512": "sha512-BoXUQ0mHyeAbkR3qlhwXqUFxzJ7rZuFOrvFM/jZRk+S6JLI2JxXRKby6bxuWbmwYv2o/eRPQPbAOvEk5hB2Gmg==",
+      "path": "system.spatial/5.6.4",
+      "hashPath": "system.spatial.5.6.4.nupkg.sha512"
     },
     "System.Text.Encoding/4.3.0": {
       "type": "package",
@@ -7173,12 +7203,12 @@
       "path": "system.xml.xpath.xdocument/4.3.0",
       "hashPath": "system.xml.xpath.xdocument.4.3.0.nupkg.sha512"
     },
-    "WindowsAzure.Storage/8.1.4": {
+    "WindowsAzure.Storage/9.3.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-SpcAYi5gkWLQTVQltkulSFLKsLM8BqHTFhKWQx+HYGKh7yaYy2YnVqJUWCIUpva3NUdGKpr/HKHx9WKu8h4LxQ==",
-      "path": "windowsazure.storage/8.1.4",
-      "hashPath": "windowsazure.storage.8.1.4.nupkg.sha512"
+      "sha512": "sha512-VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
+      "path": "windowsazure.storage/9.3.3",
+      "hashPath": "windowsazure.storage.9.3.3.nupkg.sha512"
     },
     "Risebird.Business/1.0.0": {
       "type": "project",
@@ -7186,6 +7216,16 @@
       "sha512": ""
     },
     "Risebird.Business.Interface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Risebird.CommonHelper/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Risebird.CommonHelper.Interface/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
