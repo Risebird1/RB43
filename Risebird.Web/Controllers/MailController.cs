@@ -1,30 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
     public class MailController : Controller
     {
         private INotificationHelper _notificationHelper;
-        public MailController(INotificationHelper notificationHelper)
+        private IApplicationErrorLogger _applicationErrorLogger;
+        public MailController(INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger)
         {
             _notificationHelper = notificationHelper;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         [HttpGet]
-        public IActionResult Mail()
+        public async Task<IActionResult> Mail()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
 
         [HttpPost]
-        public IActionResult Mail(Mail mail)
+        public async Task<IActionResult> Mail(Mail mail)
         {
-            var result = _notificationHelper.SendHelpsupportMail(mail);
-            ViewBag.Message = result;
-            return View();
+            try
+            {
+                var result = _notificationHelper.SendHelpsupportMail(mail);
+                ViewBag.Message = result;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
 
     }

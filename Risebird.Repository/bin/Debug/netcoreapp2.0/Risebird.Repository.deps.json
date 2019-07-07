@@ -11,6 +11,7 @@
           "Dapper": "1.60.6",
           "Dapper.FluentMap": "1.8.0",
           "Microsoft.Extensions.Configuration": "2.2.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Entities": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0",
           "System.Data.SqlClient": "4.6.1",
@@ -640,6 +641,14 @@
           }
         }
       },
+      "Risebird.CommonHelper.Interface/1.0.0": {
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "runtime": {
+          "Risebird.CommonHelper.Interface.dll": {}
+        }
+      },
       "Risebird.Entities/1.0.0": {
         "dependencies": {
           "WindowsAzure.Storage": "9.3.3"
@@ -1083,6 +1092,11 @@
       "sha512": "sha512-VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
       "path": "windowsazure.storage/9.3.3",
       "hashPath": "windowsazure.storage.9.3.3.nupkg.sha512"
+    },
+    "Risebird.CommonHelper.Interface/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "Risebird.Entities/1.0.0": {
       "type": "project",

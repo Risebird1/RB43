@@ -30,3 +30,5 @@ C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInf
 C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\FIles\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

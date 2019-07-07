@@ -1079,6 +1079,19 @@
           "lib/netstandard1.3/Microsoft.WindowsAzure.Storage.dll": {}
         }
       },
+      "Risebird.CommonHelper.Interface/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.0",
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        }
+      },
       "Risebird.Entities/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
@@ -4429,6 +4442,11 @@
         "windowsazure.storage.nuspec"
       ]
     },
+    "Risebird.CommonHelper.Interface/1.0.0": {
+      "type": "project",
+      "path": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj",
+      "msbuildProject": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj"
+    },
     "Risebird.Entities/1.0.0": {
       "type": "project",
       "path": "../Risebird.Entities/Risebird.Entities.csproj",
@@ -4446,6 +4464,7 @@
       "Dapper.FluentMap >= 1.8.0",
       "Microsoft.Extensions.Configuration >= 2.2.0",
       "Microsoft.NETCore.App >= 2.0.0",
+      "Risebird.CommonHelper.Interface >= 1.0.0",
       "Risebird.Entities >= 1.0.0",
       "Risebird.Repository.Interface >= 1.0.0",
       "System.Data.SqlClient >= 4.6.1",
@@ -4484,6 +4503,9 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
+            "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            },
             "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj": {
               "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj"
             },

@@ -5114,6 +5114,7 @@
         "framework": ".NETCoreApp,Version=v2.0",
         "dependencies": {
           "Risebird.Business.Interface": "1.0.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0"
         },
         "compile": {
@@ -5184,6 +5185,7 @@
           "Dapper": "1.60.6",
           "Dapper.FluentMap": "1.8.0",
           "Microsoft.Extensions.Configuration": "2.2.0",
+          "Risebird.CommonHelper.Interface": "1.0.0",
           "Risebird.Entities": "1.0.0",
           "Risebird.Repository.Interface": "1.0.0",
           "System.Data.SqlClient": "4.6.1",

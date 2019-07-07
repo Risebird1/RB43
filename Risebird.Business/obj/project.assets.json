@@ -848,6 +848,19 @@
           "bin/placeholder/Risebird.Business.Interface.dll": {}
         }
       },
+      "Risebird.CommonHelper.Interface/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.0",
+        "dependencies": {
+          "Risebird.Entities": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Risebird.CommonHelper.Interface.dll": {}
+        }
+      },
       "Risebird.Entities/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
@@ -3692,6 +3705,11 @@
       "path": "../Risebird.Business.Interface/Risebird.Business.Interface.csproj",
       "msbuildProject": "../Risebird.Business.Interface/Risebird.Business.Interface.csproj"
     },
+    "Risebird.CommonHelper.Interface/1.0.0": {
+      "type": "project",
+      "path": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj",
+      "msbuildProject": "../Risebird.CommonHelper.Interface/Risebird.CommonHelper.Interface.csproj"
+    },
     "Risebird.Entities/1.0.0": {
       "type": "project",
       "path": "../Risebird.Entities/Risebird.Entities.csproj",
@@ -3707,6 +3725,7 @@
     ".NETCoreApp,Version=v2.0": [
       "Microsoft.NETCore.App >= 2.0.0",
       "Risebird.Business.Interface >= 1.0.0",
+      "Risebird.CommonHelper.Interface >= 1.0.0",
       "Risebird.Repository.Interface >= 1.0.0"
     ]
   },
@@ -3743,6 +3762,9 @@
           "projectReferences": {
             "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
               "projectPath": "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            },
+            "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
             "C:\\FIles\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
               "projectPath": "C:\\FIles\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
