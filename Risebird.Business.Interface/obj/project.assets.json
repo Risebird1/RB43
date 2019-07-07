@@ -533,12 +533,10 @@
       ]
     },
     "Microsoft.NETCore.Platforms/2.0.0": {
-      "sha512": "CCf4NjmDOoise7FAij2VPuHIgKKsu696vkTwhOkPVQfLsTmB2WLFfQ4yeO5Udtk8FD636UBMx6Y9eovzJKT76A==",
+      "sha512": "VdLJOCXhZaEMY7Hm2GKiULmn7IEPFE4XC5LPSfBVCUIA8YLZVh846gtfBJalsPQF2PlzdD7ecX7DZEulJ402ZQ==",
       "type": "package",
       "path": "microsoft.netcore.platforms/2.0.0",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.0/_._",
@@ -692,23 +690,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PrashantVish1S\\.nuget\\packages\\": {},
+    "C:\\Users\\rashmi.r\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
       "projectName": "Risebird.Business.Interface",
-      "projectPath": "C:\\FIles\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
-      "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "C:\\FIles\\Risebird.Business.Interface\\obj\\",
+      "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
+      "packagesPath": "C:\\Users\\rashmi.r\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\PrashantVish1S\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rashmi.r\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -716,14 +714,13 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "http://nuget.grapecity.com/nuget": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }
