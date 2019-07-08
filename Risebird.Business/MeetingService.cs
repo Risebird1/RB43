@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -44,6 +45,20 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public List<Meeting> GetAllOpenInterviews()
+        {
+            try
+            {
+               var openMeeting= _meetingRespository.GetAllOpenInterviews().Result.ToList();
+               return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

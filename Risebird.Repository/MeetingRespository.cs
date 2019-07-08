@@ -48,6 +48,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Meeting>> GetAllOpenInterviews()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                   var openInterviewers= await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
+                        commandType: CommandType.StoredProcedure);
+                    return openInterviewers;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
