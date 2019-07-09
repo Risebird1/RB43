@@ -52,7 +52,7 @@ namespace Risebird.Business
         {
             try
             {
-               var openMeeting= _meetingRespository.GetAllOpenInterviews().Result.ToList();
+               var openMeeting= _meetingRespository.GetAllOpenInterviews().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
                return openMeeting;
             }
             catch (Exception ex)
