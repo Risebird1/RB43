@@ -4,3 +4,5 @@
 
 /.vs/RisebirdPortal/v15
 /.vs
+/Risebird.CommonHelper/obj/Debug/netcoreapp2.0/Risebird.CommonHelper.csprojAssemblyReference.cache
+/Risebird.CommonHelper.Interface/obj/Debug/netcoreapp2.0/Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
