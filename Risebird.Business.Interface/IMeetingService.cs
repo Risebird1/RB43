@@ -1,6 +1,7 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
@@ -8,5 +9,6 @@ namespace Risebird.Business.Interface
     {
         List<Meeting> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
+        List<Meeting> GetAllOpenInterviews();
     }
 }

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace Risebird.Web.Controllers
 {
     [Authorize]
-    public class MeetingController : Controller
+    public class InterviewController : Controller
     {
         private IMeetingService _meetingService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public MeetingController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -62,6 +62,20 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View();
+            }
+        }
+
+        
+        public async Task<IActionResult> OpenInterview()
+        {
+            try
+            {
+                return View(_meetingService.GetAllOpenInterviews());
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }
