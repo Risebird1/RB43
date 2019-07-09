@@ -5,7 +5,6 @@ C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Int
 C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
 C:\FIles\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CoreCompileInputs.cache
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
 C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
