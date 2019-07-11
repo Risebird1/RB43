@@ -32,3 +32,4 @@ C:\Users\shajr\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebir
 C:\Users\shajr\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.dll
 C:\Users\shajr\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.pdb
 C:\Users\shajr\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.csprojAssemblyReference.cache
+C:\FIles\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.csprojAssemblyReference.cache
