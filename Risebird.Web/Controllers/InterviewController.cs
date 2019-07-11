@@ -31,7 +31,7 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-            
+
         }
 
         [Authorize]
@@ -55,8 +55,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                   var model = new MeetingVM();
-                    return View(model);
+                var model = new MeetingVM();
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        
+
         public async Task<IActionResult> OpenInterview()
         {
             try
@@ -78,5 +78,41 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
+        {
+            try
+            {
+                AssignYourselfVM assinAssignYourselfVm = new AssignYourselfVM();
+                assinAssignYourselfVm.id = id;
+                assinAssignYourselfVm.InterviewDate = InterviewDate;
+                assinAssignYourselfVm.CandidateEmail = CandidateEmail;
+                return View(assinAssignYourselfVm);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AssignYourself(AssignYourselfVM model)
+        {
+            try
+            {
+                var result=_meetingService.AssignYourself(model.id,model.Interviewer);
+                ViewBag.Message = result;
+                return RedirectToAction("OpenInterview");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("OpenInterview");
+            }
+        }
     }
+
 }

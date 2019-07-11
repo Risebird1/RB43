@@ -10,5 +10,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllInterviewMeetings();
         Task<bool> AddMeeting(MeetingVM meeting);
         Task<IEnumerable<Meeting>> GetAllOpenInterviews();
+        string AssignYourself(int meetingid, string interviewerMail);
     }
 }
