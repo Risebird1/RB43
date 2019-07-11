@@ -39,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Interview\AssignYourself.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\User\ClientUsers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
@@ -49,6 +52,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Dashboard\" />
+    <Folder Include="wwwroot\img\loaders\" />
   </ItemGroup>
 
 </Project>

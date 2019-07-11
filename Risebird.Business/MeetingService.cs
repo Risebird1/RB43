@@ -61,6 +61,26 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        /// <summary>
+        /// Assing Yourself
+        /// </summary>
+        /// <param name="meetingid"></param>
+        /// <param name="interviewerMail"></param>
+        /// <returns></returns>
+        public string AssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+                return _meetingRespository.AssignYourself(meetingid, interviewerMail);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
     }
 }
 
