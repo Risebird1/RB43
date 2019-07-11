@@ -22,4 +22,3 @@ C:\Users\shajr\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\R
 C:\Users\shajr\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\Users\shajr\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\shajr\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\FIles\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache

@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-OneShareManagement.Web-04b0927d-59ce-40a8-a8bf-c48556ff1710</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <ApplicationIcon>risebird.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
