@@ -1,7 +1,9 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
 {
@@ -9,5 +11,7 @@ namespace Risebird.Repository.Interface
     {
         IEnumerable<SkillLevel> GetSkillLevels();
         IEnumerable<Skill> GetSkills();
+
+        Task<bool> AddSkillLevel(SkillLevelVM skillLevel);
     }
 }

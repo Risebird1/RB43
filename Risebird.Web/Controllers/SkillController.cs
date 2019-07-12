@@ -5,6 +5,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Threading.Tasks;
+using Risebird.Entities.ViewModel;
 
 namespace Risebird.Web.Controllers
 {
@@ -42,6 +43,45 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View();
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddSkillLevel()
+        {
+            try
+            {
+                var model = new SkillLevelVM();
+                return View("SkillLevelAdd", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("SkillLevelAdd");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSkillLevel(SkillLevelVM skillLevelVM)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _skillService.AddSkillLevel(skillLevelVM);
+                    return RedirectToAction("SkillLevel");
+                }
+                else
+                {
+                    return View("SkillLevelAdd");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View("SkillLevelAdd");
             }
 
         }

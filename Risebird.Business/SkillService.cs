@@ -5,15 +5,21 @@ using System.Text;
 using Risebird.Business.Interface;
 using Risebird.Entities.Data;
 using Risebird.Repository.Interface;
+using Risebird.Entities.ViewModel;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 
 namespace Risebird.Business
 {
-    public class SkillService:ISkillService
+    public class SkillService : ISkillService
     {
         private ISkillRepository _skillRepository;
-        public SkillService(ISkillRepository skillRepository)
+        private IApplicationErrorLogger _applicationErrorLogger;
+
+        public SkillService(ISkillRepository skillRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _skillRepository = skillRepository;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
         public List<Skill> GetSkills()
@@ -36,6 +42,21 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 return null;
+            }
+        }
+        
+        public bool AddSkillLevel(SkillLevelVM skillLevel)
+        {
+            try
+            {
+                _skillRepository.AddSkillLevel(skillLevel);
+                return true;
+            }
+
+            catch(Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

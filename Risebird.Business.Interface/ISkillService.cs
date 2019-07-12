@@ -1,4 +1,5 @@
 ﻿using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,5 +10,7 @@ namespace Risebird.Business.Interface
     {
         List<Skill> GetSkills();
         List<SkillLevel> GetSkillLevels();
+
+        bool AddSkillLevel(SkillLevelVM skillLevel);
     }
 }
