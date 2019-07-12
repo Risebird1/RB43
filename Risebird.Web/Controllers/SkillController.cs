@@ -6,6 +6,7 @@ using Risebird.Entities.Enum;
 using System;
 using System.Threading.Tasks;
 using Risebird.Entities.ViewModel;
+using Risebird.Entities.Data;
 
 namespace Risebird.Web.Controllers
 {
@@ -37,6 +38,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Message = TempData["SuccessErrorMessage"];
                 return View(_skillService.GetSkillLevels());
             }
             catch (Exception ex)
@@ -58,7 +60,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return View("SkillLevelAdd");
+                return View("SkillLevel");
             }
 
         }
@@ -71,6 +73,7 @@ namespace Risebird.Web.Controllers
                 if (ModelState.IsValid)
                 {
                     _skillService.AddSkillLevel(skillLevelVM);
+                    TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
                     return RedirectToAction("SkillLevel");
                 }
                 else
@@ -81,9 +84,66 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return View("SkillLevelAdd");
+                TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
+                return View("SkillLevel");
             }
 
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                SkillLevelVM skillLevelToUpdate = _skillService.GetSkillLevel(id);
+
+                SkillLevel sk = new SkillLevel();
+
+                TempData["SkillLevelIdToUpdate"] = id;
+               
+                if (skillLevelToUpdate != null)
+                    return View("SkillLevelUpdate", skillLevelToUpdate);
+                else
+                    return View("SkillLevel");
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return View("SkillLevel");
+            }
+        }
+        public async Task<IActionResult> Update(SkillLevelVM skillLevelUpdated)
+        {
+            try
+            {
+                int skillLevelIdToUpdate = (int)TempData.Peek("skillLevelIdToUpdate");
+
+                SkillLevel skillLevelToUpdate = new SkillLevel
+                {
+                    id = skillLevelIdToUpdate,
+                    Name = skillLevelUpdated.Name,
+                    Description = skillLevelUpdated.Description
+                };
+
+                if (ModelState.IsValid)
+                {
+                    _skillService.UpdateSkillLevel(skillLevelToUpdate);
+                    TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
+                    return RedirectToAction("SkillLevel");
+                }
+                else
+                {
+                    return View("SkillLevelUpdate");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
+                return View("SkillLevel");
+            }
+        }
     }
+
 }

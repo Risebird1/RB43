@@ -12,5 +12,7 @@ namespace Risebird.Business.Interface
         List<SkillLevel> GetSkillLevels();
 
         bool AddSkillLevel(SkillLevelVM skillLevel);
+        SkillLevelVM GetSkillLevel(int id);
+        bool UpdateSkillLevel(SkillLevel skillLevelToUpdate);
     }
 }

@@ -95,6 +95,64 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<SkillLevelVM> GetSkillLevel(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SkillLevelVM svm = await SqlMapper.QuerySingleAsync<SkillLevelVM>(con, "[usp_GetSkillLevelById]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return svm;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateSkillLevel(SkillLevel entity)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", entity.id);
+                parameters.Add("@skillLevelName", entity.Name);
+                parameters.Add("@skillLevelDescr", entity.Description);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[usp_UpdateSkillLevel]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         private DynamicParameters SetStoredProcedureParameterForSkillLevel(SkillLevelVM entity)
         {
             var parameters = new DynamicParameters();

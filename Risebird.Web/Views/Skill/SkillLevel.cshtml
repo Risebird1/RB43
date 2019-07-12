@@ -60,26 +60,26 @@
 </div>
 <!-- PAGE CONTENT WRAPPER -->
 <loading></loading>
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+@if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
         {
                                 sweetAlert({
-                                    title: "Risebird Users",
+                                    title: "Risebird Skill Level",
                                     text:'@ViewBag.Message',
                                     type: "success"
                                 });
          };
     </script>
 }
-@if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
 {
     <script type="text/javascript">
             window.onload = function ()
             {
                     sweetAlert({
-                        title: "Risebird Users",
+                        title: "Risebird Skill Level",
                     text: '@ViewBag.Message',
                    type: "error"
                    });

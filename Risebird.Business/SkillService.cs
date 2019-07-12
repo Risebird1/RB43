@@ -59,5 +59,36 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public SkillLevelVM GetSkillLevel(int id)
+        {
+            try
+            {
+                if (_skillRepository.GetSkillLevel(id) == null)
+                    return null;
+                else
+                    return _skillRepository.GetSkillLevel(id).Result;
+                        
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateSkillLevel(SkillLevel skillLevelToUpdate)
+        {
+            try
+            {
+                _skillRepository.UpdateSkillLevel(skillLevelToUpdate);
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
