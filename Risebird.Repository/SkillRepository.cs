@@ -153,6 +153,34 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> DeleteSkillLevel(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[usp_DeleteSkillLevel]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         private DynamicParameters SetStoredProcedureParameterForSkillLevel(SkillLevelVM entity)
         {
             var parameters = new DynamicParameters();

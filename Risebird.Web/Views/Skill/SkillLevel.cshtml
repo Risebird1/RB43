@@ -46,7 +46,7 @@
                                     <td>@item.Description</td>
                                     <td>
                                         <i type="submit" onclick="location.href = '@Url.Action("Edit", "Skill", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
-                                        <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
+                                        <i type="submit" onclick="location.href = '@Url.Action("Delete", "Skill", new { id = item.id})'" class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom"></i>
                                     </td>
                                 </tr>
                             }
@@ -54,7 +54,7 @@
                     </table>
                 </div>
             </div>
-            <!-- END DEFAULT DATATABLE -->
+            <!-- END DEFAULT DATATABLE onclick="javascript:DeleteEntityfromEnvironment('');"-->
         </div>
     </div>
 </div>

@@ -78,18 +78,19 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return View("SkillLevelAdd");
+                    return RedirectToAction("SkillLevel");
                 }
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
-                return View("SkillLevel");
+                return RedirectToAction("SkillLevel");
             }
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             try
@@ -103,16 +104,18 @@ namespace Risebird.Web.Controllers
                 if (skillLevelToUpdate != null)
                     return View("SkillLevelUpdate", skillLevelToUpdate);
                 else
-                    return View("SkillLevel");
+                    return RedirectToAction("SkillLevel");
 
             }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return View("SkillLevel");
+                return RedirectToAction("SkillLevel");
             }
         }
-        public async Task<IActionResult> Update(SkillLevelVM skillLevelUpdated)
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(SkillLevelVM skillLevelUpdated)
         {
             try
             {
@@ -142,6 +145,23 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
                 return View("SkillLevel");
+            }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                _skillService.DeleteSkillLevel(id);
+                TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
+                return RedirectToAction("SkillLevel");
+            }
+
+            catch(Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                TempData["SuccessErrorMessage"] = "Deletion of SKill Level Successfully";
+                return RedirectToAction("SkillLevel");
             }
         }
     }

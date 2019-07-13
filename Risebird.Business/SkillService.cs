@@ -90,5 +90,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool DeleteSkillLevel(int id)
+        {
+            try
+            {
+                _skillRepository.DeleteSkillLevel(id);
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
