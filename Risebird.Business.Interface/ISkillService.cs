@@ -11,8 +11,8 @@ namespace Risebird.Business.Interface
         List<Skill> GetSkills();
         List<SkillLevel> GetSkillLevels();
 
-        bool AddSkillLevel(SkillLevelVM skillLevel);
-        SkillLevelVM GetSkillLevel(int id);
+        bool AddSkillLevel(SkillLevel skillLevel);
+        SkillLevel GetSkillLevel(int id);
         bool UpdateSkillLevel(SkillLevel skillLevelToUpdate);
         bool DeleteSkillLevel(int id);
     }

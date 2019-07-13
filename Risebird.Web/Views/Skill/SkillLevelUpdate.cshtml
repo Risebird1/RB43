@@ -1,15 +1,15 @@
-﻿@model Risebird.Entities.ViewModel.SkillLevelVM
+﻿@model Risebird.Entities.Data.SkillLevel
 @{
     ViewData["Title"] = "SkillLevelUpdate";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <ul class="breadcrumb">
-    <li><a href="/Meeting/Index">Skill Level</a></li>
-    <li class="active"><strong>Add</strong></li>
+    <li><a href="/Skill/SkillLevel">Skill Level</a></li>
+    <li class="active"><strong>Update</strong></li>
 </ul>
 
-@using (Html.BeginForm("Edit", "Skill", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("EditSkillLevel", "Skill", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
 
     @Html.AntiForgeryToken()
@@ -45,9 +45,9 @@
                                     <div class="pull-right">
                                         <input type="submit" id="btnUpload" value="Update Skill Level" class="btn btn btn-primary" />
                                     </div>
-                                    @*<div>
-                                            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-link" })
-                                        </div>*@
+                                    <div>
+                                        @Html.ActionLink("Back to List", "SkillLevel", "Skill", new { @class = "btn btn-link" })
+                                    </div>
                                 </div>
                             </div>
                         </div>

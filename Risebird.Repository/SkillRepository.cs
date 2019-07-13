@@ -68,7 +68,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<bool> AddSkillLevel(SkillLevelVM skillLevel)
+        public async Task<bool> AddSkillLevel(SkillLevel skillLevel)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<SkillLevelVM> GetSkillLevel(int id)
+        public async Task<SkillLevel> GetSkillLevel(int id)
         {
             try
             {
@@ -104,9 +104,9 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    SkillLevelVM svm = await SqlMapper.QuerySingleAsync<SkillLevelVM>(con, "[usp_GetSkillLevelById]", parameters,
+                    SkillLevel skillLevel = await SqlMapper.QuerySingleAsync<SkillLevel>(con, "[usp_GetSkillLevelById]", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return svm;
+                    return skillLevel;
                 }
             }
 
@@ -128,10 +128,7 @@ namespace Risebird.Repository
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@id", entity.id);
-                parameters.Add("@skillLevelName", entity.Name);
-                parameters.Add("@skillLevelDescr", entity.Description);
+                DynamicParameters parameters = SetStoredProcedureParameterForSkillLevel(entity);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "[usp_UpdateSkillLevel]", parameters,
@@ -181,9 +178,12 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForSkillLevel(SkillLevelVM entity)
+        private DynamicParameters SetStoredProcedureParameterForSkillLevel(SkillLevel entity)
         {
             var parameters = new DynamicParameters();
+
+            if (entity.id > 0)
+                parameters.Add("@id", entity.id);
 
             parameters.Add("@skillLevelName", entity.Name); 
             parameters.Add("@skillLevelDescr", entity.Description); 

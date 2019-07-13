@@ -54,27 +54,34 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new SkillLevelVM();
+                var model = new SkillLevel();
                 return View("SkillLevelAdd", model);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return View("SkillLevel");
+                return RedirectToAction("SkillLevel");
             }
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddSkillLevel(SkillLevelVM skillLevelVM)
+        public async Task<IActionResult> AddSkillLevel(SkillLevel skillLevel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _skillService.AddSkillLevel(skillLevelVM);
-                    TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
-                    return RedirectToAction("SkillLevel");
+                    if (_skillService.AddSkillLevel(skillLevel))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
+                        return RedirectToAction("SkillLevel");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
+                        return RedirectToAction("SkillLevel");
+                    }
                 }
                 else
                 {
@@ -91,13 +98,11 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> EditSkillLevel(int id)
         {
             try
             {
-                SkillLevelVM skillLevelToUpdate = _skillService.GetSkillLevel(id);
-
-                SkillLevel sk = new SkillLevel();
+                SkillLevel skillLevelToUpdate = _skillService.GetSkillLevel(id);
 
                 TempData["SkillLevelIdToUpdate"] = id;
                
@@ -115,24 +120,22 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(SkillLevelVM skillLevelUpdated)
+        public async Task<IActionResult> EditSkillLevel(SkillLevel skillLevelUpdated)
         {
             try
             {
-                int skillLevelIdToUpdate = (int)TempData.Peek("skillLevelIdToUpdate");
-
-                SkillLevel skillLevelToUpdate = new SkillLevel
-                {
-                    id = skillLevelIdToUpdate,
-                    Name = skillLevelUpdated.Name,
-                    Description = skillLevelUpdated.Description
-                };
-
                 if (ModelState.IsValid)
                 {
-                    _skillService.UpdateSkillLevel(skillLevelToUpdate);
-                    TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
-                    return RedirectToAction("SkillLevel");
+                    if (_skillService.UpdateSkillLevel(skillLevelUpdated))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
+                        return RedirectToAction("SkillLevel");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
+                        return RedirectToAction("SkillLevel");
+                    }
                 }
                 else
                 {
@@ -148,19 +151,26 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteSkillLevl(int id)
         {
             try
             {
-                _skillService.DeleteSkillLevel(id);
-                TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
-                return RedirectToAction("SkillLevel");
+                if(_skillService.DeleteSkillLevel(id))
+                {
+                    TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
+                    return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";
+                    return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                }
             }
 
             catch(Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessage"] = "Deletion of SKill Level Successfully";
+                TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";
                 return RedirectToAction("SkillLevel");
             }
         }

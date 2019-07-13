@@ -45,7 +45,7 @@ namespace Risebird.Business
             }
         }
         
-        public bool AddSkillLevel(SkillLevelVM skillLevel)
+        public bool AddSkillLevel(SkillLevel skillLevel)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public SkillLevelVM GetSkillLevel(int id)
+        public SkillLevel GetSkillLevel(int id)
         {
             try
             {

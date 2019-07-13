@@ -39,6 +39,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Client\ClientUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Skill\SkillLevelUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

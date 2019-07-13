@@ -12,8 +12,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<SkillLevel> GetSkillLevels();
         IEnumerable<Skill> GetSkills();
 
-        Task<bool> AddSkillLevel(SkillLevelVM skillLevel);
-        Task<SkillLevelVM> GetSkillLevel(int id);
+        Task<bool> AddSkillLevel(SkillLevel skillLevel);
+        Task<SkillLevel> GetSkillLevel(int id);
         Task<bool> UpdateSkillLevel(SkillLevel entity);
         Task<bool> DeleteSkillLevel(int id);
     }
