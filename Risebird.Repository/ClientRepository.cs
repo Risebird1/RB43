@@ -159,6 +159,30 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<ClientRoles>> GetClientRoles()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<ClientRoles>(con, "[sp_GetClientRoles]", null,
+                        commandType: CommandType.StoredProcedure);                    
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         private DynamicParameters SetStoredProcedureParameterForClient(Client entity)
         {
             var parameters = new DynamicParameters();
@@ -171,5 +195,6 @@ namespace Risebird.Repository
 
             return parameters;
         }
+       
     }
 }

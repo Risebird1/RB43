@@ -14,5 +14,6 @@ namespace Risebird.Business.Interface
         bool UpdateClient(Client client);
         Client GetClient(int id);
         bool DeleteClient(int id);
+        List<ClientRoles> GetClientRoles();
     }
 }

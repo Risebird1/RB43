@@ -85,7 +85,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SkillLevel");
+                    return View("SkillLevelAdd");
                 }
             }
             catch (Exception ex)
@@ -104,8 +104,6 @@ namespace Risebird.Web.Controllers
             {
                 SkillLevel skillLevelToUpdate = _skillService.GetSkillLevel(id);
 
-                TempData["SkillLevelIdToUpdate"] = id;
-               
                 if (skillLevelToUpdate != null)
                     return View("SkillLevelUpdate", skillLevelToUpdate);
                 else

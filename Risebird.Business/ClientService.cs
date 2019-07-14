@@ -93,5 +93,23 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public List<ClientRoles> GetClientRoles()
+        {
+            try
+            {
+                var clientRoles = _clientRepository.GetClientRoles();
+                if (clientRoles != null)
+                    return clientRoles.Result.ToList();
+                else
+                    return null;                
+            }
+
+            catch(Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
