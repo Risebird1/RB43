@@ -4,20 +4,6 @@
         Layout = "~/Views/Shared/_Layout.cshtml";
     }
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            //var allowDateConvert = true;
-            $('#meeting').DataTable({
-                "lengthMenu": [[15, 20, 25, 50, -1], [15, 20, 25, 50, "All"]],
-                "order": [[15, "desc"]],
-                fixedColumns: {
-                    leftColumns: 2
-                }
-            });
-        });
-
-
-    </script>
     <style>
         i.hover {
             cursor: pointer;
@@ -80,14 +66,10 @@
             <div class="col-md-12 dataloading">
                 <!-- START DEFAULT DATATABLE -->
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <ul class="panel-controls">
-                            <li><a href="#" title="Refresh"><span class="fa fa-refresh" onclick="location.href='@Url.Action("Index", "Interview")'"></span></a></li>
-                        </ul>
-                    </div>
+                   
                     <div class="panel-body">
                         <div class=" table-responsive">
-                            <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
+                            <table class="table datatable table-striped table-bordered table-sorting" id="openmeeting">
                                 <thead>
                                     <tr>
                                         <th>Client Name</th>
@@ -99,7 +81,6 @@
                                         <th>Candidate Email</th>
                                         <th>Resume Detail</th>
                                         <th>Confrimation Status</th>
-                                        <th>Zoom Link</th>
                                         <th>Risebird HR</th>
                                         <th>Interviewer</th>
                                         <th>Actions</th>
@@ -118,11 +99,10 @@
                                             <td> @item.candidateEmail</td>
                                             <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
                                             <td> @item.comfirmationStatus</td>
-                                            <td> @item.zoomLink</td>
                                             <td> @item.risebirdHR</td>
                                             <td> @item.interviewer</td>
                                             <td>
-                                                <i type="submit" onclick="location.href = '@Url.Action("Assign", "Interview", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                                <i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>
                                              </td>
                                         </tr>
                                     }
@@ -165,9 +145,31 @@
             }, 2000);
         };
     </script>
+<loading></loading>
+@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+{
     <script type="text/javascript">
-        function InterviewRefresh() {
-            window.location.href = "/Meeting/Index";
+        window.onload = function ()
+        {
+            sweetAlert({
+                title: "Risebird Notification",
+                text:'@ViewBag.Message',
+                type: "success"
+            });
         };
     </script>
+}
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+{
+    <script type="text/javascript">
+        window.onload = function ()
+        {
+            sweetAlert({
+                title: "Risebird Notification",
+                text: '@ViewBag.Message',
+                type: "error"
+            });
+        };
+    </script>
+}
     <!-- PAGE CONTENT WRAPPER -->

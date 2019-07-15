@@ -14,7 +14,7 @@ using static System.Data.CommandType;
 
 namespace Risebird.Repository
 {
-    public class MeetingRespository: IMeetingRespository
+    public class MeetingRespository : IMeetingRespository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -54,8 +54,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                   var openInterviewers= await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
-                        commandType: CommandType.StoredProcedure);
+                    var openInterviewers = await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
+                         commandType: CommandType.StoredProcedure);
                     return openInterviewers;
                 }
 
@@ -115,6 +115,29 @@ namespace Risebird.Repository
             }
 
             return false;
+        }
+
+        public string AssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
+                    return "Interviewer assigned successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
         }
     }
 }
