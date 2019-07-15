@@ -9,8 +9,8 @@
         var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
    
         <ul class="nav navbar-nav navbar-right">
-            <li class="navbar-text">emailid</li>
-            <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+            <li class="navbar-text" style="display: inline-block;">emailid</li>
+            <li class="xn-icon-button pull-right" style="display: inline-block;"><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
         </ul>
     }
      else

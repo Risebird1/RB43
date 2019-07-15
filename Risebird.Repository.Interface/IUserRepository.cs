@@ -1,6 +1,7 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
 {
@@ -10,5 +11,9 @@ namespace Risebird.Repository.Interface
         IEnumerable<UserList> GetRisebirdUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientUserVM> GetClientUsers();
+        Task<bool> AddClientUser(ClientUserVM client);
+        Task<bool> DeleteClientUser(int id);
+        Task<ClientUserVM> GetClientUser(int id);
+        Task<bool> UpdateClientUser(ClientUserVM clientUser);
     }
 }

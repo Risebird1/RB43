@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-OneShareManagement.Web-04b0927d-59ce-40a8-a8bf-c48556ff1710</UserSecretsId>
     <WebProject_DirectoryAccessLevelKey>1</WebProject_DirectoryAccessLevelKey>
+    <ApplicationIcon>risebird.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,7 +40,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\Interview\AssignYourself.cshtml">
+    <Content Update="Views\Client\ClientUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Skill\SkillAdd.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Skill\SkillUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Skill\SkillLevelUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\User\ClientUserUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\User\ClientUserAdd.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\User\ClientUsers.cshtml">
@@ -51,8 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Dashboard\" />
-    <Folder Include="wwwroot\img\loaders\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
 </Project>

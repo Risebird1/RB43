@@ -14,3 +14,5 @@ C:\FIles\Risebird.Business\obj\Release\netcoreapp2.0\Risebird.Business.AssemblyI
 C:\FIles\Risebird.Business\obj\Release\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\FIles\Risebird.Business\obj\Release\netcoreapp2.0\Risebird.Business.dll
 C:\FIles\Risebird.Business\obj\Release\netcoreapp2.0\Risebird.Business.pdb
+C:\FIles\Risebird.Business\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\FIles\Risebird.Business\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
