@@ -42,6 +42,12 @@
     <Content Update="Views\Client\ClientUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Skill\SkillAdd.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Skill\SkillUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Skill\SkillLevelUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

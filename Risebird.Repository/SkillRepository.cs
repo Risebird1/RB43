@@ -25,7 +25,9 @@ namespace Risebird.Repository
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
-        }        
+        }
+
+        #region Skill CRUD
 
         public IEnumerable<Skill> GetSkills()
         {
@@ -48,6 +50,132 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<bool> AddSkill(Skill skill)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForSkill(skill);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddSkill", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<Skill> GetSkill(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<Skill>(con, "[usp_GetSkillById]", parameters,
+                        commandType: CommandType.StoredProcedure);                    
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateSkill(Skill entity)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForSkill(entity);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[usp_UpdateSkill]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSkill(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[usp_DeleteSkill]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private DynamicParameters SetStoredProcedureParameterForSkill(Skill entity)
+        {
+            var parameters = new DynamicParameters();
+
+            if (entity.id > 0)
+                parameters.Add("@id", entity.id);
+
+            parameters.Add("@skillName", entity.Name);
+            parameters.Add("@skillDescr", entity.Description);
+
+            return parameters;
+        }
+
+        #endregion
+
+        #region Skill Level CRUD
+
         public IEnumerable<SkillLevel> GetSkillLevels()
         {
             try
@@ -68,6 +196,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
         public async Task<bool> AddSkillLevel(SkillLevel skillLevel)
         {
             try
@@ -190,5 +319,7 @@ namespace Risebird.Repository
             
             return parameters;
         }
+
+        #endregion
     }
 }

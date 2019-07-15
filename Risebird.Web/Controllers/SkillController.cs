@@ -21,10 +21,13 @@ namespace Risebird.Web.Controllers
             _applicationErrorLogger = applicationErrorLogger;
         }
 
+        #region Skill Functions
+
         public async Task<IActionResult> List()
         {
             try
             {
+                ViewBag.Message = TempData["SuccessErrorMessage"];
                 return View(_skillService.GetSkills());
             }
             catch (Exception ex)
@@ -33,6 +36,133 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> AddSkill()
+        {
+            try
+            {
+                var model = new Skill();
+                return View("SkillAdd", model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("List");
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSkill(Skill skill)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_skillService.AddSkill(skill))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill is added Successfully";
+                        return RedirectToAction("List");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                        return RedirectToAction("List");
+                    }
+                }
+                else
+                {
+                    return View("SkillAdd");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
+                return RedirectToAction("SkillLevel");
+            }
+
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditSkill(int id)
+        {
+            try
+            {
+                Skill skillToUpdate = _skillService.GetSkill(id);
+
+                if (skillToUpdate != null)
+                    return View("SkillUpdate", skillToUpdate);
+                else
+                    return RedirectToAction("List");
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("List");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSkill(Skill skillUpdated)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_skillService.UpdateSkill(skillUpdated))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill is updated Successfully";
+                        return RedirectToAction("List");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Updating Skill is Failed";
+                        return RedirectToAction("List");
+                    }
+                }
+                else
+                {
+                    return View("SkillUpdate");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
+                return View("SkillLevel");
+            }
+        }
+
+        public async Task<IActionResult> DeleteSkill(int id)
+        {
+            try
+            {
+                if (_skillService.DeleteSkill(id))
+                {
+                    TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
+                    return Json(new { url = Url.Action("List", "Skill") });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                    return Json(new { url = Url.Action("List", "Skill") });
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                return RedirectToAction("List");
+            }
+        }
+
+        #endregion
+
+        #region Skill Level Functions
 
         public async Task<IActionResult> SkillLevel()
         {
@@ -149,7 +279,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteSkillLevl(int id)
+        public async Task<IActionResult> DeleteSkillLevel(int id)
         {
             try
             {
@@ -172,6 +302,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SkillLevel");
             }
         }
+
+        #endregion
     }
 
 }

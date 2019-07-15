@@ -22,6 +22,8 @@ namespace Risebird.Business
             _applicationErrorLogger = applicationErrorLogger;
         }
 
+        #region Skill Functions
+
         public List<Skill> GetSkills()
         {
             try
@@ -33,6 +35,68 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public bool AddSkill(Skill skill)
+        {
+            try
+            {
+                return _skillRepository.AddSkill(skill).Result;                
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public Skill GetSkill(int id)
+        {
+            try
+            {
+                if (_skillRepository.GetSkill(id) == null)
+                    return null;
+                else
+                    return _skillRepository.GetSkill(id).Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateSkill(Skill skillToUpdate)
+        {
+            try
+            {
+                return _skillRepository.UpdateSkill(skillToUpdate).Result;                
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public bool DeleteSkill(int id)
+        {
+            try
+            {
+                _skillRepository.DeleteSkill(id);
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Skill Level Fucntions
+
         public List<SkillLevel> GetSkillLevels()
         {
             try
@@ -43,14 +107,12 @@ namespace Risebird.Business
             {
                 return null;
             }
-        }
-        
+        }        
         public bool AddSkillLevel(SkillLevel skillLevel)
         {
             try
             {
-                _skillRepository.AddSkillLevel(skillLevel);
-                return true;
+                return _skillRepository.AddSkillLevel(skillLevel).Result;                
             }
 
             catch(Exception e)
@@ -80,8 +142,7 @@ namespace Risebird.Business
         {
             try
             {
-                _skillRepository.UpdateSkillLevel(skillLevelToUpdate);
-                return true;
+                return _skillRepository.UpdateSkillLevel(skillLevelToUpdate).Result;             
             }
 
             catch (Exception e)
@@ -104,5 +165,7 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        #endregion
     }
 }
