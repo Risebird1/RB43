@@ -21,7 +21,7 @@ namespace Risebird.Business
             {
                 return _clientRepository.GetClients().ToList();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
                 return null;
             }

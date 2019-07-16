@@ -28,11 +28,15 @@ C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.pdb
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb

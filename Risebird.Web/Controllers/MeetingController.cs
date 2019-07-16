@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -10,25 +13,45 @@ namespace Risebird.Web.Controllers
     public class MeetingController : Controller
     {
         private IMeetingService _meetingService;
-        public MeetingController(IMeetingService meetingService)
+        private IApplicationErrorLogger _applicationErrorLogger;
+        public MeetingController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingService = meetingService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
             try
             {
                 return View(_meetingService.GetMeetingList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
             
         }
 
-       
-        public ActionResult Add()
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Add(MeetingVM model)
+        {
+            try
+            {
+                _meetingService.AddMeeting(model);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
         {
             try
             {
@@ -37,6 +60,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return View();
             }
         }

@@ -1,52 +1,44 @@
 ﻿@model Risebird.Entities.ViewModel.Mail
-    @{
-        ViewData["Title"] = "Mail";
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+@{
+    ViewData["Title"] = "Mail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-    <!-- START BREADCRUMB -->
-    <ul class="breadcrumb">
-        <li class="active"><strong>Mail</strong></li>
-    </ul>
-    <!-- END BREADCRUMB -->
-    <!-- PAGE TITLE -->
-    <div class="page-title">
-        <h2><span class="fa fa-envelope"></span> Mail</h2>
-    </div>
-    <!-- END PAGE TITLE -->
-    <!-- PAGE CONTENT WRAPPER -->
+<!-- START BREADCRUMB -->
+<ul class="breadcrumb">
+    <li class="active"><strong>Mail</strong></li>
+</ul>
+
+@using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{
+
+    @Html.AntiForgeryToken()
     <div class="page-content-wrap">
         <div class="row">
             <div class="col-md-12">
-              
-                <div class="form-horizontal">
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                               
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">FROM :</label>
 
-                        <div class="col-md-6 col-sm-6">
-                            <label>hire@risebird.io</label>
-                        </div>
-                    </div>
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+                    
                     <div class="form-group">
                         <label class="col-md-3 control-label">TO :</label>
 
                         <div class="col-md-6 col-sm-6">
                             <div class="col-md-6 col-sm-6">
-                                @Html.EditorFor(model => model.TO, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.TO, "", new { @class = "text-danger" })
+                                @Html.EditorFor(model => model.TO, new {htmlAttributes = new {@class = "form-control", placeholder = "Use ';' for multiple sender", required = "required" } })
+                                @Html.ValidationMessageFor(model => model.TO, "", new {@class = "text-danger"})
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="list-group-item">
                         <div class="form-group">
                             <label class="col-md-3 control-label">SUBJECT :</label>
 
                             <div class="col-md-6">
-                                <textarea type="text" ng-minlength="4" ng-maxlength="150" class="form-control" name="MailSubject" ng-model="MailSubject" required></textarea>
-
+                                @Html.TextAreaFor(model => model.Subject,
+                                    htmlAttributes: new { @class = "form-control", maxlength = 100, placeholder = "Mail Subject", required = "required" })
+                             
                             </div>
                         </div>
                     </div>
@@ -54,16 +46,24 @@
                         <div class="form-group">
                             <label class="col-md-3 control-label">BODY :</label>
                             <div class="col-md-6">
-                                <textarea type="text" ng-minlength="4" ng-maxlength="500" class="form-control" name="MailBody" ng-model="MailBody" required></textarea>
-
+                                @Html.TextAreaFor(model => model.Body,
+                                    htmlAttributes: new { @class = "form-control", maxlength = 5000, style = "height: 200px", placeholder = "Mail Body", required = "required" })
+                               
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="form-group col-sm-10">
+                    <div class="pull-right">
+                        <input type="submit" id="btnUpload" value="Send" class="btn btn btn-primary" />
+                    </div>
+                   
                 </div>
             </div>
-       
+        </div>
+
     </div>
+}
     <!-- PAGE CONTENT WRAPPER -->
     <loading></loading>
     @if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
@@ -72,34 +72,24 @@
         window.onload = function ()
         {
                                 sweetAlert({
-                                    title: "Risebird Users",
+                                    title: "Risebird Notification",
                                     text:'@ViewBag.Message',
                                     type: "success"
                                 });
          };
         </script>
     }
-    @if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
+    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
     {
         <script type="text/javascript">
             window.onload = function ()
             {
                     sweetAlert({
-                        title: "Risebird Users",
+                        title: "Risebird Notification",
                     text: '@ViewBag.Message',
                    type: "error"
                    });
            };
         </script>
     }
-    <script type="text/javascript">
-$(document).ready(function ()
-    {
-        $('#idenvironment').DataTable({
-            'aoColumnDefs': [{
-                'bSortable': false,
-                'aTargets': [-1] /*sort false 1st one, start by the right */
-            }],
-            "order": []   /* Disable initial sort */
-        });
-    });</script>
+

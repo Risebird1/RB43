@@ -20,7 +20,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Date")]
         [Required(ErrorMessage = "Please enter Interview Date.")]
         public DateTime interviewDate { get; set; }
+        [Display(Name = "Interview Slot")]
+        [Required(ErrorMessage = "Please enter Interview Slot.")]
         public string interviewSlot { get; set; }
+        [Display(Name = "Interview Duration")]
+        [Required(ErrorMessage = "Please enter Interview Duration.")]
         public string interviewDuration { get; set; }
         [Display(Name = "Primary Skill")]
         [Required(ErrorMessage = "Please enter Primary Skills.")]
@@ -31,7 +35,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Client HR")]
         [Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
-        [Display(Name = "Select Resume")]
+        [Display(Name = "Resume Links")]
         [Required(ErrorMessage = "Please enter Resume Link.")]
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]

@@ -21,15 +21,4 @@ C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.Common
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
 C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.deps.json
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.Entities.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.1\Risebird.Entities.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.AssemblyInfo.cs
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csproj.CopyComplete
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.pdb
+C:\FIles\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.1\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache

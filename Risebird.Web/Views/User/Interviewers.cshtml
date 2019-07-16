@@ -56,9 +56,9 @@
                                 <td>@item.EmailId</td>
                                 <td>@item.MobileNumber</td>
                                 <td>@item.PrimarySkill</td>
-                                <td>@item.ResumeLink</td>
+                                <td><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
                                 <td>@item.Slots</td>
-                                if (item.IsApproved == 1)
+                                if (@item.IsApproved == 1)
                                 {
                                 <td>Approved</td>
                                 }

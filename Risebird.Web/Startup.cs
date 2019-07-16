@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper;
+using Risebird.CommonHelper.Interface;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
 
@@ -79,6 +81,8 @@ namespace Risebird.Web
         /// <param name="services"></param>
         private static void DependencyMapping(IServiceCollection services)
         {
+            services.AddScoped<INotificationHelper, NotificationHelper>();
+            services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISkillService, SkillService>();
@@ -90,6 +94,7 @@ namespace Risebird.Web
             services.AddScoped<ISkillRepository, SkillRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
+            services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
         }
     }
 }
