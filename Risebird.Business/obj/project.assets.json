@@ -1275,8 +1275,6 @@
       "type": "package",
       "path": "microsoft.netcore.platforms/2.0.0",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.0/_._",
@@ -1432,12 +1430,10 @@
       ]
     },
     "Newtonsoft.Json/10.0.2": {
-      "sha512": "iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
+      "sha512": "vcX8ci+srBr5scnSKCUNNoFo5BQ6KjdfeJ5LCJQhvxncNkTy7w3pAWsnRJrsF9WBBdMiaQp0aOa3YRh1CDCc7A==",
       "type": "package",
       "path": "newtonsoft.json/10.0.2",
-      "hasTools": true,
       "files": [
-        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.md",
         "lib/net20/Newtonsoft.Json.dll",
@@ -2539,7 +2535,6 @@
       "path": "system.reflection.emit.lightweight/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3104,7 +3099,6 @@
       "type": "package",
       "path": "system.runtime.serialization.formatters/4.3.0",
       "files": [
-        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3645,7 +3639,6 @@
       "type": "package",
       "path": "system.xml.xmldocument/4.3.0",
       "files": [
-        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3679,11 +3672,10 @@
       ]
     },
     "WindowsAzure.Storage/9.3.3": {
-      "sha512": "VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
+      "sha512": "nBRir2+4rZgm5xWwAe6DMGepLprFmVsAby6gV06Y1pkWkMoZxMAO6x3Bid2SH0SBpSSE43nHwx8Y0G4FDN6XJg==",
       "type": "package",
       "path": "windowsazure.storage/9.3.3",
       "files": [
-        ".nupkg.metadata",
         ".signature.p7s",
         "lib/net45/Microsoft.WindowsAzure.Storage.dll",
         "lib/net45/Microsoft.WindowsAzure.Storage.pdb",
@@ -3732,23 +3724,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Rohini\\.nuget\\packages\\": {},
+    "C:\\Users\\rashmi.r\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "projectUniqueName": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
       "projectName": "Risebird.Business",
-      "projectPath": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
-      "packagesPath": "C:\\Users\\Rohini\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Business\\obj\\",
+      "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "packagesPath": "C:\\Users\\rashmi.r\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Rohini\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rashmi.r\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3761,14 +3753,14 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\Users\\Rohini\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\rashmi.r\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             }
           }
         }
