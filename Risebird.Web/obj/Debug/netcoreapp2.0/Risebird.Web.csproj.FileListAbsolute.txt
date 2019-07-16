@@ -71,3 +71,7 @@ C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Ris
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
+C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb

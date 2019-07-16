@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class ClientUser
+    {
+        public int id { get; set; }
+        public int ClientId { get; set; }
+        public int UserId { get; set; }
+        public int RoleId { get; set; }
+    }
+    public class Client
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+    public class ClientRole
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+    public class TransClientUser
+    {
+        public int id { get; set; }
+        public int IRFId { get; set; }
+        public int ClientUserId { get; set; }
+        public int ClientRoleId { get; set; }
+    }
+}

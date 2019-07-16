@@ -95,6 +95,7 @@ namespace Risebird.Web
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
             services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
+            services.AddScoped<IIRFRepository, IRFRepository>();
         }
     }
 }

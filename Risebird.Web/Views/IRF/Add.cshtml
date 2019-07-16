@@ -4,10 +4,7 @@
 }
 
 <div style="margin-bottom:10px">
-
-
-
-    <form action="/Meeting/Add" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+    <form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
         <div class="row">
             <div class="col-md-12 edit-build nova-cont">
                 <div class="panel panel-default">
@@ -20,68 +17,165 @@
                                 <div class="form-horizontal">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="IRFName">IRF Name</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">Client Name</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter existing IRF Name." id="IRFName" name="IRFName" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="IRFName" data-valmsg-replace="true"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="clientName">Client Name</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter existing Client Name." id="clientName" name="clientName" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="clientName" data-valmsg-replace="true"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="JobRole">Skill Cluster</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Job Role." id="JobRole" name="JobRole" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="JobRole" data-valmsg-replace="true"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="interviewDate">Client Location</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Interview Date." id="interviewDate" name="interviewDate" type="text">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="interviewDate" data-valmsg-replace="true"></span>
+                                                <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
+
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="primaryskill">Start Date</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="IRFId">IRF Id</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Primary Skills." id="primaryskill" name="primaryskill" type="datetime" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="primaryskill" data-valmsg-replace="true"></span>
+                                                <input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Job Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Tiltle</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="JDTiltle" name="JDTiltle" type="text" value="">
+
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="candidateEmail">End Date</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="CompanyType">CompanyType</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Candidate Email Id." id="candidateEmail" name="candidateEmail" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="candidateEmail" data-valmsg-replace="true"></span>
+                                                <select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
+                                                    <option value="Product">Product</option>
+                                                    <option value="Service">Service</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Open Positions </label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">Client</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Client HR Email Id." id="ClientHrContact" name="ClientHrContact" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientHrContact" data-valmsg-replace="true"></span>
+                                               @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews to be conducted</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="JobCountry">Job Country</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" data-val="true" data-val-required="Please enter Client HR Email Id." id="ClientHrContact" name="ClientHrContact" type="text" value="">
-                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientHrContact" data-valmsg-replace="true"></span>
+                                                <input class="form-control text-box single-line" id="JobCountry" name="JobCountry" type="text">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="JDLink">JD Link</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="JDLink" name="JDLink" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="StartDate" name="StartDate" type="datetime" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="EndDate">End Date</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="EndDate" name="EndDate" type="datetime" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No Of Open Positions </label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="text" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No Of Interviews to be conducted</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="text" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="text" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
+                                            <div class="col-md-6 col-sm-6">
+                                               @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
                                             </div>
                                         </div>
                                     </div>
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
-                                                <h2>Skill Matrix</h2>
+                                                <h2>Joinability Matrix</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Level</th>
+                                                            <th class="table_heading">Type</th>
+                                                            <th class="table_heading">Value</th>
+                                                            <th class="table_heading">Weightage</th>
+                                                            <th class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                            </td>
+                                                            <td>
+
+                                                                <select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
+                                                                    <option value="Job Location">Job Location</option>
+                                                                    <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
+                                                                    <option value="Approved Visa Type">Approved Visa Type</option>
+                                                                    <option value="Max Notice period (Days)">Max Notice period (Days)</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" value="">
+                                                            </td>
+
+                                                            <td width="8%">
+                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
+                                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                                </a>
+
+                                                                <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                    <div class="multiple-row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Tech Skill Matrix</h2>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
 
@@ -102,24 +196,16 @@
 
                                                         <tr>
                                                             <td>
-                                                                <select class="form-control" id="SkillCollection_0__SiteName" name="SkillCollection[0].SiteName">
 
-                                                                    <option value="Beginner">Beginner</option>
-                                                                    <option value="Intermediate">Intermediate</option>
-                                                                    <option value="Advance">Advance</option>
-                                                                </select>
-                                                                @*<input class="form-control text-box single-line" data-val="true" data-val-required="Required*" id="SkillCollection_0__SiteName" name="SkillCollection[0].SiteName" type="text" value="">*@
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="SkillCollection[0].SiteName" data-valmsg-replace="true" id="SkillCollection[0].Area"></span>
-                                                                <input class="hdnAddressID" id="SkillCollection_0__ID" name="SkillCollection[0].ID" type="hidden" value="0">
+                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" data-val="true" data-val-number="The field BasicRate must be a number." data-val-required="Required*" id="SkillCollection_0__BasicRate" name="SkillCollection[0].BasicRate" type="text">
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="SkillCollection[0].BasicRate" data-valmsg-replace="true" id="SkillCollection[0].Wing"></span>
+                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" data-val="true" data-val-number="The field SpecialAllowance must be a number." data-val-required="Required*" id="SkillCollection_0__SpecialAllowance" name="SkillCollection[0].SpecialAllowance" type="number" value="">
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="SkillCollection[0].SpecialAllowance" data-valmsg-replace="true" id="SkillCollection[0].BuildingName"></span>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" value="">
                                                             </td>
 
 
@@ -130,6 +216,66 @@
                                                                 </a>
 
                                                                 <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                    <div class="multiple-row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>General Skill Matrix</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="table_heading">Type</th>
+                                                            <th class="table_heading">Level</th>
+                                                            <th class="table_heading">Skill Name</th>
+                                                            <th class="table_heading">Weightage</th>
+                                                            <th class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tr>
+                                                            <td>
+                                                                <select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
+                                                                    <option value="Logical">Logical</option>
+                                                                    <option value="Analytical">Analytical</option>
+                                                                    <option value="Communication">Communication</option>
+                                                                </select>
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                               
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("SkillGeneral[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                            </td>
+
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" value="">
+                                                            </td>
+
+
+
+                                                            <td width="8%">
+                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSkillGeneralRow()">
+                                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                                </a>
+
+                                                                <a class="btn border-white btn-sm btn-danger delete-skillgeneral" id="btnMinus" onclick="DeleteSkillGeneralRow(0)">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </a>
                                                             </td>
@@ -160,24 +306,10 @@
 
                                                         <tr>
                                                             <td>
-                                                                <select class="form-control" id="ClientCollection_0__SiteName" name="ClientCollection[0].SiteName">
-
-                                                                    <option value="Beginner">User 1</option>
-                                                                    <option value="Intermediate">User 2</option>
-                                                                    <option value="Advance">User 3</option>
-                                                                </select>
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientCollection[0].SiteName" data-valmsg-replace="true" id="ClientCollection[0].Area"></span>
-                                                                <input class="hdnAddressID" id="ClientCollection_0__ID" name="ClientCollection[0].ID" type="hidden" value="0">
+                                                                @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
                                                             </td>
                                                             <td>
-                                                                <select class="form-control" id="ClientCollection_0__SiteName" name="ClientCollection[0].SiteName">
-
-                                                                    <option value="Beginner">Manager</option>
-                                                                    <option value="Intermediate">L2 Interviewer</option>
-                                                                    <option value="Advance">Technical Head</option>
-                                                                </select>
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientCollection[0].SiteName" data-valmsg-replace="true" id="ClientCollection[0].Area"></span>
-                                                                <input class="hdnAddressID" id="ClientCollection_0__ID" name="ClientCollection[0].ID" type="hidden" value="0">
+                                                                @Html.DropDownList("ClientCollection[0].ClientRoleId", (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
                                                             </td>
 
                                                             <td width="8%">
@@ -216,19 +348,12 @@
 
                                                         <tr>
                                                             <td>
-                                                                <select class="form-control" id="ClientCollection_0__SiteName" name="ClientCollection[0].SiteName">
-
-                                                                    <option value="Beginner">User 1</option>
-                                                                    <option value="Intermediate">User 2</option>
-                                                                    <option value="Advance">User 3</option>
-                                                                </select>
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientCollection[0].SiteName" data-valmsg-replace="true" id="ClientCollection[0].Area"></span>
-                                                                <input class="hdnAddressID" id="ClientCollection_0__ID" name="ClientCollection[0].ID" type="hidden" value="0">
+                                                                @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control" })
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" data-val="true" data-val-number="The field BasicRate must be a number." data-val-required="Required*" id="SkillCollection_0__BasicRate" name="SkillCollection[0].BasicRate" type="text">
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="SkillCollection[0].BasicRate" data-valmsg-replace="true" id="SkillCollection[0].Wing"></span>
+                                                                @Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+
                                                             </td>
 
                                                             <td width="8%">
@@ -263,17 +388,10 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-
                                                         <tr>
                                                             <td>
-                                                                <select class="form-control" id="ClientCollection_0__SiteName" name="ClientCollection[0].SiteName">
+                                                                @Html.DropDownList("QualityController[0].InterviewerId", (SelectList)ViewBag.QualityController, new { @class = "form-control" })
 
-                                                                    <option value="Beginner">User 1</option>
-                                                                    <option value="Intermediate">User 2</option>
-                                                                    <option value="Advance">User 3</option>
-                                                                </select>
-                                                                <span class="field-validation-valid text-danger" data-valmsg-for="ClientCollection[0].SiteName" data-valmsg-replace="true" id="ClientCollection[0].Area"></span>
-                                                                <input class="hdnAddressID" id="ClientCollection_0__ID" name="ClientCollection[0].ID" type="hidden" value="0">
                                                             </td>
 
                                                             <td width="8%">
@@ -323,7 +441,6 @@
                 </div>
             </div>
         </div>
-        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8N9ahr_NEYlFouFKbxDuNnNHMg7hyn_4zHULt7BQCVvXA8y-SZJ4c7iwaENlsnoiiywD0sed00lWHz-jVzZN7BXlFqPIV-hW2T3s4wX3RiziqpvO_8DJ3WABxHuENsFG_rkw2WcufhuWKGKY2EGBXexAVWsOxKMJrtqwa9iWSLT1kS4-h_oyBJ2Ez_kACEIaZA">
     </form>
 </div>
 <style>
@@ -392,6 +509,89 @@
 
             // Check document for changes
             $.validator.unobtrusive.parse(document);
+
+    }
+    function AddSkillGeneralRow() {
+
+        var $ttc = $("#SkillGeneralTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#SkillGeneralTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#SkillGeneralTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+    }
+
+    function AddJoinabilityRow() {
+
+        var $ttc = $("#JoinabilityTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#JoinabilityTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#JoinabilityTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
 
     }
 
@@ -535,6 +735,42 @@
                 $(this).closest('tr').remove();
 
             }
+
+    });
+
+    $(document).on('click', '.delete-joinability', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-skillgeneral', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Row');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
 
     });
 
