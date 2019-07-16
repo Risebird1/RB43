@@ -1,18 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace Risebird.Entities.ViewModel
 {
     public class ClientUserVM
     {
         public int id { get; set; }
+        [Required(ErrorMessage = "Please enter First Name")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
+        [Required(ErrorMessage = "Please Enter Last Name")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        [Display(Name = "Email ID")]
+        [Required(ErrorMessage ="Please Enter Email ID")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         public string EmailId { get; set; }
+        [Display(Name = "Mobile Number")]
+        [RegularExpression(@"^(\d{10})$", ErrorMessage = "Please enter a 10 digit mobile number")]
         public long MobileNumber { get; set; }
         public int idProfile { get; set; }
         public string ClientName { get; set; }
         public string Role { get; set; }
+
+        [Required(ErrorMessage = "Please Select Client")]
+        public int? SelectedClient { get; set; }
+        [Display(Name ="Client")]
+        public SelectList Clients { get; set; }
+
+        [Required(ErrorMessage ="Please Select Client Role")]
+        public int? SelectedClientRole { get; set; }
+        [Display(Name = "Client Role")]
+        public SelectList ClientRoles { get; set; }
     }
 }

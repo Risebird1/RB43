@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
-using System;
+using Risebird.Entities.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using static System.Data.CommandType;
@@ -20,13 +20,13 @@ namespace Risebird.Repository
         }
         public IEnumerable<Users> GetCientUsers()
         {
-            IEnumerable<ClientUser> clientUsers = new List<ClientUser>();
+            IEnumerable<ClientUserDTO> clientUsers = new List<ClientUserDTO>();
             IEnumerable<Users> clients = new List<Users>();
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    clientUsers = SqlMapper.Query<ClientUser>(
+                    clientUsers = SqlMapper.Query<ClientUserDTO>(
                         con, "select * from ClientUser", null, commandType: Text);
                     var idList = new List<int>();
                     foreach (var item in clientUsers)
@@ -46,7 +46,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<ClientRole> GetClientRoles()
+        public IEnumerable<Risebird.Entities.Data.ClientRole> GetClientRoles()
         {
             try
             {
@@ -130,7 +130,7 @@ namespace Risebird.Repository
 
         public IEnumerable<Users> GetQualityController()
         {
-            IEnumerable<QualityController> qualityControllers = new List<QualityController>();
+            IEnumerable<Entities.Data.QualityController> qualityControllers = new List<Entities.Data.QualityController>();
             IEnumerable<Users> users = new List<Users>();
             try
             {

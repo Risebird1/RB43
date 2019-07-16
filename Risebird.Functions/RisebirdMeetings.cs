@@ -22,6 +22,7 @@ namespace Risebird.Functions
             log.Info("C# HTTP trigger function processed a request.");
 
             string jsonContent = await req.Content.ReadAsStringAsync();
+            log.Info(jsonContent);
            // string jsonString =  File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
 

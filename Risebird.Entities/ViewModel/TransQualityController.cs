@@ -10,11 +10,11 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public int QualityControllerId { get; set; }
     }
-    public class QualityController
-    {
-        public int id { get; set; }
-        public int UserId { get; set; }
-        public string PrimarySkill { get; set; }
-        public string ResumeLink { get; set; }
-    }
+    //public class QualityController
+    //{
+    //    public int id { get; set; }
+    //    public int UserId { get; set; }
+    //    public string PrimarySkill { get; set; }
+    //    public string ResumeLink { get; set; }
+    //}
 }

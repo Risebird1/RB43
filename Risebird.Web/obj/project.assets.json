@@ -5169,6 +5169,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.0",
         "dependencies": {
+          "Microsoft.AspNetCore.All": "2.0.6",
           "WindowsAzure.Storage": "9.3.3"
         },
         "compile": {

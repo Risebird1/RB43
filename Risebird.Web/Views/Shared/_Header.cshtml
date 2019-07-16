@@ -29,6 +29,7 @@
     .list-group .list-group-item {
         line-height: 7px;
     }
+
 </style>
 
 
@@ -43,20 +44,21 @@
     <li class="xn-icon-button pull-right">
         @*<a href="#" class="mb-control" data-box="#mb-signout" data-toggle="tooltip" data-placement="bottom" title="LogOut" data-original-title="Tooltip on bottom"><span class="fa fa-sign-out"></span></a>*@
         <div class="profile-data abccolor">
+
             @if (User.Identity.IsAuthenticated)
             {
                 @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
                 {
                     var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
-                    <div class="profile-data-name">@emailid</div>
-                    <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>
+                    <span class="profile-data-name">@emailid</span>
+                    <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>
 
 
                 }
                 else
                 {
-                    <div class="profile-data-name">@User.Identity.Name</div>
-                    <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>
+                    <span class="profile-data-name">@User.Identity.Name</span>
+                    <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>
 
                 }
                 @*<div class="profile-data-name">@User.Identity.Name</div>

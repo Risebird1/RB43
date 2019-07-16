@@ -1,12 +1,15 @@
 ﻿using Risebird.Entities.Data;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Risebird.Business.Interface
 {
     public interface IClientService
     {
         List<Client> GetClients();
+        bool AddClient(Client client);
+        bool UpdateClient(Client client);
+        Client GetClient(int id);
+        bool DeleteClient(int id);
+        List<ClientRole> GetClientRoles();
     }
 }

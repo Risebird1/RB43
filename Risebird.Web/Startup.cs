@@ -29,12 +29,10 @@ namespace Risebird.Web
         {
             services.AddSingleton<IConfiguration>(Configuration);
             //Configure session state
-            services.AddSession(options =>
+            services.AddDistributedRedisCache(options =>
             {
-                // Set a short timeout for easy testing.
-                //options.IdleTimeout = TimeSpan.FromSeconds(10);
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                options.Cookie.HttpOnly = true;
+                options.InstanceName = "risebirdportalui";
+                options.Configuration = "risebirdportal.redis.cache.windows.net:6380,password=CZQPNXSRw87bjTASEORqVE58vcDaI562tJcSyt8IJnA=,ssl=True,abortConnect=False";
             });
             services.AddAuthentication(sharedOptions =>
             {
@@ -43,9 +41,14 @@ namespace Risebird.Web
             })
             .AddAzureAd(options => Configuration.Bind("AzureAd", options))
             .AddCookie();
-
+            services.AddSession(o =>
+            {
+                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.Cookie.Name = "Risebirdportal.Session";
+                o.Cookie.HttpOnly = true;
+            });
             services.AddMvc();
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             //Dependency injection
             DependencyMapping(services);
         }
