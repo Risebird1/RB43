@@ -4,6 +4,49 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+<style type="text/css">
+    i.hover {
+        cursor: pointer;
+    }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: black;
+            z-index: 99;
+            opacity: 0.8;
+            filter: alpha(opacity=80);
+            -moz-opacity: 0.8;
+            min-height: 100%;
+            width: 100%;
+        }
+
+        th, td {
+            white-space: nowrap;
+        }
+
+        div.dataTables_wrapper {
+            width: 800px;
+            margin: 0 auto;
+        }
+
+        .loader {
+            font-family: Arial;
+            font-size: 10pt;
+            /*border: 5px solid #67CFF5;*/
+            /*width: 200px;
+        height: 100px;*/
+            display: none;
+            position: fixed;
+            background-color: White;
+            z-index: 999;
+            opacity: 0.5;
+            filter: alpha(opacity = 50);
+        }
+    
+</style>
+
 <!-- START BREADCRUMB -->
 <ul class="breadcrumb">
     <li class="active"><strong>Interviewers</strong></li>
@@ -38,7 +81,6 @@
                                 <th>Primary Skills</th>
                                 <th>Resume Link</th>
                                 <th>Approved</th>
-                                <th>Slots</th>
                                 <th>No Of Interview</th>
                                 <th>SuccessRate</th>
                                 <th>Actions</th>
@@ -48,17 +90,15 @@
                             @foreach (var item in Model)
                             {
 
-                            <tr>
-                                <td hidden>@item.id</td>
-                                <td hidden>@item.idProfile</td>
+                            <tr id=@item.id>
+                               
                                 <td>@item.FirstName</td>
                                 <td>@item.LastName</td>
                                 <td>@item.EmailId</td>
                                 <td>@item.MobileNumber</td>
                                 <td>@item.PrimarySkill</td>
-                                <td>@item.ResumeLink</td>
-                                <td>@item.Slots</td>
-                                if (item.IsApproved == 1)
+                                <td><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                @if(@item.IsApproved == true)
                                 {
                                 <td>Approved</td>
                                 }

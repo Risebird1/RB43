@@ -1,11 +1,15 @@
 ﻿using Risebird.Entities.Data;
-using System;
+using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
 {
     public interface IMeetingRespository
     {
-        IEnumerable<Meeting> GetAllInterviewMeetings();
+        Task<IEnumerable<Meeting>> GetAllInterviewMeetings();
+        Task<bool> AddMeeting(MeetingVM meeting);
+        Task<IEnumerable<Meeting>> GetAllOpenInterviews();
+        string AssignYourself(int meetingid, string interviewerMail);
     }
 }

@@ -31,7 +31,7 @@ namespace Risebird.Web.Controllers
                     //var Menu = _userService.GetProfileMenuList(userAuthentication.ProfileName);
                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
-                    return RedirectToAction("Index", "Meeting");
+                    return RedirectToAction("Index", "Interview");
                 }
                 else
                 {

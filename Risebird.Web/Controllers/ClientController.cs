@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using System;
+using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
@@ -9,19 +12,22 @@ namespace Risebird.Web.Controllers
     public class ClientController : Controller
     {
         private IClientService _clientService;
-        public ClientController(IClientService clientService)
+        private IApplicationErrorLogger _applicationErrorLogger;
+        public ClientController(IClientService clientService, IApplicationErrorLogger applicationErrorLogger)
         {
             _clientService = clientService;
+            _applicationErrorLogger = applicationErrorLogger;
         }
 
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
             try
             {
                 return View(_clientService.GetClients());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
         }

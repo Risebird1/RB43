@@ -31,18 +31,28 @@
   <ItemGroup>
     <ProjectReference Include="..\Risebird.Business.Interface\Risebird.Business.Interface.csproj" />
     <ProjectReference Include="..\Risebird.Business\Risebird.Business.csproj" />
+    <ProjectReference Include="..\Risebird.CommonHelper.Interface\Risebird.CommonHelper.Interface.csproj" />
+    <ProjectReference Include="..\Risebird.CommonHelper\Risebird.CommonHelper.csproj" />
     <ProjectReference Include="..\Risebird.Entities\Risebird.Entities.csproj" />
     <ProjectReference Include="..\Risebird.Repository.Interface\Risebird.Repository.Interface.csproj" />
     <ProjectReference Include="..\Risebird.Repository\Risebird.Repository.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Interview\AssignYourself.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\User\ClientUsers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Views\User\Interviewers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Dashboard\" />
+    <Folder Include="wwwroot\img\loaders\" />
   </ItemGroup>
 
 </Project>
