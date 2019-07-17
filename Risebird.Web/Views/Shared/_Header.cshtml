@@ -29,7 +29,19 @@
     .list-group .list-group-item {
         line-height: 7px;
     }
-
+    .img-thumbnailnew {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    -webkit-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+ 
 </style>
 
 
@@ -41,35 +53,45 @@
     </li>
     <!-- END TOGGLE NAVIGATION -->
     <!-- SIGN OUT -->
-    <li class="xn-icon-button pull-right">
+    <li class="xn-icon-button dropdown pull-right">
         @*<a href="#" class="mb-control" data-box="#mb-signout" data-toggle="tooltip" data-placement="bottom" title="LogOut" data-original-title="Tooltip on bottom"><span class="fa fa-sign-out"></span></a>*@
-        <div class="profile-data abccolor">
+        @*<div class="profile-data abccolor">*@
 
-            @if (User.Identity.IsAuthenticated)
+        @if (User.Identity.IsAuthenticated)
+        {
+            @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
             {
-                @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
-                {
-                    var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
-                    <span class="profile-data-name">@emailid</span>
-                    <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>
+                var emailid = HttpContextAccessor.HttpContext.Session.GetString("email");
+                //var email = emailid.Replace('"',' ').Trim();
+                var email = emailid.Trim('"');
+                @*<span class="profile-data-name">@email</span>
+                <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut"><span class="glyphicon glyphicon-user">Sign Out</span></a></span>*@
+                <span style="height:50px;"><a id="user-profile" style="color:white;" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" />@email </a>
+               </span>
+                <ul class="dropdown-menu dropdown-block" role="menu">
+                    <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+                </ul>
 
-
-                }
-                else
-                {
-                    <span class="profile-data-name">@User.Identity.Name</span>
-                    <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>
-
-                }
-                @*<div class="profile-data-name">@User.Identity.Name</div>
-            <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>*@
             }
             else
             {
-                <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignIn">Sign In</a></div>
+                @*<span class="profile-data-name">@User.Identity.Name</span>
+                <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>*@
+                <span style="height:50px;"><a id="user-profile" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" /></a></span>
+                <span class="profile-data-name" style="color:white;">@User.Identity.Name</span>
+                <ul class="dropdown-menu dropdown-block" role="menu">
+                    <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
+                </ul>
             }
-        </div>
-    </li>
+            @*<div class="profile-data-name">@User.Identity.Name</div>
+            <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></div>*@
+        }
+        else
+        {
+            <div class="profile-data-title"><a style="color:white;" asp-area="" asp-controller="Account" asp-action="SignIn">Sign In</a></div>
+        }
+        @*</div>*@
+    </li>   
 </ul>
 <!-- END SIGN OUT -->
 <!-- My Profile -->
