@@ -66,8 +66,9 @@
                 var email = emailid.Trim('"');
                 @*<span class="profile-data-name">@email</span>
                 <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut"><span class="glyphicon glyphicon-user">Sign Out</span></a></span>*@
-                <span style="height:50px;"><a id="user-profile" style="color:white;" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" />@email </a>
-               </span>
+                <span style="height:50px;">
+                    <a id="user-profile" style="color:white;" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" /> @email</a>
+                </span>
                 <ul class="dropdown-menu dropdown-block" role="menu">
                     <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
                 </ul>
@@ -77,8 +78,9 @@
             {
                 @*<span class="profile-data-name">@User.Identity.Name</span>
                 <span class="profile-data-title"><a style="color:white;padding-left:10px;" asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></span>*@
-                <span style="height:50px;"><a id="user-profile" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" /></a></span>
-                <span class="profile-data-name" style="color:white;">@User.Identity.Name</span>
+                <span style="height:50px;">
+                    <a id="user-profile" style="color:white;" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="~/img/man.png" class="img-responsive img-thumbnailnew img-circle" style="height:50px;" /> @User.Identity.Name</a>
+                </span>
                 <ul class="dropdown-menu dropdown-block" role="menu">
                     <li><a asp-area="" asp-controller="Account" asp-action="SignOut">Sign out</a></li>
                 </ul>
