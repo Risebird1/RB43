@@ -139,5 +139,66 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public IEnumerable<Meeting> GetTotalInvites()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Meeting>(
+                        con, "select id from InterviewMeetings", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<Meeting> GetTotalInterviewer()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Meeting>(
+                        con, "select id from interviewer", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<Meeting> GetTotalcandidate()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Meeting>(
+                        con, "select distinct candidateEmail from InterviewMeetings", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

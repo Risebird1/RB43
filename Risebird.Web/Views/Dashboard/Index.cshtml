@@ -1,4 +1,4 @@
-﻿
+﻿@model Risebird.Entities.ViewModel.MeetingVM
 @{
 
     ViewData["Title"] = "Index";
@@ -21,7 +21,7 @@
         <div class="card" style="width:60%">
             <div class="card-body">
                 <p class="card-text">Total Invites</p>
-                <h4 class="card-title">2,489</h4>
+                <h4 class="card-title">@ViewBag.Totinvites </h4>
                 <div id="invitesPending" style="height: 200px; width: 54%;"></div>
                 <div id="invitesAccepted" style="height: 200px; width: 20%;"></div>
             </div>
@@ -32,7 +32,7 @@
         <div class="card" style="width:40%">
             <div class="card-body">
                 <p class="card-text">Total Interviewers</p>
-                <h4 class="card-title">2,489</h4>
+                <h4 class="card-title">@ViewBag.TotInterviewer</h4>
                 <div id="interviewers" style="height: 200px; width: 54%;"></div>
             </div>
         </div>
@@ -49,21 +49,21 @@
             <div class="card-body">
                 <span class="fa fa-user icon-dash"></span>
                 <p class="text">Candidates</p>
-                <label>2,408</label>
+                <label>@ViewBag.TotInterviewer</label>
             </div>
         </div>
         <div class="card" style="float:left;width:32%;margin-left:20px;margin-right:20px">
             <div class="card-body">
                 <span class="fa fa-video-camera icon-dash"></span>
-                <p class="text">Interviews</p>
-                <label>2,408</label>
+                <p class="text">Interview</p>
+                <label>@ViewBag.Totinvites</label>
             </div>
         </div>
         <div class="card" style="width:32%;">
             <div class="card-body">
                 <span class="fa fa-user icon-dash"></span>
-                <p class="text">Interviewers</p>
-                <label>2,408</label>
+                <p class="text">Interview</p>
+                <label>@ViewBag.TotInterviewer</label>
             </div>
         </div>
     </div>
@@ -144,8 +144,9 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script>
-    window.onload = function () {
-
+   
+    window.onload = function () {    
+        var pending='@ViewBag.Totinvites';
         var chart = new CanvasJS.Chart("invitesPending", {
             width: 350,//in pixels
             height: 200,//in pixels

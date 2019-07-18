@@ -81,6 +81,42 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        public List<Meeting> GetInvitecnt()
+        {
+            try
+            {
+                return _meetingRespository.GetTotalInvites().ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<Meeting> GetInterviwercnt()
+        {
+            try
+            {
+                return _meetingRespository.GetTotalInterviewer().ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<Meeting> GetCandidatecnt()
+        {
+            try
+            {
+                return _meetingRespository.GetTotalcandidate().ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
 

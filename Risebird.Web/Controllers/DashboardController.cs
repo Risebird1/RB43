@@ -11,23 +11,29 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        private IMeetingService _meetingService;
+        private IMeetingService _dashboardService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public DashboardController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
+        public DashboardController(IMeetingService dashboardService, IApplicationErrorLogger applicationErrorLogger)
         {
-            _meetingService = meetingService;
+            _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;
         }
         public async Task<IActionResult> Index()
         {
             try
             {
-                return View(_meetingService.GetMeetingList());
-            }
-             catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                var Totinvites = _dashboardService.GetInvitecnt();
+                ViewBag.Totinvites = Totinvites.Count;
+                var TotInterviewer = _dashboardService.GetInterviwercnt();
+                ViewBag.TotInterviewer = TotInterviewer.Count;
+                var Totcandidate = _dashboardService.GetCandidatecnt();
+                ViewBag.Totcandidate = Totcandidate.Count;
                 return View();
+            }
+             catch (Exception)
+            {
+              return null;
+
             }
         }
     }
