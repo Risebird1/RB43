@@ -33,3 +33,15 @@ C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.deps.json
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CoreCompileInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfoInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb

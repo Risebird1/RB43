@@ -71,9 +71,7 @@
                         <div class=" table-responsive">
                             <table class="table datatable table-striped table-bordered table-sorting" id="openmeeting">
                                 <thead>
-                                    <tr>
-                                        <th>Client Name</th>
-                                        <th>Client HR</th>
+                                    <tr>                                      
                                         <th>Job Role</th>
                                         <th>Interview Date</th>
                                         <th>Interview Duration</th>
@@ -89,9 +87,7 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.id>
-                                            <td> @item.clientName </td>
-                                            <td> @item.ClientHrContact </td>
+                                        <tr id=@item.id>                                          
                                             <td> @item.JobRole </td>
                                             <td> @item.interviewDate </td>
                                             <td> @item.interviewDuration </td>

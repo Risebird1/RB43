@@ -32,3 +32,12 @@ C:\Users\rashmi.r\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Rise
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.AssemblyInfo.cs
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.dll
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\bin\Debug\netcoreapp2.1\Risebird.DB.deps.json
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\bin\Debug\netcoreapp2.1\Risebird.DB.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\bin\Debug\netcoreapp2.1\Risebird.DB.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.csproj.CoreCompileInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.AssemblyInfoInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.AssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.DB\obj\Debug\netcoreapp2.1\Risebird.DB.pdb

@@ -4,8 +4,7 @@ namespace Risebird.Entities.Data
 {
     public class Meeting
     {
-        public int id { get; set; }
-        public string IRFName { get; set; }
+        public int id { get; set; }        
         public string clientName { get; set; }
         public string JobRole { get; set; }
         public string interviewDate { get; set; }
@@ -28,7 +27,10 @@ namespace Risebird.Entities.Data
         public string fraudSyncComment { get; set; }
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
+        public string interviewOnDevice { get; set; }
+        public string sCreatedBy { get; set; }
         public DateTime dtCreatedOn { get; set; }
+        public string IRFID { get; set; }          
 
     }
 }

@@ -93,7 +93,7 @@
                             <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
                                 <thead>
                                     <tr>
-                                        <th>IRF Name</th>
+                                        <th>IRF ID</th>
                                         <th>Client Name</th>
                                         <th>Client HR</th>
                                         <th>Job Role</th>
@@ -121,7 +121,7 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr id=@item.id>
-                                        <td> @item.IRFName </td>
+                                        <td> @item.IRFID </td>
                                         <td> @item.clientName </td>
                                         <td> @item.ClientHrContact </td>
                                         <td> @item.JobRole </td>
