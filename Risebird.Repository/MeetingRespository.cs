@@ -137,6 +137,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-        }
+        }       
+
     }
 }

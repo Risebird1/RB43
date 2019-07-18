@@ -81,6 +81,7 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
+        
     }
 }
 
