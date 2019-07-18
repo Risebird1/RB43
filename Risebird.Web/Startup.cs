@@ -101,6 +101,8 @@ namespace Risebird.Web
             services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();          
             services.AddScoped<IDashboarRepository, DashboardRepository>();
 
+          
+            services.AddScoped<IIRFRepository, IRFRepository>();
         }
     }
 }

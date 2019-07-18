@@ -54,9 +54,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var openInterviewers = await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
                          commandType: CommandType.StoredProcedure);
-                    return openInterviewers;
                 }
 
             }
