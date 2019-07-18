@@ -12,7 +12,7 @@ namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;
+        private IUserRepository _userRepository;        
         private IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
@@ -129,5 +129,68 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public bool AddInterviewer(InterviewerVM interviewer)
+        {
+            try
+            {
+                return _userRepository.AddInterviewer(interviewer).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public InterviewerVM GetInterviewer(int id)
+        {
+            try
+            {
+                var interviewer = _userRepository.GetInterviewer(id);
+
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer.Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateInterviewer(InterviewerVM interviewer)
+        {
+            try
+            {
+                return _userRepository.UpdateInterviewer(interviewer).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool DeleteInterviewer(int id)
+        {
+            try
+            {
+                return _userRepository.DeleteInterviewer(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
     }
 }

@@ -241,6 +241,113 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<bool> AddInterviewer(InterviewerVM interviewer)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForInterviewer(interviewer);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteInterviewer(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<InterviewerVM> GetInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<InterviewerVM>(con, "usp_GetInterviewerById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
+        {
+            try
+            {
+                DynamicParameters parameters = SetStoredProcedureParameterForInterviewer(Interviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity)
         {
             var parameters = new DynamicParameters();
@@ -251,6 +358,27 @@ namespace Risebird.Repository
                 parameters.Add("@selectedClientId", entity.SelectedClient);
             if (entity.SelectedClientRole.HasValue)
                 parameters.Add("@selectedClientRoleId", entity.SelectedClientRole);
+
+            parameters.Add("@userFirstName", entity.FirstName);
+            parameters.Add("@userLastName", entity.LastName);
+            parameters.Add("@userEmailId", entity.EmailId);
+            parameters.Add("@userMobileNumber", entity.MobileNumber);
+
+            return parameters;
+        }
+
+        private DynamicParameters SetStoredProcedureParameterForInterviewer(InterviewerVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            if (entity.id > 0)
+                parameters.Add("@id", entity.id);
+
+            parameters.Add("@selectedSkills", entity.PrimarySkill);            
+            parameters.Add("@resumeLink", entity.ResumeLink);
+            parameters.Add("@successRate", entity.SuccessRate);
+            parameters.Add("@slots", entity.Slots);
+            parameters.Add("@noOfInterview", entity.NoOfInterview);
 
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
