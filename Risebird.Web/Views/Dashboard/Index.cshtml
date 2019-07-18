@@ -162,12 +162,15 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 17,
-                indexLabel: "{label}  #percent%",
-                toolTipContent: "<b>{label} </b>(#percent%)",
-                dataPoints: [
-                    { y: 80, label: "Pending", color: "#6db8bc" },
-                    { y: 20, color: "#ccc" }
-                ]
+                indexLabel: "{label}  {y}%",
+                toolTipContent: "<b>{label} </b>({y}%)",
+                dataPoints: @Html.Raw(ViewBag.DataPoints)
+                //indexLabel: "{label}  #percent%",
+                //toolTipContent: "<b>{label} </b>(#percent%)",
+                //dataPoints: [
+                //    { y: 80, label: "Pending", color: "#6db8bc" },
+                //    { y: 20, color: "#ccc" }
+                //]
             }]
         });
         chart.render();
@@ -187,12 +190,15 @@
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 17,
-                indexLabel: "{label}  #percent%",
-                toolTipContent: "<b>{label} </b>(#percent%)",
-                dataPoints: [
-                    { y: 30, label: "Accepted" },
-                    { y: 70, color: "#ccc" }
-                ]
+                indexLabel: "{label}  {y}%",
+                toolTipContent: "<b>{label} </b>({y}%)",
+                dataPoints: @Html.Raw(ViewBag.DataPoints1)
+                //indexLabel: "{label}  #percent%",
+                //toolTipContent: "<b>{label} </b>(#percent%)",
+                //dataPoints: [
+                //    { y: 30, label: "Accepted" },
+                //    { y: 70, color: "#ccc" }
+                //]
             }]
         });
         chart.render();
@@ -206,13 +212,16 @@
                 type: "doughnut",
                 startAngle: 60,
                 innerRadius: 55,
-                indexLabelFontSize: 17,
-                indexLabel: "{label}  #percent%",
-                toolTipContent: "<b>{label} </b>(#percent%)",
-                dataPoints: [
-                    { y: 30, label: "Scheduled", color: "#5184c1" },
-                    { y: 70, label: "Completed" }
-                ]
+                indexLabelFontSize: 15,
+                indexLabel: "{label}  {y}%",
+                toolTipContent: "<b>{label} </b>({y}%)",
+                dataPoints: @Html.Raw(ViewBag.DataPoints2)
+                //indexLabel: "{label}  #percent%",
+                //toolTipContent: "<b>{label} </b>(#percent%)",
+                //dataPoints: [
+                //    { y: 30, label: "Scheduled", color: "#5184c1" },
+                //    { y: 70, label: "Completed" }
+                //]
             }]
         });
         chart.render();

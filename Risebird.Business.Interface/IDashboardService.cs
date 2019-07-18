@@ -9,5 +9,6 @@ namespace Risebird.Business.Interface
         List<Meeting> GetInvitecnt();
         List<Meeting> GetInterviwercnt();
         List<Meeting> GetCandidatecnt();
+        string GetDoughnutGraphDetails(string flag);
     }
 }

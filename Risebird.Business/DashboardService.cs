@@ -56,5 +56,22 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string GetDoughnutGraphDetails(string flag)
+        {
+            try
+            {
+                if (_dashboardRespository.GetDoughnutGraphDetails(flag) == null)
+                    return null;
+                else
+                   
+                return _dashboardRespository.GetDoughnutGraphDetails(flag).Result;
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

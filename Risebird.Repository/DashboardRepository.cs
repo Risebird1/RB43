@@ -85,7 +85,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<Meeting> GetDoughnutGraphDetails(string flag)
+        public async Task<string> GetDoughnutGraphDetails(string flag)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Risebird.Repository
                 parameters.Add("@Flag", flag);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QuerySingleAsync<Meeting>(con, "[sp_GetDashboardDetails]", parameters,
+                    return await SqlMapper.QuerySingleAsync<string>(con, "[sp_GetDashboardDetails]", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }

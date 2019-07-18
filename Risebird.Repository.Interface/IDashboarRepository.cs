@@ -10,5 +10,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Meeting> GetTotalInvites();
         IEnumerable<Meeting> GetTotalInterviewer();
         IEnumerable<Meeting> GetTotalcandidate();
+        Task<string> GetDoughnutGraphDetails(string flag);
     }
 }
