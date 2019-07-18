@@ -11,9 +11,9 @@ namespace Risebird.Web.Controllers
     [Authorize]
     public class DashboardController : Controller
     {
-        private IMeetingService _dashboardService;
+        private IDashboardService _dashboardService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public DashboardController(IMeetingService dashboardService, IApplicationErrorLogger applicationErrorLogger)
+        public DashboardController(IDashboardService dashboardService, IApplicationErrorLogger applicationErrorLogger)
         {
             _dashboardService = dashboardService;
             _applicationErrorLogger = applicationErrorLogger;

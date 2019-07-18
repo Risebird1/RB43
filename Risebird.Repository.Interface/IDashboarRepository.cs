@@ -8,5 +8,7 @@ namespace Risebird.Repository.Interface
    public interface IDashboarRepository
     {
         IEnumerable<Meeting> GetTotalInvites();
+        IEnumerable<Meeting> GetTotalInterviewer();
+        IEnumerable<Meeting> GetTotalcandidate();
     }
 }

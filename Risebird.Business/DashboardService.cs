@@ -32,5 +32,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<Meeting> GetInterviwercnt()
+        {
+            try
+            {
+                return _dashboardRespository.GetTotalInterviewer().ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<Meeting> GetCandidatecnt()
+        {
+            try
+            {
+                return _dashboardRespository.GetTotalcandidate().ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }

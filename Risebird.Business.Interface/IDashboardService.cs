@@ -7,5 +7,7 @@ namespace Risebird.Business.Interface
    public interface IDashboardService
     {
         List<Meeting> GetInvitecnt();
+        List<Meeting> GetInterviwercnt();
+        List<Meeting> GetCandidatecnt();
     }
 }

@@ -49,13 +49,13 @@
             <div class="card-body">
                 <span class="fa fa-user icon-dash"></span>
                 <p class="text">Candidates</p>
-                <label>@ViewBag.TotInterviewer</label>
+                <label>@ViewBag.Totcandidate</label>
             </div>
         </div>
         <div class="card" style="float:left;width:32%;margin-left:20px;margin-right:20px">
             <div class="card-body">
                 <span class="fa fa-video-camera icon-dash"></span>
-                <p class="text">Interview</p>
+                <p class="text">Interviewer</p>
                 <label>@ViewBag.Totinvites</label>
             </div>
         </div>
@@ -165,8 +165,8 @@
                 indexLabel: "{label}  #percent%",
                 toolTipContent: "<b>{label} </b>(#percent%)",
                 dataPoints: [
-                    { y: 70, label: "Pending", color: "#6db8bc" },
-                    { y: 30, color: "#ccc" }
+                    { y: 80, label: "Pending", color: "#6db8bc" },
+                    { y: 20, color: "#ccc" }
                 ]
             }]
         });
