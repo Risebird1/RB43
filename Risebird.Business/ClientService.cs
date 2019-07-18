@@ -94,7 +94,7 @@ namespace Risebird.Business
             }
         }
 
-        public List<ClientRoles> GetClientRoles()
+        public List<ClientRole> GetClientRoles()
         {
             try
             {

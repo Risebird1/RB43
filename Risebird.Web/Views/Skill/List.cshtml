@@ -23,7 +23,7 @@
                     <div class="panel-heading">
                         <ul class="panel-controls">
                             <li>
-                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddSkill","Skill")'"><span class="fa fa-plus-circle">Add Skill</span></button>
+                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddSkill","Skill")'"><span class="fa fa-plus-circle"> Add Skill</span></button>
                             </li>
                         </ul>
                     </div>
@@ -31,6 +31,7 @@
                         <table class="table datatable" id="idSkill">
                             <thead>
                                 <tr>
+                                    <th hidden></th>
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Actions</th>
@@ -45,7 +46,7 @@
                                     <td>@item.Name</td>
                                     <td>@item.Description</td>
                                     <td>
-                                        <i type="submit" onclick="location.href = '@Url.Action("EditSkill", "Skill", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                        <i type="submit" onclick="location.href = '@Url.Action("Edit", "Skill", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
                                         <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
                                     </td>
                                 </tr>
@@ -60,26 +61,26 @@
     </div>
     <!-- PAGE CONTENT WRAPPER -->
     <loading></loading>
-    @if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
+    @if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
         {
                                 sweetAlert({
-                                    title: "Risebird Skills",
+                                    title: "Risebird Users",
                                     text:'@ViewBag.Message',
                                     type: "success"
                                 });
          };
     </script>
 }
-    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+    @if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
 {
     <script type="text/javascript">
             window.onload = function ()
             {
                     sweetAlert({
-                        title: "Risebird Skills",
+                        title: "Risebird Users",
                     text: '@ViewBag.Message',
                    type: "error"
                    });
@@ -96,21 +97,3 @@
             "order": []   /* Disable initial sort */
         });
     });</script>
-    <script type="text/javascript">
-        function DeleteEntityfromEnvironment(skillId) {
-
-            var confirmMessageBox = confirm('Are you sure you wish to delete this record ?');
-            if (confirmMessageBox) {
-                if (skillId != '') {
-                    $.ajax({
-                        url: '/Skill/DeleteSkill',
-                        data: { 'id': skillId },
-                        type: 'get',
-                        success: function (data) {
-                            window.location = data.url;
-                        }
-                    });
-                }
-            }
-        }
-    </script>

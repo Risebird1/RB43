@@ -54,9 +54,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var openInterviewers = await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
                          commandType: CommandType.StoredProcedure);
-                    return openInterviewers;
                 }
 
             }
@@ -138,6 +137,7 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-        }
+        }       
+
     }
 }
