@@ -15,6 +15,7 @@ namespace Risebird.Business
     {
         private IMeetingRespository _meetingRespository;
         private IApplicationErrorLogger _applicationErrorLogger;
+        
         public MeetingService(IMeetingRespository meetingRespository, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
@@ -38,8 +39,7 @@ namespace Risebird.Business
         {
             try
             {
-                _meetingRespository.AddMeeting(meeting);
-                return true;
+                return _meetingRespository.AddMeeting(meeting).Result;                
             }
             catch (Exception ex)
             {
@@ -80,7 +80,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-        }
+        }       
     }
 }
 
