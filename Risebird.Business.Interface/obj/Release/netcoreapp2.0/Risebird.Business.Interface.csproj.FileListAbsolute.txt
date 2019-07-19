@@ -10,3 +10,15 @@ C:\FIles\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business
 C:\FIles\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
 C:\FIles\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.dll
 C:\FIles\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\bin\Release\netcoreapp2.0\Risebird.Business.Interface.deps.json
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\bin\Release\netcoreapp2.0\Risebird.Business.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\bin\Release\netcoreapp2.0\Risebird.Business.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.csproj.CoreCompileInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfoInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Business.Interface\obj\Release\netcoreapp2.0\Risebird.Business.Interface.pdb
