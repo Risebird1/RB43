@@ -138,6 +138,22 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterview");
             }
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UnassignYourself(AssignYourselfVM model)
+        {
+            try
+            {
+                var result = _meetingService.UnassignYourself(model.id);
+                ViewBag.Message = result;
+                return RedirectToAction("MyInterview");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+        }
     }
 
 }

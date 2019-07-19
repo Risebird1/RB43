@@ -81,7 +81,19 @@ namespace Risebird.Business
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
-        
+        public string UnassignYourself(int meetingid)
+        {
+            try
+            {
+                return _meetingRespository.UnassignYourself(meetingid);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to unassigned interview, Please contact Risebird HR.";
+            }
+        }
     }
 }
 
