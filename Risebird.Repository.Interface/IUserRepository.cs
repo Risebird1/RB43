@@ -15,5 +15,9 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteClientUser(int id);
         Task<ClientUserVM> GetClientUser(int id);
         Task<bool> UpdateClientUser(ClientUserVM clientUser);
+        Task<bool> AddInterviewer(InterviewerVM interviewer);
+        Task<bool> DeleteInterviewer(int id);
+        Task<InterviewerVM> GetInterviewer(int id);
+        Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
     }
 }

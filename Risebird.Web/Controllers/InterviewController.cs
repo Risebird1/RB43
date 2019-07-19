@@ -6,6 +6,10 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Risebird.Web.Controllers
 {
@@ -14,10 +18,14 @@ namespace Risebird.Web.Controllers
     {
         private IMeetingService _meetingService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger)
+        private IAzureStorageHelper _azureStorageHelper;
+        private ISkillService _skillService;
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
+            _azureStorageHelper = azureStorageHelper;
+            _skillService = skillService;
         }
 
         public async Task<IActionResult> Index()
@@ -36,12 +44,59 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Add(MeetingVM model)
+        public async Task<IActionResult> Add(MeetingVM meeting)
         {
             try
             {
-                _meetingService.AddMeeting(model);
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    if (meeting.File == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
+                        var model = new MeetingVM();
+                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                        return View("AddInterview", model);
+                    }
+
+                    byte[] fileData = new byte[meeting.File.Length];
+                    string uploadedFileURL = _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", fileData);
+                    List<Skill> skills = _skillService.GetSkills();
+
+                    if (uploadedFileURL == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        var model = new MeetingVM();
+                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                        return View("AddInterview", model);
+                    }
+
+                    else
+                    {
+                        meeting.resumeLink = uploadedFileURL;
+                        List<String> selectedSkill = skills.Where(x => meeting.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                        meeting.primaryskill = String.Join("| ", selectedSkill);
+
+                        if (_meetingService.AddMeeting(meeting))
+                        {
+                            TempData["SuccessErrorMessage"] = "Meeting is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Meeting addition is Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                }
+                else
+                {
+                    var model = new MeetingVM();                    
+                    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                    return View("Add",model);
+                }
             }
             catch (Exception ex)
             {
@@ -56,6 +111,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = new MeetingVM();
+                model.PrimarySkills= new SelectList(_skillService.GetSkills(), "id", "Name");
                 return View(model);
             }
             catch (Exception ex)
@@ -128,7 +184,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var result=_meetingService.AssignYourself(model.id,model.Interviewer);
+                var result = _meetingService.AssignYourself(model.id, model.Interviewer);
                 ViewBag.Message = result;
                 return RedirectToAction("OpenInterview");
             }
@@ -138,22 +194,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("OpenInterview");
             }
         }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> UnassignYourself(AssignYourselfVM model)
-        {
-            try
-            {
-                var result = _meetingService.UnassignYourself(model.id);
-                ViewBag.Message = result;
-                return RedirectToAction("MyInterview");
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("MyInterview");
-            }
-        }
-    }
 
+
+    }
 }

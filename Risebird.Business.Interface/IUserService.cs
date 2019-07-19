@@ -14,6 +14,10 @@ namespace Risebird.Business.Interface
         bool DeleteClientUser(int id);
         ClientUserVM GetClientUser(int id);
         bool UpdateClientUser(ClientUserVM clientUser);
+        bool AddInterviewer(InterviewerVM interviewer);
+        InterviewerVM GetInterviewer(int id);
+        bool DeleteInterviewer(int id);
+        bool UpdateInterviewer(InterviewerVM interviewer);
 
     }
 }
