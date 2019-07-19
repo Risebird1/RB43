@@ -92,12 +92,20 @@ namespace Risebird.Web
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IMeetingService, MeetingService>();
+            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
+            services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<ISkillRepository, SkillRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
-            services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
+            services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();          
+            services.AddScoped<IDashboarRepository, DashboardRepository>();          
+            services.AddScoped<IIRFRepository, IRFRepository>();
+            services.AddScoped<IJoinabilityMatrixRepository, JoinabilityMatrixRepository>();
+            services.AddScoped<IGeneralSkillMatrixRepository, GeneralSkillMatrixRepository>();
+
         }
     }
 }

@@ -13,6 +13,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateClient(Client entity);
         Task<Client> GetClient(int id);
         Task<bool> DeleteClient(int id);
-        Task<IEnumerable<ClientRoles>> GetClientRoles();
+        Task<IEnumerable<ClientRole>> GetClientRoles();
     };
 }
