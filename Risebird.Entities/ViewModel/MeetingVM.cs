@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Risebird.Entities.ViewModel
 {
     [Serializable]
     public class MeetingVM
     {
-        [Display(Name = "IRF Name")]
+        [Display(Name = "IRF ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
         public string IRFName { get; set; }
         [Display(Name = "Client Name")]
@@ -26,17 +28,21 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Duration")]
         [Required(ErrorMessage = "Please enter Interview Duration.")]
         public string interviewDuration { get; set; }
-        [Display(Name = "Primary Skill")]
-        [Required(ErrorMessage = "Please enter Primary Skills.")]
+
         public string primaryskill { get; set; }
+
+        public int[] SelectedSkillIds { get; set; }
+       
+        [Display(Name = "Primary Skills")]
+        public SelectList PrimarySkills { get; set; }
+
         [Display(Name = "Candidate Email")]
         [Required(ErrorMessage = "Please enter Candidate Email Id.")]
         public string candidateEmail { get; set; }
         [Display(Name = "Client HR")]
-        [Required(ErrorMessage = "Please enter Client HR Email Id.")]
+        //[Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
-        [Display(Name = "Resume Links")]
-        [Required(ErrorMessage = "Please enter Resume Link.")]
+        
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
@@ -62,5 +68,7 @@ namespace Risebird.Entities.ViewModel
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
         public DateTime dtCreatedOn { get; set; }
+        [Display(Name = "Upload Resume")]
+        public IFormFile File { get; set; }
     }
 }

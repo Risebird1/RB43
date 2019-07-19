@@ -2,6 +2,7 @@
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Repository.Interface
 {
@@ -15,5 +16,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientRole> GetClientRoles();
         IEnumerable<Users> GetQualityController();
+        Task<bool> AddIRFDetails(IRFVm irfDetails);
+        IEnumerable<IRF> GetAllIRF();
     }
 }

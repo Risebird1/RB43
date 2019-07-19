@@ -1,77 +1,27 @@
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
-C:\Sample Sol\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\Sample Sol\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
-C:\FIles\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\Users\rashmi.r\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

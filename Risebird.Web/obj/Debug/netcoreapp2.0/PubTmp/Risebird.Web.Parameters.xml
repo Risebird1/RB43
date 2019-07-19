@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="IIS Web Application Name" description="" value="RisebirdPortal" tags="IisApp">
-    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\FIles\\Risebird\.Web\\obj\\Debug\\netcoreapp2\.0\\PubTmp\\Out\\$" />
-  </parameter>
-</parameters>
