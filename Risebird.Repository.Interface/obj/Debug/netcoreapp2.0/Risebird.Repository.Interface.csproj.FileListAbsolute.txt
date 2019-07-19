@@ -33,3 +33,15 @@ C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\Users\rashmi.r\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.deps.json
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CoreCompileInputs.cache
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfoInputs.cache
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfo.cs
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\Rohini\source\repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
