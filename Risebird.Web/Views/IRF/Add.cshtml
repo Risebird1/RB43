@@ -15,15 +15,6 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-horizontal">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">Client Name</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
-
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="IRFId">IRF Id</label>
@@ -32,6 +23,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">Client Name</label>
+                                            
+                                            <div class="col-md-6 col-sm-6">
+                                                @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h2>Job Details</h2>
@@ -39,7 +40,7 @@
                                     </div><!--end of col-md-12-->
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Tiltle</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Title</label>
                                             <div class="col-md-6 col-sm-6">
                                                 <input class="form-control text-box single-line" id="JDTiltle" name="JDTiltle" type="text" value="">
 
@@ -55,9 +56,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">Client</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">End Client Name</label>
                                             <div class="col-md-6 col-sm-6">
-                                               @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })
+                                                <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -78,17 +79,17 @@
                                         <div class="form-group">
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="StartDate" name="StartDate" type="datetime" value="">
+                                                <input class="form-control text-box single-line" id="StartDate" name="StartDate" type="date" value="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="EndDate">End Date</label>
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="EndDate" name="EndDate" type="datetime" value="">
+                                                <input class="form-control text-box single-line" id="EndDate" name="EndDate" type="date" value="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No Of Open Positions </label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>
                                             <div class="col-md-6 col-sm-6">
                                                 <input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="text" value="">
                                             </div>
@@ -100,18 +101,30 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate</label>
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>
                                             <div class="col-md-6 col-sm-6">
                                                 <input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="text" value="">
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No Of Interviews </label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="text" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <input class="form-control text-box single-line" id="RisebirdHr" name="RisebirdHr" type="number" value="">
+                                            </div>
+                                        </div>
+                                        @*<div class="form-group">
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
                                             <div class="col-md-6 col-sm-6">
-                                               @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
-                                            </div>
-                                        </div>
+                                                @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
+                                            @*</div>
+                                        </div>*@
                                     </div>
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -259,7 +272,7 @@
                                                             </td>
                                                             <td>
                                                                 @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-                                                               
+
                                                             </td>
                                                             <td>
                                                                 @Html.DropDownList("SkillGeneral[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })

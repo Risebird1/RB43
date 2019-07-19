@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 
@@ -15,15 +16,18 @@ namespace Risebird.Web.Controllers
     public class IRFController : Controller
     {
         private IIRFRepository _irfRepository;
+        private IIRFService _irfService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService)
         {
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _irfService = irfService;
         }
         public IActionResult Index()
         {
-            return View();
+            var irfList = _irfRepository.GetAllIRF();
+            return View(irfList);
         }
         [HttpGet]
         public IActionResult Add()
@@ -39,9 +43,31 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddIRF(IRFVm iRF)
+        public IActionResult AddIRF(IRFVm irfDetails)
         {
-            return View();
+            try
+            {
+                if (_irfService.AddIRFDetails(irfDetails))
+                {
+                    TempData["SuccessErrorMessage"] = "IRF is added Successfully";
+                    ViewBag.Message = "IRF has been added successfully.";
+                    return View("Index");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                    ViewBag.Message = "IRF adding failed.";
+                    return RedirectToAction("Index");
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }
