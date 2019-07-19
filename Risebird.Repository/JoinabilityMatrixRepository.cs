@@ -14,7 +14,7 @@ using Risebird.CommonHelper.Interface;
 
 namespace Risebird.Repository
 {
-    public class JoinabilityMatrixRepository : IJoinabilityMatrixRepository
+   public class JoinabilityMatrixRepository : IJoinabilityMatrixRepository
     {
         private readonly IConfiguration _configuration;
         private readonly string connectionString;
@@ -39,11 +39,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-               // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-               // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                // await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -167,3 +167,4 @@ namespace Risebird.Repository
         }
     }
 }
+
