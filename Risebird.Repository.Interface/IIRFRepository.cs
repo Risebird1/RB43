@@ -18,5 +18,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<Users> GetQualityController();
         Task<bool> AddIRFDetails(IRFVm irfDetails);
         IEnumerable<IRF> GetAllIRF();
+        IEnumerable<Interviewer> GetInterviewerSkills();
     }
 }

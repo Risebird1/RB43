@@ -39,6 +39,8 @@ namespace Risebird.Web.Controllers
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
             ViewBag.QualityController = new SelectList(_irfRepository.GetQualityController(), "id", "FirstName");
+            ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+
             return View();
         }
 
@@ -68,6 +70,16 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        public ActionResult GetInterviewerSkills(string id)
+        {
+            var skills = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
+            return Json(skills.Select(x => new
+            {
+                id = x.id,
+                Name = x.Name
+            }).ToList());
         }
     }
 }

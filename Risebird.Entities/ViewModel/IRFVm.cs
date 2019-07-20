@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -7,18 +9,55 @@ namespace Risebird.Entities.ViewModel
     public class IRFVm
     {
         public int id { get; set; }
+
+        [DisplayName("IRFId")]
+        [Required]
         public string IRFId { get; set; }
+
+        [DisplayName("Client Name")]
+        [Required]
         public string ClientName { get; set; }
+
+        [DisplayName("JD Title")]
+        [Required]
         public string JDTiltle { get; set; }
+
+        [DisplayName("Company Type")]
+        [Required]
         public string CompanyType { get; set; }
+
+
         public int ClientId { get; set; }
+        [DisplayName("Job Country")]
+        [Required]
         public string JobCountry { get; set; }
+
+        [DisplayName("Start Date")]
+        [Required]
         public DateTime StartDate { get; set; }
+
+        [DisplayName("End Date")]
+        [Required]
         public DateTime EndDate { get; set; }
+
+        [DisplayName("JD Link")]
+        [Required]
         public string JDLink { get; set; }
+
+        [DisplayName("No of Positions")]
+        [Required]
         public int NoOfPosition { get; set; }
+
+        [DisplayName("No of Interviews")]
+        [Required]
         public int NoOfIntterview { get; set; }
+
+        [DisplayName("Risebird HR")]
+        [Required]
         public int RisebirdHr { get; set; }
+
+        [DisplayName("Per Minute Rate(Rs.)")]
+        [Required]
         public double PerMintuteRate { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
