@@ -52,10 +52,11 @@ namespace Risebird.Business
         {
             try
             {
-                if (_skillRepository.GetSkill(id) == null)
+                var skill = _skillRepository.GetSkill(id);
+                if (skill == null)
                     return null;
                 else
-                    return _skillRepository.GetSkill(id).Result;
+                    return skill.Result;
 
             }
 
@@ -82,8 +83,7 @@ namespace Risebird.Business
         {
             try
             {
-                _skillRepository.DeleteSkill(id);
-                return true;
+               return _skillRepository.DeleteSkill(id).Result;               
             }
 
             catch (Exception e)
@@ -125,10 +125,11 @@ namespace Risebird.Business
         {
             try
             {
-                if (_skillRepository.GetSkillLevel(id) == null)
+                var skillLevel = _skillRepository.GetSkillLevel(id);
+                if (skillLevel  == null)
                     return null;
                 else
-                    return _skillRepository.GetSkillLevel(id).Result;
+                    return skillLevel.Result;
                         
             }
 
@@ -155,8 +156,7 @@ namespace Risebird.Business
         {
             try
             {
-                _skillRepository.DeleteSkillLevel(id);
-                return true;
+                return _skillRepository.DeleteSkillLevel(id).Result;                
             }
 
             catch (Exception e)
