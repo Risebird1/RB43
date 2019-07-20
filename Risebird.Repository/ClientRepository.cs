@@ -159,13 +159,13 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<ClientRoles>> GetClientRoles()
+        public async Task<IEnumerable<ClientRole>> GetClientRoles()
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<ClientRoles>(con, "[sp_GetClientRoles]", null,
+                    return await SqlMapper.QueryAsync<ClientRole>(con, "[sp_GetClientRoles]", null,
                         commandType: CommandType.StoredProcedure);                    
                 }
             }

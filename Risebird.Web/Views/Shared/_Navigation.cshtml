@@ -9,8 +9,8 @@
     <!-- START X-NAVIGATION -->
     <ul class="x-navigation">
         <li class="xn-logo">
-            <a href="#">
-                <img src="~/images/risebird.png" alt="RisebirdLogo" width="50px" height="50px"/>
+            <a href="#" style="padding:15px 0px 10px 0px">
+                <img src="~/images/risebird.jpg" alt="RisebirdLogo" width="200px" height="50px" />
             </a>
             <a href="#" class="x-navigation-control"></a>
         </li>
@@ -18,7 +18,7 @@
         {
             var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
             var adminMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
-            var menuList1= menuList.Where(a => a.idParentFunction != 6).ToList();
+            var menuList1 = menuList.Where(a => a.idParentFunction != 6).ToList();
             foreach (var m in menuList1)
             {
 
@@ -40,7 +40,7 @@
                             <i data-toggle="tooltip" data-placement="bottom" title="@m.functionName" data-original-title="Tooltip on bottom">
                                 <span class="@m.sIcon"></span>
                             </i>
-                            <span class="xn-text">@m.functionName</span>
+                            <span class="xn-text" style="color:#8b91a0;">@m.functionName</span>
                         </a>
                         <ul>
                             @foreach (var item in adminMenuList)
@@ -56,7 +56,8 @@
                             }
                         </ul>
                     </li>
-                   }
+
+                }
             }
         }
     </ul>

@@ -134,6 +134,31 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        public async Task<IActionResult> MyInterview()
+        {
+            try
+            {
+                 var myInterview=  _meetingService.GetAllOpenInterviews();
+                return View(myInterview);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<IActionResult> QCInterview()
+        {
+            try
+            {
+                return View(_meetingService.GetAllOpenInterviews());
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)

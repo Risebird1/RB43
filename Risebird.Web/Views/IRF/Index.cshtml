@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<Risebird.Entities.ViewModel.IRF>
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -73,218 +74,266 @@
             <button type="button" class="btn btn-default mb-control"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add Form</span></button>
         </ul>
     </div>
-    </div>
-    <div class="container">
+</div>
+<div class="container">
 
-        <div id="products" class="row list-group">
+    <div id="products" class="row list-group">
 
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
 
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
                     </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            Ashutosh Kapile
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java Core</p>
-                            <span>Location:</span> <p>Pune</p>
-                            <span>No Of Positions:</span> <p>30</p>
-                            <span>No Of Interviews:</span> <p>50</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <span class="fa fa-download"></span>
-                            </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+        @foreach (var item in Model)
+        {
+            <div class="item  col-xs-4 col-lg-4">
+                <div class="thumbnail">
+
+                    <div class="caption">
+                        <h4 class="group inner list-group-item-heading">
+                            @item.ClientName
+                        </h4>
+                        <div class="group inner list-group-item-text">
+                            <span>Skills:</span> <p>Java</p>
+                            <span>Location:</span> <p>@item.JobCountry</p>
+                            <span>No Of Positions:</span> <p>@item.NoOfPosition</p>
+                            <span>No Of Interviews:</span> <p>@item.NoOfIntterview</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6 icon">
+                                <span class="fa fa-pencil"></span>
+                                <span class="fa fa-trash" style="color:#d9534f"></span>
+                                <span class="fa fa-download"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @*<div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="item  col-xs-4 col-lg-4">
+            <div class="thumbnail">
+
+                <div class="caption">
+                    <h4 class="group inner list-group-item-heading">
+                        Ashutosh Kapile
+                    </h4>
+                    <div class="group inner list-group-item-text">
+                        <span>Skills:</span> <p>Java Core</p>
+                        <span>Location:</span> <p>Pune</p>
+                        <span>No Of Positions:</span> <p>30</p>
+                        <span>No Of Interviews:</span> <p>50</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 icon">
+                            <span class="fa fa-pencil"></span>
+                            <span class="fa fa-trash" style="color:#d9534f"></span>
+                            <span class="fa fa-download"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+@if (ViewBag.Message != null)
+{
+    <script>
+
+        $(document).ready(function () {
+            var message = '@ViewBag.Message';
+            debugger;
+            if (message.includes("success")) {
+                alert("Successful");
+                //swal("Successful!", "IRF added successfully.", "success");
+
+            }
+            else
+                alert("Unsuccessful");
+                //swal("Sorry!", "IRF submission failed.", "error");
+
+        });
+
+    </script>
+
+}

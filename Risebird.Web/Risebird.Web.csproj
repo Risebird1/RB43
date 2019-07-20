@@ -43,6 +43,9 @@
     <Content Update="Views\Client\ClientUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Interview\QCInterview.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Profile\ProfileUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
