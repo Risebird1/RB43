@@ -1,8 +1,12 @@
-﻿@{
+﻿@model Risebird.Entities.ViewModel.IRFVm
+
+@{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+@*<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>*@
 <div style="margin-bottom:10px">
     <form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
         <div class="row">
@@ -15,18 +19,25 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="form-horizontal">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="IRFId">IRF Id</label>
+                                            @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="IRFId">IRF Id</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">
+                                                @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
+
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">Client Name</label>
-                                            
+
                                             <div class="col-md-6 col-sm-6">
                                                 @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })
                                             </div>
@@ -40,91 +51,188 @@
                                     </div><!--end of col-md-12-->
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Title</label>
+                                            @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Title</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="JDTiltle" name="JDTiltle" type="text" value="">
+                                                @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="JDTiltle" name="JDTiltle" type="text" value="">*@
 
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="CompanyType">CompanyType</label>
+                                            @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="CompanyType">CompanyType</label>*@
                                             <div class="col-md-6 col-sm-6">
                                                 <select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
                                                     <option value="Product">Product</option>
                                                     <option value="Service">Service</option>
                                                 </select>
+                                                @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+
                                             </div>
                                         </div>
                                         <div class="form-group">
+
                                             <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">End Client Name</label>
                                             <div class="col-md-6 col-sm-6">
                                                 <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="JobCountry">Job Country</label>
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JobCountry">Job Country</label>*@
+                                            @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="JobCountry" name="JobCountry" type="text">
+                                                @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                @*<input class="form-control text-box single-line" id="JobCountry" name="JobCountry" type="text">*@
+                                                @Html.ValidationMessageFor(model => model.JobCountry, "", new { @class = "text-danger" })
                                             </div>
                                         </div>
 
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="JDLink">JD Link</label>
+                                            @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JDLink">JD Link</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="JDLink" name="JDLink" type="text">
+                                                @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="JDLink" name="JDLink" type="text">*@
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>
+                                            @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="StartDate" name="StartDate" type="date" value="">
+                                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line" }  })
+                                                @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="StartDate" name="StartDate" type="date" value="">*@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="EndDate">End Date</label>
+                                            @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="EndDate">End Date</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="EndDate" name="EndDate" type="date" value="">
+                                                @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="EndDate" name="EndDate" type="date" value="">*@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>
+                                            @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="text" value="">
+                                                @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="NoOfPosition" name="NoOfPosition" type="number" value="">*@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No Of Interviews to be conducted</label>
+                                            @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No of Interviews to be conducted</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="text" value="">
+                                                @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="number" value="">*@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>
+                                            @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="text" value="">
+                                                @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
+
+                                                @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No Of Interviews </label>
+                                            @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="text" value="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                <input class="form-control text-box single-line" id="RisebirdHr" name="RisebirdHr" type="number" value="">
+                                                @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
+
                                             </div>
                                         </div>
                                         @*<div class="form-group">
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
-                                            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
-                                            <div class="col-md-6 col-sm-6">
-                                                @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
-                                            @*</div>
-                                        </div>*@
+            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
+            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
+            <div class="col-md-6 col-sm-6">
+                @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
+                                        @*</div>
+            </div>*@
+                                    </div>
+                                    <div class="multiple-row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Tech Skill Matrix</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="SkillTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Level</th>
+                                                            <th class="table_heading">Skill Name</th>
+                                                            <th class="table_heading">Weightage</th>
+                                                            <th class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tr>
+                                                            <td>
+
+                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                            </td>
+
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" value="">
+                                                            </td>
+
+
+
+                                                            <td width="8%">
+                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRow()">
+                                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                                </a>
+
+                                                                <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
                                     </div>
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -186,60 +294,7 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
-                                    <div class="multiple-row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h2>Tech Skill Matrix</h2>
-                                            </div><!--end of multiple location-->
-                                        </div><!--end of col-md-12-->
 
-
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered mbn" id="SkillTable">
-                                                    <thead>
-                                                        <tr>
-
-                                                            <th class="table_heading">Level</th>
-                                                            <th class="table_heading">Skill Name</th>
-                                                            <th class="table_heading">Weightage</th>
-                                                            <th class="table_heading">Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        <tr>
-                                                            <td>
-
-                                                                @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
-                                                            </td>
-
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" value="">
-                                                            </td>
-
-
-
-                                                            <td width="8%">
-                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRow()">
-                                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                                </a>
-
-                                                                <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)">
-                                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div><!--end of col-md-12-->
-
-                                    </div>
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
@@ -253,9 +308,9 @@
                                                 <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                     <thead>
                                                         <tr>
-                                                            <th class="table_heading">Type</th>
                                                             <th class="table_heading">Level</th>
-                                                            <th class="table_heading">Skill Name</th>
+                                                            <th class="table_heading">Type</th>
+                                                            <th class="table_heading">Value</th>
                                                             <th class="table_heading">Weightage</th>
                                                             <th class="table_heading">Action</th>
                                                         </tr>
@@ -264,6 +319,10 @@
 
                                                         <tr>
                                                             <td>
+                                                                @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                            </td>
+                                                            <td>
                                                                 <select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
                                                                     <option value="Logical">Logical</option>
                                                                     <option value="Analytical">Analytical</option>
@@ -271,18 +330,12 @@
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("SkillGeneral[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
                                                             </td>
 
                                                             <td>
                                                                 <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" value="">
                                                             </td>
-
-
 
                                                             <td width="8%">
                                                                 <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSkillGeneralRow()">
@@ -362,7 +415,7 @@
 
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control" })
+                                                                @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value)" })
                                                             </td>
 
                                                             <td>
@@ -449,7 +502,7 @@
 
 
 
-                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -466,63 +519,67 @@
         color: #ffffff;
         margin-top: 45px;
     }
-    #btnPlus, #btnMinus{
-        padding:2px;
+
+    #btnPlus, #btnMinus {
+        padding: 2px;
     }
-    #btnMinus{
-        position:absolute;
-        margin-left:12px;   
+
+    #btnMinus {
+        position: absolute;
+        margin-left: 12px;
     }
+
     #btnPlus {
         background-color: #4a89dc;
     }
+
     .glyphicon {
         top: -1px;
         right: -2px;
         vertical-align: middle;
         line-height: 0;
     }
-    </style>
+</style>
 <script>
-     function AddRow() {
+    function AddRow() {
 
-            var $ttc = $("#SkillTable").find("tbody tr:last");
-            var $tr = $ttc.clone();
-            var trIndexReplaced = $("#SkillTable tr").length - 1;
+        var $ttc = $("#SkillTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#SkillTable tr").length - 1;
 
-            $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-            }).attr("id", function () { // change id also
-                var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-                return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-            });
-            $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-                var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-                return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-            })
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
 
-         
 
-            // reset fields in the new row
-            $tr.find("select").val("");
-            $tr.find("input[type=text]").val("");
-            $tr.find("input[type=hidden]").val("");
 
-            $tr.find("a").val("");
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
 
-            // add cloned row as last row
-            $("#SkillTable").find("tbody tr:last").after($tr);
+        $tr.find("a").val("");
 
-            // Find the affected form
-            var $form = $tr.closest("FORM");
+        // add cloned row as last row
+        $("#SkillTable").find("tbody tr:last").after($tr);
 
-            // Unbind existing validation
-            $form.unbind();
-            $form.data("validator", null);
+        // Find the affected form
+        var $form = $tr.closest("FORM");
 
-            // Check document for changes
-            $.validator.unobtrusive.parse(document);
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
 
     }
     function AddSkillGeneralRow() {
@@ -693,6 +750,24 @@
 
     }
 
+    function InterviewerChanged(id) {
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': id },
+            success: function (data) {
+                $("#InterviewerCollection[0].SkillId").html();
+                var s;/*= '<option value="-1">Please Select a Department</option>';*/
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].id + '">' + data[i].Name + '</option>';
+                }
+                $("#InterviewerCollection[0].SkillId").html(s);
+            }
+        });  
+
+       
+    }
     function AddRowController() {
 
         var $ttc = $("#ControllerTable").find("tbody tr:last");
@@ -734,21 +809,21 @@
         $.validator.unobtrusive.parse(document);
 
     }
-      $(document).on('click', '.delete-row', function (event) {
+    $(document).on('click', '.delete-row', function (event) {
 
-            if ($(this).parents('tbody').find('tr').length === 1) {
+        if ($(this).parents('tbody').find('tr').length === 1) {
 
-                alert('Must have atleast one Skill');
-                return false;
-            }
+            alert('Must have atleast one Skill');
+            return false;
+        }
 
-            else {
+        else {
 
-                var currentvalue = $(this).attr('value');
+            var currentvalue = $(this).attr('value');
 
-                $(this).closest('tr').remove();
+            $(this).closest('tr').remove();
 
-            }
+        }
 
     });
 
@@ -841,5 +916,5 @@
         }
 
     });
-        
-    </script>
+
+</script>

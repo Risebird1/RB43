@@ -137,6 +137,23 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<Interviewer> GetInterviewerSkills()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Interviewer>(
+                        con, "select * from Interviewer", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<Users> GetQualityController()
         {
             IEnumerable<Entities.Data.QualityController> qualityControllers = new List<Entities.Data.QualityController>();
