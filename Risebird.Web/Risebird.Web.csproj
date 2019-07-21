@@ -61,6 +61,12 @@
     <Content Update="Views\Skill\SkillLevelUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\User\UserUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\User\UserAdd.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\User\InterviewerUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

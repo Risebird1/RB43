@@ -68,7 +68,7 @@
 </div>
 <!-- PAGE CONTENT WRAPPER -->
 <loading></loading>
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+@if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
@@ -81,7 +81,7 @@
          };
     </script>
 }
-@if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
 {
     <script type="text/javascript">
             window.onload = function ()
@@ -103,4 +103,23 @@
             }],
             "order": []   /* Disable initial sort */
         });
-    });</script>
+    });
+
+    function DeleteEntityfromEnvironment(userId) {
+
+        var confirmMessageBox = confirm('Are you sure you wish to delete this record ?');
+        if (confirmMessageBox) {
+            if (userId != '') {
+                $.ajax({
+                    url: '/User/Delete',
+                    data: { 'id': userId },
+                    type: 'get',
+                    success: function (data) {
+                        window.location = data.url;
+                    }
+                });
+            }
+        }
+    }
+
+    </script>

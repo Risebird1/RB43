@@ -33,6 +33,8 @@ namespace Risebird.Business
             }
         }
 
+        #region User Service Functions
+
         public List<UserList> GetRisebirdUsers()
         {
             try
@@ -45,17 +47,70 @@ namespace Risebird.Business
             }
         }
 
-        public List<InterviewerVM> GetInterviewers()
+        public UserList GetUser(int id)
         {
             try
             {
-                return _userRepository.GetInterviewers().ToList();
+                var user = _userRepository.GetUser(id);
+
+                if (user == null)
+                    return null;
+                else
+                    return user.Result;
             }
+
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
+
+        public bool AddUser(UserList user)
+        {
+            try
+            {
+                return _userRepository.AddUser(user).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool DeleteUser(int id)
+        {
+            try
+            {
+                return _userRepository.DeleteUser(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool UpdateUser(UserList user)
+        {
+            try
+            {
+                return _userRepository.UpdateUser(user).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Client User Service Functions
 
         public List<ClientUserVM> GetClientUsers()
         {
@@ -130,6 +185,22 @@ namespace Risebird.Business
             }
         }
 
+        #endregion
+
+        #region Interviewer Service Functions
+
+        public List<InterviewerVM> GetInterviewers()
+        {
+            try
+            {
+                return _userRepository.GetInterviewers().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         public bool AddInterviewer(InterviewerVM interviewer)
         {
             try
@@ -190,6 +261,8 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        #endregion
 
 
     }

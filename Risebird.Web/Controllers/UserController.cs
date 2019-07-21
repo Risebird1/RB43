@@ -22,19 +22,26 @@ namespace Risebird.Web.Controllers
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
-        public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService)
+        private IProfileService _profileService;
+        public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, 
+                                ISkillService skillService, IProfileService profileService)
+
         {
             _userService = userService;
             _clientService = clientService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
+            _profileService = profileService;
         }
+
+        #region User Fucntions
 
         public IActionResult Index()
         {
             try
             {
+                ViewBag.Message = TempData["SuccessErrorMessageUser"];
                 return View(_userService.GetRisebirdUsers());
             }
             catch (Exception)
@@ -42,23 +49,165 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
-        public IActionResult Interviewers()
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
-                return View(_userService.GetInterviewers());
+                var model = new UserList();
+                List<Profile> profiles = _profileService.GetProfile();
+                profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
+                profiles = profiles.Where(x => x.Name != "Client").ToList();
+
+                model.UserProfiles = new SelectList(profiles, "id", "Name");
+                
+                return View("UserAdd", model);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(UserList user)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_userService.AddUser(user))
+                    {
+                        TempData["SuccessErrorMessageUser"] = "User is added Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageUser"] = "User addition is Failed";
+                        return RedirectToAction("Index");
+                    }
+                }
+
+                else
+                {                   
+                    List<Profile> profiles = _profileService.GetProfile();
+                    profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
+                    profiles = profiles.Where(x => x.Name != "Client").ToList();
+
+                    user.UserProfiles = new SelectList(profiles, "id", "Name");
+
+                    return View("UserAdd", user);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUser"] = "User addition is Failed";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                UserList user = _userService.GetUser(id);                
+
+                 if (user != null)
+                {
+                    List<Profile> profiles = _profileService.GetProfile();
+                    profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
+                    profiles = profiles.Where(x => x.Name != "Client").ToList();
+                    user.UserProfiles = new SelectList(profiles, "id", "Name");
+                    return View("UserUpdate", user);
+                }
+                else
+                    return RedirectToAction("Index");
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserList user)
+        {
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_userService.UpdateUser(user))
+                    {
+                        TempData["SuccessErrorMessageUser"] = "User is updated Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageUser"] = "Updating User is Failed";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    List<Profile> profiles = _profileService.GetProfile();
+                    profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
+                    profiles = profiles.Where(x => x.Name != "Client").ToList();
+
+                    user.UserProfiles = new SelectList(profiles, "id", "Name");
+
+                    return View("UserUpdate", user);
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUser"] = "Updating User is Failed"; ;
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                if (_userService.DeleteClientUser(id))
+                {
+                    TempData["SuccessErrorMessageUser"] = "User is deleted Successfully";
+                    return Json(new { url = Url.Action("Index", "User") });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageUser"] = "Deletion of User Failed";
+                    return Json(new { url = Url.Action("Index", "User") });
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageUser"] = "Deletion of User Failed";
+                return RedirectToAction("Index");
+            }
+        }
+
+        #endregion
+
+        #region Client User Functions
+
         public IActionResult ClientUsers()
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
+                ViewBag.Message = TempData["SuccessErrorMessageClientUser"];
                 return View(_userService.GetClientUsers());
             }
             catch (Exception)
@@ -96,12 +245,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_userService.AddClientUser(clientUserVM))
                     {
-                        TempData["SuccessErrorMessage"] = "Client User is added Successfully";
+                        TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
                         return RedirectToAction("ClientUsers");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Client User addition is Failed";
+                        TempData["SuccessErrorMessageClientUser"] = "Client User addition is Failed";
                         return RedirectToAction("ClientUsers");
                     }
                 }
@@ -120,7 +269,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Client User addition is Failed";
+                TempData["SuccessErrorMessageClientUser"] = "Client User addition is Failed";
                 return RedirectToAction("ClientUsers");
             }
 
@@ -132,12 +281,12 @@ namespace Risebird.Web.Controllers
             {
                 if (_userService.DeleteClientUser(id))
                 {
-                    TempData["SuccessErrorMessage"] = "Client User is deleted Successfully";
+                    TempData["SuccessErrorMessageClientUser"] = "Client User is deleted Successfully";
                     return Json(new { url = Url.Action("ClientUsers", "User") });
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of Client User Failed";
+                    TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
                     return Json(new { url = Url.Action("ClientUsers", "User") });
                 }
             }
@@ -145,7 +294,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Deletion of Client User Failed";
+                TempData["SuccessErrorMessageClientUser"] = "Deletion of Client User Failed";
                 return RedirectToAction("ClientUsers");
             }
         }
@@ -157,12 +306,12 @@ namespace Risebird.Web.Controllers
             {
                 ClientUserVM clientUserVM = _userService.GetClientUser(id);
 
-                clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
-                clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
-
-
                 if (clientUserVM != null)
+                {
+                    clientUserVM.Clients = new SelectList(_clientService.GetClients(), "id", "Name");
+                    clientUserVM.ClientRoles = new SelectList(_clientService.GetClientRoles(), "id", "Name");
                     return View("ClientUserUpdate", clientUserVM);
+                }
                 else
                     return RedirectToAction("ClientUsers");
 
@@ -185,12 +334,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_userService.UpdateClientUser(clientUserVM))
                     {
-                        TempData["SuccessErrorMessage"] = "Client User is updated Successfully";
+                        TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";
                         return RedirectToAction("ClientUsers");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Client User is Failed";
+                        TempData["SuccessErrorMessageClientUser"] = "Updating Client User is Failed";
                         return RedirectToAction("ClientUsers");
                     }
                 }
@@ -204,10 +353,27 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Updating Client User is Failed"; ;
+                TempData["SuccessErrorMessageClientUser"] = "Updating Client User is Failed"; ;
                 return RedirectToAction("ClientUsers");
             }
 
+        }
+
+        #endregion
+
+        #region Interviewer Functions
+
+        public IActionResult Interviewers()
+        {
+            try
+            {
+                ViewBag.Message = TempData["SuccessErrorMessageInterviewer"];
+                return View(_userService.GetInterviewers());
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         [HttpGet]
@@ -264,12 +430,12 @@ namespace Risebird.Web.Controllers
                         interviewer.PrimarySkill = String.Join(",", selectedSkill);
                         if (_userService.AddInterviewer(interviewer))
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer is added Successfully";
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
                             return RedirectToAction("Interviewers");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer addition is Failed";
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
                             return RedirectToAction("Interviewers");
                         }
                     }
@@ -291,7 +457,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Interviewer addition is Failed";
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
                 return RedirectToAction("Interviewers");
             }
         }
@@ -303,11 +469,12 @@ namespace Risebird.Web.Controllers
             {
                 InterviewerVM interviewerVM = _userService.GetInterviewer(id);
 
-                interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-                TempData["ResumeLink"] = interviewerVM.ResumeLink;
-
                 if (interviewerVM != null)
+                {
+                    interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                    TempData["ResumeLink"] = interviewerVM.ResumeLink;
                     return View("InterviewerUpdate", interviewerVM);
+                }
                 else
                     return RedirectToAction("Interviewers");
 
@@ -359,12 +526,12 @@ namespace Risebird.Web.Controllers
                     
                     if (_userService.UpdateInterviewer(interviewer))
                     {
-                        TempData["SuccessErrorMessage"] = "Interviewer is Updated Successfully";
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
                         return RedirectToAction("Interviewers");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Interviewer update is Failed";
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
                         return RedirectToAction("Interviewers");
                     }
                 }
@@ -386,7 +553,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Interviewer addition is Failed";
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
                 return RedirectToAction("Interviewers");
             }
         }
@@ -397,12 +564,12 @@ namespace Risebird.Web.Controllers
             {
                 if (_userService.DeleteInterviewer(id))
                 {
-                    TempData["SuccessErrorMessage"] = "Interviewer is deleted Successfully";
+                    TempData["SuccessErrorMessageInterviewer"] = "Interviewer is deleted Successfully";
                     return Json(new { url = Url.Action("Interviewers", "User") });
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of Intervieer Failed";
+                    TempData["SuccessErrorMessageInterviewer"] = "Deletion of Intervieer Failed";
                     return Json(new { url = Url.Action("Interviewers", "User") });
                 }
             }
@@ -410,9 +577,11 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Deletion of Interviewer Failed";
+                TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
                 return RedirectToAction("Interviewers");
             }
         }
+
+        #endregion
     }
 }
