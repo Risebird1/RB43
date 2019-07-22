@@ -1,3 +1,4 @@
+using System;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Risebird.Functions
@@ -22,14 +24,14 @@ namespace Risebird.Functions
             log.Info("C# HTTP trigger function processed a request.");
 
             string jsonContent = await req.Content.ReadAsStringAsync();
-            log.Info(jsonContent);
-           // string jsonString =  File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
-            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-
+            //log.Info(jsonContent);
+            //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
+           //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
             string clientName = string.Empty;
             string JobRole = string.Empty;
-            string interviewDate = string.Empty;
+            DateTime interviewDate = DateTime.UtcNow;
             string interviewDuration = string.Empty;
             string slot = string.Empty;
             string primaryskill = string.Empty;
@@ -43,13 +45,20 @@ namespace Risebird.Functions
             string eventGeneratedOn = string.Empty;
             string eventGeneratedBy = string.Empty;
             string ClientHrContact = string.Empty;
+            string isReschedule = string.Empty;
+            string IRFID = string.Empty;
+            string prefferedLocation = string.Empty;
+            string expectedPerHourRate = string.Empty;
+            string staffingAgenecy = string.Empty;
+            string joiningTime = string.Empty;
+            string interviewOnDevice = string.Empty;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
                 var mainDetails = children.Current;
-                if (((JProperty) mainDetails).Name == "event")
+                if (((JProperty)mainDetails).Name == "event")
                 {
-                    eventType = ((JProperty) mainDetails).Value.ToString().Split('.').Last()
+                    eventType = ((JProperty)mainDetails).Value.ToString().Split('.').Last()
                         .ToUpper();
                     if (eventType == "CANCELED")
                     {
@@ -60,32 +69,31 @@ namespace Risebird.Functions
                         comfirmationStatus = "Confirmed";
                     }
                 }
-                else if (((JProperty)mainDetails).Name == "time")
-                {
-                    eventGeneratedOn = ((JProperty) mainDetails).Value.ToString();
-                    eventGeneratedBy = "Canlendly";
-                }
+                //else if (((JProperty)mainDetails).Name == "time")
+                //{
+                //    eventGeneratedOn = ((JProperty) mainDetails).Value.ToString();
+                //    eventGeneratedBy = "Canlendly";
+                //}
                 else if (((JProperty)mainDetails).Name == "payload")
                 {
                     foreach (var data in mainDetails.Children())
                     {
-                        var internalNodes = data.Children().GetEnumerator(); 
+                        var internalNodes = data.Children().GetEnumerator();
                         while (internalNodes.MoveNext())
                         {
                             var mainFamilies1 = internalNodes.Current;
-                            if (((JToken) mainFamilies1).Path =="payload.event_type")
+                            if (((JToken)mainFamilies1).Path == "payload.event_type")
                             {
-                                primaryskill = ((JProperty) mainFamilies1).Value["name"].ToString();
-                                clientName = primaryskill.Split('|').First();
-                                interviewDuration = ((JProperty)mainFamilies1).Value["duration"].ToString()+"Mins";
+                                interviewDuration = ((JProperty)mainFamilies1).Value["duration"].ToString();
                             }
-                           else if (((JToken)mainFamilies1).Path == "payload.event")
+                            else if (((JToken)mainFamilies1).Path == "payload.event")
                             {
-                                hrRiseBirdAssinged = ((JProperty)mainFamilies1).Value["assigned_to"].ToString();
-                                hrRiseBirdAssinged = hrRiseBirdAssinged.Replace("\n", "").Replace("\"", "").Replace("[", "").Replace("]", "").Replace("\r", "");
-                               
-                                interviewDate = ((JProperty)mainFamilies1).Value["start_time_pretty"].ToString();
-                                if (interviewDate.Contains("AM"))
+                                var rbhrassigned = ((JProperty)mainFamilies1).Value["extended_assigned_to"].ToString();
+                                hrRiseBirdAssinged  = JsonConvert.DeserializeObject<JArray>(rbhrassigned)[0]["email"]
+                                    .Value<string>();
+
+                                var interviewDatestr = ((JProperty)mainFamilies1).Value["invitee_start_time"].ToString();
+                                if (interviewDatestr.Contains("AM"))
                                 {
                                     slot = "Morning";
                                 }
@@ -93,20 +101,23 @@ namespace Risebird.Functions
                                 {
                                     slot = "Evening";
                                 }
+
+                                interviewDate = Convert.ToDateTime(interviewDatestr);
                                 zoomLink = ((JProperty)mainFamilies1).Value["location"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")
                             {
                                 candidateEmail = ((JProperty)mainFamilies1).Value["email"].ToString();
+                                isReschedule = ((JProperty)mainFamilies1).Value["is_reschedule"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.questions_and_answers")
                             {
                                 foreach (var questions in ((JProperty)mainFamilies1).First.Children())
                                 {
-                                    if (((JContainer) questions)["question"].ToString()
-                                        .Contains("Your Linkedin or Resume Link"))
+                                    if (((JContainer)questions)["question"].ToString()
+                                        .Contains("Your Resume Link"))
                                     {
-                                        resumeLink = ((JContainer) questions)["answer"].ToString();
+                                        resumeLink = ((JContainer)questions)["answer"].ToString();
                                     }
                                     //else if (((JContainer)questions)["question"].ToString()
                                     //    .Contains("Title of JD you are applying for"))
@@ -123,8 +134,38 @@ namespace Risebird.Functions
                                     {
                                         ClientHrContact = ((JContainer)questions)["answer"].ToString();
                                     }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("Interview Channel ID"))
+                                    {
+                                        IRFID = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("Your preferred location"))
+                                    {
+                                        prefferedLocation = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("Per Hour rate"))
+                                    {
+                                        expectedPerHourRate = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("staffing agency"))
+                                    {
+                                        staffingAgenecy = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("you can join"))
+                                    {
+                                        joiningTime = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("infra for the video interview"))
+                                    {
+                                        interviewOnDevice = ((JContainer)questions)["answer"].ToString();
+                                    }
                                 }
-                             
+
                             }
                         }
                     }
@@ -145,31 +186,29 @@ namespace Risebird.Functions
 
                 // 3. add parameter to command, which
                 // will be passed to the stored procedure
-
-                //cmd.Parameters.Add(new SqlParameter("@eventType", eventType));
-                cmd.Parameters.Add(new SqlParameter("@clientName", clientName));
-                cmd.Parameters.Add(new SqlParameter("@JobRole", JobRole));
+                cmd.Parameters.Add(new SqlParameter("@IRFId", IRFID));
                 cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
-                cmd.Parameters.Add(new SqlParameter("@interviewDuration", interviewDuration));
                 cmd.Parameters.Add(new SqlParameter("@slot", slot));
-                cmd.Parameters.Add(new SqlParameter("@primaryskill", primaryskill));
+                cmd.Parameters.Add(new SqlParameter("@interviewDuration", Convert.ToInt32(interviewDuration)));
                 cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
                 cmd.Parameters.Add(new SqlParameter("@hrRiseBirdAssinged", hrRiseBirdAssinged));
                 cmd.Parameters.Add(new SqlParameter("@resumeLink", resumeLink));
                 cmd.Parameters.Add(new SqlParameter("@zoomLink", zoomLink));
-                cmd.Parameters.Add(new SqlParameter("@eventGeneratedOn", eventGeneratedOn));
-                cmd.Parameters.Add(new SqlParameter("@eventGeneratedBy", eventGeneratedBy));
                 cmd.Parameters.Add(new SqlParameter("@ClientHrContact", ClientHrContact));
                 cmd.Parameters.Add(new SqlParameter("@comfirmationStatus", comfirmationStatus));
-                
+                cmd.Parameters.Add(new SqlParameter("@prefferedLocation", prefferedLocation));
+                cmd.Parameters.Add(new SqlParameter("@expectedPerHourRate", expectedPerHourRate));
+                cmd.Parameters.Add(new SqlParameter("@staffingAgenecy", staffingAgenecy));
+                cmd.Parameters.Add(new SqlParameter("@joiningTime", joiningTime));
+                cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
                 cmd.ExecuteScalar();
-              
+
 
                 log.Info("Build update in database ended.");
             }
 
-            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok"); 
-            
+            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
+
         }
     }
 }

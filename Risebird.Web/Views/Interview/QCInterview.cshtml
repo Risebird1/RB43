@@ -72,13 +72,10 @@
                         <table class="table datatable table-striped table-bordered table-sorting" id="openmeeting">
                             <thead>
                                 <tr>
-                                    <th>Job Role</th>
                                     <th>Interview Date</th>
                                     <th>Interview Duration</th>
-                                    <th>Primary Skill</th>
                                     <th>Candidate Email</th>
-                                    <th>Resume Detail</th>
-                                    <th>Confrimation Status</th>
+                                    <th>Resume</th>
                                     <th>Risebird HR</th>                                    
                                     <th>Actions</th>
                                 </tr>
@@ -87,14 +84,13 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr id=@item.id>
-                                        <td> @item.JobRole </td>
                                         <td> @item.interviewDate </td>
                                         <td> @item.interviewDuration </td>
                                         <td> @item.primaryskill</td>
                                         <td> @item.candidateEmail</td>
                                         <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
-                                        <td> @item.comfirmationStatus</td>                                       
-                                        <td> @item.interviewer</td>
+                                                                          
+                                        <td> @item.risebirdHR</td>
                                         <td>
                                             <i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>
                                         </td>

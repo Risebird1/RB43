@@ -4,7 +4,7 @@ namespace Risebird.Entities.Data
 {
     public class Meeting
     {
-        public int id { get; set; }        
+        public int id { get; set; }
         public string clientName { get; set; }
         public string JobRole { get; set; }
         public string interviewDate { get; set; }
@@ -12,7 +12,7 @@ namespace Risebird.Entities.Data
         public string interviewDuration { get; set; }
         public string primaryskill { get; set; }
         public string candidateEmail { get; set; }
-        public string ClientHrContact { get; set;}
+        public string ClientHrContact { get; set; }
         public string resumeLink { get; set; }
         public string comfirmationStatus { get; set; }
         public string zoomLink { get; set; }
@@ -30,7 +30,11 @@ namespace Risebird.Entities.Data
         public string interviewOnDevice { get; set; }
         public string sCreatedBy { get; set; }
         public DateTime dtCreatedOn { get; set; }
-        public string IRFID { get; set; }          
+        public string IRFID { get; set; }
+        public string PreferredLocation { get; set; }
+        public string ExpectedPerHourRate { get; set; }
+        public string staffingAgenecy { get; set; }
+        public string joiningTime { get; set; }
 
     }
 }
