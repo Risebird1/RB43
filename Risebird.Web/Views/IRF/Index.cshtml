@@ -79,7 +79,7 @@
 
     <div id="products" class="row list-group">
 
-        <div class="item  col-xs-4 col-lg-4">
+        @*<div class="item  col-xs-4 col-lg-4">
             <div class="thumbnail">
 
                 <div class="caption">
@@ -101,7 +101,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
 
         @foreach (var item in Model)
         {
@@ -113,7 +113,7 @@
                             @item.ClientName
                         </h4>
                         <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>Java</p>
+                            <span>Skills:</span> <p>.NET Developer</p>
                             <span>Location:</span> <p>@item.JobCountry</p>
                             <span>No Of Positions:</span> <p>@item.NoOfPosition</p>
                             <span>No Of Interviews:</span> <p>@item.NoOfIntterview</p>
@@ -323,7 +323,7 @@
         $(document).ready(function () {
             var message = '@ViewBag.Message';
             debugger;
-            if (message.includes("success")) {
+            if (message.includes("Success")) {
                 alert("Successful");
                 //swal("Successful!", "IRF added successfully.", "success");
 

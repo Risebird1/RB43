@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -27,6 +28,10 @@ namespace Risebird.Web.Controllers
         public IActionResult Index()
         {
             var irfList = _irfRepository.GetAllIRF();
+            if (TempData["SuccessErrorMessage"] != null)
+            {
+                ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+            }
             return View(irfList);
         }
         [HttpGet]
@@ -49,16 +54,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_irfService.AddIRFDetails(irfDetails))
+                if (_irfService.AddIRFDetails(irfDetails).Result)
                 {
                     TempData["SuccessErrorMessage"] = "IRF is added Successfully";
-                    ViewBag.Message = "IRF has been added successfully.";
-                    return View("Index");
+                    return RedirectToAction("Index");
                 }
                 else
                 {
                     TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
-                    ViewBag.Message = "IRF adding failed.";
                     return RedirectToAction("Index");
                 }
                 
@@ -72,14 +75,10 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public ActionResult GetInterviewerSkills(string id)
+        public string GetInterviewerSkills(string id)
         {
-            var skills = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
-            return Json(skills.Select(x => new
-            {
-                id = x.id,
-                Name = x.Name
-            }).ToList());
+            var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
+            return name;
         }
     }
 }
