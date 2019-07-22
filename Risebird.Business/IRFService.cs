@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -23,16 +24,16 @@ namespace Risebird.Business
         }
 
         #region IRF Functions
-        public bool AddIRFDetails(IRFVm irfDetails)
+        public async Task<bool> AddIRFDetails(IRFVm irfDetails)
         {
             try
             {
-                return _irfRepository.AddIRFDetails(irfDetails).Result;
+                return  _irfRepository.AddIRFDetails(irfDetails).Result;
             }
 
             catch (Exception e)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -61,22 +62,22 @@ namespace Risebird.Business
             }
         }
 
-        public IEnumerable<Skill> GetInterviewerSkills(int id)
+        public string GetInterviewerSkills(int id)
         {
             try
             {
                 var interviewers = _irfRepository.GetInterviewerSkills();
-                var list = new List<Skill>();
-                Skill obj = new Skill();
+                string Name = String.Empty;
                 foreach (var item in interviewers)
                 {
                     if (item.UserId == id)
-                        obj.Name = item.PrimarySkill;
-                    continue;
+                    {
+                        Name = item.PrimarySkill;
+                        break;
+                    }
+
                 }
-                obj.id = _irfRepository.GetSkills().Where(x => x.Name == obj.Name).FirstOrDefault().id;
-                list.Add(obj);
-                return list;
+                return Name;
             }
 
             catch (Exception e)
