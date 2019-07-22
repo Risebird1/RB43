@@ -28,6 +28,8 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
+        #region User Repository Functions
+
         /// <summary>
         /// Get all the Risebird User- Admin and HR
         /// </summary>
@@ -53,30 +55,133 @@ namespace Risebird.Repository
             return null;
         }
 
-        /// <summary>
-        /// Get all the Interviewer
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<InterviewerVM> GetInterviewers()
+        public async Task<bool> AddUser(UserList user)
         {
             try
             {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForUser(user);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[sp_RisebirdInterviewer]", null,
-                        commandType: StoredProcedure);
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
                 }
             }
-            catch (SqlException ex)
+
+            catch (SqlException e)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
-            catch (Exception ex)
+
+            catch (Exception e)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
-            return null;
         }
+
+        public async Task<UserList> GetUser(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<UserList>(con, "usp_GetUserById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateUser(UserList user)
+        {
+            try
+            {              
+                DynamicParameters parameters = SetStoredProcedureParameterForUser(user);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteUser(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteUser", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private DynamicParameters SetStoredProcedureParameterForUser(UserList entity)
+        {
+            var parameters = new DynamicParameters();
+
+            if (entity.Id > 0)
+                parameters.Add("@id", entity.Id);
+            //if (entity.IdProfile.HasValue)
+
+            parameters.Add("@selectedProfileId", entity.IdProfile); 
+            parameters.Add("@userFirstName", entity.FirstName);
+            parameters.Add("@userLastName", entity.LastName);
+            parameters.Add("@userEmailId", entity.EmailId);
+            parameters.Add("@userMobileNumber", entity.MobileNumber);
+
+            return parameters;
+        }
+
+        #endregion
+
+        #region Client User Repository Function
 
         /// <summary>
         /// Get all the Client Users
@@ -150,7 +255,7 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+               return false;
             }
 
             catch (Exception e)
@@ -212,21 +317,40 @@ namespace Risebird.Repository
             }
         }
 
+        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            if (entity.id > 0)
+                parameters.Add("@id", entity.id);
+            if (entity.SelectedClient.HasValue)
+                parameters.Add("@selectedClientId", entity.SelectedClient);
+            if (entity.SelectedClientRole.HasValue)
+                parameters.Add("@selectedClientRoleId", entity.SelectedClientRole);
+
+            parameters.Add("@userFirstName", entity.FirstName);
+            parameters.Add("@userLastName", entity.LastName);
+            parameters.Add("@userEmailId", entity.EmailId);
+            parameters.Add("@userMobileNumber", entity.MobileNumber);
+
+            return parameters;
+        }
+
+        #endregion        
+
+        #region Interviewer Repository Functions
+
         /// <summary>
-        /// get all the menu listed based on logged in user
+        /// Get all the Interviewer
         /// </summary>
-        /// <param name="emailId"></param>
         /// <returns></returns>
-        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        public IEnumerable<InterviewerVM> GetInterviewers()
         {
             try
             {
-                var parameters = new DynamicParameters();
-                parameters.Add("@EmailId", emailId); // Normal parametersmeters 
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
+                    return SqlMapper.Query<InterviewerVM>(con, "[dbo].[sp_RisebirdInterviewer]", null,
                         commandType: StoredProcedure);
                 }
             }
@@ -348,25 +472,6 @@ namespace Risebird.Repository
             }
         }
 
-        private DynamicParameters SetStoredProcedureParameterForClientUser(ClientUserVM entity)
-        {
-            var parameters = new DynamicParameters();
-
-            if (entity.id > 0)
-                parameters.Add("@id", entity.id);
-            if (entity.SelectedClient.HasValue)
-                parameters.Add("@selectedClientId", entity.SelectedClient);
-            if (entity.SelectedClientRole.HasValue)
-                parameters.Add("@selectedClientRoleId", entity.SelectedClientRole);
-
-            parameters.Add("@userFirstName", entity.FirstName);
-            parameters.Add("@userLastName", entity.LastName);
-            parameters.Add("@userEmailId", entity.EmailId);
-            parameters.Add("@userMobileNumber", entity.MobileNumber);
-
-            return parameters;
-        }
-
         private DynamicParameters SetStoredProcedureParameterForInterviewer(InterviewerVM entity)
         {
             var parameters = new DynamicParameters();
@@ -374,7 +479,7 @@ namespace Risebird.Repository
             if (entity.id > 0)
                 parameters.Add("@id", entity.id);
 
-            parameters.Add("@selectedSkills", entity.PrimarySkill);            
+            parameters.Add("@selectedSkills", entity.PrimarySkill);
             parameters.Add("@resumeLink", entity.ResumeLink);
             parameters.Add("@successRate", entity.SuccessRate);
             parameters.Add("@slots", entity.Slots);
@@ -387,6 +492,40 @@ namespace Risebird.Repository
 
             return parameters;
         }
+
+        #endregion
+
+        /// <summary>
+        /// get all the menu listed based on logged in user
+        /// </summary>
+        /// <param name="emailId"></param>
+        /// <returns></returns>
+        public IEnumerable<Menu> GetMenuBasedOnUserEmailld(string emailId)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId); // Normal parametersmeters 
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Menu>(con, "[dbo].[sp_GetMenuBasedOnEmailId]", parameters,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+
 
     }
 }

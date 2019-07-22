@@ -62,6 +62,20 @@ namespace Risebird.Business
             }
         }
 
+        public List<Meeting> GetAllAssignedInterviews()
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterview().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         /// <summary>
         /// Assing Yourself
         /// </summary>
@@ -82,17 +96,17 @@ namespace Risebird.Business
             }
         }       
         
-        public string UnassignYourself(int meetingid)
+        public bool UnassignYourself(int meetingid)
         {
             try
             {
-                return _meetingRespository.UnassignYourself(meetingid);
+                return _meetingRespository.UnassignYourself(meetingid).Result;
 
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to unassigned interview, Please contact Risebird HR.";
+                return false;
             }
         }
     }

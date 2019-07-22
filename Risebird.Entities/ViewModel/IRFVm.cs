@@ -33,10 +33,13 @@ namespace Risebird.Entities.ViewModel
         public string JobCountry { get; set; }
 
         [DisplayName("Start Date")]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime StartDate { get; set; }
 
         [DisplayName("End Date")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime EndDate { get; set; }
 

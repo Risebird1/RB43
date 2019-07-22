@@ -275,8 +275,8 @@ namespace Risebird.Repository
                      await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
                         commandType: CommandType.StoredProcedure);
 
-                    var irfList = SqlMapper.Query<IRFVm>(
-                        con, "select * from IRF", null, commandType: Text).AsList();
+                    var irfList =  SqlMapper.QueryAsync<IRFVm>(
+                        con, "select * from IRF", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                     //var irfId = SqlMapper.Query<string>(
                     //    con, "select id from IRF where IRFId = @IRFId ", new {IRFId = irfDetails.IRFId }, commandType: Text);
@@ -285,14 +285,14 @@ namespace Risebird.Repository
                     foreach (var item in irfDetails.Joinability)
                     {
                         string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.Execute(sqlJoinability, new
+                        var affectedRows = con.ExecuteAsync(sqlJoinability, new
                         {
                             IRFId = irfID,
                             LevelId = item.LevelId,
                             Type = item.Type,
                             Value = item.Value,
                             Weightage = item.Weightage
-                        });
+                        }).Result;
                     }
 
 
@@ -300,15 +300,15 @@ namespace Risebird.Repository
                     foreach (var item in irfDetails.SkillGeneral)
                     {
 
-                        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, SkillId, Weightage) Values (@IRFId, @LevelId, @Type, @SkillId, @Weightage);";
-                        var affectedRows = con.Execute(sqlSkillGeneral, new
+                        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
                         {
                             IRFId = irfID,
                             LevelId = item.LevelId,
                             Type = item.Type,
-                            SkillId = item.SkillId,
+                            Value = item.Value,
                             Weightage = item.Weightage
-                        });
+                        }).Result;
                     }
                     
                     //update tech skill table
@@ -324,6 +324,7 @@ namespace Risebird.Repository
                             Weightage = item.Weightage
                         });
                     }
+                    //update 
                     
                     return true;
                 }
@@ -364,7 +365,7 @@ namespace Risebird.Repository
             //parameters.Add("@QCUserId", entity.QualityController[0].QualityControllerId);
             parameters.Add("@ClientUserId", entity.ClientCollection[0]?.ClientUserId);
             parameters.Add("@ClientRoleId", entity.ClientCollection[0]?.ClientRoleId);
-            
+            parameters.Add("@QCUserId", entity.QualityController[0]?.UserId);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

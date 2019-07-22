@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@*<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>*@
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 <div style="margin-bottom:10px">
     <form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
         <div class="row">
@@ -24,7 +24,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
 
-                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="IRFId">IRF Id</label>*@
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
                                             <div class="col-md-6 col-sm-6">
                                                 @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
@@ -53,7 +53,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
 
-                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="Name">JD Title</label>*@
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="name">jd title</label>*@
                                             <div class="col-md-6 col-sm-6">
                                                 @Html.EditorFor(model => model.JDTiltle, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.JDTiltle, "", new { @class = "text-danger" })
@@ -65,7 +65,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
 
-                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="CompanyType">CompanyType</label>*@
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
                                             <div class="col-md-6 col-sm-6">
                                                 <select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
                                                     <option value="Product">Product</option>
@@ -143,7 +143,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
 
-                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfIntterview">No of Interviews to be conducted</label>*@
+                                            @*<label class="control-label col-md-4 col-sm-2 desp-label" for="noofintterview">no of interviews to be conducted</label>*@
                                             <div class="col-md-6 col-sm-6">
                                                 @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
@@ -213,7 +213,7 @@
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" value="">
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1"value="100">
                                                             </td>
 
 
@@ -275,7 +275,7 @@
                                                                 <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" value="">
+                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1"value="100">
                                                             </td>
 
                                                             <td width="8%">
@@ -334,7 +334,7 @@
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" value="">
+                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
                                                             </td>
 
                                                             <td width="8%">
@@ -384,7 +384,7 @@
                                                                     <span class="glyphicon glyphicon-plus"></span>
                                                                 </a>
 
-                                                                <a class="btn border-white btn-sm btn-danger delete-client" id="btnMinus" onclick="DeleteRowClient(0)">
+                                                                <a class="btn border-white btn-sm btn-danger delete-client" id="btnMinus" onclick="DeleteRowClient()">
                                                                     <span class="glyphicon glyphicon-trash"></span>
                                                                 </a>
                                                             </td>
@@ -415,11 +415,12 @@
 
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value)" })
+                                                                @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                             </td>
 
                                                             <td>
-                                                                @Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                                @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
 
@@ -457,7 +458,7 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("QualityController[0].InterviewerId", (SelectList)ViewBag.QualityController, new { @class = "form-control" })
+                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control" })
 
                                                             </td>
 
@@ -542,6 +543,12 @@
 </style>
 <script>
     function AddRow() {
+        var table = document.getElementById("SkillTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Tech Skills.");
+            return;
+        }
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -583,7 +590,12 @@
 
     }
     function AddSkillGeneralRow() {
-
+        var table = document.getElementById("SkillGeneralTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 General Skills.");
+            return;
+        }
         var $ttc = $("#SkillGeneralTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillGeneralTable tr").length - 1;
@@ -625,6 +637,13 @@
     }
 
     function AddJoinabilityRow() {
+        var table = document.getElementById("JoinabilityTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Rows.");
+            return;
+        }
+        
 
         var $ttc = $("#JoinabilityTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -667,6 +686,12 @@
     }
 
     function AddRowClient() {
+        var table = document.getElementById("ClientTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Clients.");
+            return;
+        }
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -709,6 +734,12 @@
     }
 
     function AddRowInterviewer() {
+        var table = document.getElementById("InterviewerTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Interviewers.");
+            return;
+        }
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -750,25 +781,70 @@
 
     }
 
-    function InterviewerChanged(id) {
+    function InterviewerChanged(val, id) {
         debugger;
+        var index = id.charAt(22);
+        var skillElementid = 'InterviewerCollection_' + index + '__SkillId';
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
-            data: { 'id': id },
+            data: { 'id': val },
             success: function (data) {
-                $("#InterviewerCollection[0].SkillId").html();
-                var s;/*= '<option value="-1">Please Select a Department</option>';*/
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].id + '">' + data[i].Name + '</option>';
-                }
-                $("#InterviewerCollection[0].SkillId").html(s);
+                $("#"+skillElementid).val(data);
             }
         });  
 
        
     }
+
+    $(document).ready(function () {
+        //Perform Ajax request.
+        var id = $("#InterviewerCollection_0__InterviewerId").val();
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': id },
+            success: function (data) {
+                $("#InterviewerCollection_0__SkillId").val(data);
+            }
+        });  
+    });
+
+    //function DeleteRow(tableID, obj) {
+    //    try {
+    //        debugger;
+    //        var table = document.getElementById(tableID);
+    //        var rowCount = table.rows.length;
+    //        if (rowCount <= 1) {
+    //            alert("Cannot delete all the rows.");
+    //            return;
+    //        }
+
+    //        //var parent = obj.parentNode;
+    //        table.removeChild(obj);
+    //        //table.delete(row);
+
+    //        //for (var i = 0; i < rowCount; i++) {
+    //        //    var row = table.rows[i];
+                
+    //        //    table.deleteRow(i);
+    //        //    rowCount--;
+    //        //    i--;
+                
+    //        //}
+    //    } catch (e) {
+    //        alert(e);
+    //    }
+    //}
+
     function AddRowController() {
+
+        var table = document.getElementById("ControllerTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Quality Controllers.");
+            return;
+        }
 
         var $ttc = $("#ControllerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
