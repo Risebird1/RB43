@@ -46,7 +46,7 @@
                                     <td>@item.Name</td>
                                     <td>@item.Description</td>
                                     <td>
-                                        <i type="submit" onclick="location.href='@Url.Action("Edit", "Profile", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                        <i type="submit" onclick="location.href='@Url.Action("EditProfile", "Profile", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
                                         <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
                                     </td>
                                 </tr>
@@ -61,26 +61,26 @@
 </div>
 <!-- PAGE CONTENT WRAPPER -->
 <loading></loading>
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+@if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
         {
                                 sweetAlert({
-                                    title: "Risebird Users",
+                                    title: "Risebird Profiles",
                                     text:'@ViewBag.Message',
                                     type: "success"
                                 });
          };
     </script>
 }
-@if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
 {
     <script type="text/javascript">
             window.onload = function ()
             {
                     sweetAlert({
-                        title: "Risebird Users",
+                        title: "Risebird Profiles",
                     text: '@ViewBag.Message',
                    type: "error"
                    });
@@ -96,4 +96,22 @@
             }],
             "order": []   /* Disable initial sort */
         });
-    });</script>
+    });
+
+    function DeleteEntityfromEnvironment(profileId) {
+
+        var confirmMessageBox = confirm('Are you sure you wish to delete this record ?');
+        if (confirmMessageBox) {
+            if (profileId != '') {
+                $.ajax({
+                    url: '/Profile/DeleteProfile',
+                    data: { 'id': profileId },
+                    type: 'get',
+                    success: function (data) {
+                        window.location = data.url;
+                    }
+                });
+            }
+        }
+    }
+</script>
