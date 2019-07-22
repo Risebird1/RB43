@@ -94,26 +94,20 @@
                                 <thead>
                                     <tr>
                                         <th>IRF ID</th>
-                                        <th>Client Name</th>
                                         <th>Client HR</th>
-                                        <th>Job Role</th>
                                         <th>Interview Date</th>
                                         <th>Interview Duration</th>
-                                        <th>Primary Skill</th>
                                         <th>Candidate Email</th>
                                         <th>Resume Detail</th>
                                         <th>Confrimation Status</th>
+                                        <<th>Staffing Agenecy</th>
                                         <th>Zoom Link</th>
                                         <th>Risebird HR</th>
                                         <th>Interviewer</th>
-                                        <th>Interview Status</th>
-                                        <th>Selection Status</th>
-                                        <th>Interviewer Comment</th>
-                                        <th>Video Link</th>
-                                        <th>Report Link</th>
-                                        <th>Fraud SyncComment</th>
-                                        <th>Risebird Comment</th>
-                                        <th>Trainable Comment</th>
+                                        <th>Expected Joining Time</th>
+                                        <th>Preferred Location</th>
+                                        <th>Expected Per Hour Rate</th>
+                                        <th>Interview Device Details</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -122,31 +116,25 @@
                                 {
                                     <tr id=@item.id>
                                         <td> @item.IRFID </td>
-                                        <td> @item.clientName </td>
                                         <td> @item.ClientHrContact </td>
-                                        <td> @item.JobRole </td>
                                         <td> @item.interviewDate </td>
                                         <td> @item.interviewDuration </td>
-                                        <td> @item.primaryskill</td>
                                         <td> @item.candidateEmail</td>
                                         <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
                                         <td> @item.comfirmationStatus</td>
+                                        <td>@item.staffingAgenecy</td>
                                         <td> @item.zoomLink</td>
                                         <td> @item.risebirdHR</td>
                                         <td> @item.interviewer</td>
-                                        <td> @item.intervieweStatus</td>
-                                        <td> @item.selectionStatus</td>
-                                        <td> @item.interviewerComment</td>
-                                        <td> <a id="videolinkId" target="_blank" title="Video Link" href=@item.videoLink>Video Link</a></td>
-                                        <td> <a id="reportlinkId" target="_blank" title="Report Link" href=@item.reportLink>Report Link</a></td>
-                                        <td> @item.fraudSyncComment</td>
-                                        <td> @item.hrCoordinatorComment</td>
-                                        <td> @item.trainableComment</td>
+                                        <td> @item.joiningTime</td>
+                                        <td> @item.PreferredLocation</td>
+                                        <td> @item.ExpectedPerHourRate</td>
+                                        <td> @item.interviewOnDevice</td>
                                         <td>
                                             <i type="submit" onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
                                             <i type="submit" onclick="location.href = '@Url.Action("Comment", "Interview", new { id = item.id})'" class="fa fa-comment" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Comment" data-original-title="Tooltip on bottom"></i>
                                             <i type="submit" onclick="location.href = '@Url.Action("SendReport", "Interview", new { id = item.id})'" class="fa fa-envelope" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Send Report" data-original-title="Tooltip on bottom"></i>
-                                            
+
                                         </td>
                                     </tr>
                                 }

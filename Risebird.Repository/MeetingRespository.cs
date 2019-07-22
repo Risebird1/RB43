@@ -70,6 +70,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Meeting>> GetAllAssignedInterview()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews",null,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
 
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
@@ -138,26 +161,29 @@ namespace Risebird.Repository
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
         }
-        public string UnassignYourself(int meetingid)
-        {
+
+        public async Task<bool> UnassignYourself(int meetingid)
+        {            
             try
             {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlMapper.Query<string>(
-                        con, "update [dbo].[InterviewMeetings] set interviewer=NULL where id = @meetingid", new { meetingid = meetingid }, commandType: Text);
-                    return "Interviewer unassigned successfully.";
+                        con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
                 }
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to unassigned interview, Please contact Risebird HR.";
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to unassigned interview, Please contact Risebird HR.";
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
         }
 

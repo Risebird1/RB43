@@ -138,7 +138,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                 var myInterview=  _meetingService.GetAllOpenInterviews();
+                var myInterview=  _meetingService.GetAllAssignedInterviews();
                 return View(myInterview);
             }
             catch (Exception ex)
@@ -195,6 +195,29 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> UnassignYourself(int id)
+        {
+            try
+            {
+                if (_meetingService.UnassignYourself(id))
+                {
+                    TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
+                    return Json(new { url = Url.Action("MyInterview", "Interview") });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                    return Json(new { url = Url.Action("MyInterview", "Interview") });
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                return RedirectToAction("MyInterview");
+            }
+        }
 
     }
 }

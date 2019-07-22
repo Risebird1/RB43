@@ -10,57 +10,63 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[InsertMeetings]
-@clientName varchar(200),
-@JobRole varchar(200),
+@IRFId varchar(200),
 @interviewDate varchar(200),
-@interviewDuration varchar(50),
 @slot varchar(100),
-@primaryskill varchar(500),
+@interviewDuration int,
 @candidateEmail varchar(200),
 @hrRiseBirdAssinged varchar(200),
 @resumeLink varchar(MAX),
 @zoomLink varchar(MAX),
-@eventGeneratedOn varchar(100),
-@eventGeneratedBy varchar(100),
 @ClientHrContact varchar(200),
-@comfirmationStatus varchar(100)
-
+@comfirmationStatus varchar(100),
+@prefferedLocation varchar(200),
+@expectedPerHourRate varchar(200),
+@joiningTime varchar(200),
+@staffingAgenecy varchar(200),
+@interviewOnDevice varchar(500)
 AS
 Begin
 
-IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and clientName=@clientName and primaryskill=@primaryskill)
+IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)
 Begin
 INSERT INTO [dbo].[InterviewMeetings]
-           ([clientName]
-           ,[JobRole]
+           ([IRFId]
            ,[interviewDate]
            ,[interviewSlot]
            ,[interviewDuration]
-           ,[primaryskill]
            ,[candidateEmail]
            ,[ClientHrContact]
            ,[resumeLink]
            ,[comfirmationStatus]
            ,[zoomLink]
            ,[risebirdHR]
+		   ,[PreferredLocation]
+		   ,[ExpectedPerHourRate]
+		   ,[joiningTime]
+		   ,[staffingAgenecy]
+		   ,[IntervIewOnDevice]
            ,[sCreatedBy]
            ,[dtCreatedOn]
            )
      VALUES
-           (@clientName,
-@JobRole,
+           (@IRFId,
 @interviewDate,
 @slot,
 @interviewDuration,
-@primaryskill,
 @candidateEmail,
 @ClientHrContact,
 @resumeLink,
 @comfirmationStatus,
 @zoomLink,
 @hrRiseBirdAssinged,
-@eventGeneratedBy,
-@eventGeneratedOn
+@prefferedLocation,
+@expectedPerHourRate,
+@joiningTime,
+@staffingAgenecy,
+@interviewOnDevice,
+'Clendly',
+GETUTCDATE()  
 )
 
 End
@@ -71,7 +77,7 @@ ELSE
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
       ,[comfirmationStatus] = @comfirmationStatus
- WHERE     candidateEmail = @candidateEmail and clientName=@clientName and primaryskill=@primaryskill
+ WHERE     candidateEmail = @candidateEmail and interviewDate=@interviewDate
  
  
 End
