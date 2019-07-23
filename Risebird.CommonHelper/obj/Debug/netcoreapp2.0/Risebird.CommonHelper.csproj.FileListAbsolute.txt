@@ -68,17 +68,3 @@ E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Ri
 E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
 E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.deps.json
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CoreCompileInputs.cache
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
-C:\Users\Admin\Source\Repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
