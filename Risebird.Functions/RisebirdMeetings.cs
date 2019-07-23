@@ -207,8 +207,25 @@ namespace Risebird.Functions
                 log.Info("Build update in database ended.");
             }
 
-            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
+          //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
 
+            try
+            {
+                HttpClient client = new HttpClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["PortalBaseUri"].ToString());
+                client.DefaultRequestHeaders.ExpectContinue = false;
+                //throw new Exception();
+                log.Info("Send mail based on IRF matched interviwer.");
+                HttpResponseMessage response = await client.GetAsync("/api/scheduler/IRFBasedInterviewerMail?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
+                var httpresponse = response.Content.ReadAsStringAsync().Result;
+                log.Info($"httpsresponce for Auto sIRF Mail send:{httpresponse} ");                
+            }
+            catch (Exception ex)
+            {               
+                log.Info($"Failed to send mail to IRF: "+ IRFID + " interviews exception:{ex.Message} ");               
+            }
+            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
         }
     }
 }
