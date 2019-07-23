@@ -109,6 +109,38 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public InterviewComments GetInterviewComments(int interviewId)
+        {
+
+            try
+            {
+                var comments = _meetingRespository.GetInterviewComments(interviewId);
+
+                if (comments == null)
+                    return null;
+                else
+                    return comments.Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool UpdateComments(InterviewComments comments)
+        {
+            try
+            {
+                return _meetingRespository.UpdateComments(comments).Result;
+            }
+            catch(Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }
 
