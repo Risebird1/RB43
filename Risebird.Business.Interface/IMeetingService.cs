@@ -13,5 +13,7 @@ namespace Risebird.Business.Interface
         string AssignYourself(int meetingid, string interviewerMail);
         bool UnassignYourself(int meetingid);
         List<Meeting> GetAllAssignedInterviews();
+        bool UpdateComments(InterviewComments comments);
+        InterviewComments GetInterviewComments(int interviewId);
     }
 }

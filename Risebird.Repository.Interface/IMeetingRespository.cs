@@ -13,5 +13,7 @@ namespace Risebird.Repository.Interface
         string AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
         Task<IEnumerable<Meeting>> GetAllAssignedInterview();
+        Task<bool> UpdateComments(InterviewComments interviewComments);
+        Task<InterviewComments> GetInterviewComments(int interviewId);
     }
 }

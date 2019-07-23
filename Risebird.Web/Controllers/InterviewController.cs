@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Risebird.Web.Controllers
 {
@@ -32,6 +33,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                ViewBag.Message = TempData["SuccessErrorMessageInterview"];
                 return View(_meetingService.GetMeetingList());
             }
             catch (Exception ex)
@@ -80,12 +82,12 @@ namespace Risebird.Web.Controllers
 
                         if (_meetingService.AddMeeting(meeting))
                         {
-                            TempData["SuccessErrorMessage"] = "Meeting is added Successfully";
+                            TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Meeting addition is Failed";
+                            TempData["SuccessErrorMessageInterview"] = "Meeting addition is Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -101,6 +103,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Meeting addition is Failed";
                 return RedirectToAction("Index");
             }
         }
@@ -161,6 +164,88 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> AddComments(int interviewId)
+        {
+            try
+            {
+                InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
+                if (comments == null)
+                    comments = new InterviewComments();
+                
+                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                               select new { ID = (int)s, Name =s.GetDescription()};
+                comments.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+                var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
+                                         select new { ID = (int)s, Name = s.GetDescription()};
+                comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+                var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                comments.QCStatusList = new SelectList(qcStatuses, "ID", "Name");
+
+                var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
+                                         select new { ID = (int)s, Name = s.GetDescription() };
+                comments.TrainingStatusList = new SelectList(trainingStatuses, "ID", "Name");
+
+                return View("InterviewComments", comments);
+            }
+            catch(Exception e)
+            {
+               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComments(InterviewComments interviewComments)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_meetingService.UpdateComments(interviewComments))
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Comments are updated Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterview"] = "Comment update is failed";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    InterviewComments comments = new InterviewComments();
+                    var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                            select new { ID = (int)s, Name = s.GetDescription() };
+                    comments.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+                    var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
+                                             select new { ID = (int)s, Name = s.GetDescription() };
+                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+                    var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+                    var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
+                                           select new { ID = (int)s, Name = s.GetDescription() };
+                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+                    return View("InterviewComments", comments);
+                }
+            }
+            catch(Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                TempData["SuccessErrorMessageInterview"] = "Comment update is failed";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
         {
             try
@@ -217,6 +302,26 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
                 return RedirectToAction("MyInterview");
             }
+        }
+        
+
+    }
+
+    public static class EnumExtensionMethods
+    {
+        public static string GetDescription(this Enum GenericEnum)
+        {
+            Type genericEnumType = GenericEnum.GetType();
+            MemberInfo[] memberInfo = genericEnumType.GetMember(GenericEnum.ToString());
+            if ((memberInfo != null && memberInfo.Length > 0))
+            {
+                var _Attribs = memberInfo[0].GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+                if ((_Attribs != null && _Attribs.Count() > 0))
+                {
+                    return ((System.ComponentModel.DescriptionAttribute)_Attribs.ElementAt(0)).Description;
+                }
+            }
+            return GenericEnum.ToString();
         }
 
     }

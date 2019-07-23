@@ -1,117 +1,119 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
-    @{
-        ViewData["Title"] = "Interview";
-        Layout = "~/Views/Shared/_Layout.cshtml";
+@{
+    ViewData["Title"] = "Interview";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var allowDateConvert = true;
+        $('#meeting').DataTable({
+            "lengthMenu": [[15, 20, 25, 50, -1], [15, 20, 25, 50, "All"]],
+            "order": [[15, "desc"]],
+            fixedColumns: {
+                leftColumns: 2
+            }
+        });
+    });
+
+
+</script>
+<style>
+    i.hover {
+        cursor: pointer;
+    }
+</style>
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
     }
 
-    <script type="text/javascript">
-        $(document).ready(function () {
-            //var allowDateConvert = true;
-            $('#meeting').DataTable({
-                "lengthMenu": [[15,20,25,50, -1], [15,20,25,50, "All"]],
-                "order": [[15, "desc"]],
-                fixedColumns:   {
-                    leftColumns: 2
-                }
-            });
-        });
+    th, td {
+        white-space: nowrap;
+    }
 
+    div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
 
-    </script>
-    <style>
-        i.hover {
-            cursor: pointer;
-        }
-    </style>
-    <style type="text/css">
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: black;
-            z-index: 99;
-            opacity: 0.8;
-            filter: alpha(opacity=80);
-            -moz-opacity: 0.8;
-            min-height: 100%;
-            width: 100%;
-        }
-        th, td {
-            white-space: nowrap;
-        }
-
-        div.dataTables_wrapper {
-            width: 800px;
-            margin: 0 auto;
-        }
-
-        .loader {
-            font-family: Arial;
-            font-size: 10pt;
-            /*border: 5px solid #67CFF5;*/
-            /*width: 200px;
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
         height: 100px;*/
-            display: none;
-            position: fixed;
-            background-color: White;
-            z-index: 999;
-            opacity: 0.5;
-            filter: alpha(opacity = 50);
-        }
-    </style>
-    <!--START BREADCRUMB-->
-    <ul class="breadcrumb">
-        <li class="active"><strong>Interviews</strong></li>
-    </ul>
-    <!-- END BREADCRUMB -->
-    <!-- PAGE TITLE -->
-    <div class="page-title">
-        <h4><span class="fa fa-meetup"></span> Interviews</h4>
-        @*<ahref="#" class="panel-refresh" title="Refresh"><span class="fa fa-refresh" onclick="javascript:InterviewRefresh();"></span></a>*@
-        @*<i type="submit" class="fa fa-file-excel-o  @ViewBag.ActionClass.Export" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExporttoExcel", "ActionLog")'"></i>*@
-    </div>
-    <!-- END PAGE TITLE -->
-    <!-- PAGE CONTENT WRAPPER -->
-    <div class="page-content-wrap">
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+        opacity: 0.5;
+        filter: alpha(opacity = 50);
+    }
+</style>
+<!--START BREADCRUMB-->
+<ul class="breadcrumb">
+    <li class="active"><strong>Interviews</strong></li>
+</ul>
+<!-- END BREADCRUMB -->
+<!-- PAGE TITLE -->
+<div class="page-title">
+    <h4><span class="fa fa-meetup"></span> Interviews</h4>
+    @*<ahref="#" class="panel-refresh" title="Refresh"><span class="fa fa-refresh" onclick="javascript:InterviewRefresh();"></span></a>*@
+    @*<i type="submit" class="fa fa-file-excel-o  @ViewBag.ActionClass.Export" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExporttoExcel", "ActionLog")'"></i>*@
+</div>
+<!-- END PAGE TITLE -->
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
 
-        <div class="row">
-            <div class="loader" align="center">
-                <img src="~/img/owl/AjaxLoader.gif" style="width: 160px; height:80px; " />
-            </div>
-            <div class="col-md-12 dataloading">
-                <!-- START DEFAULT DATATABLE -->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <ul class="panel-controls">
-                            <li><a href="#"  title="Refresh"><span class="fa fa-refresh" onclick="location.href='@Url.Action("Index", "Interview")'"></span></a></li>
-                            <button type="button" class="btn btn-default mb-control"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
-                        </ul>
-                    </div>
-                    <div class="panel-body">
-                        
-                        <div class=" table-responsive">
-                            <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
-                                <thead>
-                                    <tr>
-                                        <th>IRF ID</th>
-                                        <th>Client HR</th>
-                                        <th>Interview Date</th>
-                                        <th>Interview Duration</th>
-                                        <th>Candidate Email</th>
-                                        <th>Resume Detail</th>
-                                        <th>Confrimation Status</th>
-                                        <<th>Staffing Agenecy</th>
-                                        <th>Zoom Link</th>
-                                        <th>Risebird HR</th>
-                                        <th>Interviewer</th>
-                                        <th>Expected Joining Time</th>
-                                        <th>Preferred Location</th>
-                                        <th>Expected Per Hour Rate</th>
-                                        <th>Interview Device Details</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+    <div class="row">
+        <div class="loader" align="center">
+            <img src="~/img/owl/AjaxLoader.gif" style="width: 160px; height:80px; " />
+        </div>
+        <div class="col-md-12 dataloading">
+            <!-- START DEFAULT DATATABLE -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <ul class="panel-controls">
+                        <li><a href="#" title="Refresh"><span class="fa fa-refresh" onclick="location.href='@Url.Action("Index", "Interview")'"></span></a></li>
+                        <button type="button" class="btn btn-default mb-control"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
+                    </ul>
+                </div>
+                <div class="panel-body">
+
+                    <div class=" table-responsive">
+                        <table class="table datatable table-striped table-bordered table-sorting" id="meeting">
+                            <thead>
+                                <tr>
+                                    <th>IRF ID</th>
+                                    <th>Client HR</th>
+                                    <th>Interview Date</th>
+                                    <th>Interview Duration</th>
+                                    <th>Candidate Email</th>
+                                    <th>Resume Detail</th>
+                                    <th>Confrimation Status</th>
+                                    <
+                                    <th>Staffing Agenecy</th>
+                                    <th>Zoom Link</th>
+                                    <th>Risebird HR</th>
+                                    <th>Interviewer</th>
+                                    <th>Expected Joining Time</th>
+                                    <th>Preferred Location</th>
+                                    <th>Expected Per Hour Rate</th>
+                                    <th>Interview Device Details</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach (var item in Model)
                                 {
                                     <tr id=@item.id>
@@ -138,51 +140,76 @@
                                         </td>
                                     </tr>
                                 }
-                                </tbody>
-                            </table>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- END DEFAULT DATATABLE -->
             </div>
+            <!-- END DEFAULT DATATABLE -->
         </div>
-
     </div>
-    <script type="text/javascript">
 
+</div>
+<script type="text/javascript">
+
+    $(".dataloading").hide();
+    $(".datatable").hide();
+    var loader;
+    function ShowProgress() {
         $(".dataloading").hide();
         $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+</script>
 
-    <!-- Keep the Page Content Here.-->
-
+<!-- Keep the Page Content Here.-->
+@if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
+{
     <script type="text/javascript">
-        window.onload = function () {
-            setTimeout(function () {
-                //document.body.removeChild.getElementsByClassName("row");
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $(".datatable").show();
-
-                //$("#b-navbar-fg").show();
-            }, 2000);
-        };
+        window.onload = function ()
+        {
+                                sweetAlert({
+                                    title: "Risebird Interview",
+                                    text:'@ViewBag.Message',
+                                    type: "success"
+                                });
+         };
     </script>
+}
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+{
     <script type="text/javascript">
-        function InterviewRefresh() {
-            window.location.href = "/Meeting/Index";
-        };
+            window.onload = function ()
+            {
+                    sweetAlert({
+                        title: "Risebird Interview",
+                    text: '@ViewBag.Message',
+                   type: "error"
+                   });
+           };
     </script>
-    <!-- PAGE CONTENT WRAPPER -->
+}
+<script type="text/javascript">
+    window.onload = function () {
+        setTimeout(function () {
+            //document.body.removeChild.getElementsByClassName("row");
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $(".datatable").show();
+
+            //$("#b-navbar-fg").show();
+        }, 2000);
+    };
+</script>
+<script type="text/javascript">
+    function InterviewRefresh() {
+        window.location.href = "/Meeting/Index";
+    };
+</script>
+<!-- PAGE CONTENT WRAPPER -->

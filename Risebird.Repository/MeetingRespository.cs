@@ -76,7 +76,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews",null,
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews", null,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -163,7 +163,7 @@ namespace Risebird.Repository
         }
 
         public async Task<bool> UnassignYourself(int meetingid)
-        {            
+        {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
@@ -177,15 +177,78 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
             catch (Exception ex)
             {
-               await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
 
+        public async Task<InterviewComments> GetInterviewComments(int interviewId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@interviewId", interviewId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<InterviewComments>(con, "usp_GetInterviewComments", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> UpdateComments(InterviewComments interviewComments)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForComments(interviewComments);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        private DynamicParameters SetStoredProcedureParameterForComments(InterviewComments entity)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@interviewId", entity.InterviewId); // Normal parametersmeters 
+            parameters.Add("@@interviewStatus", entity.InterviewStatus);
+            parameters.Add("@@interviewerComment", entity.InterviewerComment);
+            parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
+            parameters.Add("@hrComment", entity.HRComment);
+            parameters.Add("@qcStatus", entity.QCStatus);
+            parameters.Add("@qcComment", entity.QCComment);
+            parameters.Add("@trainingStatus", entity.TrainingStatus);
+            parameters.Add("@trainerComment", entity.TrainerComment);
+            return parameters;
+        }
     }
 }
