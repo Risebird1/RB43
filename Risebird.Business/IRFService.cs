@@ -1,4 +1,5 @@
-﻿using Risebird.Business.Interface;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
@@ -87,7 +88,44 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<Skill> GetTechSkills(int id)
+        {
+            try
+            {
+                List<Skill> list = new List<Skill>();
+                var skills = _irfRepository.GetSkillsbyIRFid(id);
+                var result = _irfRepository.GetSkills();
+                foreach (var item in skills)
+                {
 
+                   var obj= result.Where(x => x.id == item.SkillId).FirstOrDefault();
+                    list.Add(obj);
+                }
+                
+                return list;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool AddSkillComments(TechSkillComments skillComments)
+        {
+            try
+            {
+                return _irfRepository.AddSkillComments(skillComments);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         #endregion
     }

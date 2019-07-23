@@ -251,24 +251,7 @@ namespace Risebird.Repository
         {
             try
             {
-
-                //string sql = "INSERT INTO IRF (IRFId, ClientName, JDTiltle, CompanyType, ClientId, JobCountry, StartDate, EndDate, JDLink, NoOfPosition, NoOfIntterview, RisebirdHr, PerMintuteRate) Values (@IRFId, @ClientName, @JDTiltle, @CompanyType, @ClientId, @JobCountry, @StartDate, @EndDate, @JDLink, @NoOfPosition, @NoOfIntterview, @RisebirdHr, @PerMintuteRate);";
-
-                //using (var connection = new SqlConnection(connectionString))
-                //{
-                //    var affectedRows = connection.Execute(sql, new { IRFId = irfDetails.IRFId, ClientName = irfDetails.ClientName, JDTiltle = irfDetails.JDTiltle, CompanyType= irfDetails.CompanyType, ClientId= irfDetails.ClientId, JobCountry=irfDetails.JobCountry, StartDate = irfDetails.StartDate, EndDate = irfDetails.EndDate, JDLink = irfDetails.JDLink,
-                //        NoOfPosition = irfDetails.NoOfPosition,
-                //        NoOfIntterview= irfDetails.NoOfIntterview,
-                //        RisebirdHr = irfDetails.RisebirdHr,
-                //        PerMintuteRate = irfDetails.PerMintuteRate
-                //    });
-                //    if (affectedRows > 0)
-                //        return true;
-                //    else
-                //        return false;
-
-                //}
-                //Set the parameters to be passed to store procedure
+                
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -343,6 +326,63 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public IEnumerable<TransTechSkill> GetSkillsbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select * from TransTechSkill where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransTechSkill>(query, dynamicParameters);
+                    return results ;
+                }
+                
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public bool AddSkillComments(TechSkillComments obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+                    foreach (var item in obj.SkillCollection)
+                    {
+                        string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
+                        var affectedRows = con.Execute(sqlJoinability, new
+                        {
+                            IRFId = obj.IRFId,
+                            Skill = Convert.ToInt16(item.Skill),
+                            Comment = item.Comment
+                           
+                        });
+                    }
+                    return true;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
         private DynamicParameters SetStoredProcedureParameterForIRF(IRFVm entity)
         {
