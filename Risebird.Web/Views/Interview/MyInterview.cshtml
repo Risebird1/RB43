@@ -72,34 +72,32 @@
                         <table class="table datatable table-striped table-bordered table-sorting" id="mymeeting">
                             <thead>
                                 <tr>
-                                    <th>Job Role</th>
                                     <th>Interview Date</th>
+                                    <th>Interview Slot</th>
                                     <th>Interview Duration</th>
-                                    <th>Primary Skill</th>
                                     <th>Candidate Email</th>
-                                    <th>Resume Detail</th>
+                                    <th>Resume</th>
                                     <th>Confrimation Status</th>
-                                    <th>Risebird HR</th>                                    
+                                    <th>Risebird HR</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                    <tr id=@item.id>
-                                        <td> @item.JobRole </td>
-                                        <td> @item.interviewDate </td>
-                                        <td> @item.interviewDuration </td>
-                                        <td> @item.primaryskill</td>
-                                        <td> @item.candidateEmail</td>
-                                        <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
-                                        <td> @item.comfirmationStatus</td>                                       
-                                        <td> @item.interviewer</td>
-                                        <td>
-                                            @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
-                                            @Html.ActionLink(" ", "UnassignYourself", new { id =  item.id }, new { onclick = "return confirm('Do you realy want to assign yourself?');", @class = "fa fa-pencil-square-o" })
-                                        </td>
-                                    </tr>
+                                <tr id=@item.id>
+                                    <td> @item.interviewDate </td>
+                                    <td> @item.interviewSlot </td>
+                                    <td> @item.interviewDuration </td>
+                                    <td> @item.candidateEmail</td>
+                                    <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
+                                    <td> @item.comfirmationStatus</td>
+                                    <td> @item.risebirdHR</td>
+                                    <td>
+                                        @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
+                                        <i class="fa fa-remove hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Unassign" data-original-title="Tooltip on bottom" onclick="javascript:UnAssignInterviewer('@item.id');"></i>
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                         </table>
@@ -167,4 +165,24 @@
         };
     </script>
 }
+
+<script type="text/javascript">
+    function UnAssignInterviewer(meetingId) {
+
+        var confirmMessageBox = confirm('Are you sure you wish to Unassign?');
+        if (confirmMessageBox) {
+            if (meetingId != '') {
+                $.ajax({
+                    url: '/Interview/UnassignYourself',
+                    data: { 'id': meetingId },
+                    type: 'get',
+                    success: function (data) {
+                        window.location = data.url;
+                    }
+                });
+            }
+        }
+    }
+
+</script>
 <!-- PAGE CONTENT WRAPPER -->
