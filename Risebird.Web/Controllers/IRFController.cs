@@ -38,7 +38,7 @@ namespace Risebird.Web.Controllers
         public IActionResult Add()
         {
             ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-            ViewBag.Level = new SelectList( _irfRepository.GetLevels(), "id", "Name");
+            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
             ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
             ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -64,7 +64,7 @@ namespace Risebird.Web.Controllers
                     TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
                     return RedirectToAction("Index");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -80,5 +80,46 @@ namespace Risebird.Web.Controllers
             var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
             return name;
         }
+
+        public IActionResult AddComments(string id)
+        {
+            TechSkillComments model = new TechSkillComments();
+            ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
+            model.IRFId = Convert.ToInt16(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult AddComments(TechSkillComments model)
+        {
+            try
+            {
+
+                if (_irfService.AddSkillComments(model))
+                {
+                    TempData["SuccessErrorMessage"] = "Comments saved Successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Comments were not saved.";
+                    return RedirectToAction("Index");
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
+                return RedirectToAction("Index");
+            }
+        }
+
+        //public List<string> GetTechSkills(string id)
+        //{
+        //    var name = _irfService.GetTechSkills(Convert.ToInt16(id));
+        //    return name;
+        //}
     }
 }

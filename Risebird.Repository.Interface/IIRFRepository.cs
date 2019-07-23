@@ -19,5 +19,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddIRFDetails(IRFVm irfDetails);
         IEnumerable<IRF> GetAllIRF();
         IEnumerable<Interviewer> GetInterviewerSkills();
+        IEnumerable<TransTechSkill> GetSkillsbyIRFid(int id);
+        bool AddSkillComments(TechSkillComments obj);
     }
 }

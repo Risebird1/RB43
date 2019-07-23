@@ -12,5 +12,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddIRFDetails(IRFVm irfDetails);
         IEnumerable<Users> GetRiseBirdHR();
         string GetInterviewerSkills(int id);
+        IEnumerable<Skill> GetTechSkills(int id);
+        bool AddSkillComments(TechSkillComments skillComments);
     }
 }
