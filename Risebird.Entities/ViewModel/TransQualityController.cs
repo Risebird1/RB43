@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public int IRFId { get; set; }
         public int QualityControllerId { get; set; }
+        public int UserId { get; set; }
     }
     //public class QualityController
     //{
