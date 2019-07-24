@@ -480,5 +480,37 @@ namespace Risebird.Repository
             
             return parameters;
         }
+
+        /// <summary>
+        /// Based on IRFID get list of interviwers
+        /// </summary>
+        /// <param name="irfId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFID", irfId); // Normal parametersmeters 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                   var result =  await SqlMapper.QueryAsync<string>(con, "usp_ListOfIRFInterviwer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
     }
 }

@@ -130,7 +130,7 @@
 
         $(document).ready(function () {
             var message = '@ViewBag.Message';
-            debugger;
+           
             if (message.includes("Success")) {
                 alert("Successful");
                 //swal("Successful!", "IRF added successfully.", "success");
@@ -149,7 +149,7 @@
     <script>
 
         function AddComments(id) {
-            debugger;
+           
             var url = '/IRF/AddComments?id=' + id ;
             window.location.href = url;
         };  

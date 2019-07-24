@@ -58,6 +58,32 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+        public string SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate)
+        {
+            try
+            {                
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");               
+                foreach (var mails in interviwers)
+                {
+                    mailMessage.To.Add(new MailAddress(mails, null));
+                }
 
+                mailMessage.Subject = "New Meeting has been scheduled on date: "+ meetingDate;
+                string msgBody = string.Format("Dear Interviewers, New interview has been scheduled based on skills on " + meetingDate +". \n Kindly login over RisebirdPortal.com and go to OpenInterview and assign yourself. We have first come first assign policy. \n Regards Team Risebird");
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
     }
 }
