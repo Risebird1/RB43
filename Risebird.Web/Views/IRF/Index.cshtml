@@ -79,30 +79,6 @@
 
     <div id="products" class="row list-group">
 
-        @*<div class="item  col-xs-4 col-lg-4">
-            <div class="thumbnail">
-
-                <div class="caption">
-                    <h4 class="group inner list-group-item-heading">
-                        Ashutosh Kapile
-                    </h4>
-                    <div class="group inner list-group-item-text">
-                        <span>Skills:</span> <p>Java Core</p>
-                        <span>Location:</span> <p>Pune</p>
-                        <span>No Of Positions:</span> <p>30</p>
-                        <span>No Of Interviews:</span> <p>50</p>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6 icon">
-                            <span class="fa fa-pencil"></span>
-                            <span class="fa fa-trash" style="color:#d9534f"></span>
-                            <span class="fa fa-download"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>*@
-
         @foreach (var item in Model)
         {
             <div class="item  col-xs-4 col-lg-4">
@@ -110,22 +86,35 @@
 
                     <div class="caption">
                         <h4 class="group inner list-group-item-heading">
-                            @item.ClientName
+                            @item.IRFId
                         </h4>
                         <div class="group inner list-group-item-text">
-                            <span>Skills:</span> <p>.NET Developer</p>
+                            <span>Client Name:</span> <p>@item.ClientName</p>
                             <span>Location:</span> <p>@item.JobCountry</p>
-                            <span>No Of Positions:</span> <p>@item.NoOfPosition</p>
-                            <span>No Of Interviews:</span> <p>@item.NoOfIntterview</p>
+                            <span>No of Openings:</span> <p>@item.NoOfPosition</p>
+                            <span>No of Interviews:</span> <p>@item.NoOfIntterview</p>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-md-6 icon">
-                                <span class="fa fa-pencil"></span>
-                                <span class="fa fa-trash" style="color:#d9534f"></span>
-                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddComments('@item.id')">
+                                <i class="fa fa-pencil" style="color:blue;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom" onclick="javascript:EditIRF('@item.id');"></i>
+
+                                <i class="fa fa-comments" style="color:black;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Questions" data-original-title="Tooltip on bottom" onclick="javascript:AddComments('@item.id');"></i>
+
+                                <i class="fa fa-meetup" style="color:green;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Meetings" data-original-title="Tooltip on bottom" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"></i>
+
+                                <i class="fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>
+
+                                @*<span class="fa fa-trash" style="color:#d9534f"></span>*@
+                                @*<a class="btn border-white btn-sm btn-danger" id="deleteIRF" onclick="DeleteIRF(@item.id)">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                                <a class="btn btn-primary border-white btn-sm" id="btnComments" onclick="AddComments('@item.id')">
                                     <span class="glyphicon glyphicon-comment"></span>
                                 </a>
-                                <span class="fa fa-download"></span>
+                                <a class="btn btn-primary border-white btn-sm" id="btnMeetings" onclick="GetInterviewMeetings('@item.id')">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </a>*@
+                                @*<span class="fa fa-download"></span>*@
                             </div>
                         </div>
                     </div>
@@ -164,5 +153,17 @@
             var url = '/IRF/AddComments?id=' + id ;
             window.location.href = url;
         };  
+        function DeleteIRF(id) {
+            var url = '/IRF/DeleteIRF?id=' + id;
+            window.location.href = url;
+        };  
+
+        function GetInterviewMeetings(id, IRFid) {
+            debugger;
+            var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        }; 
+
+
 
     </script>

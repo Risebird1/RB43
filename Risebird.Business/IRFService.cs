@@ -63,6 +63,20 @@ namespace Risebird.Business
             }
         }
 
+        public SelectList GetQualityController()
+        {
+            try
+            {
+                return new SelectList(_irfRepository.GetQualityController(), "id", "FirstName");
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public string GetInterviewerSkills(int id)
         {
             try
@@ -87,6 +101,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public string GetQCSkills(int id)
+        {
+            try
+            {
+                return _irfRepository.GetQCSkills(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public IEnumerable<Skill> GetTechSkills(int id)
         {
@@ -124,6 +153,34 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<bool> DeleteIRF(int id)
+        {
+            try
+            {
+                return _irfRepository.DeleteIRF(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public List<Meeting> GetIRFInterviewMeetings(int id)
+        {
+            try
+            {
+                return _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

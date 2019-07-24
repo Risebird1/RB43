@@ -1,0 +1,159 @@
+﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+@{
+    ViewData["Title"] = "Interview Meetings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    i.hover {
+        cursor: pointer;
+    }
+</style>
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
+
+    th, td {
+        white-space: nowrap;
+    }
+
+    div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
+
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+        height: 100px;*/
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+        opacity: 0.5;
+        filter: alpha(opacity = 50);
+    }
+</style>
+<!--START BREADCRUMB-->
+<ul class="breadcrumb">
+    <li class="active"><strong>Interview Meetings</strong></li>
+</ul>
+<!-- END BREADCRUMB -->
+<!-- PAGE TITLE -->
+<div class="page-title">
+    <h4><span class="fa fa-meetup"></span>Interview Meetings for <b>@ViewBag.IRF</b></h4>
+</div>
+<!-- END PAGE TITLE -->
+<!-- PAGE CONTENT WRAPPER -->
+<div class="page-content-wrap">
+
+    <div class="row">
+        <div class="loader" align="center">
+            <img src="~/img/owl/AjaxLoader.gif" style="width: 160px; height:80px; " />
+        </div>
+        <div class="col-md-12 dataloading">
+            <!-- START DEFAULT DATATABLE -->
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    <div class=" table-responsive">
+                        <table class="table datatable table-striped table-bordered table-sorting" id="mymeeting">
+                            <thead>
+                                <tr>
+                                    <th>Interview Date</th>
+                                    <th>Candidate Email</th>
+                                    <th>Client HR Contact</th>
+                                    <th>Resume</th>
+                                    <th>Preferred Location</th>
+                                    <th>Expected Rate Per Hour</th>
+                                    <th>Staffing Agency</th>
+                                    <th>Joining Time</th>
+                                    <th>Interview Status</th>
+                                    <th>QC Status</th>
+                                    <th>L2 Interview Status</th>
+                                    <th>Client Interview Status</th>
+                                    <th>Fraud Sync Comment</th>
+                                    <th>Video Link</th>
+                                    <th>Report Link</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr id=@item.id>
+                                    <td> @item.interviewDate </td>
+                                    <td> @item.candidateEmail </td>
+                                    <td> @item.ClientHrContact </td>
+                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                    <td> @item.PreferredLocation</td>
+                                    <td> @item.ExpectedPerHourRate </td>
+                                    <td> @item.staffingAgenecy </td>
+                                    <td> @item.joiningTime </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    <td>  </td>
+                                    
+                                    @*<td>*@
+                                        @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
+                                        @*<i class="fa fa-remove hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Unassign" data-original-title="Tooltip on bottom" onclick="javascript:UnAssignInterviewer('@item.id');"></i>*@
+                                    @*</td>*@
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- END DEFAULT DATATABLE -->
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+        $(".dataloading").hide();
+        $(".datatable").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $(".datatable").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+</script>
+
+<!-- Keep the Page Content Here.-->
+
+<script type="text/javascript">
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $(".datatable").show();
+            }, 2000);
+        };
+</script>
+<loading></loading>
+
+<!-- PAGE CONTENT WRAPPER -->
