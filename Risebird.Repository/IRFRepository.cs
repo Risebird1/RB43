@@ -12,6 +12,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Risebird.Repository
 {
@@ -202,31 +203,40 @@ namespace Risebird.Repository
         {
             try
             {
+                var query = "Select * from IRF where IsDeleted = @IsDeleted";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<IRF>(
-                        con, "select * from IRF", null, commandType: Text);
-                    ////add skills
-                    //foreach(var item in listIRF)
-                    //{
-                    //    var parameters = new DynamicParameters();
-
-                    //    parameters.Add("@IRFId", item.id);
-
-                    //    var skillName =  SqlMapper.QueryAsync<string>(con, "usp_GetIRFSkills", parameters,
-                    //    commandType: CommandType.StoredProcedure);
-                    //}
-
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    return results;
                 }
-            }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-            }
 
-            catch (Exception e)
+            }
+            catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public string GetQCSkills(int userId)
+        {
+            try
+            {
+                var query = "Select PrimarySkill from QualityController where UserId = @UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.ToList().FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -380,6 +390,66 @@ namespace Risebird.Repository
             {
                  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public async Task<bool> DeleteIRF(int IRFId)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                   var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteIRF", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                    
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public IEnumerable<Meeting> GetIRFInterviewMeetings(int id)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result =  SqlMapper.Query<Meeting>(con, "usp_GetIRFInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

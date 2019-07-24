@@ -43,7 +43,7 @@ namespace Risebird.Web.Controllers
             ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
             ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
             ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
-            ViewBag.QualityController = new SelectList(_irfRepository.GetQualityController(), "id", "FirstName");
+            ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
             ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
 
             return View();
@@ -80,6 +80,10 @@ namespace Risebird.Web.Controllers
             var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
             return name;
         }
+        public string GetQCSkills(string id)
+        {
+            return _irfService.GetQCSkills(Convert.ToInt16(id));
+        }
 
         public IActionResult AddComments(string id)
         {
@@ -111,15 +115,52 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
+                TempData["SuccessErrorMessage"] = "Comments were not saved";
                 return RedirectToAction("Index");
             }
         }
 
-        //public List<string> GetTechSkills(string id)
-        //{
-        //    var name = _irfService.GetTechSkills(Convert.ToInt16(id));
-        //    return name;
-        //}
+        public IActionResult DeleteIRF(string id)
+        {
+            try
+            {
+                if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
+                {
+                    TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                    return RedirectToAction("Index");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public IActionResult GetInterviewMeetings(string id, string irfId)
+        {
+            try
+            {
+                var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                ViewBag.IRF = irfId;
+                return View(meetings);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+            
+        }
+
+
     }
 }
