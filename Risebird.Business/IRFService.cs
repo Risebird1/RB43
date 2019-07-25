@@ -262,5 +262,19 @@ namespace Risebird.Business
             }
         }
 
+
+        public List<string> GetListOfInterviwerBasedOnIRFId(string irfId)
+        {
+            try
+            {
+                return _irfRepository.GetListOfInterviwerBasedOnIRFId(irfId).Result.ToList();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
