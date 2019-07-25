@@ -179,7 +179,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_userService.DeleteClientUser(id))
+                if (_userService.DeleteUser(id))
                 {
                     TempData["SuccessErrorMessageUser"] = "User is deleted Successfully";
                     return Json(new { url = Url.Action("Index", "User") });
