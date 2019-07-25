@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+@*<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
-<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>*@
 <div style="margin-bottom:10px">
     <form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
         <div class="row">
@@ -112,7 +112,7 @@
 
                                             @*<label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>*@
                                             <div class="col-md-6 col-sm-6">
-                                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line" }  })
+                                                @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                                 @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
 
                                                 @*<input class="form-control text-box single-line" id="StartDate" name="StartDate" type="date" value="">*@
@@ -213,7 +213,7 @@
                                                             </td>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1"value="100">
+                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                             </td>
 
 
@@ -272,10 +272,10 @@
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
+                                                                <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="number" value="100">
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1"value="100">
+                                                                <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
                                                             </td>
 
                                                             <td width="8%">
@@ -330,7 +330,7 @@
                                                                 </select>
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
+                                                                <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="number" value="100">
                                                             </td>
 
                                                             <td>
@@ -443,6 +443,51 @@
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
+                                                <h2>Approved Quality Controllers</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="QualityControllerTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="table_heading">User</th>
+                                                            <th class="table_heading">Skills</th>
+                                                            <th class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
+                                                            </td>
+
+                                                            <td>
+                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                                @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
+
+                                                            <td width="8%">
+                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowQualityController()">
+                                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                                </a>
+
+                                                                <a class="btn border-white btn-sm btn-danger delete-qualityController" id="btnMinus" onclick="DeleteRowClient(0)">
+                                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+                                    </div>
+
+                                    @*<div class="multiple-row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
                                                 <h2>Approved Quality Controller</h2>
                                             </div><!--end of multiple location-->
                                         </div><!--end of col-md-12-->
@@ -476,7 +521,7 @@
                                                 </table>
                                             </div>
                                         </div><!--end of col-md-12-->
-                                    </div>
+                                    </div>*@
 
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -686,12 +731,12 @@
     }
 
     function AddRowClient() {
-        var table = document.getElementById("ClientTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Clients.");
-            return;
-        }
+        //var table = document.getElementById("ClientTable");
+        //var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Clients.");
+        //    return;
+        //}
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -781,6 +826,47 @@
 
     }
 
+    function AddRowQualityController() {
+        
+        var $ttc = $("#QualityControllerTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#QualityControllerTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#QualityControllerTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+    }
     function InterviewerChanged(val, id) {
        
         var index = id.charAt(22);
@@ -797,6 +883,23 @@
        
     }
 
+    function QCChanged(val, id) {
+       
+        var index = id.charAt(18);
+        var skillElementid = 'QualityController_' + index + '__SkillId';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetQCSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+
     $(document).ready(function () {
         //Perform Ajax request.
         var id = $("#InterviewerCollection_0__InterviewerId").val();
@@ -808,11 +911,23 @@
                 $("#InterviewerCollection_0__SkillId").val(data);
             }
         });  
+
+        //Get QC Skills
+        var id = $("#QualityController_0__UserId").val();
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetQCSkills",
+            data: { 'id': id },
+            success: function (data) {
+                $("#QualityController_0__SkillId").val(data);
+            }
+        });  
+
     });
 
     //function DeleteRow(tableID, obj) {
     //    try {
-    //        debugger;
+    //       
     //        var table = document.getElementById(tableID);
     //        var rowCount = table.rows.length;
     //        if (rowCount <= 1) {
@@ -962,6 +1077,24 @@
         if ($(this).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Interviewers');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-qualityController', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Quality Controller');
             return false;
         }
 

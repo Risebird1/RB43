@@ -12,6 +12,7 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace Risebird.Repository
 {
@@ -202,31 +203,40 @@ namespace Risebird.Repository
         {
             try
             {
+                var query = "Select * from IRF where IsDeleted = @IsDeleted";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<IRF>(
-                        con, "select * from IRF", null, commandType: Text);
-                    ////add skills
-                    //foreach(var item in listIRF)
-                    //{
-                    //    var parameters = new DynamicParameters();
-
-                    //    parameters.Add("@IRFId", item.id);
-
-                    //    var skillName =  SqlMapper.QueryAsync<string>(con, "usp_GetIRFSkills", parameters,
-                    //    commandType: CommandType.StoredProcedure);
-                    //}
-
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    return results;
                 }
-            }
-            catch (SqlException e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-            }
 
-            catch (Exception e)
+            }
+            catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public string GetQCSkills(int userId)
+        {
+            try
+            {
+                var query = "Select PrimarySkill from QualityController where UserId = @UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.ToList().FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -307,8 +317,44 @@ namespace Risebird.Repository
                             Weightage = item.Weightage
                         });
                     }
-                    //update 
-                    
+
+                    //update trans interviewer table
+                    foreach (var item in irfDetails.InterviewerCollection)
+                    {
+                        DynamicParameters param = new DynamicParameters();
+                        param.Add("@irfIntId", irfID);
+                        param.Add("@InterviewerUserId", item.InterviewerId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+                                commandType: CommandType.StoredProcedure);
+                        
+                    }
+
+                    //update trans Client table
+
+                    foreach (var item in irfDetails.ClientCollection)
+                    {
+                        DynamicParameters param1 = new DynamicParameters();
+                        param1.Add("@irfIntId", irfID);
+                        param1.Add("@ClientUserId", item.ClientUserId);
+                        param1.Add("@ClientRoleId", item.ClientRoleId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
+                    //update trans QC table
+
+                    foreach (var item in irfDetails.QualityController)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@irfIntId", irfID);
+                        param2.Add("@QCUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
+
                     return true;
                 }
                 
@@ -327,7 +373,122 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<TransTechSkill> GetSkillsbyIRFid(int id)
+        public async Task<bool> UpdateIRFDetails(IRFVm irfDetails)
+        {
+            try
+            {
+
+                DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+                    //var irfList = SqlMapper.QueryAsync<IRFVm>(
+                    //    con, "select * from IRF", null, commandType: Text).Result.AsList();
+                    //var irfID = irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    ////var irfId = SqlMapper.Query<string>(
+                    ////    con, "select id from IRF where IRFId = @IRFId ", new {IRFId = irfDetails.IRFId }, commandType: Text);
+
+                    ////update joinability matrix table
+                    foreach (var item in irfDetails.Joinability)
+                    {
+                        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                        var affectedRows = con.ExecuteAsync(sqlJoinability, new
+                        {
+                            IRFId = irfDetails.id,
+                            LevelId = item.LevelId,
+                            Type = item.Type,
+                            Value = item.Value,
+                            Weightage = item.Weightage
+                        }).Result;
+                    }
+
+
+                    //update general skill table
+                    foreach (var item in irfDetails.SkillGeneral)
+                    {
+
+                        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+                        {
+                            IRFId = irfDetails.id,
+                            LevelId = item.LevelId,
+                            Type = item.Type,
+                            Value = item.Value,
+                            Weightage = item.Weightage
+                        }).Result;
+                    }
+
+                    //update tech skill table
+                    foreach (var item in irfDetails.SkillCollection)
+                    {
+
+                        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+                        var affectedRows = con.Execute(sqlSkillTech, new
+                        {
+                            IRFId = irfDetails.id,
+                            LevelId = item.LevelId,
+                            SkillId = item.SkillId,
+                            Weightage = item.Weightage
+                        });
+                    }
+
+                    //update trans interviewer table
+                    foreach (var item in irfDetails.InterviewerCollection)
+                    {
+                        DynamicParameters param = new DynamicParameters();
+                        param.Add("@irfIntId", irfDetails.id);
+                        param.Add("@InterviewerUserId", item.InterviewerId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
+                    //update trans Client table
+
+                    foreach (var item in irfDetails.ClientCollection)
+                    {
+                        DynamicParameters param1 = new DynamicParameters();
+                        param1.Add("@irfIntId", irfDetails.id);
+                        param1.Add("@ClientUserId", item.ClientUserId);
+                        param1.Add("@ClientRoleId", item.ClientRoleId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
+                    //update trans QC table
+
+                    foreach (var item in irfDetails.QualityController)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@irfIntId", irfDetails.id);
+                        param2.Add("@QCUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+                    
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
         {
             try
             {
@@ -336,17 +497,131 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransTechSkill>(query, dynamicParameters);
+                    var results = con.Query<TransSkill>(query, dynamicParameters);
                     return results ;
                 }
                 
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
+        public IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select * from TransSkillGeneral where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkillGeneral>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransJoinability> GetTransJoinability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransJoinability where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransJoinability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransInterviewer> GetTransInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@irfId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransInterviewer>(con, "usp_GetTransInterviewer", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+                
+                //var query = "Select * from TransInterviewer where IRFId = @IRFId";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@IRFId", id);
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var results = con.Query<TransInterviewer>(query, dynamicParameters);
+                //    return results;
+                //}
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransClientUser> GetTransClientUser(int id)
+        {
+            try
+            {
+                var query = "Select * from TransClientUser where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransQualityController> GetTransQualityController(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@irfId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransQualityController>(con, "usp_GetTransQualityController", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public bool AddSkillComments(TechSkillComments obj)
         {
@@ -354,9 +629,16 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    
+                    string sqlDeletePrevious = "Delete from TechSkillComments where IRFId =@IRFId;";
+                    var deletedRows = con.Execute(sqlDeletePrevious, new
+                    {
+                        IRFId = obj.IRFId,
+
+                    });
+
                     foreach (var item in obj.SkillCollection)
                     {
+                        
                         string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
                         var affectedRows = con.Execute(sqlJoinability, new
                         {
@@ -383,6 +665,89 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        {
+            try
+            {
+
+
+                var query = "Select * from TechSkillComments where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> DeleteIRF(int IRFId)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", IRFId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                   var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteIRF", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                    
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public IEnumerable<Meeting> GetIRFInterviewMeetings(int id)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result =  SqlMapper.Query<Meeting>(con, "usp_GetIRFInterviewMeetings", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         private DynamicParameters SetStoredProcedureParameterForIRF(IRFVm entity)
         {
@@ -401,11 +766,11 @@ namespace Risebird.Repository
             parameters.Add("@NoOfIntterview", entity.NoOfIntterview);
             parameters.Add("@RisebirdHr", entity.RisebirdHr);
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
-            parameters.Add("@InterviewerUserId", entity.InterviewerCollection[0]?.InterviewerId);
+            //parameters.Add("@InterviewerUserId", entity.InterviewerCollection[0]?.InterviewerId);
             //parameters.Add("@QCUserId", entity.QualityController[0].QualityControllerId);
-            parameters.Add("@ClientUserId", entity.ClientCollection[0]?.ClientUserId);
-            parameters.Add("@ClientRoleId", entity.ClientCollection[0]?.ClientRoleId);
-            parameters.Add("@QCUserId", entity.QualityController[0]?.UserId);
+            //parameters.Add("@ClientUserId", entity.ClientCollection[0]?.ClientUserId);
+            //parameters.Add("@ClientRoleId", entity.ClientCollection[0]?.ClientRoleId);
+            //parameters.Add("@QCUserId", entity.QualityController[0]?.UserId);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

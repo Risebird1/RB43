@@ -63,6 +63,20 @@ namespace Risebird.Business
             }
         }
 
+        public SelectList GetQualityController()
+        {
+            try
+            {
+                return new SelectList(_irfRepository.GetQualityController(), "id", "FirstName");
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public string GetInterviewerSkills(int id)
         {
             try
@@ -87,6 +101,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public string GetQCSkills(int id)
+        {
+            try
+            {
+                return _irfRepository.GetQCSkills(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public IEnumerable<Skill> GetTechSkills(int id)
         {
@@ -127,7 +156,112 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> DeleteIRF(int id)
+        {
+            try
+            {
+                return _irfRepository.DeleteIRF(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public List<Meeting> GetIRFInterviewMeetings(int id)
+        {
+            try
+            {
+                return _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IRFVm> GetEditIRF(int id)
+        {
+            try
+            {
+                var model = new IRFVm();
+
+                //get all values from database
+                var IRF = _irfRepository.GetAllIRF().Where(x => x.id == id).FirstOrDefault();
+                var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
+                var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
+                var transJoinability = _irfRepository.GetTransJoinability(id);
+                var transClientUser = _irfRepository.GetTransClientUser(id);
+                var transInterviewer = _irfRepository.GetTransInterviewer(id);
+                var transQualityController = _irfRepository.GetTransQualityController(id);
+
+                //assign values retrieved to the model
+                model.id = IRF.id;
+                model.IRFId = IRF.IRFId;
+                model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                model.JDLink = IRF.JDLink;
+                model.JDTiltle = IRF.JDTiltle;
+                model.JobCountry = IRF.JobCountry;
+                model.Joinability = (IList<TransJoinability>)(transJoinability);
+                model.NoOfIntterview = IRF.NoOfIntterview;
+                model.NoOfPosition = IRF.NoOfPosition;
+                model.PerMintuteRate = IRF.PerMintuteRate;
+                model.QualityController = (IList<TransQualityController>)(transQualityController);
+                model.RisebirdHr = IRF.RisebirdHr;
+                model.SkillCollection = (IList<TransSkill>)(transTechSkills);
+                model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
+                model.StartDate = IRF.StartDate;
+                model.ClientCollection= (IList<TransClientUser>)(transClientUser);
+                model.ClientId = IRF.ClientId;
+                model.ClientName = IRF.ClientName;
+                model.CompanyType = IRF.CompanyType;
+                model.EndDate = IRF.EndDate;
+
+                var skillCount = transTechSkills.Count();
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateIRF(IRFVm model)
+        {
+            try
+            {
+                return _irfRepository.UpdateIRFDetails(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         #endregion
+        public IList<SkillComment> GetTechSkillComments(int id)
+        {
+            try
+            {
+                var result = (IList<SkillComment>)_irfRepository.GetTechSkillComments(id);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public List<string> GetListOfInterviwerBasedOnIRFId(string irfId)
         {
