@@ -26,8 +26,8 @@ namespace Risebird.Functions
             string jsonContent = await req.Content.ReadAsStringAsync();
             //log.Info(jsonContent);
             //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
-             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-           //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
+            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
             string clientName = string.Empty;
             string JobRole = string.Empty;
@@ -89,7 +89,7 @@ namespace Risebird.Functions
                             else if (((JToken)mainFamilies1).Path == "payload.event")
                             {
                                 var rbhrassigned = ((JProperty)mainFamilies1).Value["extended_assigned_to"].ToString();
-                                hrRiseBirdAssinged  = JsonConvert.DeserializeObject<JArray>(rbhrassigned)[0]["email"]
+                                hrRiseBirdAssinged = JsonConvert.DeserializeObject<JArray>(rbhrassigned)[0]["email"]
                                     .Value<string>();
 
                                 var interviewDatestr = ((JProperty)mainFamilies1).Value["invitee_start_time"].ToString();
@@ -207,8 +207,25 @@ namespace Risebird.Functions
                 log.Info("Build update in database ended.");
             }
 
-            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
+            //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
 
+            try
+            {
+                HttpClient client = new HttpClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["PortalBaseUri"].ToString());
+                client.DefaultRequestHeaders.ExpectContinue = false;
+                //throw new Exception();
+                log.Info("Send mail based on IRF matched interviwer.");
+                HttpResponseMessage response = await client.GetAsync("/api/scheduler/IRFBasedInterviewerMail?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
+                var httpresponse = response.Content.ReadAsStringAsync().Result;
+                log.Info($"httpsresponce for Auto sIRF Mail send:{httpresponse} ");
+            }
+            catch (Exception ex)
+            {
+                log.Info($"Failed to send mail to IRF: " + IRFID + " interviews exception:{ex.Message} ");
+            }
+            return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
         }
     }
 }

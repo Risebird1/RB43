@@ -23,7 +23,7 @@
                     <div class="panel-heading">
                         <ul class="panel-controls">
                             <li>
-                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Skill</span></button>
+                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Client</span></button>
                             </li>
                         </ul>
                     </div>
@@ -46,7 +46,7 @@
                                     <td>@item.Name</td>
                                     <td>@item.Description</td>
                                     <td>
-                                        <i type="submit" onclick="location.href = '@Url.Action("Edit", "Client", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                        <i type="submit" onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
                                         <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
                                     </td>
                                 </tr>
@@ -61,7 +61,7 @@
     </div>
     <!-- PAGE CONTENT WRAPPER -->
     <loading></loading>
-    @if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+    @if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
@@ -74,7 +74,7 @@
          };
     </script>
 }
-    @if (ViewBag.Message != null && (ViewBag.Message.Contains("failed")))
+    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
 {
     <script type="text/javascript">
             window.onload = function ()
@@ -96,4 +96,23 @@
                 }],
                 "order": []   /* Disable initial sort */
             });
-        });</script>
+        });
+
+        function DeleteEntityfromEnvironment(clientId) {
+
+            var confirmMessageBox = confirm('Are you sure you want to delete "Client name" ? ');
+            if (confirmMessageBox) {
+                if (clientId != '') {
+                    $.ajax({
+                        url: '/Client/DeleteClient',
+                        data: { 'id': clientId },
+                        type: 'get',
+                        success: function (data) {
+                            window.location = data.url;
+                        }
+                    });
+                }
+            }
+        }
+
+    </script>

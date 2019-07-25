@@ -39,7 +39,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("End Date")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime EndDate { get; set; }
 

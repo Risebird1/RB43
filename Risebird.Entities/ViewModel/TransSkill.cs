@@ -18,7 +18,7 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public int LevelId { get; set; }
         public string Type { get; set; }
-        public string Value { get; set; }
+        public int Value { get; set; }
         public int Weightage { get; set; }
     }
 }
