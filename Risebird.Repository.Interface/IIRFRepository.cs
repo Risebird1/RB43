@@ -19,7 +19,18 @@ namespace Risebird.Repository.Interface
         Task<bool> AddIRFDetails(IRFVm irfDetails);
         IEnumerable<IRF> GetAllIRF();
         IEnumerable<Interviewer> GetInterviewerSkills();
-        IEnumerable<TransTechSkill> GetSkillsbyIRFid(int id);
+        IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
+        IEnumerable<TransClientUser> GetTransClientUser(int id);
+        IEnumerable<TransInterviewer> GetTransInterviewer(int id);
+        IEnumerable<TransJoinability> GetTransJoinability(int id);
+        IEnumerable<TransQualityController> GetTransQualityController(int id);
+        IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
         bool AddSkillComments(TechSkillComments obj);
+        Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
+        Task<bool> DeleteIRF(int IRFId);
+        IEnumerable<Meeting> GetIRFInterviewMeetings(int id);
+        string GetQCSkills(int userId);
+        Task<bool> UpdateIRFDetails(IRFVm irfDetails);
+        IEnumerable<SkillComment> GetTechSkillComments(int id);
     }
 }

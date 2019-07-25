@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,13 @@ namespace Risebird.Business.Interface
         string GetInterviewerSkills(int id);
         IEnumerable<Skill> GetTechSkills(int id);
         bool AddSkillComments(TechSkillComments skillComments);
+        List<string> GetListOfInterviwerBasedOnIRFId(string irfId);
+        Task<bool> DeleteIRF(int id);
+        List<Meeting> GetIRFInterviewMeetings(int id);
+        string GetQCSkills(int id);
+        SelectList GetQualityController();
+        Task<IRFVm> GetEditIRF(int id);
+        bool UpdateIRF(IRFVm model);
+        IList<SkillComment> GetTechSkillComments(int id);
     }
 }

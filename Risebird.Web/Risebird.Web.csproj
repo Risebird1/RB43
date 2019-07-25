@@ -94,4 +94,6 @@
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

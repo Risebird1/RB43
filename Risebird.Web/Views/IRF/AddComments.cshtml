@@ -13,7 +13,7 @@
             <div class="col-md-12 edit-build nova-cont">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h2 class="panel-title">Add Comments</h2>
+                        <h2 class="panel-title">Add Questions</h2>
                     </div>
                     <div class="panel-body">
                         <div class="row">
@@ -35,33 +35,69 @@
                                                     <thead>
                                                         <tr>
                                                             <th class="table_heading">Skill Name</th>
-                                                            <th class="table_heading">Comments</th>
+                                                            <th class="table_heading">Questions</th>
                                                             <th class="table_heading">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        @if (Model.SkillCollection.Count() == 0)
+                                                        {
+                                                            <tr>
+                                                                <td>
 
-                                                        <tr>
-                                                            <td>
+                                                                    @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
 
-                                                                @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
+                                                                </td>
 
-                                                            </td>
+                                                                <td>
+                                                                    <input class="form-control text-box single-line" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" type="text" value="">
+                                                                </td>
 
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" type="text" value="">
-                                                            </td>
+                                                                <td width="8%">
+                                                                    <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowComments()">
+                                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                                    </a>
 
-                                                            <td width="8%">
-                                                                <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowComments()">
-                                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                                </a>
+                                                                    <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
+                                                                        <span class="glyphicon glyphicon-trash"></span>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
 
-                                                                <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
-                                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.SkillCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+
+                                                                        @Html.DropDownList("SkillCollection[" + i + "].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.EditorFor(m=> m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                        @*@Html.Editor("SkillCollection[" + i + "].Comment", new { htmlAttributes = new { @class = "form-control text-box single-line", @value= Model.SkillCollection[i].Comment } })*@
+
+                                                                        @*@Html.Editor("SkillCollection[" + i + "].Comment", new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
+
+                                                                        @*<input class="form-control text-box single-line" id="@("SkillCollection_"+i+"__Comment")" name="SkillCollection[@i].Comment" type="text" value="">*@
+                                                                    </td>
+
+                                                                    <td width="8%">
+                                                                        <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowComments()">
+                                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                                        </a>
+
+                                                                        <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
+                                                                            <span class="glyphicon glyphicon-trash"></span>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -175,7 +211,7 @@
     }
 
     //function InterviewerChanged(val, id) {
-    //    debugger;
+    //   
     //    var index = id.charAt(22);
     //    var skillElementid = 'InterviewerCollection_' + index + '__SkillId';
     //    $.ajax({
@@ -198,7 +234,7 @@
             url: "/IRF/GetTechSkills",
             data: { 'id': id },
             success: function (data) {
-                debugger;
+                
                 $("#TechSkillComments_0__Skill").append("<option>"+);
             }
         });
