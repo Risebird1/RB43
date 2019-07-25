@@ -5,46 +5,47 @@
 }
 
 
-<style type="text/css">
+<style>
     i.hover {
         cursor: pointer;
     }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: black;
-            z-index: 99;
-            opacity: 0.8;
-            filter: alpha(opacity=80);
-            -moz-opacity: 0.8;
-            min-height: 100%;
-            width: 100%;
-        }
+</style>
+<style type="text/css">
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: black;
+        z-index: 99;
+        opacity: 0.8;
+        filter: alpha(opacity=80);
+        -moz-opacity: 0.8;
+        min-height: 100%;
+        width: 100%;
+    }
 
-        th, td {
-            white-space: nowrap;
-        }
+    th, td {
+        white-space: nowrap;
+    }
 
-        div.dataTables_wrapper {
-            width: 800px;
-            margin: 0 auto;
-        }
+    div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
 
-        .loader {
-            font-family: Arial;
-            font-size: 10pt;
-            /*border: 5px solid #67CFF5;*/
-            /*width: 200px;
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
         height: 100px;*/
-            display: none;
-            position: fixed;
-            background-color: White;
-            z-index: 999;
-            opacity: 0.5;
-            filter: alpha(opacity = 50);
-        }
-    
+        display: none;
+        position: fixed;
+        background-color: White;
+        z-index: 999;
+        opacity: 0.5;
+        filter: alpha(opacity = 50);
+    }
 </style>
 
 <!-- START BREADCRUMB -->
@@ -59,8 +60,12 @@
 <!-- END PAGE TITLE -->
 <!-- PAGE CONTENT WRAPPER -->
 <div class="page-content-wrap">
+
     <div class="row">
-        <div class="col-md-12">
+        <div class="loader" align="center">
+            <img src="~/img/owl/AjaxLoader.gif" style="width: 160px; height:80px; " />
+        </div>
+        <div class="col-md-12 dataloading">
             <!-- START DEFAULT DATATABLE -->
             <div class="panel panel-default">
                 <div class="panel-heading">
@@ -90,30 +95,30 @@
                             @foreach (var item in Model)
                             {
 
-                            <tr id=@item.id>
-                               
-                                <td>@item.FirstName</td>
-                                <td>@item.LastName</td>
-                                <td>@item.EmailId</td>
-                                <td>@item.MobileNumber</td>
-                                <td>@item.PrimarySkill</td>
-                                <td><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
-                                @if(@item.IsApproved == true)
-                                {
-                                <td>Approved</td>
-                                }
-                                else
-                                {
-                                    <td>Not Approved</td>
-                                }
+                                <tr id=@item.id>
 
-                                <td>@item.NoOfInterview</td>
-                                <td>@item.SuccessRate</td>
-                                <td>
-                                    <i type="submit" onclick="location.href='@Url.Action("EditInterviewer", "User", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
-                                    <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
-                                </td>
-                            </tr>
+                                    <td>@item.FirstName</td>
+                                    <td>@item.LastName</td>
+                                    <td>@item.EmailId</td>
+                                    <td>@item.MobileNumber</td>
+                                    <td><textarea cols="55" >@item.PrimarySkill</textarea></td>
+                                    <td><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                    @if (@item.IsApproved == true)
+                                    {
+                                        <td>Approved</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Not Approved</td>
+                                    }
+
+                                    <td>@item.NoOfInterview</td>
+                                    <td>@item.SuccessRate</td>
+                                    <td>
+                                        <i type="submit" onclick="location.href='@Url.Action("EditInterviewer", "User", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                        <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -127,7 +132,7 @@
 <loading></loading>
 @if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
 {
-<script type="text/javascript">
+    <script type="text/javascript">
         window.onload = function ()
         {
                                 sweetAlert({
@@ -136,11 +141,11 @@
                                     type: "success"
                                 });
          };
-</script>
+    </script>
 }
 @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
 {
-<script type="text/javascript">
+    <script type="text/javascript">
             window.onload = function ()
             {
                     sweetAlert({
@@ -149,7 +154,7 @@
                    type: "error"
                    });
            };
-</script>
+    </script>
 }
 <script type="text/javascript">
     $(document).ready(function () {
