@@ -23,7 +23,7 @@
                     <div class="panel-heading">
                         <ul class="panel-controls">
                             <li>
-                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Skill</span></button>
+                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Client</span></button>
                             </li>
                         </ul>
                     </div>
@@ -100,7 +100,7 @@
 
         function DeleteEntityfromEnvironment(clientId) {
 
-            var confirmMessageBox = confirm('Are you sure you wish to delete this record ?');
+            var confirmMessageBox = confirm('Are you sure you want to delete "Client name" ? ');
             if (confirmMessageBox) {
                 if (clientId != '') {
                     $.ajax({
