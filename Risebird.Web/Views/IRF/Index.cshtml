@@ -159,11 +159,16 @@
         };  
 
         function GetInterviewMeetings(id, IRFid) {
-            debugger;
+           
             var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
             window.location.href = url;
         }; 
 
+        function EditIRF(id) {
+           
+            var url = '/IRF/EditIRF?id=' + id;
+            window.location.href = url;
+        };  
 
 
     </script>

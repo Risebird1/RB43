@@ -20,5 +20,8 @@ namespace Risebird.Business.Interface
         List<Meeting> GetIRFInterviewMeetings(int id);
         string GetQCSkills(int id);
         SelectList GetQualityController();
+        Task<IRFVm> GetEditIRF(int id);
+        bool UpdateIRF(IRFVm model);
+        IList<SkillComment> GetTechSkillComments(int id);
     }
 }
