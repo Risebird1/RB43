@@ -97,6 +97,7 @@
                                         @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
                                         <i class="fa fa-remove hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Unassign" data-original-title="Tooltip on bottom" onclick="javascript:UnAssignInterviewer('@item.id');"></i>
                                         <i class="fa fa-comment hover" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Comment" data-original-title="Tooltip on bottom" onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'"></i>
+                                        <i class="fa fa-file-text" style="color:indianred;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Report" data-original-title="Tooltip on bottom" onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId})'"></i>
                                     </td>
                                 </tr>
                                 }

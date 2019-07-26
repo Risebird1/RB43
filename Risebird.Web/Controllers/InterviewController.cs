@@ -11,6 +11,7 @@ using Risebird.Entities.Data;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Risebird.Repository.Interface;
 
 namespace Risebird.Web.Controllers
 {
@@ -21,12 +22,14 @@ namespace Risebird.Web.Controllers
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService)
+        private IIRFRepository _iRFRepository;
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
+            _iRFRepository = iRFRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -303,7 +306,50 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
-        
+
+        [HttpGet]
+        public IActionResult AddReport(int interviewId, int irfId)
+        {
+            try
+            {
+                ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                return View(model);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+
+        }
+
+        [HttpPost]
+        public IActionResult AddReport(InterviewReport model)
+        {
+            try
+            {
+                if (_meetingService.AddInterviewReport(model).Result)
+                {
+                    TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                    return RedirectToAction("MyInterview");
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Report was not saved.";
+                    return RedirectToAction("MyInterview");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Report was not saved.";
+                return RedirectToAction("Index");
+            }
+        }
+
 
     }
 

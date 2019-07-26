@@ -141,6 +141,106 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<InterviewReport> GetInteviewReport(int interviewId, int irfId)
+        {
+            try
+            {
+                var model = new InterviewReport();
+
+                //get all values from database
+                var levels = _meetingRespository.GetLevels();
+                var skills = _meetingRespository.GetSkills();
+                var interviewDetails = _meetingRespository.GetAllInterviewMeetings().Result.Where(x=> x.id==interviewId).FirstOrDefault();
+                var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
+                var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
+                var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                var techSkillList = new List<TechSkillReport>();
+
+
+                //assign values to model
+                foreach (var item in techSkillsDetails)
+                {
+                    TechSkillReport obj = new TechSkillReport();
+                    obj.InterviewId = interviewId;
+                    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
+                    obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+                    obj.WeightageRequired = item.Weightage;
+                    
+                    techSkillList.Add(obj);
+                }
+                model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
+
+                var genSkillList = new List<SkillGeneralReport>();
+
+                foreach (var item in skillGeneralDetails)
+                {
+                    SkillGeneralReport obj = new SkillGeneralReport();
+                    obj.InterviewId = interviewId;
+                    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    obj.Type = item.Type;
+                    obj.WeightageRequired = item.Weightage;
+                    genSkillList.Add(obj);
+                }
+
+                model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
+
+                var joinabilityList = new List<JoinabilityReport>();
+
+
+                foreach (var item in joinabilityDetails)
+                {
+                    JoinabilityReport obj = new JoinabilityReport();
+                    obj.InterviewId = interviewId;
+                    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    obj.Type = item.Type;
+                    obj.WeightageRequired = item.Weightage;
+                    joinabilityList.Add(obj);
+                }
+                model.JoinabilityReportCollection = (IList<JoinabilityReport>)joinabilityList;
+                var quesList = new List<QuestionsDiscussed>();
+
+                foreach (var item in questionDetails)
+                {
+                    QuestionsDiscussed obj = new QuestionsDiscussed();
+                    obj.InterviewId = interviewId;
+                    obj.Comment = item.Comment;
+                    quesList.Add(obj);
+                }
+                model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
+                model.InterviewId = interviewId;
+                model.CandidateName = interviewDetails.candidateEmail;
+                model.IRFId = irfId;
+               
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddInterviewReport(InterviewReport reportModel)
+        {
+            try
+            {
+                return _meetingRespository.AddInterviewReport(reportModel).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
 

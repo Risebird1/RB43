@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class QuestionsDiscussed
+    {
+        public int id { get; set; }
+        public int InterviewId { get; set; } 
+        public string Comment { get; set; }
+        public int RatingId { get; set; }
+        public int Timing { get; set; }
+    }
+}

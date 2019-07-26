@@ -15,5 +15,7 @@ namespace Risebird.Business.Interface
         List<Meeting> GetAllAssignedInterviews();
         bool UpdateComments(InterviewComments comments);
         InterviewComments GetInterviewComments(int interviewId);
+        Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
+        Task<bool> AddInterviewReport(InterviewReport reportModel);
     }
 }

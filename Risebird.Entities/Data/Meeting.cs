@@ -35,6 +35,7 @@ namespace Risebird.Entities.Data
         public string ExpectedPerHourRate { get; set; }
         public string staffingAgenecy { get; set; }
         public string joiningTime { get; set; }
+        public int irfIntId { get; set; }
 
     }
 }

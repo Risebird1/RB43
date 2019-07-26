@@ -15,5 +15,13 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllAssignedInterview();
         Task<bool> UpdateComments(InterviewComments interviewComments);
         Task<InterviewComments> GetInterviewComments(int interviewId);
+        IEnumerable<TransJoinability> GetTransJoinability(int id);
+        IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
+        IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id);
+        IEnumerable<SkillComment> GetTechSkillComments(int id);
+        IEnumerable<Level> GetLevels();
+        IEnumerable<Skill> GetSkills();
+        Task<bool> AddInterviewReport(InterviewReport reportDetails);
+        //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }

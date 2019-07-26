@@ -236,6 +236,229 @@ namespace Risebird.Repository
             return false;
         }
 
+        public IEnumerable<TransSkill> GetSkillsbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select * from TransTechSkill where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkill>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<TransSkillGeneral> GetSkillsGeneralbyIRFid(int id)
+        {
+            try
+            {
+                var query = "Select * from TransSkillGeneral where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSkillGeneral>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransJoinability> GetTransJoinability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransJoinability where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransJoinability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<SkillComment> GetTechSkillComments(int id)
+        {
+            try
+            {
+
+
+                var query = "Select * from TechSkillComments where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SkillComment>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<Level> GetLevels()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Level>(
+                        con, "select * from Level", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<Skill> GetSkills()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Skill>(
+                        con, "select * from Skill", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
+        {
+            try
+            {
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //update interviewReport table
+                    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore);";
+                    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                    {
+                        IRFId = reportDetails.IRFId,
+                        InterviewId = reportDetails.InterviewId,
+                        CandidateName = reportDetails.CandidateName,
+                        confirmationStatus = reportDetails.confirmationStatus,
+                        OverallScore = reportDetails.OverallScore
+                    }).Result;
+                    
+
+                    //update techskillreport table
+                    foreach (var item in reportDetails.TechSkillReportCollection)
+                    {
+                        string sqlTechReport = "INSERT INTO TechSkillReport (InterviewId, RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                        var result1 = con.ExecuteAsync(sqlTechReport, new
+                        {
+                            InterviewId = reportDetails.InterviewId,
+                            RequiredLevelId = item.RequiredLevelId,
+                            SkillId = item.SkillId,
+                            ActualLevelId = item.ActualLevelId,
+                            WeightageRequired = item.WeightageRequired,
+                            WeightageActual= item.WeightageActual
+                        }).Result;
+                    }
+
+
+                    //update general skill report table
+                    foreach (var item in reportDetails.SkillGeneralReportCollection)
+                    {
+
+                        string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                        var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
+                        {
+                            InterviewId = reportDetails.InterviewId,
+                            RequiredLevelId = item.RequiredLevelId,
+                            Type = item.Type,
+                            ActualLevelId = item.ActualLevelId,
+                            WeightageRequired = item.WeightageRequired,
+                            WeightageActual = item.WeightageActual
+                        }).Result;
+                    }
+
+                    //update Joinability Report table
+                    foreach (var item in reportDetails.JoinabilityReportCollection)
+                    {
+
+                        string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                        var result3 = con.Execute(sqlJoinReport, new
+                        {
+                            InterviewId = reportDetails.InterviewId,
+                            RequiredLevelId = item.RequiredLevelId,
+                            Type = item.Type,
+                            ActualLevelId = item.ActualLevelId,
+                            WeightageRequired = item.WeightageRequired,
+                            WeightageActual = item.WeightageActual
+                        });
+                    }
+
+                    //update questions discussed table
+                    foreach (var item in reportDetails.QuestionsCollection)
+                    {
+                        string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment ,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
+                        var result3 = con.Execute(sqlJoinReport, new
+                        {
+                            InterviewId = reportDetails.InterviewId,
+                            Comment = item.Comment,
+                            RatingId = item.RatingId,
+                            Timing = item.Timing,
+                            
+                        });
+
+                    }
+
+                    
+                    
+
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
+
         private DynamicParameters SetStoredProcedureParameterForComments(InterviewComments entity)
         {
             var parameters = new DynamicParameters();
