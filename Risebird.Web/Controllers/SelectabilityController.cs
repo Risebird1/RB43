@@ -1,0 +1,140 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+using System;
+using System.Threading.Tasks;
+using Risebird.Entities.Data;
+namespace Risebird.Web.Controllers
+{
+    [Authorize]
+    public class SelectabilityController : Controller
+    {
+        private ISelectabilityMatrixService _selectabilityService;
+        private IApplicationErrorLogger _applicationErrorLogger;
+        public SelectabilityController(ISelectabilityMatrixService selectabilityService, IApplicationErrorLogger applicationErrorLogger)
+        {
+            _selectabilityService = selectabilityService;
+            _applicationErrorLogger = applicationErrorLogger;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                return View(_selectabilityService.GetSelectabilityMatrix());
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View();
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddSelectability(SelectabilityMatrix model)
+        {
+            try
+            {
+                _selectabilityService.AddSelectabilityMatrix(model);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> AddSelectability()
+        {
+            try
+            {
+                var model = new SelectabilityMatrix();
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return View();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditSelectability(int id)
+        {
+            try
+            {
+                SelectabilityMatrix skillToUpdate = _selectabilityService.GetSelectabilityMatrixById(id);
+
+                if (skillToUpdate != null)
+                    return View("EditSelectability", skillToUpdate);
+                else
+                    return RedirectToAction("Index");
+
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditSelectability(SelectabilityMatrix skillUpdated)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (_selectabilityService.UpdateSelectabilityMatrix(skillUpdated))
+                    {
+                        TempData["SuccessErrorMessage"] = "Selectability is updated Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Updating Selectability is Failed";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    return View("EditSelectability");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Updating Selectability Level is Failed";
+                return View("Index");
+            }
+        }
+        public async Task<IActionResult> DeleteSelectabilityMatrix(int id)
+        {
+            try
+            {
+                if (_selectabilityService.DeleteSelectabilityMatrix(id))
+                {
+                    TempData["SuccessErrorMessage"] = "Selectability is deleted Successfully";
+                    return Json(new { url = Url.Action("Index", "Selectability") });
+                }
+                else
+                {
+                    TempData["SuccessErrorMessage"] = "Deletion of Selectability Failed";
+                    return Json(new { url = Url.Action("Index", "Selectability") });
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                TempData["SuccessErrorMessage"] = "Deletion of Selectability Failed";
+                return RedirectToAction("Index");
+            }
+        }
+    }
+}

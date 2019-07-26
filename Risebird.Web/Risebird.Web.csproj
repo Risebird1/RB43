@@ -49,6 +49,15 @@
     <Content Update="Views\Interview\InterviewComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Selectability\AddSelectability.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Selectability\EditSelectability.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Selectability\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Profile\ProfileUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

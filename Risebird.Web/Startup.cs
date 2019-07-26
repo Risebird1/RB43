@@ -105,8 +105,9 @@ namespace Risebird.Web
             services.AddScoped<IIRFRepository, IRFRepository>();
             services.AddScoped<IJoinabilityMatrixRepository, JoinabilityMatrixRepository>();
             services.AddScoped<IGeneralSkillMatrixRepository, GeneralSkillMatrixRepository>();
+            services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();
+            services.AddScoped<ISelectabilityMatrixService, SelectabilityMatrixService>();
             services.AddScoped<IIRFService, IRFService>();
-
         }
     }
 }
