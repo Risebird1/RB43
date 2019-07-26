@@ -65,6 +65,7 @@ namespace Risebird.Entities.ViewModel
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
         public IList<TransJoinability> Joinability { get; set; }
+        public IList<TransSelectability> Selectability { get; set; }
         public IList<TransClientUser> ClientCollection { get; set; }
         public IList<TransQualityController> QualityController { get; set; }
         public IList<TransInterviewer> InterviewerCollection { get; set; }

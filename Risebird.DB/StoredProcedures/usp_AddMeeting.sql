@@ -16,66 +16,65 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[usp_AddMeeting]
-@IRFName varchar(200),
-@clientName varchar(200),
-@JobRole varchar(200),
+@IRFId varchar(200),
 @interviewDate varchar(200),
-@interviewDuration varchar(50),
-@interviewSlot varchar(50),
-@primaryskill varchar(500),
+@interviewSlot varchar(100),
+@interviewDuration int,
 @candidateEmail varchar(200),
-@ClientHrContact varchar(200),
+@hrRiseBirdAssinged varchar(200),
 @resumeLink varchar(MAX),
 @zoomLink varchar(MAX),
-@zoomDetails varchar(MAX),
+@ClientHrContact varchar(200),
 @comfirmationStatus varchar(100),
 @interviewer varchar(200),
-@risebirdHR varchar(200)
+@prefferedLocation varchar(200),
+@expectedPerHourRate varchar(200),
+@joiningTime varchar(200),
+@staffingAgenecy varchar(200)
 AS
 Begin
-DECLARE 
-  @IRFId int = (select  [id] from [dbo].[IRF] where Name = @IRFName)
+
+IF NOT EXISTS (SELECT 1   FROM   InterviewMeetings    WHERE  candidateEmail = @candidateEmail and interviewDate=@interviewDate)
+Begin
 INSERT INTO [dbo].[InterviewMeetings]
            ([IRFId]
-           ,[clientName]
-           ,[JobRole]
            ,[interviewDate]
-		   ,[interviewSlot]
+           ,[interviewSlot]
            ,[interviewDuration]
-           ,[primaryskill]
-           ,[candidateEmail]           
+           ,[candidateEmail]
            ,[ClientHrContact]
            ,[resumeLink]
-           ,[zoomLink]
-           ,[zoomDetails]
            ,[comfirmationStatus]
-           ,[interviewer]
-           ,[risebirdHR]  
-		   ,[dtCreatedOn]       
-		   )
+           ,[zoomLink]
+           ,[risebirdHR]
+		   ,[PreferredLocation]
+		   ,[ExpectedPerHourRate]
+		   ,[joiningTime]
+		   ,[staffingAgenecy]		   
+           ,[sCreatedBy]
+           ,[dtCreatedOn]
+           )
      VALUES
            (@IRFId,
-@clientName,
-@JobRole,
 @interviewDate,
 @interviewSlot,
 @interviewDuration,
-@primaryskill,
 @candidateEmail,
 @ClientHrContact,
 @resumeLink,
-@zoomLink,
-@zoomDetails,
 @comfirmationStatus,
-@interviewer,
-@risebirdHR,
-getdate())
+@zoomLink,
+@hrRiseBirdAssinged,
+@prefferedLocation,
+@expectedPerHourRate,
+@joiningTime,
+@staffingAgenecy,
+'System',
+GETUTCDATE()  
+)
 
-
-	
-	
 End
-
+END
 
 
 GO

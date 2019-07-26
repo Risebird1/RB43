@@ -58,8 +58,7 @@ namespace Risebird.Web.Controllers
                     if (meeting.File == null)
                     {
                         ModelState.AddModelError(String.Empty, "Please upload a resume.");
-                        var model = new MeetingVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        var model = new MeetingVM();                       
 
                         return View("AddInterview", model);
                     }
@@ -72,17 +71,14 @@ namespace Risebird.Web.Controllers
                     {
                         ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
                         var model = new MeetingVM();
-                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
+                     
                         return View("AddInterview", model);
                     }
 
                     else
                     {
                         meeting.resumeLink = uploadedFileURL;
-                        List<String> selectedSkill = skills.Where(x => meeting.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-                        meeting.primaryskill = String.Join("| ", selectedSkill);
-
+                       
                         if (_meetingService.AddMeeting(meeting))
                         {
                             TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
@@ -98,9 +94,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     var model = new MeetingVM();                    
-                    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
-                    return View("Add",model);
+                                      return View("Add",model);
                 }
             }
             catch (Exception ex)
@@ -116,8 +110,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new MeetingVM();
-                model.PrimarySkills= new SelectList(_skillService.GetSkills(), "id", "Name");
+                var model = new MeetingVM();               
                 return View(model);
             }
             catch (Exception ex)

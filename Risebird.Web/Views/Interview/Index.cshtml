@@ -134,7 +134,7 @@
                                         <td><textarea cols="35">@item.interviewOnDevice</textarea></td>
                                         <td>
                                             <i type="submit" onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
-                                            <i type="submit" onclick="location.href = '@Url.Action("Comment", "Interview", new { id = item.id})'" class="fa fa-comment" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Comment" data-original-title="Tooltip on bottom"></i>
+                                            <i class="fa fa-comment hover" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Comment" data-original-title="Tooltip on bottom" onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'"></i>
                                             <i type="submit" onclick="location.href = '@Url.Action("SendReport", "Interview", new { id = item.id})'" class="fa fa-envelope" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Send Report" data-original-title="Tooltip on bottom"></i>
 
                                         </td>

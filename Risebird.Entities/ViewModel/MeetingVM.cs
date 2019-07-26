@@ -12,13 +12,8 @@ namespace Risebird.Entities.ViewModel
     {
         [Display(Name = "IRF ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
-        public string IRFName { get; set; }
-        [Display(Name = "Client Name")]
-        [Required(ErrorMessage = "Please enter existing Client Name.")]
-        public string clientName { get; set; }
-        [Display(Name = "Job Role")]
-        [Required(ErrorMessage = "Please enter Job Role.")]
-        public string JobRole { get; set; }
+        public string IRFId { get; set; }
+       
         [Display(Name = "Interview Date")]
         [Required(ErrorMessage = "Please enter Interview Date.")]
         public DateTime interviewDate { get; set; }
@@ -27,14 +22,7 @@ namespace Risebird.Entities.ViewModel
         public string interviewSlot { get; set; }
         [Display(Name = "Interview Duration")]
         [Required(ErrorMessage = "Please enter Interview Duration.")]
-        public string interviewDuration { get; set; }
-
-        public string primaryskill { get; set; }
-
-        public int[] SelectedSkillIds { get; set; }
-       
-        [Display(Name = "Primary Skills")]
-        public SelectList PrimarySkills { get; set; }
+        public int interviewDuration { get; set; }
 
         [Display(Name = "Candidate Email")]
         [Required(ErrorMessage = "Please enter Candidate Email Id.")]
@@ -59,6 +47,18 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer")]
         [Required(ErrorMessage = "Please enter Interviewer Email Id.")]
         public string interviewer { get; set; }
+        [Display(Name = "Preffered Location")]
+        [Required(ErrorMessage = "Please enter Preffered Location.")]
+        public string prefferedLocation { get; set; }
+        [Display(Name = "Staffing Agency")]
+        [Required(ErrorMessage = "Please enter Staffing Agency.")]
+        public string staffingAgency { get; set; }
+        [Display(Name = "Expected Per Hour Rate")]
+        [Required(ErrorMessage = "Please enter Expected Per Hour Rate.")]
+        public string expectedPerHourRate { get; set; }
+        [Display(Name = "Expected Joining Time")]
+        [Required(ErrorMessage = "Please enter Joining Time.")]
+        public string joiningTime { get; set; }
         public string interviewerComment { get; set; }
         public string intervieweStatus { get; set; }
         public string selectionStatus { get; set; }

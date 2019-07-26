@@ -97,21 +97,21 @@ namespace Risebird.Repository
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@IRFName", entity.IRFName); // Normal parametersmeters 
-            parameters.Add("@clientName", entity.clientName);
-            parameters.Add("@JobRole", entity.JobRole);
-            parameters.Add("@interviewDate", entity.interviewDate.ToLongDateString());
+            parameters.Add("@@IRFId", entity.IRFId); // Normal parametersmeters           
+            parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
-            parameters.Add("@interviewDuration", entity.interviewDuration);
-            parameters.Add("@primaryskill", entity.primaryskill);
+            parameters.Add("@interviewDuration", entity.interviewDuration);           
             parameters.Add("@candidateEmail", entity.candidateEmail);
-            parameters.Add("@ClientHrContact", entity.ClientHrContact);
+            parameters.Add("@@hrRiseBirdAssinged", entity.risebirdHR);
             parameters.Add("@resumeLink", entity.resumeLink);
             parameters.Add("@zoomLink", entity.zoomLink);
-            parameters.Add("@zoomDetails", entity.zoomDetails);
+            parameters.Add("@ClientHrContact", entity.ClientHrContact);
             parameters.Add("@comfirmationStatus", entity.comfirmationStatus);
             parameters.Add("@interviewer", entity.interviewer);
-            parameters.Add("@risebirdHR", entity.risebirdHR);
+            parameters.Add("@prefferedLocation", entity.prefferedLocation);
+            parameters.Add("@staffingAgenecy", entity.staffingAgency);
+            parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
+            parameters.Add("@joiningTime", entity.joiningTime);
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
