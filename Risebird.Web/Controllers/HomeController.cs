@@ -27,11 +27,17 @@ namespace Risebird.Web.Controllers
                 string emailId = userClaims?.FindFirst(ClaimTypes.Email)?.Value;
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId);
                 if (menus != null)
-                {
-                    //var Menu = _userService.GetProfileMenuList(userAuthentication.ProfileName);
+                {                   
                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
+                   HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
-                    return RedirectToAction("Index", "Interview");
+                    var menuAccess = menus.Where(x => x.dAccess)?.FirstOrDefault();
+                    if (menuAccess == null)
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                    var menuslink = menuAccess.sUrl.Split('/');
+                    return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
                 }
                 else
                 {
