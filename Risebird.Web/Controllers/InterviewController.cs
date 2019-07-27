@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Risebird.Repository.Interface;
+using Microsoft.AspNetCore.Http;
 
 namespace Risebird.Web.Controllers
 {
@@ -125,7 +126,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View(_meetingService.GetAllOpenInterviews());
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                return View(_meetingService.GetAllOpenInterviews(emailid));
             }
             catch (Exception ex)
             {
@@ -137,7 +140,9 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var myInterview=  _meetingService.GetAllAssignedInterviews();
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                var myInterview=  _meetingService.GetAllAssignedInterviews(emailid);
                 return View(myInterview);
             }
             catch (Exception ex)
@@ -150,7 +155,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View(_meetingService.GetAllOpenInterviews());
+                var emailid = HttpContext.Session.GetString("email")?.Trim(); 
+                return View(_meetingService.GetAllOpenInterviews(emailid));
             }
             catch (Exception ex)
             {

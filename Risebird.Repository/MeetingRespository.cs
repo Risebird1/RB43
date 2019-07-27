@@ -48,13 +48,15 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Meeting>> GetAllOpenInterviews()
+        public async Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailID)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -70,13 +72,15 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Meeting>> GetAllAssignedInterview()
+        public async Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailID)
         {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews", null,
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviews", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -97,7 +101,7 @@ namespace Risebird.Repository
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@@IRFId", entity.IRFId); // Normal parametersmeters           
+            parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
             parameters.Add("@interviewDuration", entity.interviewDuration);           
