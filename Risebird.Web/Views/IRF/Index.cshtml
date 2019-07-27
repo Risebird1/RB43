@@ -55,7 +55,7 @@
         margin-bottom: 150px;
     }
 </style>
-<!--START BREADCRUMB-->
+@*<!--START BREADCRUMB-->
 <ul class="breadcrumb">
     <li class="active"><strong>Interview Forms</strong></li>
 </ul>
@@ -63,8 +63,6 @@
 <!-- PAGE TITLE -->
 <div class="page-title">
     <h2><span class="fa fa-address-card"></span> Interview Forms</h2>
-    @*<a href="#" class="panel-refresh" title="Refresh"><span class="fa fa-refresh" onclick="javascript:InterviewRefresh();"></span></a>*@
-    @*<i type="submit" class="fa fa-file-excel-o  @ViewBag.ActionClass.Export" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ExporttoExcel", "ActionLog")'"></i>*@
 </div>
 <!-- END PAGE TITLE -->
 <div class="panel panel-default">
@@ -104,17 +102,7 @@
 
                                 <i class="fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>
 
-                                @*<span class="fa fa-trash" style="color:#d9534f"></span>*@
-                                @*<a class="btn border-white btn-sm btn-danger" id="deleteIRF" onclick="DeleteIRF(@item.id)">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                                <a class="btn btn-primary border-white btn-sm" id="btnComments" onclick="AddComments('@item.id')">
-                                    <span class="glyphicon glyphicon-comment"></span>
-                                </a>
-                                <a class="btn btn-primary border-white btn-sm" id="btnMeetings" onclick="GetInterviewMeetings('@item.id')">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </a>*@
-                                @*<span class="fa fa-download"></span>*@
+                           
                             </div>
                         </div>
                     </div>
@@ -123,14 +111,239 @@
         }
 
     </div>
+</div>*@
+
+
+
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Interview Forms
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                <form>
+                    <div class="input-group no-border">
+                        <input type="text" value="" class="form-control" placeholder="Search...">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <i class="now-ui-icons ui-1_zoom-bold"></i>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pablo">
+                            <i class="now-ui-icons media-2_sound-wave"></i>
+                            <p>
+                                <span class="d-lg-none d-md-block">Stats</span>
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="now-ui-icons location_world"></i>
+                            <p>
+                                <span class="d-lg-none d-md-block">Some Actions</span>
+                            </p>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pablo">
+                            <i class="now-ui-icons users_single-02"></i>
+                            <p>
+                                <span class="d-lg-none d-md-block">Account</span>
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interview Forms</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            <div class="text-right">
+                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add Form</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="statistics statistics-horizontal">
+                                <div class="info info-horizontal">
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFId</h3>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row" style="font-size:smaller;">
+                                        <div class="col-12">
+                                            <div class="group inner list-group-item-text">
+                                                <span>Client Name:</span> <p>@item.ClientName</p>
+                                                <span>Location:</span> <p>@item.JobCountry</p>
+                                                <span>No of Openings:</span> <p>@item.NoOfPosition</p>
+                                                <span>No of Interviews:</span> <p>@item.NoOfIntterview</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <div class="stats text-center">
+                                <button type="button" onclick="javascript:EditIRF('@item.id');" rel="tooltip" class="btn btn-primary btn-icon btn-sm " data-original-title="" title="Edit">
+                                    <i class="now-ui-icons fa fa-edit"></i>
+                                </button>
+                                <button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
+                                    <i class="now-ui-icons fa fa-comments"></i>
+                                </button>
+                                <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
+                                    <i class="now-ui-icons fa fa-meetup"></i>
+                                </button>
+                                <button type="button" onclick="javascript:DeleteIRF('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Delete">
+                                    <i class="now-ui-icons fa fa-trash"></i>
+                                </button>
+                                @*<i class="now-ui-icons arrows-1_refresh-69"></i> Update now
+                                    <i class="now-ui-icons fa fa-pencil" style="color:blue;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom" onclick="javascript:EditIRF('@item.id');"></i>
+
+                                    <i class="now-ui-icons  fa-comments" style="color:black;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Questions" data-original-title="Tooltip on bottom" onclick="javascript:AddComments('@item.id');"></i>
+
+                                    <i class="now-ui-icons fa fa-meetup" style="color:green;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Meetings" data-original-title="Tooltip on bottom" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"></i>
+
+                                    <i class="now-ui-icons fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>*@
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @*<div class="col-lg-3 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="statistics statistics-horizontal">
+                                <div class="info info-horizontal">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <div class="icon icon-warning icon-circle">
+                                                <i class="now-ui-icons business_bank"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-7 text-right">
+                                            <h3 class="info-title">
+                                                <span>$</span>23,685
+                                            </h3>
+                                            <h6 class="stats-title">Deposit</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="card-footer ">
+                            <div class="stats">
+                                <i class="now-ui-icons ui-1_calendar-60"></i> Last week
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
 </div>
+
+
+
+
+
+
+
+
+
+
 @if (ViewBag.Message != null)
 {
     <script>
 
         $(document).ready(function () {
             var message = '@ViewBag.Message';
-           
+
             if (message.includes("Success")) {
                 alert("Successful");
                 //swal("Successful!", "IRF added successfully.", "success");
@@ -146,29 +359,29 @@
 
 }
 
-    <script>
+<script>
 
-        function AddComments(id) {
-           
-            var url = '/IRF/AddComments?id=' + id ;
-            window.location.href = url;
-        };  
-        function DeleteIRF(id) {
-            var url = '/IRF/DeleteIRF?id=' + id;
-            window.location.href = url;
-        };  
+    function AddComments(id) {
 
-        function GetInterviewMeetings(id, IRFid) {
-           
-            var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-            window.location.href = url;
-        }; 
+        var url = '/IRF/AddComments?id=' + id;
+        window.location.href = url;
+    };
+    function DeleteIRF(id) {
+        var url = '/IRF/DeleteIRF?id=' + id;
+        window.location.href = url;
+    };
 
-        function EditIRF(id) {
-           
-            var url = '/IRF/EditIRF?id=' + id;
-            window.location.href = url;
-        };  
+    function GetInterviewMeetings(id, IRFid) {
+
+        var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+
+    function EditIRF(id) {
+
+        var url = '/IRF/EditIRF?id=' + id;
+        window.location.href = url;
+    };
 
 
-    </script>
+</script>
