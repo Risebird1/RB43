@@ -9,10 +9,10 @@ namespace Risebird.Business.Interface
     {
         List<Meeting> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
-        List<Meeting> GetAllOpenInterviews();
+        List<Meeting> GetAllOpenInterviews(string emailID);
         string AssignYourself(int meetingid, string interviewerMail);
         bool UnassignYourself(int meetingid);
-        List<Meeting> GetAllAssignedInterviews();
+        List<Meeting> GetAllAssignedInterviews(string emailID);
         bool UpdateComments(InterviewComments comments);
         InterviewComments GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);

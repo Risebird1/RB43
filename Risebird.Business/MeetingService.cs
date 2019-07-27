@@ -48,11 +48,11 @@ namespace Risebird.Business
             }
         }
 
-        public List<Meeting> GetAllOpenInterviews()
+        public List<Meeting> GetAllOpenInterviews(string emailId)
         {
             try
             {
-               var openMeeting= _meetingRespository.GetAllOpenInterviews().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+               var openMeeting= _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
                return openMeeting;
             }
             catch (Exception ex)
@@ -62,11 +62,11 @@ namespace Risebird.Business
             }
         }
 
-        public List<Meeting> GetAllAssignedInterviews()
+        public List<Meeting> GetAllAssignedInterviews(string emailID)
         {
             try
             {
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterview().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)
