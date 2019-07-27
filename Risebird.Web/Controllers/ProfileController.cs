@@ -41,7 +41,7 @@ namespace Risebird.Web.Controllers
                 var model = new Profile();
                 return View("ProfileAdd", model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
@@ -105,8 +105,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                
-if (ModelState.IsValid)
+
+                if (ModelState.IsValid)
                 {
                     if (_profileService.UpdateProfile(profile))
                     {

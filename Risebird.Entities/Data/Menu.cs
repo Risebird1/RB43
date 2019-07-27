@@ -9,6 +9,8 @@
         public string sIcon { get; set; }
         public string sUrl { get; set; }
         public int idParentFunction { get; set; }
-        
+        public string profileName { get; set; }
+        public bool dAccess { get; set; }
+
     }
 }
