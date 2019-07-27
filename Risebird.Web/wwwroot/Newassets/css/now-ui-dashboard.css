@@ -14957,4 +14957,10 @@ be a descendant of the grid when it is being dragged.
   }
 }
 
+
+.navbar-brand.breadcrumscolor {
+    color: #e3e3e3a3 !important;
+}
+
+
 /*# sourceMappingURL=dashboard-pro.css.map */
