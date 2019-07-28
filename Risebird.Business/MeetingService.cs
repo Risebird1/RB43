@@ -75,6 +75,34 @@ namespace Risebird.Business
             }
         }
 
+        public List<Meeting> GetAllQCInterviews(string emailId)
+        {
+            try
+            {
+                var qcMeeting = _meetingRespository.GetAllQCInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                return qcMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public List<ClientInterviewVM> GetAllClientInterviews(string emailId)
+        {
+            try
+            {
+                var clientMeeting = _meetingRespository.GetAllClientInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                return clientMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public List<Meeting> GetAllAssignedInterviews(string emailID)
         {
             try

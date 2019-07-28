@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
+using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
@@ -155,8 +156,25 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var emailid = HttpContext.Session.GetString("email")?.Trim(); 
-                return View(_meetingService.GetAllOpenInterviews(emailid));
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                return View(_meetingService.GetAllQCInterviews(emailid));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IActionResult> ClientInterview()
+        {
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+
+               return View(_meetingService.GetAllClientInterviews(emailid));
             }
             catch (Exception ex)
             {
@@ -402,22 +420,4 @@ namespace Risebird.Web.Controllers
         }
     }
 
-    public static class EnumExtensionMethods
-    {
-        public static string GetDescription(this Enum GenericEnum)
-        {
-            Type genericEnumType = GenericEnum.GetType();
-            MemberInfo[] memberInfo = genericEnumType.GetMember(GenericEnum.ToString());
-            if ((memberInfo != null && memberInfo.Length > 0))
-            {
-                var _Attribs = memberInfo[0].GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-                if ((_Attribs != null && _Attribs.Count() > 0))
-                {
-                    return ((System.ComponentModel.DescriptionAttribute)_Attribs.ElementAt(0)).Description;
-                }
-            }
-            return GenericEnum.ToString();
-        }
-
-    }
 }
