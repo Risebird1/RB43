@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Risebird.Entities.ViewModel;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Risebird.Web.Controllers
 {
@@ -27,8 +28,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
-                return View(_skillService.GetSkills());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"];
+                    return View(_skillService.GetSkills());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -41,8 +49,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new Skill();
-                return View("SkillAdd", model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new Skill();
+                    return View("SkillAdd", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -57,22 +72,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_skillService.AddSkill(skill))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Skill is added Successfully";
-                        return RedirectToAction("List");
+                        if (_skillService.AddSkill(skill))
+                        {
+                            TempData["SuccessErrorMessage"] = "Skill is added Successfully";
+                            return RedirectToAction("List");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                            return RedirectToAction("List");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
-                        return RedirectToAction("List");
+                        return View("SkillAdd");
                     }
                 }
                 else
                 {
-                    return View("SkillAdd");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
             catch (Exception ex)
@@ -89,13 +111,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                Skill skillToUpdate = _skillService.GetSkill(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Skill skillToUpdate = _skillService.GetSkill(id);
 
-                if (skillToUpdate != null)
-                    return View("SkillUpdate", skillToUpdate);
+                    if (skillToUpdate != null)
+                        return View("SkillUpdate", skillToUpdate);
+                    else
+                        return RedirectToAction("List");
+                }
                 else
-                    return RedirectToAction("List");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -109,17 +137,24 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_skillService.UpdateSkill(skillUpdated))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Skill is updated Successfully";
-                        return RedirectToAction("List");
+                        if (_skillService.UpdateSkill(skillUpdated))
+                        {
+                            TempData["SuccessErrorMessage"] = "Skill is updated Successfully";
+                            return RedirectToAction("List");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating Skill is Failed";
+                            return RedirectToAction("List");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Skill is Failed";
-                        return RedirectToAction("List");
+                        return RedirectToAction("SignOut", "Account");
                     }
                 }
                 else
@@ -140,15 +175,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_skillService.DeleteSkill(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
-                    return Json(new { url = Url.Action("List", "Skill") });
+                    if (_skillService.DeleteSkill(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
+                        return Json(new { url = Url.Action("List", "Skill") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                        return Json(new { url = Url.Action("List", "Skill") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
-                    return Json(new { url = Url.Action("List", "Skill") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
@@ -168,8 +210,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
-                return View(_skillService.GetSkillLevels());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"];
+                    return View(_skillService.GetSkillLevels());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -184,8 +233,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new SkillLevel();
-                return View("SkillLevelAdd", model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new SkillLevel();
+                    return View("SkillLevelAdd", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -200,17 +256,24 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_skillService.AddSkillLevel(skillLevel))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
-                        return RedirectToAction("SkillLevel");
+                        if (_skillService.AddSkillLevel(skillLevel))
+                        {
+                            TempData["SuccessErrorMessage"] = "Skill Level is added Successfully";
+                            return RedirectToAction("SkillLevel");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
+                            return RedirectToAction("SkillLevel");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding Skill Level is Failed";
-                        return RedirectToAction("SkillLevel");
+                        return RedirectToAction("SignOut", "Account");
                     }
                 }
                 else
@@ -232,13 +295,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                SkillLevel skillLevelToUpdate = _skillService.GetSkillLevel(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    SkillLevel skillLevelToUpdate = _skillService.GetSkillLevel(id);
 
-                if (skillLevelToUpdate != null)
-                    return View("SkillLevelUpdate", skillLevelToUpdate);
+                    if (skillLevelToUpdate != null)
+                        return View("SkillLevelUpdate", skillLevelToUpdate);
+                    else
+                        return RedirectToAction("SkillLevel");
+                }
                 else
-                    return RedirectToAction("SkillLevel");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -252,22 +321,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_skillService.UpdateSkillLevel(skillLevelUpdated))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
-                        return RedirectToAction("SkillLevel");
+                        if (_skillService.UpdateSkillLevel(skillLevelUpdated))
+                        {
+                            TempData["SuccessErrorMessage"] = "Skill Level is updated Successfully";
+                            return RedirectToAction("SkillLevel");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
+                            return RedirectToAction("SkillLevel");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Skill Level is Failed";
-                        return RedirectToAction("SkillLevel");
+                        return View("SkillLevelUpdate");
                     }
                 }
                 else
                 {
-                    return View("SkillLevelUpdate");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
@@ -283,19 +359,26 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if(_skillService.DeleteSkillLevel(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
-                    return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                    if (_skillService.DeleteSkillLevel(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill Level is deleted Successfully";
+                        return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";
+                        return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";
-                    return Json(new { url = Url.Action("SkillLevel", "Skill") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 TempData["SuccessErrorMessage"] = "Deletion of SKill Level Failed";

@@ -6,6 +6,7 @@ using Risebird.Entities.Enum;
 using System;
 using System.Threading.Tasks;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Risebird.Web.Controllers
 {
@@ -23,8 +24,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
-                return View(_profileService.GetProfile());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"];
+                    return View(_profileService.GetProfile());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -38,8 +46,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new Profile();
-                return View("ProfileAdd", model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new Profile();
+                    return View("ProfileAdd", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -53,22 +68,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_profileService.AddProfile(profile))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Profile is added Successfully";
-                        return RedirectToAction("Index");
+                        if (_profileService.AddProfile(profile))
+                        {
+                            TempData["SuccessErrorMessage"] = "Profile is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding profile is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding profile is Failed";
-                        return RedirectToAction("Index");
+                        return View("ProfileAdd");
                     }
                 }
                 else
                 {
-                    return View("ProfileAdd");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
             catch (Exception ex)
@@ -85,13 +107,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                Profile profileToUpdate = _profileService.GetProfile(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Profile profileToUpdate = _profileService.GetProfile(id);
 
-                if (profileToUpdate != null)
-                    return View("ProfileUpdate", profileToUpdate);
+                    if (profileToUpdate != null)
+                        return View("ProfileUpdate", profileToUpdate);
+                    else
+                        return RedirectToAction("Index");
+                }
                 else
-                    return RedirectToAction("Index");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -105,23 +133,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_profileService.UpdateProfile(profile))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Profile is updated Successfully";
-                        return RedirectToAction("Index");
+                        if (_profileService.UpdateProfile(profile))
+                        {
+                            TempData["SuccessErrorMessage"] = "Profile is updated Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating Profile is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Profile is Failed";
-                        return RedirectToAction("Index");
+                        return View("ProfileUpdate");
                     }
                 }
                 else
                 {
-                    return View("ProfileUpdate");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
             catch (Exception ex)
@@ -137,15 +171,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_profileService.DeleteProfile(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Profile is deleted Successfully";
-                    return Json(new { url = Url.Action("Index", "Profile") });
+                    if (_profileService.DeleteProfile(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Profile is deleted Successfully";
+                        return Json(new { url = Url.Action("Index", "Profile") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of Profile Failed";
+                        return Json(new { url = Url.Action("Index", "Profile") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of Profile Failed";
-                    return Json(new { url = Url.Action("Index", "Profile") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
