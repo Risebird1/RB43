@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Risebird.Entities.Data
 {
@@ -11,6 +13,8 @@ namespace Risebird.Entities.Data
         public int Id { get; set; }
         public int InterviewId { get; set; }
         public int? InterviewStatus { get; set; }
+        public string AudioLink { get; set; }
+        public string VideoLink { get; set; }
         [Display(Name ="Interviewer Comment")]
         public string InterviewerComment { get; set; }
 
@@ -37,6 +41,12 @@ namespace Risebird.Entities.Data
 
         [Display(Name = "Quality Control Status")]
         public SelectList QCStatusList { get; set; }
+
+        [Display(Name = "Upload Audio")]
+        public IFormFile AudioFile { get; set; }
+
+        [Display(Name = "Upload Video")]
+        public IFormFile VideoFile { get; set; }
 
 
 

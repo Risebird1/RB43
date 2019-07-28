@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -22,7 +23,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View();
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -37,9 +45,16 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var result = _notificationHelper.SendHelpsupportMail(mail);
-                ViewBag.Message = result;
-                return View();
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var result = _notificationHelper.SendHelpsupportMail(mail);
+                    ViewBag.Message = result;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {

@@ -7,6 +7,8 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Threading.Tasks;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
+
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -23,7 +25,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View(_joinabilityService.GetJoinabilityMatrix());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    return View(_joinabilityService.GetJoinabilityMatrix());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -37,8 +46,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                _joinabilityService.AddJoinabilityMatrix(model);
-                return RedirectToAction("Index");
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    _joinabilityService.AddJoinabilityMatrix(model);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -51,8 +67,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new JoinabilityMatrix();
-                return View(model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new JoinabilityMatrix();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -65,13 +88,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                JoinabilityMatrix skillToUpdate = _joinabilityService.GetJoinabilityMatrixById(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    JoinabilityMatrix skillToUpdate = _joinabilityService.GetJoinabilityMatrixById(id);
 
-                if (skillToUpdate != null)
-                    return View("EditJoinability", skillToUpdate);
+                    if (skillToUpdate != null)
+                        return View("EditJoinability", skillToUpdate);
+                    else
+                        return RedirectToAction("Index");
+                }
                 else
-                    return RedirectToAction("Index");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -85,22 +114,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_joinabilityService.UpdateJoinabilityMatrix(skillUpdated))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Joinability is updated Successfully";
-                        return RedirectToAction("Index");
+                        if (_joinabilityService.UpdateJoinabilityMatrix(skillUpdated))
+                        {
+                            TempData["SuccessErrorMessage"] = "Joinability is updated Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating Joinability is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Joinability is Failed";
-                        return RedirectToAction("Index");
+                        return View("EditJoinability");
                     }
                 }
                 else
                 {
-                    return View("EditJoinability");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
@@ -115,15 +151,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_joinabilityService.DeleteJoinabilityMatrix(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Joinability is deleted Successfully";
-                    return Json(new { url = Url.Action("Index", "Joinability") });
+                    if (_joinabilityService.DeleteJoinabilityMatrix(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Joinability is deleted Successfully";
+                        return Json(new { url = Url.Action("Index", "Joinability") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of Joinability Failed";
+                        return Json(new { url = Url.Action("Index", "Joinability") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of Joinability Failed";
-                    return Json(new { url = Url.Action("Index", "Joinability") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 

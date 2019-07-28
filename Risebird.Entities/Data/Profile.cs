@@ -19,5 +19,7 @@ namespace Risebird.Entities.Data
 
         [Display(Name ="Active User?")]
         public bool IsActive { get; set; }
+
+        public bool isDelete { get; set; }
     }
 }

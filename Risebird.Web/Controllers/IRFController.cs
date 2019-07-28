@@ -27,26 +27,40 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Index()
         {
-            var irfList = _irfRepository.GetAllIRF();
-            if (TempData["SuccessErrorMessage"] != null)
+            if (HttpContext.Session.GetString("email") != null)
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                var irfList = _irfRepository.GetAllIRF();
+                if (TempData["SuccessErrorMessage"] != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                }
+                return View(irfList);
             }
-            return View(irfList);
+            else
+            {
+                return RedirectToAction("SignOut", "Account");
+            }
         }
         [HttpGet]
         public IActionResult Add()
         {
-            ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-            ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-            ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-            ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
-            ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-            ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
-            ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
-            ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+                ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
-            return View();
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Account");
+            }
         }
 
         [HttpPost]
@@ -54,17 +68,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_irfService.AddIRFDetails(irfDetails).Result)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "IRF is added Successfully";
-                    return RedirectToAction("Index");
+                    if (_irfService.AddIRFDetails(irfDetails).Result)
+                    {
+                        TempData["SuccessErrorMessage"] = "IRF is added Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("SignOut", "Account");
                 }
-
             }
             catch (Exception ex)
             {
@@ -87,13 +107,20 @@ namespace Risebird.Web.Controllers
 
         public IActionResult AddComments(string id)
         {
-            TechSkillComments model = new TechSkillComments();
-            var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
-            //if (result.Count() > 0)
-            model.SkillCollection = result;
-            ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
-            model.IRFId = Convert.ToInt16(id);
-            return View(model);
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                TechSkillComments model = new TechSkillComments();
+                var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
+                //if (result.Count() > 0)
+                model.SkillCollection = result;
+                ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
+                model.IRFId = Convert.ToInt16(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Account");
+            }
         }
 
         [HttpPost]
@@ -101,18 +128,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-
-                if (_irfService.AddSkillComments(model))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Comments saved Successfully";
-                    return RedirectToAction("Index");
+                    if (_irfService.AddSkillComments(model))
+                    {
+                        TempData["SuccessErrorMessage"] = "Comments saved Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Comments were not saved.";
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Comments were not saved.";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("SignOut", "Account");
                 }
-                
 
             }
             catch (Exception ex)
@@ -127,17 +159,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
-                    return RedirectToAction("Index");
+                    if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
+                    {
+                        TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "IRF delete Failed";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("SignOut", "Account");
                 }
-
             }
             catch (Exception ex)
             {
@@ -152,16 +190,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
-                ViewBag.IRF = irfId;
-                return View(meetings);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                    ViewBag.IRF = irfId;
+                    return View(meetings);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
-            
+
         }
 
         [HttpGet]
@@ -169,17 +214,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-                ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
-                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
-                ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
-                ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
-                var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
-                return View(model);
-
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                    ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                    ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
+                    ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
+                    ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+                    var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -194,18 +245,24 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_irfService.UpdateIRF(model))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "IRF saved Successfully";
-                    return RedirectToAction("Index");
+                    if (_irfService.UpdateIRF(model))
+                    {
+                        TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                        return RedirectToAction("Index");
+                    }
+
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("SignOut", "Account");
                 }
-
-
             }
             catch (Exception ex)
             {

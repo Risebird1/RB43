@@ -1,118 +1,274 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Client>
-    @{
+@{
     ViewData["Title"] = "Client";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+}
 
-    <!-- START BREADCRUMB -->
-    <ul class="breadcrumb">
-        <li class="active"><strong>Clients</strong></li>
-    </ul>
-    <!-- END BREADCRUMB -->
-    <!-- PAGE TITLE -->
-    <div class="page-title">
-        <h2><span class="fa fa-users"></span> Clients</h2>
+@*<!-- START BREADCRUMB -->
+        <ul class="breadcrumb">
+            <li class="active"><strong>Clients</strong></li>
+        </ul>
+        <!-- END BREADCRUMB -->
+        <!-- PAGE TITLE -->
+        <div class="page-title">
+            <h2><span class="fa fa-users"></span> Clients</h2>
+        </div>
+        <!-- END PAGE TITLE -->
+        <!-- PAGE CONTENT WRAPPER -->
+        <div class="page-content-wrap">
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- START DEFAULT DATATABLE -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <ul class="panel-controls">
+                                <li>
+                                    <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Client</span></button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table datatable" id="idSkill">
+                                <thead>
+                                    <tr>
+                                        <th hidden></th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                {
+
+                                    <tr>
+                                        <td hidden>@item.id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td>
+                                            <i type="submit" onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
+                                            <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- END DEFAULT DATATABLE -->
+                </div>
+            </div>
+        </div>
+        <!-- PAGE CONTENT WRAPPER -->
+        <loading></loading>
+        @if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
+    {
+        <script type="text/javascript">
+            window.onload = function ()
+            {
+                                    sweetAlert({
+                                        title: "Risebird Users",
+                                        text:'@ViewBag.Message',
+                                        type: "success"
+                                    });
+             };
+        </script>
+    }
+        @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+    {
+        <script type="text/javascript">
+                window.onload = function ()
+                {
+                        sweetAlert({
+                            title: "Risebird Users",
+                        text: '@ViewBag.Message',
+                       type: "error"
+                       });
+               };
+        </script>
+    }
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#idenvironment').DataTable({
+                    'aoColumnDefs': [{
+                        'bSortable': false,
+                        'aTargets': [-1] /*sort false 1st one, start by the right */
+                    }],
+                    "order": []   /* Disable initial sort */
+                });
+            });
+
+            function DeleteEntityfromEnvironment(clientId) {
+
+                var confirmMessageBox = confirm('Are you sure you want to delete "Client name" ? ');
+                if (confirmMessageBox) {
+                    if (clientId != '') {
+                        $.ajax({
+                            url: '/Client/DeleteClient',
+                            data: { 'id': clientId },
+                            type: 'get',
+                            success: function (data) {
+                                window.location = data.url;
+                            }
+                        });
+                    }
+                }
+            }
+
+        </script>*@
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Clients</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+          
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
     </div>
-    <!-- END PAGE TITLE -->
-    <!-- PAGE CONTENT WRAPPER -->
-    <div class="page-content-wrap">
+    <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <!-- START DEFAULT DATATABLE -->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <ul class="panel-controls">
-                            <li>
-                                <button class="btn btn-default" onclick="window.location.href = '@Url.Action("AddClient","Client")'"><span class="fa fa-plus-circle"> Add Client</span></button>
-                            </li>
-                        </ul>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Clients</h4>
                     </div>
-                    <div class="panel-body">
-                        <table class="table datatable" id="idSkill">
+                    <div class="card-body">
+                        <div class="toolbar">
+                            <div class="text-right">
+                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add client" onclick="location.href='@Url.Action("AddClient","Client")'" data-original-title="Tooltip on top"> Add Client</span></button>
+                            </div>
+                        </div>
+                        <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th hidden></th>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Actions</th>
+                                    <th class="disabled-sorting text-right">Actions</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th hidden></th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th class="disabled-sorting text-right">Actions</th>
+                                </tr>
+                            </tfoot>
                             <tbody>
                                 @foreach (var item in Model)
-                            {
-
-                                <tr>
-                                    <td hidden>@item.id</td>
-                                    <td>@item.Name</td>
-                                    <td>@item.Description</td>
-                                    <td>
-                                        <i type="submit" onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom"></i>
-                                        <i class="fa fa-trash-o hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteEntityfromEnvironment('@item.id');"></i>
-                                    </td>
-                                </tr>
-                            }
+                                {
+                                    <tr id=@item.id>
+                                        <td hidden>@item.id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td class="text-right">
+                                            <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to delete client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
+                    <!-- end content-->
                 </div>
-                <!-- END DEFAULT DATATABLE -->
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
             </div>
         </div>
-    </div>
-    <!-- PAGE CONTENT WRAPPER -->
-    <loading></loading>
-    @if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
-{
-    <script type="text/javascript">
-        window.onload = function ()
-        {
-                                sweetAlert({
-                                    title: "Risebird Users",
-                                    text:'@ViewBag.Message',
-                                    type: "success"
-                                });
-         };
-    </script>
-}
-    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
-{
-    <script type="text/javascript">
-            window.onload = function ()
-            {
-                    sweetAlert({
-                        title: "Risebird Users",
-                    text: '@ViewBag.Message',
-                   type: "error"
-                   });
-           };
-    </script>
-}
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#idenvironment').DataTable({
-                'aoColumnDefs': [{
-                    'bSortable': false,
-                    'aTargets': [-1] /*sort false 1st one, start by the right */
-                }],
-                "order": []   /* Disable initial sort */
-            });
+    </footer>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+
+
+
+        $('#skillLevel').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
         });
 
-        function DeleteEntityfromEnvironment(clientId) {
 
-            var confirmMessageBox = confirm('Are you sure you want to delete "Client name" ? ');
-            if (confirmMessageBox) {
-                if (clientId != '') {
-                    $.ajax({
-                        url: '/Client/DeleteClient',
-                        data: { 'id': clientId },
-                        type: 'get',
-                        success: function (data) {
-                            window.location = data.url;
-                        }
-                    });
-                }
+        var table = $('#skillLevel').DataTable();
+
+
+    });
+    function DeleteEntityfromEnvironment(clientId) {
+
+        var confirmMessageBox = confirm('Are you sure you want to delete client ' + Name + ' ?');
+        if (confirmMessageBox) {
+            if (clientId != '') {
+                $.ajax({
+                    url: '/Client/DeleteClient',
+                    data: { 'id': clientId },
+                    type: 'get',
+                    success: function (data) {
+                        window.location = data.url;
+                    }
+                });
             }
         }
-
-    </script>
+    }
+</script>

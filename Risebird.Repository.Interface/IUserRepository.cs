@@ -12,7 +12,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientUserVM> GetClientUsers();
 
-
+        IEnumerable<QCInterviewerVM> GetQCInterviewers();
         Task<bool> AddUser(UserList user);
         Task<bool> DeleteUser(int id);
         Task<UserList> GetUser(int id);
@@ -24,6 +24,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateClientUser(ClientUserVM clientUser);
 
         Task<bool> AddInterviewer(InterviewerVM interviewer);
+        Task<bool> AddQCInterviewer(QCInterviewerVM interviewer);
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);

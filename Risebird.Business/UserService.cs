@@ -264,6 +264,34 @@ namespace Risebird.Business
 
         #endregion
 
+        #region QCInterviewer Service Functions
 
+        public List<QCInterviewerVM> GetQCInterviewers()
+        {
+            try
+            {
+                return _userRepository.GetQCInterviewers().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public bool AddQCInterviewer(QCInterviewerVM qcinterviewer)
+        {
+            try
+            {
+                return _userRepository.AddQCInterviewer(qcinterviewer).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        #endregion
     }
 }

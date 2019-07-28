@@ -4,49 +4,60 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<ul class="breadcrumb">
-    <li><a href="/Joinability/Index">General Skill</a></li>
-    <li class="active"><strong>Add</strong></li>
-</ul>
 
-@using (Html.BeginForm("AddJoinability", "Joinability", FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
 
-    @Html.AntiForgeryToken()
-    <div class="row">
-        <div class="col-md-12 edit-build nova-cont">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="panel-title">Add Joinability</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-horizontal">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <a class="navbar-brand breadcrumscolor" href="/Joinability/Index">Joinability</a>
+                <a class="navbar-brand">Add</a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    @using (Html.BeginForm("AddJoinability", "Joinability", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                    <div class="col-md-6 col-sm-6">
-                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-md-12 edit-build nova-cont">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Add Joinability</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-horizontal">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                        <div class="col-md-6 col-sm-6">
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                    <div class="col-md-6 col-sm-6">
-                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                        <div class="col-md-6 col-sm-6">
+                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="form-group col-sm-12">
-                                    <div class="pull-right">
-                                        <input type="submit" id="btnUpload" value="Add Joinability" class="btn btn btn-primary" />
-                                    </div>
-                                    <div>
-                                        @Html.ActionLink("Back to List", "Index", "Joinability", new { @class = "btn btn-link" })
+                                    <div class="form-group col-sm-12">
+                                        <div class="pull-right">
+                                            <input type="submit" id="btnUpload" value="Add Joinability" class="btn btn btn-primary" />
+                                        </div>
+                                        <div>
+                                            @Html.ActionLink("Back to List", "Index", "Joinability", new { @class = "btn btn-link" })
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -55,9 +66,37 @@
                 </div>
             </div>
         </div>
-    </div>
-}
-
+    }
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
 <style>
     .fa-spinner {
         font-size: 18px;
