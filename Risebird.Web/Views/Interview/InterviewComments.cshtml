@@ -245,7 +245,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                                         <div class="col-md-6 col-sm-6">
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Profile", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -256,6 +256,34 @@
                                             @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
+
+                                    @*<div class="form-group">*@
+                                    @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
+                                        @{
+                                            if (Model.AudioLink != null)
+                                            {
+                                                <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
+                                            }
+                                        }
+
+
+
+                                    </div>
+                                    @*</div>*@
+                                    @*<div class="form-group">*@
+                                    @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control" })
+                                        @{
+                                            if (Model.VideoLink != null)
+                                            {
+                                                <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                            }
+                                        }
+                                    </div>
+                                    @*</div>*@
                                 </div>
 
                                 <div class="multiple_row">
@@ -267,7 +295,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.FraudCheckStatusList, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                                         <div class="col-md-6 col-sm-6">
-                                            @Html.DropDownListFor(x => Model.FraudCheckStatus, Model.FraudCheckStatusList, "Select Profile", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.FraudCheckStatus, Model.FraudCheckStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.FraudCheckStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -290,7 +318,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.QCStatusList, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                                         <div class="col-md-6 col-sm-6">
-                                            @Html.DropDownListFor(x => Model.QCStatus, Model.QCStatusList, "Select Profile", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.QCStatus, Model.QCStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.QCStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -313,7 +341,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.TrainingStatusList, htmlAttributes: new { @class = "col-md-2 col-form-label" })
                                         <div class="col-md-6 col-sm-6">
-                                            @Html.DropDownListFor(x => Model.TrainingStatus, Model.TrainingStatusList, "Select Profile", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.DropDownListFor(x => Model.TrainingStatus, Model.TrainingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
                                             @Html.ValidationMessageFor(model => model.TrainingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -374,3 +402,29 @@
         </div>
     </footer>
 </div>
+@if (ViewBag.Message != null && ViewBag.Message.Contains("Successfully"))
+{
+    <script type="text/javascript">
+            window.onload = function ()
+            {
+                                    sweetAlert({
+                                        title: "Risebird Interview Report",
+                                        text:'@ViewBag.Message',
+                                        type: "success"
+                                    });
+             };
+    </script>
+}
+@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+{
+    <script type="text/javascript">
+                window.onload = function ()
+                {
+                        sweetAlert({
+                            title: "Risebird Interview Report",
+                        text: '@ViewBag.Message',
+                       type: "error"
+                       });
+               };
+    </script>
+}
