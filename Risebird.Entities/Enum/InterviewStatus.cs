@@ -29,9 +29,9 @@ namespace Risebird.Entities.Enum
     public enum ClientInterviewStatus
     {
 
-        [Description("Offer")]
-        Offer = 1,
-        [Description("No Offer")]
-        NoOffer = 2
+        [Description("Offered")]
+        Offered = 1,
+        [Description("Not Offered")]
+        NotOffered = 2
     }
 }
