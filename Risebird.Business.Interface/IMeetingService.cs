@@ -10,6 +10,9 @@ namespace Risebird.Business.Interface
         List<Meeting> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
         List<Meeting> GetAllOpenInterviews(string emailID);
+        List<Meeting> GetAllQCInterviews(string emailID);
+        List<ClientInterviewVM> GetAllClientInterviews(string emailID);
+        
         string AssignYourself(int meetingid, string interviewerMail);
         bool UnassignYourself(int meetingid);
         List<Meeting> GetAllAssignedInterviews(string emailID);

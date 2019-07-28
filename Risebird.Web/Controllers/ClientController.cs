@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using Risebird.Entities.ViewModel;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace Risebird.Web.Controllers
 {
@@ -25,8 +26,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessage"];
-                return View(_clientService.GetClients());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessage"];
+                    return View(_clientService.GetClients());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -65,22 +73,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_clientService.AddClient(client))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Client is added Successfully";
-                        return RedirectToAction("List");
+                        if (_clientService.AddClient(client))
+                        {
+                            TempData["SuccessErrorMessage"] = "Client is added Successfully";
+                            return RedirectToAction("List");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Client is Failed";
+                            return RedirectToAction("List");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding Client is Failed";
-                        return RedirectToAction("List");
+                        return View("ClientAdd");
                     }
                 }
                 else
                 {
-                    return View("ClientAdd");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
             catch (Exception ex)
@@ -96,13 +111,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                Client clientToUpdate = _clientService.GetClient(id);
-                
-                if (clientToUpdate != null)
-                    return View("ClientUpdate", clientToUpdate);
-                else
-                    return RedirectToAction("List");
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    Client clientToUpdate = _clientService.GetClient(id);
 
+                    if (clientToUpdate != null)
+                        return View("ClientUpdate", clientToUpdate);
+                    else
+                        return RedirectToAction("List");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -116,22 +137,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_clientService.UpdateClient(client))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Client is updated Successfully";
-                        return RedirectToAction("List");
+                        if (_clientService.UpdateClient(client))
+                        {
+                            TempData["SuccessErrorMessage"] = "Client is updated Successfully";
+                            return RedirectToAction("List");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Client is Failed";
+                            return RedirectToAction("List");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding Client is Failed";
-                        return RedirectToAction("List");
+                        return View("ClientUpdate");
                     }
                 }
                 else
                 {
-                    return View("ClientUpdate");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
             catch (Exception ex)
@@ -145,18 +173,25 @@ namespace Risebird.Web.Controllers
         public async Task<IActionResult> DeleteClient(int id)
         {
             try
-            {               
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
                     if (_clientService.DeleteClient(id))
                     {
                         TempData["SuccessErrorMessage"] = "Client is deleted Successfully";
-                        return Json(new { url = Url.Action("List","Client")});
+                        return Json(new { url = Url.Action("List", "Client") });
                     }
                     else
                     {
                         TempData["SuccessErrorMessage"] = "Deleting Client is Failed";
-                        return Json(new { url = Url.Action("List","Client")});
-                    }             
-                
+                        return Json(new { url = Url.Action("List", "Client") });
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+
             }
             catch (Exception ex)
             {

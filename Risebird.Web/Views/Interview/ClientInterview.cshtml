@@ -1,0 +1,157 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientInterviewVM>
+@{
+    ViewData["Title"] = "Client Interviews";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interview</a>
+            </div>            
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interview</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Interview Date</th>
+                                    <th>Candidate Email</th>
+                                    <th>Client HR Contact</th>
+                                    <th>Resume</th>
+                                    <th>Preferred Location</th>
+                                    <th>Expected Rate Per Hour</th>
+                                    <th>Staffing Agency</th>
+                                    <th>Joining Time</th>
+                                    <th>L2 Interview Status</th>
+                                    <th>Client Interview Status</th>
+                                    <th class="disabled-sorting text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tfoot>
+                                <tr>
+                                    <th>Interview Date</th>
+                                    <th>Candidate Email</th>
+                                    <th>Client HR Contact</th>
+                                    <th>Resume</th>
+                                    <th>Preferred Location</th>
+                                    <th>Expected Rate Per Hour</th>
+                                    <th>Staffing Agency</th>
+                                    <th>Joining Time</th>
+                                    <th>L2 Interview Status</th>
+                                    <th>Client Interview Status</th>
+                                    <th class="disabled-sorting text-right">Actions</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                <tr id=@item.id>
+                                    <td> @item.interviewDate </td>
+                                    <td> @item.candidateEmail </td>
+                                    <td> @item.ClientHrContact </td>
+                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                    <td> @item.PreferredLocation</td>
+                                    <td> @item.ExpectedPerHourRate </td>
+                                    <td> @item.staffingAgenecy </td>
+                                    <td> @item.joiningTime </td>
+                                    <td> @item.L2InterviewStatus </td>
+                                    <td> @item.ClientInterviewStatus </td>
+                                    <td class="text-right">
+                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+
+
+
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+
+
+        var table = $('#meeting').DataTable();
+
+
+    });
+</script>
+
