@@ -495,6 +495,82 @@ namespace Risebird.Repository
 
         #endregion
 
+
+        #region QCInterviewer Repository Functions
+
+        public IEnumerable<QCInterviewerVM> GetQCInterviewers()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<QCInterviewerVM>(con, "[dbo].[sp_RisebirdQCInterviewer]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddQCInterviewer(QCInterviewerVM qcinterviewer)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForQCInterviewer(qcinterviewer);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddQCInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private DynamicParameters SetStoredProcedureParameterForQCInterviewer(QCInterviewerVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            if (entity.id > 0)
+                parameters.Add("@id", entity.id);
+
+            parameters.Add("@selectedSkills", entity.PrimarySkill);
+            parameters.Add("@resumeLink", entity.ResumeLink);
+            parameters.Add("@successRate", entity.SuccessRate);
+            parameters.Add("@slots", entity.Slots);
+            parameters.Add("@noOfInterview", entity.NoOfInterview);
+
+            parameters.Add("@userFirstName", entity.FirstName);
+            parameters.Add("@userLastName", entity.LastName);
+            parameters.Add("@userEmailId", entity.EmailId);
+            parameters.Add("@userMobileNumber", entity.MobileNumber);
+
+            return parameters;
+        }
+
+
+        #endregion
+
         /// <summary>
         /// get all the menu listed based on logged in user
         /// </summary>

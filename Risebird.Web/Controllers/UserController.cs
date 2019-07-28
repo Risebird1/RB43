@@ -704,5 +704,98 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+
+        #region QCInterviewer Functions
+        public IActionResult QCInterviewers()
+        {
+            try
+            {
+                ViewBag.Message = TempData["SuccessErrorMessageInterviewer"];
+                return View(_userService.GetQCInterviewers());
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddQCInterviewer()
+        {
+            try
+            {
+                var model = new QCInterviewerVM();
+                model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                return View("AddQCInterviewer", model);
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("QCInterviewers");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddQCInterviewer(QCInterviewerVM qcinterviewer)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (qcinterviewer.File == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
+                        qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                        return View("AddQCInterviewer", qcinterviewer);
+                    }
+
+                    byte[] fileData = new byte[qcinterviewer.File.Length];
+                    string uploadedFileURL = _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", fileData);
+                    List<Skill> skills = _skillService.GetSkills();
+
+                    if (uploadedFileURL == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                        return View("AddQCInterviewer", qcinterviewer);
+                    }
+
+                    else
+                    {
+                        qcinterviewer.ResumeLink = uploadedFileURL;
+                        List<String> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                        qcinterviewer.PrimarySkill = String.Join(",", selectedSkill);
+                        if (_userService.AddQCInterviewer(qcinterviewer))
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer is added Successfully";
+                            return RedirectToAction("QCInterviewers");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer addition is Failed";
+                            return RedirectToAction("QCInterviewers");
+                        }
+                    }
+                }
+                else
+                {
+                    qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                    return View("AddQCInterviewer", qcinterviewer);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer addition is Failed";
+                return RedirectToAction("QCInterviewers");
+            }
+        }
+
+        #endregion
     }
 }
