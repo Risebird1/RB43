@@ -475,6 +475,8 @@ namespace Risebird.Repository
             parameters.Add("@qcComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);
             parameters.Add("@trainerComment", entity.TrainerComment);
+            parameters.Add("@audiolink", entity.AudioLink);
+            parameters.Add("@videolink", entity.VideoLink);
             return parameters;
         }
     }

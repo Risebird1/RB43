@@ -79,14 +79,10 @@
                                     <th>Preferred Location</th>
                                     <th>Expected Rate Per Hour</th>
                                     <th>Staffing Agency</th>
-                                    <th>Joining Time</th>
-                                    <th>Interview Status</th>
-                                    <th>QC Status</th>
+                                    <th>Joining Time</th>                                    
                                     <th>L2 Interview Status</th>
-                                    <th>Client Interview Status</th>
-                                    <th>Fraud Sync Comment</th>
-                                    <th>Video Link</th>
-                                    <th>Report Link</th>
+                                    <th>Client Interview Status</th>                                    
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,14 +96,12 @@
                                     <td> @item.PreferredLocation</td>
                                     <td> @item.ExpectedPerHourRate </td>
                                     <td> @item.staffingAgenecy </td>
-                                    <td> @item.joiningTime </td>
+                                    <td> @item.joiningTime </td>                                    
                                     <td>  </td>
-                                    <td>  </td>
-                                    <td>  </td>
-                                    <td>  </td>
-                                    <td>  </td>
-                                    <td>  </td>
-                                    <td>  </td>
+                                    <td>  </td>                                    
+                                    <td class="text-center">
+                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span> 
+                                    </td>
                                     
                                     @*<td>*@
                                         @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@

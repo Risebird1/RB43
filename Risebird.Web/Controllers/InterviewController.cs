@@ -168,6 +168,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
         {
+            ViewBag.Message = TempData["SuccessErrorMessageInterviewComment"];
             try
             {
                 InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
@@ -206,44 +207,76 @@ namespace Risebird.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    
+                    //if (interviewComments.AudioFile == null && interviewComments.AudioLink == null)
+                    //{
+                    //    ModelState.AddModelError(String.Empty, "Please upload any audio file.");                      
+                    //    GetStatusList(interviewComments);
+                    //    return View("InterviewComments", interviewComments);  
+                    //}
+
+                    if(interviewComments.AudioFile != null)
+                    {
+                        byte[] audiofileData = new byte[interviewComments.AudioFile.Length];
+                        string uploadedaudioFileURL = _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", audiofileData);
+                        if (uploadedaudioFileURL == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                            GetStatusList(interviewComments);
+                            return View("InterviewComments", interviewComments);
+                        }
+                        else
+                        {
+                            interviewComments.AudioLink = uploadedaudioFileURL;
+                        }
+                    }
+                    //if (interviewComments.VideoFile == null && interviewComments.VideoLink == null)
+                    //{
+                    //    ModelState.AddModelError(String.Empty, "Please upload any video file.");
+                    //    GetStatusList(interviewComments);
+                    //    return View("InterviewComments", interviewComments);
+                    //}
+
+                    if (interviewComments.VideoFile != null)
+                    {
+                        byte[] videofileData = new byte[interviewComments.VideoFile.Length];
+                        string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", videofileData);
+
+                        if (uploadedvideoFileURL == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                            GetStatusList(interviewComments);
+                            //return View("InterviewComments", interviewComments);
+                        }
+                        else
+                        {
+                            interviewComments.VideoLink = uploadedvideoFileURL;
+                        }
+                    }
+
                     if (_meetingService.UpdateComments(interviewComments))
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Comments are updated Successfully";
-                        return RedirectToAction("Index");
+                        TempData["SuccessErrorMessageInterviewComment"] = "Report are updated Successfully";
+                        return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });                        
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterview"] = "Comment update is failed";
-                        return RedirectToAction("Index");
+                        TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
+                        return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                     }
                 }
                 else
                 {
                     InterviewComments comments = new InterviewComments();
-                    var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
-                                            select new { ID = (int)s, Name = s.GetDescription() };
-                    comments.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
-
-                    var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
-                                             select new { ID = (int)s, Name = s.GetDescription() };
-                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
-
-                    var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
-
-                    var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
-                                           select new { ID = (int)s, Name = s.GetDescription() };
-                    comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
-
+                    GetStatusList(comments);
                     return View("InterviewComments", comments);
                 }
             }
             catch(Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessageInterview"] = "Comment update is failed";
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
+                return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
             }
         }
 
@@ -349,7 +382,24 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        private void GetStatusList(InterviewComments model)
+        {
+            var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+            var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+            model.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
+            var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
+                             select new { ID = (int)s, Name = s.GetDescription() };
+            model.QCStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+            var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+        }
     }
 
     public static class EnumExtensionMethods
