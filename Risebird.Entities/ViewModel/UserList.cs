@@ -9,5 +9,6 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         public int idProfile { get; set; }
         public string FirstName { get; set; }
+        public string EmailId { get; set; }
     }
 }

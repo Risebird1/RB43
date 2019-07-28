@@ -7,6 +7,8 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Threading.Tasks;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
+
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -24,7 +26,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View(_selectabilityService.GetSelectabilityMatrix());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    return View(_selectabilityService.GetSelectabilityMatrix());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -39,8 +48,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                _selectabilityService.AddSelectabilityMatrix(model);
-                return RedirectToAction("Index");
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    _selectabilityService.AddSelectabilityMatrix(model);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -53,8 +69,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new SelectabilityMatrix();
-                return View(model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new SelectabilityMatrix();
+                    return View(model);
+                 }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -67,13 +90,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                SelectabilityMatrix skillToUpdate = _selectabilityService.GetSelectabilityMatrixById(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    SelectabilityMatrix skillToUpdate = _selectabilityService.GetSelectabilityMatrixById(id);
 
-                if (skillToUpdate != null)
-                    return View("EditSelectability", skillToUpdate);
+                    if (skillToUpdate != null)
+                        return View("EditSelectability", skillToUpdate);
+                    else
+                        return RedirectToAction("Index");
+                }
                 else
-                    return RedirectToAction("Index");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -87,22 +116,29 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_selectabilityService.UpdateSelectabilityMatrix(skillUpdated))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "Selectability is updated Successfully";
-                        return RedirectToAction("Index");
+                        if (_selectabilityService.UpdateSelectabilityMatrix(skillUpdated))
+                        {
+                            TempData["SuccessErrorMessage"] = "Selectability is updated Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating Selectability is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating Selectability is Failed";
-                        return RedirectToAction("Index");
+                        return View("EditSelectability");
                     }
                 }
                 else
                 {
-                    return View("EditSelectability");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 
@@ -117,15 +153,22 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_selectabilityService.DeleteSelectabilityMatrix(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Selectability is deleted Successfully";
-                    return Json(new { url = Url.Action("Index", "Selectability") });
+                    if (_selectabilityService.DeleteSelectabilityMatrix(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Selectability is deleted Successfully";
+                        return Json(new { url = Url.Action("Index", "Selectability") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of Selectability Failed";
+                        return Json(new { url = Url.Action("Index", "Selectability") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of Selectability Failed";
-                    return Json(new { url = Url.Action("Index", "Selectability") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
 

@@ -7,6 +7,8 @@ using Risebird.Entities.ViewModel;
 using System;
 using System.Threading.Tasks;
 using Risebird.Entities.Data;
+using Microsoft.AspNetCore.Http;
+
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -23,7 +25,14 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                return View(_generalskillService.GetGeneralSkillMatrix());
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    return View(_generalskillService.GetGeneralSkillMatrix());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -37,8 +46,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                _generalskillService.AddGeneralSkillMatrix(model);
-                return RedirectToAction("Index");
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    _generalskillService.AddGeneralSkillMatrix(model);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -51,8 +67,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                var model = new GeneralSkillMatrix();
-                return View(model);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var model = new GeneralSkillMatrix();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception ex)
             {
@@ -65,13 +88,19 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                GeneralSkillMatrix skillToUpdate = _generalskillService.GetGeneralSkillMatrixByiId(id);
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    GeneralSkillMatrix skillToUpdate = _generalskillService.GetGeneralSkillMatrixByiId(id);
 
-                if (skillToUpdate != null)
-                    return View("Edit", skillToUpdate);
+                    if (skillToUpdate != null)
+                        return View("Edit", skillToUpdate);
+                    else
+                        return RedirectToAction("Index");
+                }
                 else
-                    return RedirectToAction("Index");
-
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
             }
             catch (Exception e)
             {
@@ -85,25 +114,31 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    if (_generalskillService.UpdateGeneralSkillMatrix(skillUpdated))
+                    if (ModelState.IsValid)
                     {
-                        TempData["SuccessErrorMessage"] = "GeneralSkill is updated Successfully";
-                        return RedirectToAction("Index");
+                        if (_generalskillService.UpdateGeneralSkillMatrix(skillUpdated))
+                        {
+                            TempData["SuccessErrorMessage"] = "GeneralSkill is updated Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Updating GenralSkill is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Updating GenralSkill is Failed";
-                        return RedirectToAction("Index");
+                        return View("Edit");
                     }
                 }
                 else
                 {
-                    return View("Edit");
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
-
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -115,18 +150,24 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (_generalskillService.DeleteGeneralSkillMatrix(id))
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
-                    return Json(new { url = Url.Action("Index", "GeneralSkill") });
+                    if (_generalskillService.DeleteGeneralSkillMatrix(id))
+                    {
+                        TempData["SuccessErrorMessage"] = "Skill is deleted Successfully";
+                        return Json(new { url = Url.Action("Index", "GeneralSkill") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
+                        return Json(new { url = Url.Action("Index", "GeneralSkill") });
+                    }
                 }
                 else
                 {
-                    TempData["SuccessErrorMessage"] = "Deletion of SKill Failed";
-                    return Json(new { url = Url.Action("Index", "GeneralSkill") });
+                    return RedirectToAction("SignOut", "Account");
                 }
             }
-
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
