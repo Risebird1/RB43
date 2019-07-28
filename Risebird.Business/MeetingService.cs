@@ -15,11 +15,15 @@ namespace Risebird.Business
     {
         private IMeetingRespository _meetingRespository;
         private IApplicationErrorLogger _applicationErrorLogger;
-        
-        public MeetingService(IMeetingRespository meetingRespository, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IIRFService _irfService;
+        private readonly INotificationHelper _notificationHelper;
+
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper,IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
+            _irfService = irfFService;
+            _notificationHelper = notificationHelper;
         }
 
         public List<Meeting> GetMeetingList()
@@ -39,7 +43,16 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.AddMeeting(meeting).Result;                
+                if (_meetingRespository.AddMeeting(meeting).Result)
+                {
+                    var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
+                    if (interviwers != null)
+                    {
+                        _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        return true;
+                    }
+                }
+                return false;                
             }
             catch (Exception ex)
             {
