@@ -138,11 +138,11 @@
                 </div>
                 <a class="navbar-brand">Risebird Users</a>
             </div>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+            @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
+            </button>*@
             @*<div class="collapse navbar-collapse justify-content-end" id="navigation">
                 <form>
                     <div class="input-group no-border">
@@ -200,7 +200,9 @@
                     </div>
                     <div class="card-body">
                         <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            <div class="text-right">
+                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add risebird user" onclick="location.href='@Url.Action("Add","User")'" data-original-title="Tooltip on top"> Add Risebird User</span></button>
+                            </div>
                         </div>
                         <table id="risebirduser" class="table table-striped table-bordered" cellspacing="0" width="100%">
                             <thead>
@@ -236,8 +238,8 @@
                                     <td>@item.EmailId</td>
                                     <td>@item.MobileNumber</td>
                                     <td class="text-right">
-                                        <span onclick="location.href = '@Url.Action("Edit", "User", new { id = item.Id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.Id');" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-o"></i></span>
+                                        <span onclick="location.href = '@Url.Action("Edit", "User", new { id = item.Id})'" title="Click here to edit risebird user" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                        <span onclick="javascript:DeleteEntityfromEnvironment('@item.Id','@item.EmailId');" title="Click here to delet risebird user" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                     </td>
                                 </tr>
                                 }
@@ -311,4 +313,21 @@
 
 
     });
+
+    function DeleteEntityfromEnvironment(userId, EmailId) {
+
+        var confirmMessageBox = confirm('Are you sure you want to delete user ' + EmailId +' ?');
+        if (confirmMessageBox) {
+            if (userId != '') {
+                $.ajax({
+                    url: '/User/Delete',
+                    data: { 'id': userId },
+                    type: 'get',
+                    success: function (data) {
+                        window.location = data.url;
+                    }
+                });
+            }
+        }
+    }
 </script>
