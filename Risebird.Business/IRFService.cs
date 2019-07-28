@@ -67,7 +67,7 @@ namespace Risebird.Business
         {
             try
             {
-                return new SelectList(_irfRepository.GetQualityController(), "id", "FirstName");
+                return new SelectList(_irfRepository.GetQualityController(), "id", "EmailId");
             }
 
             catch (Exception e)

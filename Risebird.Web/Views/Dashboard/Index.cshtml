@@ -274,9 +274,9 @@
                             <p class="card-text">Total Invites : <span style="color: black">@ViewBag.Totinvites</span></p>
                             @*<h4 class="card-title">@ViewBag.Totinvites </h4>*@
                             <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div id="invitesPending" style="height: 200px; width: 40%;"></div>
+                                <div id="invitesPending" style="height: 200px; width: 50%;"></div>
                             </div>
-                            <div class="col-lg-6 col-md-6 col-sm-6" style="float:right">
+                            <div class="col-lg-6 col-md-6 col-sm-6" style="display:none">
                                 <div id="invitesAccepted" style="height: 200px; width: 40%;"></div>
                             </div>
                         </div>
@@ -297,7 +297,7 @@
                     </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row" style="display:none">
             <div class="col-md-12">
                 <h2>Skillwise Distribution of Interviews</h2>
                 <div class="card">
@@ -354,14 +354,14 @@
 <script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script>
 
-    window.onload = function () {
+   window.onload = function () {
         var pending='@ViewBag.Totinvites';
         var chart = new CanvasJS.Chart("invitesPending", {
             width: 350,//in pixels
             height: 200,//in pixels
             animationEnabled: true,
             title: {
-                text: "1,803",
+                text: "Invite Status",
                 fontColor: "#6db8bc",
                 horizontalAlign: "center",
                 fontWeight: "normal"
@@ -383,6 +383,7 @@
             }]
         });
         chart.render();
+
 
         var chart = new CanvasJS.Chart("invitesAccepted", {
             width: 300,//in pixels
