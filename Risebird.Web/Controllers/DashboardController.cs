@@ -38,8 +38,8 @@ namespace Risebird.Web.Controllers
                     var pendinginterview = _dashboardService.GetDoughnutGraphDetails("A");
                     double acceptinterview = 100 - Convert.ToDouble(pendinginterview);
                     List<DataPoint> dataPoints = new List<DataPoint>();
-                    dataPoints.Add(new DataPoint("Pending", Convert.ToDouble(pendinginterview), "#6db8bc"));
-                    dataPoints.Add(new DataPoint("", acceptinterview, "#ccc"));
+                    dataPoints.Add(new DataPoint("Confirmed", Convert.ToDouble(pendinginterview), "#6db8bc"));
+                    dataPoints.Add(new DataPoint("Cancelled", acceptinterview, "#ccc"));
                     ViewBag.DataPoints = JsonConvert.SerializeObject(dataPoints);
 
                     List<DataPoint> dataPoints1 = new List<DataPoint>();
@@ -50,8 +50,8 @@ namespace Risebird.Web.Controllers
                     var complete = _dashboardService.GetDoughnutGraphDetails("C");
                     double schedule = 100 - Convert.ToDouble(complete);
                     List<DataPoint> dataPoints2 = new List<DataPoint>();
-                    dataPoints2.Add(new DataPoint("Scheduled", schedule, "#5184c1"));
-                    dataPoints2.Add(new DataPoint("Completed", Convert.ToDouble(complete), ""));
+                    dataPoints2.Add(new DataPoint("Approved", Convert.ToDouble(complete), "#5184c1"));
+                    dataPoints2.Add(new DataPoint("Not Approved", Convert.ToDouble(schedule), ""));
                     ViewBag.DataPoints2 = JsonConvert.SerializeObject(dataPoints2);
                     return View();
                 }
