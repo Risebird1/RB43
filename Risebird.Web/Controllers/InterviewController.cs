@@ -173,8 +173,20 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
+                var clientInterviews = _meetingService.GetAllClientInterviews(emailid);
+                foreach (var m in clientInterviews)
+                {
+                    if(m.L2InterviewStatus.HasValue)
+                    {
+                        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                    }
+                    if (m.L2InterviewStatus.HasValue)
+                    {
+                        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                    }
 
-               return View(_meetingService.GetAllClientInterviews(emailid));
+                }
+                return View(clientInterviews);
             }
             catch (Exception ex)
             {
