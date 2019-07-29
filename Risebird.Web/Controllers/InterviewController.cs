@@ -230,6 +230,11 @@ namespace Risebird.Web.Controllers
             try
             {
                 InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
+                string prof = HttpContext.Session.GetString("profileName");
+                if (prof != null && prof.Contains("Client"))
+                {
+                    ViewBag.Client = "Client";
+                }
                 if (comments == null)
                     comments = new InterviewComments();
                 GetStatusList(comments);
