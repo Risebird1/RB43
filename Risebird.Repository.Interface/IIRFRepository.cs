@@ -28,7 +28,7 @@ namespace Risebird.Repository.Interface
         bool AddSkillComments(TechSkillComments obj);
         Task<IEnumerable<string>> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> DeleteIRF(int IRFId);
-        IEnumerable<Meeting> GetIRFInterviewMeetings(int id);
+        IEnumerable<MeetingVM> GetIRFInterviewMeetings(int id);
         string GetQCSkills(int userId);
         Task<bool> UpdateIRFDetails(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id);

@@ -273,7 +273,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("SignOut", "Account");
+                        return View("SkillLevelAdd");
                     }
                 }
                 else

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
     ViewData["Title"] = "Interview Meetings";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -88,19 +88,19 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                <tr id=@item.id>
+                                <tr id=@item.IRFId>
                                     <td> @item.interviewDate </td>
                                     <td> @item.candidateEmail </td>
                                     <td> @item.ClientHrContact </td>
                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                    <td> @item.PreferredLocation</td>
-                                    <td> @item.ExpectedPerHourRate </td>
-                                    <td> @item.staffingAgenecy </td>
+                                    <td> @item.prefferedLocation</td>
+                                    <td> @item.expectedPerHourRate </td>
+                                    <td> @item.staffingAgency </td>
                                     <td> @item.joiningTime </td>                                    
-                                    <td>  </td>
-                                    <td>  </td>                                    
+                                    <td> @item.L2InterviewStatDesc </td>
+                                    <td> @item.ClientInterviewStatDesc  </td>                                    
                                     <td class="text-center">
-                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span> 
+                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span> 
                                     </td>
                                     
                                     @*<td>*@

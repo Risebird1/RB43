@@ -13,6 +13,8 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
 
         [DisplayName("Candidate's Mail")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         [Required]
         public string CandidateName { get; set; }
 

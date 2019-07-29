@@ -718,7 +718,7 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<Meeting> GetIRFInterviewMeetings(int id)
+        public IEnumerable<MeetingVM> GetIRFInterviewMeetings(int id)
         {
             try
             {
@@ -727,7 +727,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result =  SqlMapper.Query<Meeting>(con, "usp_GetIRFInterviewMeetings", parameters,
+                    var result =  SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
 
