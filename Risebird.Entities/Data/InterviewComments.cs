@@ -42,12 +42,19 @@ namespace Risebird.Entities.Data
         [Display(Name = "Quality Control Status")]
         public SelectList QCStatusList { get; set; }
 
+        [Display(Name = "L2 Interview Status")]
+        public SelectList L2InterviewStatusList{ get; set; }
+        [Display(Name = "Client Interview Status")]
+        public SelectList ClientInterviewStatusList { get; set; }
+
         [Display(Name = "Upload Audio")]
         public IFormFile AudioFile { get; set; }
 
         [Display(Name = "Upload Video")]
         public IFormFile VideoFile { get; set; }
 
+        public int? L2InterviewStatus { get; set; }
+        public int? ClientInterviewStatus { get; set; }
 
 
     }

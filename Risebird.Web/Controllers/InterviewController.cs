@@ -232,23 +232,7 @@ namespace Risebird.Web.Controllers
                 InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
                 if (comments == null)
                     comments = new InterviewComments();
-
-                var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
-                                        select new { ID = (int)s, Name = s.GetDescription() };
-                comments.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
-
-                var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                comments.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
-
-                var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-                comments.QCStatusList = new SelectList(qcStatuses, "ID", "Name");
-
-                var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
-                                       select new { ID = (int)s, Name = s.GetDescription() };
-                comments.TrainingStatusList = new SelectList(trainingStatuses, "ID", "Name");
-
+                GetStatusList(comments);
                 return View("InterviewComments", comments);
             }
             catch (Exception e)
@@ -266,13 +250,6 @@ namespace Risebird.Web.Controllers
                 if (ModelState.IsValid)
                 {
 
-                    //if (interviewComments.AudioFile == null && interviewComments.AudioLink == null)
-                    //{
-                    //    ModelState.AddModelError(String.Empty, "Please upload any audio file.");                      
-                    //    GetStatusList(interviewComments);
-                    //    return View("InterviewComments", interviewComments);  
-                    //}
-
                     if (interviewComments.AudioFile != null)
                     {
                         byte[] audiofileData = new byte[interviewComments.AudioFile.Length];
@@ -288,13 +265,6 @@ namespace Risebird.Web.Controllers
                             interviewComments.AudioLink = uploadedaudioFileURL;
                         }
                     }
-                    //if (interviewComments.VideoFile == null && interviewComments.VideoLink == null)
-                    //{
-                    //    ModelState.AddModelError(String.Empty, "Please upload any video file.");
-                    //    GetStatusList(interviewComments);
-                    //    return View("InterviewComments", interviewComments);
-                    //}
-
                     if (interviewComments.VideoFile != null)
                     {
                         byte[] videofileData = new byte[interviewComments.VideoFile.Length];
@@ -456,6 +426,14 @@ namespace Risebird.Web.Controllers
             var trainingStatuses = from TrainingStatus s in Enum.GetValues(typeof(TrainingStatus))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
+
+            var l2InterviewStatuses = from L2InterviewStatus s in Enum.GetValues(typeof(L2InterviewStatus))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            model.L2InterviewStatusList = new SelectList(l2InterviewStatuses, "ID", "Name");
+
+            var clntInterviewStatuses = from ClientInterviewStatus s in Enum.GetValues(typeof(ClientInterviewStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            model.ClientInterviewStatusList = new SelectList(clntInterviewStatuses, "ID", "Name");
 
         }
     }

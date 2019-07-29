@@ -25,9 +25,13 @@ namespace Risebird.Entities.ViewModel
         public int interviewDuration { get; set; }
 
         [Display(Name = "Candidate Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         [Required(ErrorMessage = "Please enter Candidate Email Id.")]
         public string candidateEmail { get; set; }
         [Display(Name = "Client HR")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         //[Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
         
@@ -45,7 +49,6 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
-        [Required(ErrorMessage = "Please enter Interviewer Email Id.")]
         public string interviewer { get; set; }
         [Display(Name = "Preffered Location")]
         [Required(ErrorMessage = "Please enter Preffered Location.")]
@@ -70,5 +73,10 @@ namespace Risebird.Entities.ViewModel
         public DateTime dtCreatedOn { get; set; }
         [Display(Name = "Upload Resume")]
         public IFormFile File { get; set; }
+
+        public int? L2InterviewStatus { get; set; }
+        public int? ClientInterviewStatus { get; set; }
+        public string L2InterviewStatDesc { get; set; }
+        public string ClientInterviewStatDesc { get; set; }
     }
 }

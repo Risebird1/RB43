@@ -11,6 +11,7 @@ using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
+using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
@@ -194,6 +195,18 @@ namespace Risebird.Web.Controllers
                 {
                     var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
                     ViewBag.IRF = irfId;
+                    foreach (var m in meetings)
+                    {
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                        }
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        }
+
+                    }
                     return View(meetings);
                 }
                 else

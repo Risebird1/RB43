@@ -37,5 +37,6 @@ namespace Risebird.Entities.Data
         public string joiningTime { get; set; }
         public int irfIntId { get; set; }
 
+
     }
 }

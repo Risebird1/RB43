@@ -11,8 +11,12 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interview Date")]
         public string InterviewDate { get; set; }
         [Display(Name = "Candidate Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         public string CandidateEmail { get; set; }
         [Display(Name = "Interview Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
         [DataType(DataType.EmailAddress)]
         public string Interviewer { get; set; }
     }
