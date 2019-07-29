@@ -234,10 +234,10 @@
                                     <td> @item.comfirmationStatus</td>
                                     <td> @item.risebirdHR</td>
                                     <td class="text-right">
-                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>
-                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comments" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>
+                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                         @*<span onclick="location.href = '@Url.Action("GetPDF", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>*@
-                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
                                     </td>
                                 </tr>
