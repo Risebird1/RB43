@@ -245,12 +245,12 @@
 
                                     </div>
                                     @*<div class="form-group">
-            <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
-            <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
-            <div class="col-md-6 col-sm-6">
-                @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
+                                        <div class="col-md-6 col-sm-6">
+                                            @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
                                     @*</div>
-            </div>*@
+                                        </div>*@
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
 
@@ -274,7 +274,6 @@
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
-
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
 
@@ -291,358 +290,358 @@
 
 
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Tech Skill Matrix</h2>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Tech Skill Matrix</h2>
                                     </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="SkillTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="table_heading">Level</th>
-                                                        <th class="table_heading">Skill Name</th>
-                                                        <th class="table_heading">Weightage</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
-                                                        </td>
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRow()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-
-                                    <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)" >
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
-
-                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="SkillTable">
+                                            <thead>
+                                                <tr>
 
+                                                    <th class="table_heading">Level</th>
+                                                    <th class="table_heading">Skill Name</th>
+                                                    <th class="table_heading">Weightage</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Joinability Matrix</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="JoinabilityTable">
-                                                <thead>
-                                                    <tr>
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
+                                                    </td>
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRow()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
 
-                                                        <th class="table_heading">Level</th>
-                                                        <th class="table_heading">Type</th>
-                                                        <th class="table_heading">Value</th>
-                                                        <th class="table_heading">Weightage</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                                            <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)" >
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
 
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                        </td>
-                                                        <td>
-
-                                                            <select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
-                                                                <option value="Job Location">Job Location</option>
-                                                                <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
-                                                                <option value="Approved Visa Type">Approved Visa Type</option>
-                                                                <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="number" value="100">
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
-                                                        </td>
-
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-
-                                    <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
-
-                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
 
+                            </div>
 
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>General Skill Matrix</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="SkillGeneralTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">Level</th>
-                                                        <th class="table_heading">Type</th>
-                                                        <th class="table_heading">Value</th>
-                                                        <th class="table_heading">Weightage</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
 
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-
-                                                        </td>
-                                                        <td>
-                                                            <select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
-                                                                <option value="Logical">Logical</option>
-                                                                <option value="Analytical">Analytical</option>
-                                                                <option value="Communication">Communication</option>
-                                                            </select>
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="number" value="100">
-                                                        </td>
-
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
-                                                        </td>
-
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSkillGeneralRow()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-
-                                    <a class="btn border-white btn-sm btn-danger delete-skillgeneral" id="btnMinus" onclick="DeleteSkillGeneralRow(0)">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
-
-
-                                                            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteSkillGeneralRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Joinability Matrix</h2>
                                     </div>
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="JoinabilityTable">
+                                            <thead>
+                                                <tr>
 
+                                                    <th class="table_heading">Level</th>
+                                                    <th class="table_heading">Type</th>
+                                                    <th class="table_heading">Value</th>
+                                                    <th class="table_heading">Weightage</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Client Information</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="ClientTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Role</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                                    </td>
+                                                    <td>
 
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("ClientCollection[0].ClientRoleId", (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
-                                                        </td>
+                                                        <select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
+                                                            <option value="Job Location">Job Location</option>
+                                                            <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
+                                                            <option value="Approved Visa Type">Approved Visa Type</option>
+                                                            <option value="Max Notice period (Days)">Max Notice period (Days)</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="number" value="100">
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
+                                                    </td>
 
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowClient()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
 
-                                    <a class="btn border-white btn-sm btn-danger delete-client" id="btnMinus" onclick="DeleteRowClient()">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
+                                                            <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
 
+                                                        <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
 
-                                                            <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm DeleteRowClient"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Approved Interviewer List</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="InterviewerTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Skills</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
-                                                        </td>
-
-                                                        <td>
-                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                            @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-
-                                    <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
-
-                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                            </div>
 
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Approved Quality Controllers</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="QualityControllerTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Skills</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
 
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("QualityController[0].EmailId", (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
-                                                            </td>
-
-                                                        <td>
-                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                            @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowQualityController()">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                    </a>
-
-                                    <a class="btn border-white btn-sm btn-danger delete-qualityController" id="btnMinus" onclick="DeleteRowClient(0)">
-                                        <span class="glyphicon glyphicon-trash"></span>
-                                    </a>*@
-
-                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>General Skill Matrix</h2>
                                     </div>
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">Level</th>
+                                                    <th class="table_heading">Type</th>
+                                                    <th class="table_heading">Value</th>
+                                                    <th class="table_heading">Weightage</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("SkillGeneral[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
+                                                            <option value="Logical">Logical</option>
+                                                            <option value="Analytical">Analytical</option>
+                                                            <option value="Communication">Communication</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="number" value="100">
+                                                    </td>
+
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSkillGeneralRow()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
+
+                                                            <a class="btn border-white btn-sm btn-danger delete-skillgeneral" id="btnMinus" onclick="DeleteSkillGeneralRow(0)">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
 
 
+                                                        <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteSkillGeneralRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Feedback Form Fields</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <input type="checkbox" name="feedback" value="Skill selection"> Skill selection<br><br>
-                                        <input type="checkbox" name="feedback" value="Resume Selectable"> Resume Selectable<br><br>
-                                        <input type="checkbox" name="feedback" value="General skills"> General skills<br><br>
-                                        <input type="checkbox" name="feedback" value="Proctoring"> Proctoring<br><br>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Client Information</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="ClientTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Role</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("ClientCollection[0].ClientRoleId", (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowClient()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
+
+                                                            <a class="btn border-white btn-sm btn-danger delete-client" id="btnMinus" onclick="DeleteRowClient()">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
+
+
+                                                        <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm DeleteRowClient"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Approved Interviewer List</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="InterviewerTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Skills</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                        @Html.TextBox("InterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
+
+                                                            <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
+
+                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Approved Quality Controllers</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="QualityControllerTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Skills</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("QualityController[0].EmailId", (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                        @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowQualityController()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
+
+                                                            <a class="btn border-white btn-sm btn-danger delete-qualityController" id="btnMinus" onclick="DeleteRowClient(0)">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
+
+                                                        <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Feedback Form Fields</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <input type="checkbox" name="feedback" value="Skill selection"> Skill selection<br><br>
+                                    <input type="checkbox" name="feedback" value="Resume Selectable"> Resume Selectable<br><br>
+                                    <input type="checkbox" name="feedback" value="General skills"> General skills<br><br>
+                                    <input type="checkbox" name="feedback" value="Proctoring"> Proctoring<br><br>
+                                </div>
+                            </div>
 
 
 
 
 
 
-</form>
+                        </form>
 
                     </div>
                     <div class="card-footer ">
