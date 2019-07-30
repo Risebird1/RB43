@@ -34,5 +34,9 @@ namespace Risebird.Entities.ViewModel
 
         public IList<JoinabilityReport> JoinabilityReportCollection { get; set; }
 
+        public IList<SelectabilityReport> SelectabilityReportCollection { get; set; }
+
+        public bool IsEdited { get; set; }
+
     }
 }

@@ -271,14 +271,24 @@ namespace Risebird.Repository
                     var irfList =  SqlMapper.QueryAsync<IRFVm>(
                         con, "select * from IRF", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
-                    //var irfId = SqlMapper.Query<string>(
-                    //    con, "select id from IRF where IRFId = @IRFId ", new {IRFId = irfDetails.IRFId }, commandType: Text);
-
-                    //update joinability matrix table
+                    
                     foreach (var item in irfDetails.Joinability)
                     {
                         string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
                         var affectedRows = con.ExecuteAsync(sqlJoinability, new
+                        {
+                            IRFId = irfID,
+                            LevelId = item.LevelId,
+                            Type = item.Type,
+                            Value = item.Value,
+                            Weightage = item.Weightage
+                        }).Result;
+                    }
+
+                    foreach (var item in irfDetails.Selectability)
+                    {
+                        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                        var affectedRows = con.ExecuteAsync(sqlSelectability, new
                         {
                             IRFId = irfID,
                             LevelId = item.LevelId,
@@ -404,6 +414,19 @@ namespace Risebird.Repository
                         }).Result;
                     }
 
+                    foreach (var item in irfDetails.Selectability)
+                    {
+                        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                        var affectedRows = con.ExecuteAsync(sqlSelectability, new
+                        {
+                            IRFId = irfDetails.id,
+                            LevelId = item.LevelId,
+                            Type = item.Type,
+                            Value = item.Value,
+                            Weightage = item.Weightage
+                        }).Result;
+                    }
+
 
                     //update general skill table
                     foreach (var item in irfDetails.SkillGeneral)
@@ -460,15 +483,15 @@ namespace Risebird.Repository
 
                     //update trans QC table
 
-                    foreach (var item in irfDetails.QualityController)
-                    {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@irfIntId", irfDetails.id);
-                        param2.Add("@QCUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                                commandType: CommandType.StoredProcedure);
+                    //foreach (var item in irfDetails.QualityController)
+                    //{
+                    //    DynamicParameters param2 = new DynamicParameters();
+                    //    param2.Add("@irfIntId", irfDetails.id);
+                    //    param2.Add("@QCUserId", item.UserId);
+                    //    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                    //            commandType: CommandType.StoredProcedure);
 
-                    }
+                    //}
                     
                     return true;
                 }
@@ -539,6 +562,27 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransJoinability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TransSelectability> GetTransSelectability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransSelectability where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSelectability>(query, dynamicParameters);
                     return results;
                 }
 

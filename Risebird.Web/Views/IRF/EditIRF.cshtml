@@ -180,7 +180,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max ="100", @min="1" } })
+                                                                    @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                     @*<input class="form-control text-box single-line" id="@("SkillCollection_"+i+"__Weightage")" name="SkillCollection[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                                 </td>
@@ -206,6 +206,8 @@
 
                                     </div>
 
+
+
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="multiple_row">
@@ -228,7 +230,7 @@
                                                         </tr>
                                                     </thead>
 
-                                                    
+
                                                     <tbody>
 
                                                         @for (int i = 0; i < Model.Joinability.Count(); i++)
@@ -248,12 +250,12 @@
                                                                     </select>
                                                                 </td>
                                                                 <td>
-                                                                    @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type="number" } })
+                                                                    @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
 
                                                                     @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Value")" name="Joinability[@i].Value" type="number" value="100">*@
                                                                 </td>
                                                                 <td>
-                                                                    @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max="100", @min="1" } })
+                                                                    @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                     @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Weightage")" name="Joinability[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                                 </td>
@@ -276,6 +278,81 @@
                                         </div><!--end of col-md-12-->
 
                                     </div>
+
+                                    <div class="multiple-row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Selectability Matrix</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Level</th>
+                                                            <th class="table_heading">Type</th>
+                                                            <th class="table_heading">Value</th>
+                                                            <th class="table_heading">Weightage</th>
+                                                            <th class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    <tbody>
+
+                                                        @for (int i = 0; i < Model.Selectability.Count(); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.DropDownList("Selectability[" + i + "].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                                </td>
+                                                                <td>
+
+                                                                    <select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
+                                                                        <option value="Technology Stack">Technology Stack</option>
+                                                                        <option value="Career Progression">Career Progression</option>
+                                                                        <option value="Industry">Industry</option>
+                                                                        <option value="Domain">Domain</option>
+                                                                        <option value="Project">Project</option>
+                                                                        <option value="Previous Employers">Previous Employers</option>
+                                                                        <option value="Academics">Academics</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                                    @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Value")" name="Joinability[@i].Value" type="number" value="100">*@
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+
+                                                                    @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Weightage")" name="Joinability[@i].Weightage" type="number" max="100" min="1" value="100">*@
+                                                                </td>
+
+                                                                <td width="8%">
+                                                                    <a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSelectabilityRow()">
+                                                                        <span class="glyphicon glyphicon-plus"></span>
+                                                                    </a>
+
+                                                                    <a class="btn border-white btn-sm btn-danger delete-selectability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                                                        <span class="glyphicon glyphicon-trash"></span>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
 
                                     <div class="multiple-row">
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -306,7 +383,7 @@
 
                                                                 </td>
                                                                 <td>
-                                                                    <select class="form-control" id= "@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
+                                                                    <select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
                                                                         <option value="Logical">Logical</option>
                                                                         <option value="Analytical">Analytical</option>
                                                                         <option value="Communication">Communication</option>
@@ -319,7 +396,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max="100", @min="1"} })
+                                                                    @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
                                                                     @*<input class="form-control text-box single-line" id="@("SkillGeneral_"+i+"__Weightage")" name="SkillGeneral[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                                 </td>
@@ -415,7 +492,7 @@
 
                                                                 <td>
                                                                     @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
-                                                                    @Html.TextBoxFor(m=>m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                                 </td>
 
@@ -686,6 +763,55 @@
 
         // add cloned row as last row
         $("#JoinabilityTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+    }
+
+    function AddSelectabilityRow() {
+        var table = document.getElementById("SelectabilityTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Rows.");
+            return;
+        }
+
+
+        var $ttc = $("#SelectabilityTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#SelectabilityTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#SelectabilityTable").find("tbody tr:last").after($tr);
 
         // Find the affected form
         var $form = $tr.closest("FORM");
@@ -1046,6 +1172,24 @@
         if ($(this).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Interviewers');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-selectability', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Selectability Criteria');
             return false;
         }
 
