@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add IRF";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
@@ -38,6 +38,11 @@
         overflow: hidden;
     }
 </style>
+
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
 <div style="margin-bottom:10px">
 
 </div>
@@ -117,7 +122,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Add Form</h4>
+                        <h4 class="card-title">Add IRF</h4>
                     </div>
                     <div class="card-body">
                         <form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
@@ -406,6 +411,71 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Selectability Matrix</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="SelectabilityTable">
+                                            <thead>
+                                                <tr>
+
+                                                    <th class="table_heading">Level</th>
+                                                    <th class="table_heading">Type</th>
+                                                    <th class="table_heading">Value</th>
+                                                    <th class="table_heading">Weightage</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("Selectability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+
+                                                    </td>
+                                                    <td>
+
+                                                        <select class="form-control" id="Selectability_0__Type" name="Selectability[0].Type">
+                                                            <option value="Technology Stack">Technology Stack</option>
+                                                            <option value="Career Progression">Career Progression</option>
+                                                            <option value="Industry">Industry</option>
+                                                            <option value="Domain">Domain</option>
+                                                            <option value="Project">Project</option>
+                                                            <option value="Previous Employers">Previous Employers</option>
+                                                            <option value="Academics">Academics</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="number" value="100">
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
+                                                                <span class="glyphicon glyphicon-plus"></span>
+                                                            </a>
+
+                                                            <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                                                <span class="glyphicon glyphicon-trash"></span>
+                                                            </a>*@
+
+                                                        <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
 
 
                             <div class="row">
@@ -521,23 +591,23 @@
 
 
 
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="multiple_row">
-                                        <h2>Approved Interviewer List</h2>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Approved Interviewer</h2>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered mbn" id="InterviewerTable">
-                                            <thead>
-                                                <tr>
-                                                    <th class="table_heading">User</th>
-                                                    <th class="table_heading">Skills</th>
-                                                    <th class="table_heading">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered mbn" id="InterviewerTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="table_heading">User</th>
+                                                        <th class="table_heading">Skills</th>
+                                                        <th class="table_heading">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
 
                                                 <tr>
                                                     <td>
@@ -637,22 +707,22 @@
                             </div>
 
 
-
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class="col-md-9">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
 
 
 
                         </form>
 
                     </div>
-                    <div class="card-footer ">
-                        <div class="row">
-                            <label class="col-md-2"></label>
-                            <div class="col-md-9">
-                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                            </div>
-                        </div>
-                    </div>
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -837,6 +907,56 @@
         $.validator.unobtrusive.parse(document);
 
     }
+
+    function AddSelectabilityRow() {
+        var table = document.getElementById("SelectabilityTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 6) {
+            alert("Cannot add more than 5 Rows.");
+            return;
+        }
+
+
+        var $ttc = $("#SelectabilityTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#SelectabilityTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#SelectabilityTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+
+    }
+
 
     function AddRowClient() {
         //var table = document.getElementById("ClientTable");
@@ -1185,6 +1305,24 @@
         if ($(this).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Interviewers');
+            return false;
+        }
+
+        else {
+
+            var currentvalue = $(this).attr('value');
+
+            $(this).closest('tr').remove();
+
+        }
+
+    });
+
+    $(document).on('click', '.delete-selectability', function (event) {
+
+        if ($(this).parents('tbody').find('tr').length === 1) {
+
+            alert('Must have atleast one Selectability Criteria.');
             return false;
         }
 

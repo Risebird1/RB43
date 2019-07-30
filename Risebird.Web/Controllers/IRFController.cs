@@ -69,6 +69,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     if (_irfService.AddIRFDetails(irfDetails).Result)
