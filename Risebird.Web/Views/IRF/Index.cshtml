@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.IRF>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "IRF";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
@@ -55,68 +55,6 @@
         margin-bottom: 150px;
     }
 </style>
-@*<!--START BREADCRUMB-->
-<ul class="breadcrumb">
-    <li class="active"><strong>Interview Forms</strong></li>
-</ul>
-<!-- END BREADCRUMB -->
-<!-- PAGE TITLE -->
-<div class="page-title">
-    <h2><span class="fa fa-address-card"></span> Interview Forms</h2>
-</div>
-<!-- END PAGE TITLE -->
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <ul class="panel-controls">
-            <li><a href="#" title="Refresh"><span class="fa fa-refresh" onclick="location.href='@Url.Action("Index", "IRF")'"></span></a></li>
-            <button type="button" class="btn btn-default mb-control"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add Form</span></button>
-        </ul>
-    </div>
-</div>
-<div class="container">
-
-    <div id="products" class="row list-group">
-
-        @foreach (var item in Model)
-        {
-            <div class="item  col-xs-4 col-lg-4">
-                <div class="thumbnail">
-
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading">
-                            @item.IRFId
-                        </h4>
-                        <div class="group inner list-group-item-text">
-                            <span>Client Name:</span> <p>@item.ClientName</p>
-                            <span>Location:</span> <p>@item.JobCountry</p>
-                            <span>No of Openings:</span> <p>@item.NoOfPosition</p>
-                            <span>No of Interviews:</span> <p>@item.NoOfIntterview</p>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6 icon">
-                                <i class="fa fa-pencil" style="color:blue;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom" onclick="javascript:EditIRF('@item.id');"></i>
-
-                                <i class="fa fa-comments" style="color:black;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Questions" data-original-title="Tooltip on bottom" onclick="javascript:AddComments('@item.id');"></i>
-
-                                <i class="fa fa-meetup" style="color:green;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Meetings" data-original-title="Tooltip on bottom" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"></i>
-
-                                <i class="fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>
-
-                           
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
-    </div>
-</div>*@
-
-
-
-
-
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -197,7 +135,7 @@
                         <div class="toolbar">
                             <!--        Here you can write extra buttons/actions for the toolbar              -->
                             <div class="text-right">
-                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add Form</span></button>
+                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
                             </div>
                         </div>
                     </div>
