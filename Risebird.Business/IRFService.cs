@@ -198,6 +198,8 @@ namespace Risebird.Business
                 var transClientUser = _irfRepository.GetTransClientUser(id);
                 var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
+                var transSelectability = _irfRepository.GetTransSelectability(id);
+
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
@@ -214,6 +216,7 @@ namespace Risebird.Business
                 model.RisebirdHr = IRF.RisebirdHr;
                 model.SkillCollection = (IList<TransSkill>)(transTechSkills);
                 model.SkillGeneral = (IList<TransSkillGeneral>)(transSkillsGeneral);
+                model.Selectability = (IList<TransSelectability>)(transSelectability);
                 model.StartDate = IRF.StartDate;
                 model.ClientCollection= (IList<TransClientUser>)(transClientUser);
                 model.ClientId = IRF.ClientId;
