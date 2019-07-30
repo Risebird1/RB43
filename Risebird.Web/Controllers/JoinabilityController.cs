@@ -48,8 +48,26 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    _joinabilityService.AddJoinabilityMatrix(model);
-                    return RedirectToAction("Index");
+
+                    if (ModelState.IsValid)
+                    {
+                        if (_joinabilityService.AddJoinabilityMatrix(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "Joinability Matrix is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Joinability Matrix  is Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return View("AddJoinability");
+                    }
+
+
                 }
                 else
                 {

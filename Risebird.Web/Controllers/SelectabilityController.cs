@@ -50,8 +50,24 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    _selectabilityService.AddSelectabilityMatrix(model);
-                    return RedirectToAction("Index");
+                 
+                    if (ModelState.IsValid)
+                    {
+                        if (_selectabilityService.AddSelectabilityMatrix(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "Selectability Matrix is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Selectability Matrix  is Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return View("AddSelectability");
+                    }
                 }
                 else
                 {
