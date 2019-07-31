@@ -61,6 +61,39 @@ namespace Risebird.Business
             }
         }
 
+        public MeetingVM GetMeeting(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetInterviewMeetingById(id);
+                if (meeting == null)
+                    return null;
+                else
+                    return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateMeeting(MeetingVM meetingToUpdate)
+        {
+            try
+            {
+                return _meetingRespository.usp_UpdateMeeting(meetingToUpdate).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public List<Meeting> GetAllOpenInterviews(string emailId)
         {
             try

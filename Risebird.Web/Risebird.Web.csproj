@@ -148,6 +148,9 @@
     <Content Update="Views\Client\ClientUpdate.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Interview\Edit.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Interview\ClientInterview.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

@@ -10,7 +10,7 @@ namespace Risebird.Entities.ViewModel
     [Serializable]
     public class MeetingVM
     {
-        public int imid;
+        public int imid { get; set; }
 
         [Display(Name = "IRF ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
