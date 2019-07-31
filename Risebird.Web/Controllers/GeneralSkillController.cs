@@ -48,8 +48,24 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    _generalskillService.AddGeneralSkillMatrix(model);
-                    return RedirectToAction("Index");
+                    if (ModelState.IsValid)
+                    {
+                        if (_generalskillService.AddGeneralSkillMatrix(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "General Skill is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding General Skill  is Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return View("Add");
+                    }
+
                 }
                 else
                 {

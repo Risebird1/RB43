@@ -33,5 +33,6 @@ namespace Risebird.Repository.Interface
         Task<bool> UpdateIRFDetails(IRFVm irfDetails);
         IEnumerable<SkillComment> GetTechSkillComments(int id);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
+        IEnumerable<LevelTech> GetLevelTech();
     }
 }

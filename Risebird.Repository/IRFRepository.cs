@@ -138,6 +138,23 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<LevelTech>(
+                        con, "select * from LevelTech", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<Interviewer> GetInterviewerSkills()
         {
             try

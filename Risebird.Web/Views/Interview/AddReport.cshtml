@@ -184,9 +184,19 @@
                                                                 </div>
                                                                 <div class="col-md-3 col-sm-3 px-1">
                                                                     <div class="form-group">
+                                                                        @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label desp-label" })
+
+                                                                        @Html.DropDownList("Rating", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                                        @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-md-3 col-sm-3 px-1">
+                                                                    <div class="form-group">
                                                                         @Html.LabelFor(model => model.OverallScore, htmlAttributes: new { @class = "control-label desp-label" })
 
-                                                                        @Html.EditorFor(model => model.OverallScore, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                        @Html.TextBoxFor(model => model.OverallScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                         @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                                                     </div>
@@ -293,14 +303,14 @@
                                                                                         </td>
 
                                                                                         <td>
-                                                                                            @Html.DropDownList("TechSkillReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                                                            @Html.DropDownList("TechSkillReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control", @onchange="CalculateOverAll(this.id, this.value)" })
 
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.TechSkillReportCollection[i].WeightageActual, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                            @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
                                                                                         @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
@@ -346,21 +356,20 @@
 
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
 
                                                                                         <td>
-                                                                                            @Html.DropDownList("SkillGeneralReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                                                            @Html.DropDownList("SkillGeneralReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
 
@@ -412,14 +421,14 @@
                                                                                         </td>
 
                                                                                         <td>
-                                                                                            @Html.DropDownList("JoinabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                                                            @Html.DropDownList("JoinabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
 
                                                                                         @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
@@ -471,14 +480,14 @@
                                                                                         </td>
 
                                                                                         <td>
-                                                                                            @Html.DropDownList("SelectabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                                                            @Html.DropDownList("SelectabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                         </td>
                                                                                         <td>
                                                                                             @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
                                                                                         <td>
-                                                                                            @Html.EditorFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
+                                                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                         </td>
 
                                                                                         @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
@@ -716,6 +725,65 @@
 
 </script>*@
 <script>
+
+    function CalculateOverAll(id, value) {
+        debugger;
+        var index;
+        var skillName;
+        if (id.includes("Tech")) {
+            index = id.charAt(26);
+            skillName = "TechSkillReportCollection";
+        }
+
+        else if (id.includes("General")) {
+            index = id.charAt(29);
+            skillName = "SkillGeneralReportCollection";
+        }
+        else if (id.includes("Joinability")) {
+            index =  id.charAt(28);
+            skillName = "JoinabilityReportCollection";
+        }
+        else {
+            index =  id.charAt(30);
+            skillName = "SelectabilityReportCollection";
+        }
+        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+        var required = $("#" + reqLevelId).val();
+        if (required < value) {
+            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
+        }
+        else {
+            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+        }
+
+        var items = $('[id$="WeightageActual"]');
+        //var length = item.length;
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }
+        //items.forEach(function (item) {
+        //    totalCount = totalCount + item.val();
+        //});
+        var average = totalCount / 4;
+        $("#OverallScore").val(average);
+
+    }
+
+    $(document).ready(function () {
+                
+        var items = $('[id$="WeightageActual"]');        
+        var totalCount = 0;
+
+        for (i = 0; i < items.length; i++) {
+            totalCount += parseInt(items[i].value);
+        }        
+        var average = totalCount / 4;
+        $("#OverallScore").val(average);
+
+    });
 
     function AddRow() {
         //var table = document.getElementById("QuestionsTable");
