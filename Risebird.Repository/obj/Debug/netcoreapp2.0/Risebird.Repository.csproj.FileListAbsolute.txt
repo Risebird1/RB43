@@ -107,3 +107,4 @@ C:\Users\ankit\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0
 C:\Users\ankit\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 C:\Users\ankit\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\Users\ankit\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\FIles\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csprojAssemblyReference.cache

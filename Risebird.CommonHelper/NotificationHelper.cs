@@ -68,9 +68,11 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails, null));
                 }
-
+                object[] parameters = new object[] { meetingDate };
                 mailMessage.Subject = "New Meeting has been scheduled on date: "+ meetingDate;
-                string msgBody = string.Format("Dear Interviewers, New interview has been scheduled based on skills on " + meetingDate +". \n Kindly login over RisebirdPortal.com and go to OpenInterview and assign yourself. We have first come first assign policy. \n Regards Team Risebird");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewMailTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+               
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
