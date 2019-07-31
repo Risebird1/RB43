@@ -250,7 +250,7 @@
                                         <td> @item.risebirdHR</td>
                                         <td> @item.interviewer</td>
                                         <td class="text-right">
-                                            <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                            <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'"  title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                         </td>
                                     </tr>
                                 }

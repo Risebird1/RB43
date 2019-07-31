@@ -26,6 +26,10 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int OverallScore { get; set; }
 
+        [DisplayName("Overall Rating")]
+        [Required]
+        public int Rating{ get; set; }
+
         public IList<QuestionsDiscussed> QuestionsCollection { get; set; }
 
         public IList<TechSkillReport> TechSkillReportCollection { get; set; }
@@ -33,6 +37,10 @@ namespace Risebird.Entities.ViewModel
         public IList<SkillGeneralReport> SkillGeneralReportCollection { get; set; }
 
         public IList<JoinabilityReport> JoinabilityReportCollection { get; set; }
+
+        public IList<SelectabilityReport> SelectabilityReportCollection { get; set; }
+
+        public bool IsEdited { get; set; }
 
     }
 }

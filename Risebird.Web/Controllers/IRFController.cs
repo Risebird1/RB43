@@ -49,6 +49,7 @@ namespace Risebird.Web.Controllers
             {
                 ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
@@ -69,6 +70,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     if (_irfService.AddIRFDetails(irfDetails).Result)
@@ -231,6 +233,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
                     ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");

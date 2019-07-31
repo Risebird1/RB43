@@ -350,6 +350,27 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<TransSelectability> GetTransSelectability(int id)
+        {
+            try
+            {
+                var query = "Select * from TransSelectability where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransSelectability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<SkillComment> GetTechSkillComments(int id)
         {
             try
@@ -412,17 +433,35 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //update interviewReport table
-                    string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore);";
-                    var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                    //check if the data is edited
+                    DynamicParameters paramx = new DynamicParameters();
+                    paramx.Add("@InterviewId", reportDetails.InterviewId);
+                    paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
+                    paramx.Add("@OverallScore", reportDetails.OverallScore);
+                    paramx.Add("@Rating", reportDetails.Rating);
+                    if (reportDetails.IsEdited)
                     {
-                        IRFId = reportDetails.IRFId,
-                        InterviewId = reportDetails.InterviewId,
-                        CandidateName = reportDetails.CandidateName,
-                        confirmationStatus = reportDetails.confirmationStatus,
-                        OverallScore = reportDetails.OverallScore
-                    }).Result;
-                    
+                        var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
+                                            commandType: CommandType.StoredProcedure);
+                       
+                    }
+
+                    else
+                    {
+                        //add to interviewReport table
+                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating);";
+                        var affectedRows = con.ExecuteAsync(sqlInsertReport, new
+                        {
+                            IRFId = reportDetails.IRFId,
+                            InterviewId = reportDetails.InterviewId,
+                            CandidateName = reportDetails.CandidateName,
+                            confirmationStatus = reportDetails.confirmationStatus,
+                            OverallScore = reportDetails.OverallScore,
+                            Rating= reportDetails.Rating
+                        }).Result;
+
+                    }
+
 
                     //update techskillreport table
                     foreach (var item in reportDetails.TechSkillReportCollection)
@@ -472,6 +511,22 @@ namespace Risebird.Repository
                         });
                     }
 
+                    //update Selectability Report table
+                    //foreach (var item in reportDetails.SelectabilityReportCollection)
+                    //{
+
+                    //    string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                    //    var result3 = con.Execute(sqlSelectableReport, new
+                    //    {
+                    //        InterviewId = reportDetails.InterviewId,
+                    //        RequiredLevelId = item.RequiredLevelId,
+                    //        Type = item.Type,
+                    //        ActualLevelId = item.ActualLevelId,
+                    //        WeightageRequired = item.WeightageRequired,
+                    //        WeightageActual = item.WeightageActual
+                    //    });
+                    //}
+
                     //update questions discussed table
                     foreach (var item in reportDetails.QuestionsCollection)
                     {
@@ -486,10 +541,6 @@ namespace Risebird.Repository
                         });
 
                     }
-
-                    
-                    
-
 
                     return true;
                 }
@@ -507,6 +558,132 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
+        }
+
+        public IEnumerable<InterviewReport> GetInterviewReportById(int id)
+        {
+            try
+            {
+                var query = "Select * from InterviewReport where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<InterviewReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<JoinabilityReport> GetJoinabilityReport(int id)
+        {
+            try
+            {
+                var query = "select JoinabilityReport.*, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<JoinabilityReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<SelectabilityReport> GetSelectabilityReport(int id)
+        {
+            try
+            {
+                var query = "select SelectabilityReport.*, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SelectabilityReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id)
+        {
+            try
+            {
+                var query = "Select * from QuestionsDiscussed where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<QuestionsDiscussed>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillReport.*, [Level].[Name] as RequiredLevel from TechSkillReport inner join [Level] on TechSkillReport.RequiredLevelId=[Level].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<SkillGeneralReport> GetSkillGeneralReport(int id)
+        {
+            try
+            {
+                var query = "select SkillGeneralReport.*, [Level].[Name] as RequiredLevel from SkillGeneralReport inner join [Level] on SkillGeneralReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SkillGeneralReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
         }
 
 
