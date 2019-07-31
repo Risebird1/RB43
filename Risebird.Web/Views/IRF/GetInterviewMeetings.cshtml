@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
+@*<style>
     i.hover {
         cursor: pointer;
     }
@@ -45,8 +45,8 @@
         opacity: 0.5;
         filter: alpha(opacity = 50);
     }
-</style>
-<!--START BREADCRUMB-->
+</style>*@
+@*<!--START BREADCRUMB-->
 <ul class="breadcrumb">
     <li class="active"><strong>Interview Meetings</strong></li>
 </ul>
@@ -79,9 +79,9 @@
                                     <th>Preferred Location</th>
                                     <th>Expected Rate Per Hour</th>
                                     <th>Staffing Agency</th>
-                                    <th>Joining Time</th>                                    
+                                    <th>Joining Time</th>
                                     <th>L2 Interview Status</th>
-                                    <th>Client Interview Status</th>                                    
+                                    <th>Client Interview Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -106,47 +106,82 @@
                                     @*<td>*@
                                         @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
                                         @*<i class="fa fa-remove hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Unassign" data-original-title="Tooltip on bottom" onclick="javascript:UnAssignInterviewer('@item.id');"></i>*@
-                                    @*</td>*@
-                                </tr>
+                                        @*</td>*@
+                                    </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
+                    <!-- end content-->
                 </div>
+                <!--  end card  -->
             </div>
-            <!-- END DEFAULT DATATABLE -->
+            <!-- end col-md-12 -->
         </div>
-    </div>
 
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
 </div>
+
+
+
 <script type="text/javascript">
 
+    $(".dataloading").hide();
+    $(".datatable").hide();
+    var loader;
+    function ShowProgress() {
         $(".dataloading").hide();
         $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
 </script>
 
 <!-- Keep the Page Content Here.-->
 
 <script type="text/javascript">
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $(".datatable").show();
-            }, 2000);
-        };
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $(".datatable").show();
+        }, 2000);
+    };
 </script>
 <loading></loading>
 
