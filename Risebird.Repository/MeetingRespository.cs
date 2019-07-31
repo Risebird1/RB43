@@ -438,6 +438,7 @@ namespace Risebird.Repository
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
+                    paramx.Add("@Rating", reportDetails.Rating);
                     if (reportDetails.IsEdited)
                     {
                         var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -448,14 +449,15 @@ namespace Risebird.Repository
                     else
                     {
                         //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore);";
+                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             IRFId = reportDetails.IRFId,
                             InterviewId = reportDetails.InterviewId,
                             CandidateName = reportDetails.CandidateName,
                             confirmationStatus = reportDetails.confirmationStatus,
-                            OverallScore = reportDetails.OverallScore
+                            OverallScore = reportDetails.OverallScore,
+                            Rating= reportDetails.Rating
                         }).Result;
 
                     }

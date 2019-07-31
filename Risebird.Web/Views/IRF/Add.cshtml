@@ -318,7 +318,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                        @Html.DropDownList("SkillCollection[0].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control" })
 
                                                     </td>
                                                     <td>
@@ -386,7 +386,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="number" value="100">
+                                                        <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -451,7 +451,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="number" value="100">
+                                                        <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
@@ -512,7 +512,7 @@
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="number" value="100">
+                                                        <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
                                                     </td>
 
                                                     <td>
@@ -688,22 +688,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="multiple_row">
-                                        <h2>Feedback Form Fields</h2>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <input type="checkbox" name="feedback" value="Skill selection"> Skill selection<br><br>
-                                    <input type="checkbox" name="feedback" value="Resume Selectable"> Resume Selectable<br><br>
-                                    <input type="checkbox" name="feedback" value="General skills"> General skills<br><br>
-                                    <input type="checkbox" name="feedback" value="Proctoring"> Proctoring<br><br>
                                 </div>
                             </div>
 
