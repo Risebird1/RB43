@@ -137,12 +137,12 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        
-                                                @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                           
+                                            @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -210,17 +210,19 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-
-                                                    @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                    @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
                                                     {
                                                         <tr>
                                                             <td>
 
-                                                                @Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                                @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" type="text" value="">
+
+
 
                                                             </td>
                                                             <td>
-                                                                <select class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId">
+                                                                <select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
                                                                     <option value="1">Poor</option>
                                                                     <option value="2">Average</option>
                                                                     <option value="3">Above Average</option>
@@ -230,8 +232,9 @@
                                                             </td>
 
                                                             <td>
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
 
-                                                                @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                @*@Html.EditorFor(m => m.QuestionsCollection[].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })*@
 
                                                             </td>
 
@@ -242,9 +245,47 @@
 
                                                             </td>
                                                         </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                        {
+                                                            <tr>
+                                                                <td>
 
+                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                                </td>
+                                                                <td>
+                                                                    <select class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId">
+                                                                        <option value="1">Poor</option>
+                                                                        <option value="2">Average</option>
+                                                                        <option value="3">Above Average</option>
+                                                                        <option value="4">Excellent</option>
+                                                                        <option value="5">Outstanding</option>
+                                                                    </select>
+                                                                </td>
+
+                                                                <td>
+
+                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+
+                                                                </td>
+
+                                                                <td>
+
+                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                                </td>
+                                                            </tr>
+
+
+                                                        }
 
                                                     }
+
+
 
 
                                                 </tbody>
@@ -275,36 +316,42 @@
                                                         <th class="table_heading">Actual Weightage</th>
                                                     </tr>
                                                 </thead>
+
+
                                                 <tbody>
-                                                    @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                    @if (Model.TechSkillReportCollection != null)
                                                     {
-                                                        <tr>
+                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
 
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            <td>
-                                                                @Html.DropDownList("TechSkillReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                <td>
+                                                                    @Html.DropDownList("TechSkillReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                            @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
 
 
-                                                        </tr>
+                                                            </tr>
 
+                                                        }
                                                     }
+
 
 
                                                 </tbody>
@@ -336,31 +383,35 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @for (int i = 0; i < Model.SkillGeneralReportCollection.Count(); i++)
+                                                    @if (Model.SkillGeneralReportCollection != null)
                                                     {
-                                                        <tr>
+                                                        @for (int i = 0; i < Model.SkillGeneralReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
 
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            <td>
-                                                                @Html.DropDownList("SkillGeneralReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                <td>
+                                                                    @Html.DropDownList("SkillGeneralReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
 
 
-                                                        </tr>
+                                                            </tr>
+
+                                                        }
 
                                                     }
 
@@ -394,34 +445,38 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
+                                                    @if (Model.JoinabilityReportCollection != null)
                                                     {
-                                                        <tr>
+                                                        @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
 
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            <td>
-                                                                @Html.DropDownList("JoinabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                <td>
+                                                                    @Html.DropDownList("JoinabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
 
-                                                        </tr>
+                                                            </tr>
 
+                                                        }
                                                     }
+
 
 
                                                 </tbody>
@@ -453,34 +508,251 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
+                                                    @if (Model.SelectabilityReportCollection != null)
                                                     {
-                                                        <tr>
+                                                        @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
+                                                        {
+                                                            <tr>
 
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            <td>
-                                                                @Html.DropDownList("SelectabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                <td>
+                                                                    @Html.DropDownList("SelectabilityReportCollection[" + i + "].ActualLevelId", (SelectList)ViewBag.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            </td>
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                </td>
 
-                                                            @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
+                                                                @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
 
-                                                        </tr>
+                                                            </tr>
 
+                                                        }
                                                     }
+
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Proctoring Report</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered mbn" id="ProctoringTable">
+                                                <thead>
+                                                    <tr>
+
+                                                        <th class="table_heading">Areas</th>
+                                                        <th class="table_heading">Number of Red Flags</th>
+                                                        
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            Eyes Movement
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <label class="form-control" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Head Movement
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Lips Movement
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="LipsOverhead">Using overhead light</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="LipsDarklight">Dark light in the room or on the face</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="LipsHeadphone">Using Headphone in front of Lips</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Latency check
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>
+                                                            Candidate desktop
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="DesktopScreenSharing">Sharing screen but not desktop</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Voice Impostering
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            Linkedin Photo 
+                                                        </td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+
+                                                        <td>
+                                                            <label class="form-control" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
+                                                        </td>
+                                                        <td>
+                                                            @Html.EditorFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
+
+                                                        </td>
+
+                                                    </tr>
 
 
                                                 </tbody>
@@ -506,14 +778,14 @@
                                 </div>
 
                                 @*<div class="form-group col-sm-12">
-                                        <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
-                                        </div>
+            <div class="pull-right">
+                <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
+            </div>
 
-                                        <div>
-                                            <a href="/Interview/MyInterview">Back to List</a>
-                                        </div>
-                                    </div>*@
+            <div>
+                <a href="/Interview/MyInterview">Back to List</a>
+            </div>
+        </div>*@
 
 
 
@@ -730,12 +1002,14 @@
         }
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
-        if (required < value) {
-            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
-        }
-        else {
+        if (required <= value) {
             var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
             $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+
+           
+        }
+        else {
+            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
         }
 
         var items = $('[id$="WeightageActual"]');

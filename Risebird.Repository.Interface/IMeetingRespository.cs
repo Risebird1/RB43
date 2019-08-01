@@ -36,6 +36,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         IEnumerable<SkillGeneralReport> GetSkillGeneralReport(int id);
+        ProctoringReport GetProctoringReport(int id);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }

@@ -342,12 +342,12 @@
                                                         </td>
                                                         <td>
                                                             @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                                </a>
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
 
-                                                                <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>*@
+                                        <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
 
                                                             <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteJoinabilityRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
@@ -421,7 +421,7 @@
                                                         </td>
                                                     </tr>
                                                 }
-                                                   
+
                                             </tbody>
                                         </table>
                                     </div>
@@ -630,20 +630,20 @@
                                     </div>
                                 </div><!--end of col-md-12-->
                             </div>
-
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class="col-md-9">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
                             @Html.HiddenFor(m => m.id)
                         </form>
 
                     </div>
-                    <div class="card-footer ">
-                        <div class="row">
-                            <label class="col-md-2"></label>
-                            <div class="col-md-9">
-                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
-                            </div>
-                        </div>
-                    </div>
+                    
 
 
                 </div>

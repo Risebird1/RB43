@@ -475,6 +475,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                //model.IsEdited = false;
                 //ViewBag.TechSkillsCount = model.TechSkillReportCollection.Count();
                 //ViewBag.SkillGeneralCount = model.SkillGeneralReportCollection.Count();
                 //ViewBag.JoinabilityCount = model.JoinabilityReportCollection.Count();

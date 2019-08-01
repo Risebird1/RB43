@@ -235,7 +235,7 @@ namespace Risebird.Business
                     //get all values from database
                     var levels = _meetingRespository.GetLevels();
                     var skills = _meetingRespository.GetSkills();
-                    var interviewDetails = _meetingRespository.GetAllInterviewMeetings().Result.Where(x => x.id == interviewId).FirstOrDefault();
+                    var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
                     var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
@@ -341,6 +341,7 @@ namespace Risebird.Business
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
             model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
+            model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
             return model;
         }
