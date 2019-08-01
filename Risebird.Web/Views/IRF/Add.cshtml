@@ -43,9 +43,7 @@
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-<div style="margin-bottom:10px">
 
-</div>
 
 
 
@@ -135,7 +133,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
 
                                         @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
@@ -162,7 +160,7 @@
                                 </div>
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.JDTiltle, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="name">jd title</label>*@
 
@@ -174,7 +172,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
 
@@ -188,14 +186,14 @@
                                     </div>
                                     <div class="form-group">
 
-                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">End Client Name</label>
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ClientId">End Client Name</label>
 
                                         <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
 
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JobCountry">Job Country</label>*@
-                                        @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @Html.EditorFor(model => model.JobCountry, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
 
@@ -206,7 +204,7 @@
                                 </div>
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="StartDate">Start Date</label>*@
 
@@ -217,7 +215,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="EndDate">End Date</label>*@
 
@@ -228,7 +226,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.NoOfPosition, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="NoOfPosition">No of Open Positions </label>*@
 
@@ -239,7 +237,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="noofintterview">no of interviews to be conducted</label>*@
 
@@ -260,7 +258,7 @@
                                 <div class="col-md-4 col-sm-4 pl-1">
 
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
 
@@ -271,7 +269,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
 
@@ -280,7 +278,7 @@
 
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                                        @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JDLink">JD Link</label>*@
 
