@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Data.CommandType;
 
@@ -33,9 +36,9 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Meeting>(
-                        con, "select * from InterviewMeetings", null, commandType: Text);
+                        con, "select im.*, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId", null, commandType: Text);
                 }
-
+                //select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId
             }
             catch (SqlException ex)
             {
@@ -149,6 +152,9 @@ namespace Risebird.Repository
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
             var parameters = new DynamicParameters();
+            if (entity.imid > 0)
+                parameters.Add("@interviewId", entity.imid);
+
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
@@ -163,7 +169,7 @@ namespace Risebird.Repository
             parameters.Add("@prefferedLocation", entity.prefferedLocation);
             parameters.Add("@staffingAgenecy", entity.staffingAgency);
             parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
-            parameters.Add("@joiningTime", entity.joiningTime);
+            parameters.Add("@joiningTime", entity.joiningTime);            
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
@@ -186,6 +192,53 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public async Task<MeetingVM> GetInterviewMeetingById(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);                   
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> usp_UpdateMeeting(MeetingVM meeting)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForMeeting(meeting);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateMeeting", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
 
             return false;
@@ -462,85 +515,129 @@ namespace Risebird.Repository
 
                     }
 
-
-                    //update techskillreport table
-                    foreach (var item in reportDetails.TechSkillReportCollection)
+                    if(reportDetails.TechSkillReportCollection!=null)
                     {
-                        string sqlTechReport = "INSERT INTO TechSkillReport (InterviewId, RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                        var result1 = con.ExecuteAsync(sqlTechReport, new
+                        //update techskillreport table
+                        foreach (var item in reportDetails.TechSkillReportCollection)
                         {
-                            InterviewId = reportDetails.InterviewId,
-                            RequiredLevelId = item.RequiredLevelId,
-                            SkillId = item.SkillId,
-                            ActualLevelId = item.ActualLevelId,
-                            WeightageRequired = item.WeightageRequired,
-                            WeightageActual= item.WeightageActual
-                        }).Result;
+                            string sqlTechReport = "INSERT INTO TechSkillReport (InterviewId, RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            var result1 = con.ExecuteAsync(sqlTechReport, new
+                            {
+                                InterviewId = reportDetails.InterviewId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                SkillId = item.SkillId,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            }).Result;
+                        }
+
+                    }
+                    
+
+                    if(reportDetails.SkillGeneralReportCollection!=null)
+                    {
+                        //update general skill report table
+                        foreach (var item in reportDetails.SkillGeneralReportCollection)
+                        {
+
+                            string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
+                            {
+                                InterviewId = reportDetails.InterviewId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Type,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            }).Result;
+                        }
                     }
 
-
-                    //update general skill report table
-                    foreach (var item in reportDetails.SkillGeneralReportCollection)
+                    if(reportDetails.JoinabilityReportCollection!=null)
                     {
+                        //update Joinability Report table
 
-                        string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                        var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
+                        foreach (var item in reportDetails.JoinabilityReportCollection)
                         {
-                            InterviewId = reportDetails.InterviewId,
-                            RequiredLevelId = item.RequiredLevelId,
-                            Type = item.Type,
-                            ActualLevelId = item.ActualLevelId,
-                            WeightageRequired = item.WeightageRequired,
-                            WeightageActual = item.WeightageActual
-                        }).Result;
+
+                            string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            var result3 = con.Execute(sqlJoinReport, new
+                            {
+                                InterviewId = reportDetails.InterviewId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Type,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            });
+                        }
                     }
 
-                    //update Joinability Report table
-                    foreach (var item in reportDetails.JoinabilityReportCollection)
+                    if(reportDetails.SelectabilityReportCollection!=null)
                     {
+                        //update Selectability Report table
+                        foreach (var item in reportDetails.SelectabilityReportCollection)
+                        {
 
-                        string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                        var result3 = con.Execute(sqlJoinReport, new
+                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            var result3 = con.Execute(sqlSelectableReport, new
+                            {
+                                InterviewId = reportDetails.InterviewId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Type,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            });
+                        }
+
+                    }
+                    
+                    if(reportDetails.QuestionsCollection !=null)
+                    {
+                        //update questions discussed table
+                        foreach (var item in reportDetails.QuestionsCollection)
+                        {
+                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment ,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
+                            var result3 = con.Execute(sqlJoinReport, new
+                            {
+                                InterviewId = reportDetails.InterviewId,
+                                Comment = item.Comment,
+                                RatingId = item.RatingId,
+                                Timing = item.Timing,
+
+                            });
+
+                        }
+                    }
+
+                    if (reportDetails.Proctoring != null)
+                    {
+                        //update protoring report table
+                        string sqlProcReport = "INSERT INTO ProctoringReport Values (@InterviewId, @EyesDirection, @EyesReflection, @HeadDirection, @LipsOverhead, @LipsDarklight, @LipsHeadphone, @LatencyJitter, @DesktopSuspiciousApps, @DesktopScreenSharing, @VoiceAudioSplitter, @VoiceToneExpression, @VoicePersonalUnsatisfactory, @VoiceSuspicious, @LinkedInPhotoVerification);";
+                        var result3 = con.Execute(sqlProcReport, new
                         {
                             InterviewId = reportDetails.InterviewId,
-                            RequiredLevelId = item.RequiredLevelId,
-                            Type = item.Type,
-                            ActualLevelId = item.ActualLevelId,
-                            WeightageRequired = item.WeightageRequired,
-                            WeightageActual = item.WeightageActual
+                            EyesDirection = reportDetails.Proctoring.EyesDirection,
+                            EyesReflection = reportDetails.Proctoring.EyesReflection,
+                            HeadDirection = reportDetails.Proctoring.HeadDirection,
+                            LipsOverhead = reportDetails.Proctoring.LipsOverhead,
+                            LipsDarklight = reportDetails.Proctoring.LipsDarklight,
+                            LipsHeadphone = reportDetails.Proctoring.LipsHeadphone,
+                            LatencyJitter = reportDetails.Proctoring.LatencyJitter,
+                            DesktopSuspiciousApps = reportDetails.Proctoring.DesktopSuspiciousApps,
+                            DesktopScreenSharing = reportDetails.Proctoring.DesktopScreenSharing,
+                            VoiceAudioSplitter = reportDetails.Proctoring.VoiceAudioSplitter,
+                            VoiceToneExpression = reportDetails.Proctoring.VoiceToneExpression,
+                            VoicePersonalUnsatisfactory = reportDetails.Proctoring.VoicePersonalUnsatisfactory,
+                            VoiceSuspicious = reportDetails.Proctoring.VoiceSuspicious,
+                            LinkedInPhotoVerification = reportDetails.Proctoring.LinkedInPhotoVerification
+
                         });
+                        
                     }
 
-                    //update Selectability Report table
-                    //foreach (var item in reportDetails.SelectabilityReportCollection)
-                    //{
-
-                    //    string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                    //    var result3 = con.Execute(sqlSelectableReport, new
-                    //    {
-                    //        InterviewId = reportDetails.InterviewId,
-                    //        RequiredLevelId = item.RequiredLevelId,
-                    //        Type = item.Type,
-                    //        ActualLevelId = item.ActualLevelId,
-                    //        WeightageRequired = item.WeightageRequired,
-                    //        WeightageActual = item.WeightageActual
-                    //    });
-                    //}
-
-                    //update questions discussed table
-                    foreach (var item in reportDetails.QuestionsCollection)
-                    {
-                        string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment ,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
-                        var result3 = con.Execute(sqlJoinReport, new
-                        {
-                            InterviewId = reportDetails.InterviewId,
-                            Comment = item.Comment,
-                            RatingId = item.RatingId,
-                            Timing = item.Timing,
-                            
-                        });
-
-                    }
 
                     return true;
                 }
@@ -676,6 +773,26 @@ namespace Risebird.Repository
                 {
                     var results = con.Query<SkillGeneralReport>(query, dynamicParameters);
                     return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public ProctoringReport GetProctoringReport(int id)
+        {
+            try
+            {
+                var query = "select * from ProctoringReport where InterviewId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ProctoringReport>(query, dynamicParameters);
+                    return results.FirstOrDefault();
                 }
 
             }
