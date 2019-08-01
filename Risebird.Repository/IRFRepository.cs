@@ -280,6 +280,7 @@ namespace Risebird.Repository
             {
                 
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+                //parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                      await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
@@ -287,7 +288,7 @@ namespace Risebird.Repository
 
                     var irfList =  SqlMapper.QueryAsync<IRFVm>(
                         con, "select * from IRF", null, commandType: Text).Result.AsList();
-                    var irfID = irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                     
                     foreach (var item in irfDetails.Joinability)
                     {
@@ -406,6 +407,7 @@ namespace Risebird.Repository
             {
 
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+                parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
@@ -500,16 +502,16 @@ namespace Risebird.Repository
 
                     //update trans QC table
 
-                    //foreach (var item in irfDetails.QualityController)
-                    //{
-                    //    DynamicParameters param2 = new DynamicParameters();
-                    //    param2.Add("@irfIntId", irfDetails.id);
-                    //    param2.Add("@QCUserId", item.UserId);
-                    //    var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                    //            commandType: CommandType.StoredProcedure);
+                    foreach (var item in irfDetails.QualityController)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@irfIntId", irfDetails.id);
+                        param2.Add("@QCUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                                commandType: CommandType.StoredProcedure);
 
-                    //}
-                    
+                    }
+
                     return true;
                 }
 

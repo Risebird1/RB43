@@ -9,6 +9,9 @@ namespace Risebird.Repository.Interface
     {
         Task<IEnumerable<Meeting>> GetAllInterviewMeetings();
         Task<bool> AddMeeting(MeetingVM meeting);
+        Task<MeetingVM> GetInterviewMeetingById(int id);
+        Task<bool> usp_UpdateMeeting(MeetingVM meeting);
+
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
         Task<IEnumerable<ClientInterviewVM>> GetAllClientInterviews(string emailId);
@@ -33,6 +36,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<QuestionsDiscussed> GetQuestionsDiscussed(int id);
         IEnumerable<TechSkillReport> GetTechSkillReport(int id);
         IEnumerable<SkillGeneralReport> GetSkillGeneralReport(int id);
+        ProctoringReport GetProctoringReport(int id);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }
