@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -33,9 +35,9 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Meeting>(
-                        con, "select * from InterviewMeetings", null, commandType: Text);
+                        con, "select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId", null, commandType: Text);
                 }
-
+                //select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId
             }
             catch (SqlException ex)
             {
@@ -149,6 +151,9 @@ namespace Risebird.Repository
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {
             var parameters = new DynamicParameters();
+            if (entity.imid > 0)
+                parameters.Add("@interviewId", entity.imid);
+
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
@@ -163,7 +168,7 @@ namespace Risebird.Repository
             parameters.Add("@prefferedLocation", entity.prefferedLocation);
             parameters.Add("@staffingAgenecy", entity.staffingAgency);
             parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
-            parameters.Add("@joiningTime", entity.joiningTime);
+            parameters.Add("@joiningTime", entity.joiningTime);            
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
@@ -186,6 +191,53 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public async Task<MeetingVM> GetInterviewMeetingById(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);                   
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> usp_UpdateMeeting(MeetingVM meeting)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = SetStoredProcedureParameterForMeeting(meeting);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateMeeting", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
             }
 
             return false;
