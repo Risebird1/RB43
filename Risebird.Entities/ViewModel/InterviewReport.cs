@@ -30,6 +30,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int Rating{ get; set; }
 
+        public ProctoringReport Proctoring { get; set; }
+
         public IList<QuestionsDiscussed> QuestionsCollection { get; set; }
 
         public IList<TechSkillReport> TechSkillReportCollection { get; set; }

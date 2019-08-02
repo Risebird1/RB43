@@ -14,6 +14,7 @@ CREATE PROCEDURE [dbo].[InsertMeetings]
 @interviewDate varchar(200),
 @slot varchar(100),
 @interviewDuration int,
+@candidateName varchar(200),
 @candidateEmail varchar(200),
 @hrRiseBirdAssinged varchar(200),
 @resumeLink varchar(MAX),
@@ -35,6 +36,7 @@ INSERT INTO [dbo].[InterviewMeetings]
            ,[interviewDate]
            ,[interviewSlot]
            ,[interviewDuration]
+		   ,[candidateName]
            ,[candidateEmail]
            ,[ClientHrContact]
            ,[resumeLink]
@@ -54,6 +56,7 @@ INSERT INTO [dbo].[InterviewMeetings]
 @interviewDate,
 @slot,
 @interviewDuration,
+@candidateName,
 @candidateEmail,
 @ClientHrContact,
 @resumeLink,
@@ -68,12 +71,10 @@ INSERT INTO [dbo].[InterviewMeetings]
 'Clendly',
 GETUTCDATE()  
 )
-
 End
-
 ELSE
 
- Begin
+Begin
  UPDATE [dbo].[InterviewMeetings]
    SET [interviewDate] = @interviewDate
       ,[comfirmationStatus] = @comfirmationStatus

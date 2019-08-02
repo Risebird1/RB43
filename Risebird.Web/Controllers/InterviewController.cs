@@ -136,6 +136,96 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
+
+                    if (meetingToUpdate != null)
+                        return View("Edit", meetingToUpdate);
+                    else
+                        return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(MeetingVM meetingUpdated)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        //String uploadedFileURL = String.Empty;
+                        if ((meetingUpdated.File!=null))
+                        {
+                            byte[] fileData = new byte[meetingUpdated.File.Length];
+                            string uploadedFileURL = _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", fileData);
+                            if (uploadedFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                                var model = new MeetingVM();
+
+                                return View("Edit");
+
+                            }
+
+                            meetingUpdated.resumeLink = uploadedFileURL;
+                        }
+
+                        //if (uploadedFileURL == null)
+                        //{
+                        //    ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        //    var model = new MeetingVM();
+
+                        //    return View("Edit");
+
+                        //}
+                        if (_meetingService.UpdateMeeting(meetingUpdated))
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Meeting is updated Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Updating meeting is Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("Edit");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Updating meeting Level is Failed";
+                return View("Index");
+            }
+        }
+
 
         public async Task<IActionResult> OpenInterview()
         {
@@ -395,9 +485,15 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string prof = HttpContext.Session.GetString("profileName");
+                if (prof != null && prof.Contains("Client"))
+                {
+                    ViewBag.Client = "Client";
+                }
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                //model.IsEdited = false;
                 //ViewBag.TechSkillsCount = model.TechSkillReportCollection.Count();
                 //ViewBag.SkillGeneralCount = model.SkillGeneralReportCollection.Count();
                 //ViewBag.JoinabilityCount = model.JoinabilityReportCollection.Count();

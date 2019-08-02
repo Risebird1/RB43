@@ -289,5 +289,11 @@ namespace Risebird.Web.Controllers
         }
 
 
+        public IActionResult Stats()
+        {
+            return View();
+            
+        }
+
     }
 }
