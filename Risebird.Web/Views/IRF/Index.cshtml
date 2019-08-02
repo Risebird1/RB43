@@ -188,6 +188,9 @@
                                 <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
+                                <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
+                                    <i class="now-ui-icons fa fa-meetup"></i>
+                                </button>
                                 <button type="button" onclick="javascript:DeleteIRF('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Delete">
                                     <i class="now-ui-icons fa fa-trash"></i>
                                 </button>
@@ -327,5 +330,9 @@
         window.location.href = url;
     };
 
+    function stats(id) {
 
+        var url = '/IRF/Stats?id=' + id;
+        window.location.href = url;
+    };
 </script>
