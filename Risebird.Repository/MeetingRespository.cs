@@ -36,7 +36,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<Meeting>(
-                        con, "select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId", null, commandType: Text);
+                        con, "select im.*, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId", null, commandType: Text);
                 }
                 //select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId
             }

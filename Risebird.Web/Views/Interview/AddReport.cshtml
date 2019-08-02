@@ -606,7 +606,7 @@
 
                                                         <th class="table_heading">Areas</th>
                                                         <th class="table_heading">Number of Red Flags</th>
-                                                        
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -778,7 +778,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            Linkedin Photo 
+                                                            Linkedin Photo
                                                         </td>
                                                         <td></td>
                                                     </tr>
@@ -819,14 +819,14 @@
                                 </div>
 
                                 @*<div class="form-group col-sm-12">
-            <div class="pull-right">
-                <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
-            </div>
+                                        <div class="pull-right">
+                                            <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
+                                        </div>
 
-            <div>
-                <a href="/Interview/MyInterview">Back to List</a>
-            </div>
-        </div>*@
+                                        <div>
+                                            <a href="/Interview/MyInterview">Back to List</a>
+                                        </div>
+                                    </div>*@
 
 
 
@@ -1047,7 +1047,7 @@
             var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
             $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
 
-           
+
         }
         else {
             $("#" + skillName + "_" + index + "__WeightageActual").val("0");
@@ -1621,3 +1621,13 @@
     });
 
 </script>
+@if (ViewBag.Client != null && (ViewBag.Client.Contains("Client")))
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#main-panel').find(":input").attr("disabled", true);
+        });
+
+    </script>
+}
