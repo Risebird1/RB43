@@ -25,9 +25,9 @@ namespace Risebird.Functions
 
             string jsonContent = await req.Content.ReadAsStringAsync();
             //log.Info(jsonContent);
-            //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
-            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+            string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
             string clientName = string.Empty;
             string JobRole = string.Empty;
@@ -35,6 +35,7 @@ namespace Risebird.Functions
             string interviewDuration = string.Empty;
             string slot = string.Empty;
             string primaryskill = string.Empty;
+            string candidateName = string.Empty;
             string candidateEmail = string.Empty;
             string hrRiseBirdAssinged = string.Empty;
             string resumeLink = string.Empty;
@@ -107,6 +108,14 @@ namespace Risebird.Functions
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")
                             {
+                                try
+                                {
+                                    candidateName = ((JProperty)mainFamilies1).Value["name"].ToString();
+                                }
+                                catch (Exception)
+                                {
+                                } 
+                               
                                 candidateEmail = ((JProperty)mainFamilies1).Value["email"].ToString();
                                 isReschedule = ((JProperty)mainFamilies1).Value["is_reschedule"].ToString();
                             }
@@ -190,6 +199,7 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
                 cmd.Parameters.Add(new SqlParameter("@slot", slot));
                 cmd.Parameters.Add(new SqlParameter("@interviewDuration", Convert.ToInt32(interviewDuration)));
+                cmd.Parameters.Add(new SqlParameter("@candidateName", candidateName));
                 cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
                 cmd.Parameters.Add(new SqlParameter("@hrRiseBirdAssinged", hrRiseBirdAssinged));
                 cmd.Parameters.Add(new SqlParameter("@resumeLink", resumeLink));
@@ -203,11 +213,8 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
                 cmd.ExecuteScalar();
 
-
                 log.Info("Build update in database ended.");
             }
-
-            //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
 
             try
             {
@@ -217,14 +224,15 @@ namespace Risebird.Functions
                 client.DefaultRequestHeaders.ExpectContinue = false;
                 //throw new Exception();
                 log.Info("Send mail based on IRF matched interviwer.");
-                HttpResponseMessage response = await client.GetAsync("/api/scheduler/IRFBasedInterviewerMail?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
+                HttpResponseMessage response = await client.GetAsync("/api/Scheduler?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
                 var httpresponse = response.Content.ReadAsStringAsync().Result;
                 log.Info($"httpsresponce for Auto sIRF Mail send:{httpresponse} ");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 log.Info($"Failed to send mail to IRF: " + IRFID + " interviews exception:{ex.Message} ");
             }
+            //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
             return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
         }
     }
