@@ -1069,6 +1069,85 @@
     }
 
     $(document).ready(function () {
+        debugger;
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+
+            var index = weightageItems[i].id.indexOf(i);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + i + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + i + "__ActualLevelId").val();
+            if (reqLevel <= actLevel) {
+                reqWeight = $("#" + skillName + i + "__WeightageRequired").val();
+                $("#" + skillName + i + "__WeightageActual").val(reqWeight);
+            }
+            else
+                $("#" + skillName + i + "__WeightageActual").val("0");
+        }
+
+
+
+        ////techSkillCollection
+        //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < techItems.length; i++) {
+        //    var reqLevel = $("#TechSkillReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#TechSkillReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////generalSkillCollection
+        //var genSkillItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < genSkillItems.length; i++) {
+        //    var reqLevel = $("#SkillGeneralReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#SkillGeneralReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#SkillGeneralReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////selectability
+        //var selectabilityItems = $('[id^="SelectabilityReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < selectabilityItems.length; i++) {
+        //    var reqLevel = $("#SelectabilityReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#SelectabilityReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#SelectabilityReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////joinability
+        //var joinabilityItems = $('[id^="JoinabilityReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < joinabilityItems.length; i++) {
+        //    var reqLevel = $("#JoinabilityReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#JoinabilityReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#JoinabilityReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+
+        
+
 
         var items = $('[id$="WeightageActual"]');
         var totalCount = 0;
