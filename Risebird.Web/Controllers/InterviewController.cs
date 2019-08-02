@@ -141,11 +141,20 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    return View(_meetingService.GetAllOpenInterviews(emailid));
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    //if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        return View(_meetingService.GetAllOpenInterviews(emailid));
+                    }
+                    //else
+                    //{
+                    //    return RedirectToAction("SignOut", "Account");
+                    //}
                 }
                 else
                 {
@@ -162,12 +171,21 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                    return View(myInterview);
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    //if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        return View(myInterview);
+                    }
+                    //else
+                    //{
+                    //    return RedirectToAction("SignOut", "Account");
+                    //}
                 }
                 else
                 {
@@ -204,7 +222,7 @@ namespace Risebird.Web.Controllers
                 var clientInterviews = _meetingService.GetAllClientInterviews(emailid);
                 foreach (var m in clientInterviews)
                 {
-                    if(m.L2InterviewStatus.HasValue)
+                    if (m.L2InterviewStatus.HasValue)
                     {
                         m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
                     }
@@ -438,11 +456,11 @@ namespace Risebird.Web.Controllers
             model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
             var l2InterviewStatuses = from L2InterviewStatus s in Enum.GetValues(typeof(L2InterviewStatus))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
+                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.L2InterviewStatusList = new SelectList(l2InterviewStatuses, "ID", "Name");
 
             var clntInterviewStatuses = from ClientInterviewStatus s in Enum.GetValues(typeof(ClientInterviewStatus))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
+                                        select new { ID = (int)s, Name = s.GetDescription() };
             model.ClientInterviewStatusList = new SelectList(clntInterviewStatuses, "ID", "Name");
 
         }
