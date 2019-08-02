@@ -72,53 +72,53 @@
                 </a>
             </div>
             @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-                <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navigation">
-                <form>
-                    <div class="input-group no-border">
-                        <input type="text" value="" class="form-control" placeholder="Search...">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <i class="now-ui-icons ui-1_zoom-bold"></i>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                    <span class="navbar-toggler-bar navbar-kebab"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navigation">
+                    <form>
+                        <div class="input-group no-border">
+                            <input type="text" value="" class="form-control" placeholder="Search...">
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <i class="now-ui-icons ui-1_zoom-bold"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pablo">
-                            <i class="now-ui-icons media-2_sound-wave"></i>
-                            <p>
-                                <span class="d-lg-none d-md-block">Stats</span>
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="now-ui-icons location_world"></i>
-                            <p>
-                                <span class="d-lg-none d-md-block">Some Actions</span>
-                            </p>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pablo">
-                            <i class="now-ui-icons users_single-02"></i>
-                            <p>
-                                <span class="d-lg-none d-md-block">Account</span>
-                            </p>
-                        </a>
-                    </li>
-                </ul>
-            </div>*@
+                    </form>
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pablo">
+                                <i class="now-ui-icons media-2_sound-wave"></i>
+                                <p>
+                                    <span class="d-lg-none d-md-block">Stats</span>
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="now-ui-icons location_world"></i>
+                                <p>
+                                    <span class="d-lg-none d-md-block">Some Actions</span>
+                                </p>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pablo">
+                                <i class="now-ui-icons users_single-02"></i>
+                                <p>
+                                    <span class="d-lg-none d-md-block">Account</span>
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>*@
         </div>
     </nav>
     <!-- End Navbar -->
@@ -149,9 +149,9 @@
             @foreach (var item in Model)
             {
                 <div class="col-lg-3 col-sm-6">
-                    <div class="card card-stats" >
+                    <div class="card card-stats">
                         <div class="card-body ">
-                        
+
                             <div class="statistics statistics-horizontal">
                                 <div class="info info-horizontal">
                                     <div class="row">
@@ -162,7 +162,7 @@
                                     <hr>
 
                                     <div class="row" style="font-size:smaller;">
-                            
+
                                         <div class="col-12">
                                             <div class="group inner list-group-item-text">
                                                 <span>Client Name:</span> <p>@item.ClientName</p>
@@ -191,14 +191,17 @@
                                 <button type="button" onclick="javascript:DeleteIRF('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Delete">
                                     <i class="now-ui-icons fa fa-trash"></i>
                                 </button>
+                                <button type="button" onclick="javascript:stats('@item.id');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                    <i class="now-ui-icons fa fa-industry"></i>
+                                </button>
                                 @*<i class="now-ui-icons arrows-1_refresh-69"></i> Update now
-                                    <i class="now-ui-icons fa fa-pencil" style="color:blue;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom" onclick="javascript:EditIRF('@item.id');"></i>
+        <i class="now-ui-icons fa fa-pencil" style="color:blue;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Edit" data-original-title="Tooltip on bottom" onclick="javascript:EditIRF('@item.id');"></i>
 
-                                    <i class="now-ui-icons  fa-comments" style="color:black;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Questions" data-original-title="Tooltip on bottom" onclick="javascript:AddComments('@item.id');"></i>
+        <i class="now-ui-icons  fa-comments" style="color:black;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Questions" data-original-title="Tooltip on bottom" onclick="javascript:AddComments('@item.id');"></i>
 
-                                    <i class="now-ui-icons fa fa-meetup" style="color:green;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Meetings" data-original-title="Tooltip on bottom" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"></i>
+        <i class="now-ui-icons fa fa-meetup" style="color:green;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Meetings" data-original-title="Tooltip on bottom" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"></i>
 
-                                    <i class="now-ui-icons fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>*@
+        <i class="now-ui-icons fa fa-trash" style="color:red;font-size: 30px;" data-toggle="tooltip" data-placement="bottom" title="Delete" data-original-title="Tooltip on bottom" onclick="javascript:DeleteIRF('@item.id');"></i>*@
 
                             </div>
                         </div>
@@ -279,37 +282,67 @@
 
 @if (ViewBag.Message != null)
 {
-    <script>
+    <script type="text/javascript">
 
         $(document).ready(function () {
             var message = '@ViewBag.Message';
-
             if (message.includes("Success")) {
-                alert("Successful");
+                //alert("Successful");
                 //swal("Successful!", "IRF added successfully.", "success");
 
             }
-            else
-                alert("Unsuccessful");
+            else {
+                //alert("Unsuccessful");
                 //swal("Sorry!", "IRF submission failed.", "error");
+            }
+
 
         });
 
     </script>
 
 }
+<script type="text/javascript">
+    function DeleteIRF(id) {
+       
+        debugger;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((id) => {
+            if (id => 0) {
+                debugger;
+                var url = '/IRF/DeleteIRF?id=' + id;
+                window.location.href = url;
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+            }
+            else{
+                Swal.fire(
+                    'Cancelled',
+                    'Your file has been not deleted successfully.',
+                    'error'
+                )
+            }
+        })
 
-<script>
+    };
 
     function AddComments(id) {
 
         var url = '/IRF/AddComments?id=' + id;
         window.location.href = url;
     };
-    function DeleteIRF(id) {
-        var url = '/IRF/DeleteIRF?id=' + id;
-        window.location.href = url;
-    };
+
+
 
     function GetInterviewMeetings(id, IRFid) {
 

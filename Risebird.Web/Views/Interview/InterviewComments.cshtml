@@ -295,7 +295,6 @@
                                     <div class="col-md-6 col-sm-6 px-1">
                                         @*<div class="form-group">*@
                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
                                         @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
                                         @{
                                             if (Model.AudioLink != null)
@@ -308,7 +307,7 @@
                                         @*<div class="form-group">*@
                                         @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn " })
                                         @{
                                             if (Model.VideoLink != null)
                                             {
