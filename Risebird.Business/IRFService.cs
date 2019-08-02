@@ -223,6 +223,7 @@ namespace Risebird.Business
                 model.ClientName = IRF.ClientName;
                 model.CompanyType = IRF.CompanyType;
                 model.EndDate = IRF.EndDate;
+                model.JobLevel = IRF.JobLevel;
 
                 var skillCount = transTechSkills.Count();
                 return model;

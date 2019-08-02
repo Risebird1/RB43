@@ -277,6 +277,16 @@
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
+
+                                        @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
+
+                                    </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 

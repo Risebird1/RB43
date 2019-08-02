@@ -205,8 +205,9 @@ namespace Risebird.Repository
                 parameters.Add("@interviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
-                        commandType: CommandType.StoredProcedure);                   
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetMeetingById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
 
             }
@@ -492,6 +493,10 @@ namespace Risebird.Repository
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
                     paramx.Add("@Rating", reportDetails.Rating);
+                    paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
+                    paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
+                    paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
+                    paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
                     if (reportDetails.IsEdited)
                     {
                         var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -502,7 +507,7 @@ namespace Risebird.Repository
                     else
                     {
                         //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating);";
+                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             IRFId = reportDetails.IRFId,
@@ -510,7 +515,12 @@ namespace Risebird.Repository
                             CandidateName = reportDetails.CandidateName,
                             confirmationStatus = reportDetails.confirmationStatus,
                             OverallScore = reportDetails.OverallScore,
-                            Rating= reportDetails.Rating
+                            Rating= reportDetails.Rating,
+                            TechSkillComments = reportDetails.TechSkillComments,
+                            SkillGeneralComments = reportDetails.SkillGeneralComments,
+                            SelectabilityComments = reportDetails.SelectabilityComments,
+                            JoinabilityComments = reportDetails.JoinabilityComments,
+
                         }).Result;
 
                     }
@@ -661,13 +671,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from InterviewReport where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@InterviewId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewReport>(query, dynamicParameters);
-                    return results;
+                    return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewReportById", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
                 }
 
             }
@@ -819,6 +828,10 @@ namespace Risebird.Repository
             parameters.Add("@trainerComment", entity.TrainerComment);
             parameters.Add("@audiolink", entity.AudioLink);
             parameters.Add("@videolink", entity.VideoLink);
+            parameters.Add("@MeetingStatus", entity.MeetingStatus);
+            parameters.Add("@OfferStatus", entity.OfferStatus);
+            parameters.Add("@PreparationStatus", entity.PreparationStatus);
+            parameters.Add("@JoiningStatus", entity.JoiningStatus);
             return parameters;
         }
     }

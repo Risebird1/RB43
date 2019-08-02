@@ -412,14 +412,7 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
                        commandType: CommandType.StoredProcedure);
-
-                    //var irfList = SqlMapper.QueryAsync<IRFVm>(
-                    //    con, "select * from IRF", null, commandType: Text).Result.AsList();
-                    //var irfID = irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
-                    ////var irfId = SqlMapper.Query<string>(
-                    ////    con, "select id from IRF where IRFId = @IRFId ", new {IRFId = irfDetails.IRFId }, commandType: Text);
-
-                    ////update joinability matrix table
+                    
                     foreach (var item in irfDetails.Joinability)
                     {
                         string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
@@ -829,11 +822,7 @@ namespace Risebird.Repository
             parameters.Add("@NoOfIntterview", entity.NoOfIntterview);
             parameters.Add("@RisebirdHr", entity.RisebirdHr);
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
-            //parameters.Add("@InterviewerUserId", entity.InterviewerCollection[0]?.InterviewerId);
-            //parameters.Add("@QCUserId", entity.QualityController[0].QualityControllerId);
-            //parameters.Add("@ClientUserId", entity.ClientCollection[0]?.ClientUserId);
-            //parameters.Add("@ClientRoleId", entity.ClientCollection[0]?.ClientRoleId);
-            //parameters.Add("@QCUserId", entity.QualityController[0]?.UserId);
+            parameters.Add("@JobLevel", entity.JobLevel);       
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

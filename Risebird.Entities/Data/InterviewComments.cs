@@ -13,6 +13,7 @@ namespace Risebird.Entities.Data
         public int Id { get; set; }
         public int InterviewId { get; set; }
         public int? InterviewStatus { get; set; }
+        public int? MeetingStatus { get; set; }
         public string AudioLink { get; set; }
         public string VideoLink { get; set; }
         [Display(Name ="Interviewer Comment")]
@@ -33,6 +34,9 @@ namespace Risebird.Entities.Data
         [Display(Name ="Interview Status")]
         public SelectList InterviewStatusList { get; set; }
 
+        [Display(Name = "Meeting Status")]
+        public SelectList MeetingStatusList { get; set; }
+
         [Display(Name = "Fraud Check Status")]
         public SelectList FraudCheckStatusList { get; set; }
 
@@ -43,9 +47,20 @@ namespace Risebird.Entities.Data
         public SelectList QCStatusList { get; set; }
 
         [Display(Name = "L2 Interview Status")]
-        public SelectList L2InterviewStatusList{ get; set; }
+        public SelectList L2InterviewStatusList { get; set; }
+
+        [Display(Name = "Final Interview Meeting Status")]
+        public SelectList FinalInterviewMeetingStatusList { get; set; }
         [Display(Name = "Client Interview Status")]
         public SelectList ClientInterviewStatusList { get; set; }
+
+        [Display(Name = "Joining Status")]
+        public SelectList JoiningStatusList { get; set; }
+        [Display(Name = "Preparation Status")]
+        public SelectList PreparationStatusList { get; set; }
+
+        [Display(Name = "Offer Status")]
+        public SelectList OfferStatusList { get; set; }
 
         [Display(Name = "Upload Audio")]
         public IFormFile AudioFile { get; set; }
@@ -53,6 +68,11 @@ namespace Risebird.Entities.Data
         [Display(Name = "Upload Video")]
         public IFormFile VideoFile { get; set; }
 
+        public int? FinalInterviewMeetingStatus { get; set; }
+
+        public int? OfferStatus { get; set; }
+        public int? PreparationStatus { get; set; }
+        public int? JoiningStatus { get; set; }
         public int? L2InterviewStatus { get; set; }
         public int? ClientInterviewStatus { get; set; }
 

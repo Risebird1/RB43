@@ -42,7 +42,20 @@ namespace Risebird.Entities.ViewModel
 
         public IList<SelectabilityReport> SelectabilityReportCollection { get; set; }
 
+        [DisplayName("Technical Skill Comments")]
+        public string TechSkillComments { get; set; }
+        [DisplayName("General Skills Comments")]
+        public string SkillGeneralComments { get; set; }
+        [DisplayName("Joinability Comments")]
+        public string JoinabilityComments { get; set; }
+        [DisplayName("Selectability Comments")]
+        public string SelectabilityComments { get; set; }
         public bool IsEdited { get; set; }
+        
+        public int JobLevel { get; set; }
+
+        [DisplayName("Job Level")]
+        public string JobLevelName { get; set; }
 
     }
 }

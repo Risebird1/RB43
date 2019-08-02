@@ -521,6 +521,12 @@ namespace Risebird.Web.Controllers
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+            var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+
+            model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
             var fraudCheckStatuses = from FraudCheckStatus s in Enum.GetValues(typeof(FraudCheckStatus))
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.FraudCheckStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
@@ -533,6 +539,10 @@ namespace Risebird.Web.Controllers
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.TrainingStatusList = new SelectList(fraudCheckStatuses, "ID", "Name");
 
+            var finalInterviewMeetingStatuses = from FinalInterviewMeetingStatus s in Enum.GetValues(typeof(FinalInterviewMeetingStatus))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            model.FinalInterviewMeetingStatusList = new SelectList(finalInterviewMeetingStatuses, "ID", "Name");
+
             var l2InterviewStatuses = from L2InterviewStatus s in Enum.GetValues(typeof(L2InterviewStatus))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             model.L2InterviewStatusList = new SelectList(l2InterviewStatuses, "ID", "Name");
@@ -541,6 +551,17 @@ namespace Risebird.Web.Controllers
                                       select new { ID = (int)s, Name = s.GetDescription() };
             model.ClientInterviewStatusList = new SelectList(clntInterviewStatuses, "ID", "Name");
 
+            var offerStatuses = from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+            model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+
+            var joiningStatuses = from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+            model.JoiningStatusList = new SelectList(joiningStatuses, "ID", "Name");
+
+            var preparationStatuses = from PreparationStatus s in Enum.GetValues(typeof(PreparationStatus))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
     }
 
