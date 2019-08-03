@@ -122,7 +122,7 @@ namespace Risebird.Business
             }
         }
 
-        public List<ClientInterviewVM> GetAllClientInterviews(string emailId)
+        public List<MeetingVM> GetAllClientInterviews(string emailId)
         {
             try
             {
@@ -321,13 +321,6 @@ namespace Risebird.Business
                     
                     return model;
                 }
-
-
-                
-                
-               
-                
-
             }
 
             catch (Exception e)

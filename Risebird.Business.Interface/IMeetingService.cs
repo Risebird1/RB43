@@ -14,7 +14,7 @@ namespace Risebird.Business.Interface
         MeetingVM GetMeeting(int id);
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
-        List<ClientInterviewVM> GetAllClientInterviews(string emailID);
+        List<MeetingVM> GetAllClientInterviews(string emailID);
         
         string AssignYourself(int meetingid, string interviewerMail);
         bool UnassignYourself(int meetingid);

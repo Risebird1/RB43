@@ -203,6 +203,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    var selectedMeeting = new List<MeetingVM>(); 
                     var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
                     ViewBag.IRF = irfId;
                     foreach (var m in meetings)
@@ -244,9 +245,9 @@ namespace Risebird.Web.Controllers
                         {
                             m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                         }
-
+                        selectedMeeting.Add(m);
                     }
-                    return View(meetings);
+                    return View(selectedMeeting);
                 }
                 else
                 {

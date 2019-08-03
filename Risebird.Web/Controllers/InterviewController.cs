@@ -309,9 +309,15 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                var clientInterviews = _meetingService.GetAllClientInterviews(emailid);
-                foreach (var m in clientInterviews)
+
+                var meetings = _meetingService.GetAllClientInterviews(emailid);
+               
+                foreach (var m in meetings)
                 {
+                    if (m.intervieweStatus.HasValue)
+                    {
+                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                    }
                     if (m.L2InterviewStatus.HasValue)
                     {
                         m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
@@ -320,9 +326,29 @@ namespace Risebird.Web.Controllers
                     {
                         m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                     }
+                    if (m.JoiningStatus.HasValue)
+                    {
+                        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                    }
+                    if (m.PreparationStatus.HasValue)
+                    {
+                        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                    }
+                    if (m.OfferStatus.HasValue)
+                    {
+                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                    }
+                    if (m.MeetingStatus.HasValue)
+                    {
+                        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                    }
+                    if (m.QCStatus.HasValue)
+                    {
+                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                    }
 
                 }
-                return View(clientInterviews);
+                return View(meetings);
             }
             catch (Exception ex)
             {
