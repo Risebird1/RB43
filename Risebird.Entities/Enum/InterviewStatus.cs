@@ -22,12 +22,12 @@ namespace Risebird.Entities.Enum
     {
         [Description("No Show")]
         NoShow = 1,
-        [Description("Selected")]
-        Selected = 2,
-        [Description("Rejected")]
-        Rejected = 3,
-        [Description("Border Line")]
-        BorderLine = 4
+        [Description("Scheduled")]
+        Scheduled = 2,
+        [Description("Dropped")]
+        Dropped = 3,
+        [Description("Completed")]
+        Completed = 4
 
     }
 
@@ -37,10 +37,10 @@ namespace Risebird.Entities.Enum
         OfferReleased = 1,
         [Description("Offer Accepted")]
         OfferAccepted = 2,
-        [Description("Offer Denied")]
+        [Description("Offer Declined")]
         OfferDenied = 3,
-        [Description("Dropped")]
-        Dropped = 4
+        [Description("Not offered")]
+        Notoffered = 4
 
     }
 
@@ -58,10 +58,10 @@ namespace Risebird.Entities.Enum
         NoShow = 1,
         [Description("Selected")]
         Selected = 2,
-        [Description("Rejected")]
-        Rejected = 3,
-        [Description("Border Line")]
-        BorderLine = 4
+        [Description("Completed")]
+        Completed = 3,
+        [Description("Dropped")]
+        Dropped = 4
 
     }
 

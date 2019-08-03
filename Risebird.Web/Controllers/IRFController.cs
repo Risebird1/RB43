@@ -196,6 +196,73 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult SelectedInterviewMeetings(string id, string irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                    ViewBag.IRF = irfId;
+                    foreach (var m in meetings)
+                    {
+                        if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                        {
+                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                        }
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        }
+                        if (m.JoiningStatus.HasValue)
+                        {
+                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        }
+                        if (m.PreparationStatus.HasValue)
+                        {
+                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        }
+                        if (m.OfferStatus.HasValue)
+                        {
+                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        }
+                        if (m.MeetingStatus.HasValue)
+                        {
+                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        }
+                        if (m.QCStatus.HasValue)
+                        {
+                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        }
+
+                    }
+                    return View(meetings);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
+        [HttpGet]
         public IActionResult GetInterviewMeetings(string id, string irfId)
         {
             try
@@ -206,6 +273,10 @@ namespace Risebird.Web.Controllers
                     ViewBag.IRF = irfId;
                     foreach (var m in meetings)
                     {
+                        if (m.intervieweStatus.HasValue)
+                        {
+                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                        }
                         if (m.L2InterviewStatus.HasValue)
                         {
                             m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
@@ -213,6 +284,26 @@ namespace Risebird.Web.Controllers
                         if (m.L2InterviewStatus.HasValue)
                         {
                             m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        }
+                        if (m.JoiningStatus.HasValue)
+                        {
+                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        }
+                        if (m.PreparationStatus.HasValue)
+                        {
+                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        }
+                        if (m.OfferStatus.HasValue)
+                        {
+                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        }
+                        if (m.MeetingStatus.HasValue)
+                        {
+                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        }
+                        if (m.QCStatus.HasValue)
+                        {
+                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                         }
 
                     }
