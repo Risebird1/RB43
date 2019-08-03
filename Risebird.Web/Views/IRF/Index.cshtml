@@ -279,7 +279,7 @@
 <script type="text/javascript">
     function DeleteIRF(id) {
        
-        debugger;
+       
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -290,7 +290,7 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((id) => {
             if (id => 0) {
-                debugger;
+              
                 var url = '/IRF/DeleteIRF?id=' + id;
                 window.location.href = url;
                 Swal.fire(

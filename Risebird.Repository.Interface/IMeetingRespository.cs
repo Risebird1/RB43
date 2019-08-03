@@ -14,7 +14,7 @@ namespace Risebird.Repository.Interface
 
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
-        Task<IEnumerable<ClientInterviewVM>> GetAllClientInterviews(string emailId);
+        Task<IEnumerable<MeetingVM>> GetAllClientInterviews(string emailId);
         
         string AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
