@@ -1074,17 +1074,20 @@
         //shorter/better attempt
         var weightageItems = $('[id$="WeightageActual"]');
         for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
 
-            var index = weightageItems[i].id.indexOf(i);
+            var index = weightageItems[i].id.indexOf(digit);
             var skillName = weightageItems[i].id.substring(0, index);
-            var reqLevel = $("#" + skillName + i + "__RequiredLevelId").val();
-            var actLevel = $("#" + skillName + i + "__ActualLevelId").val();
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
             if (reqLevel <= actLevel) {
-                reqWeight = $("#" + skillName + i + "__WeightageRequired").val();
-                $("#" + skillName + i + "__WeightageActual").val(reqWeight);
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
             }
             else
-                $("#" + skillName + i + "__WeightageActual").val("0");
+                $("#" + skillName + digit + "__WeightageActual").val("0");
         }
 
 
