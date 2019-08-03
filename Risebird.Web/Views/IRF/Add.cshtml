@@ -137,7 +137,7 @@
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
 
                                         @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur="checkUniqueness(this.value)" } })
-                                        <label class="control-label col-md-4 col-sm-2 desp-label" id="uniqueMsg" style="color:red"></label>
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
                                         @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
 
@@ -186,10 +186,13 @@
 
                                     </div>
                                     <div class="form-group">
+                                        @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
 
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ClientId">End Client Name</label>
+                                        @*<label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ClientId">End Client Name</label>
 
-                                        <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">
+                                        <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">*@
 
                                     </div>
                                     <div class="form-group">

@@ -104,4 +104,48 @@ namespace Risebird.Entities.Enum
         [Description("Architect")]
         Architect = 5
     }
+
+    public enum JoinabilityType
+    {
+
+        [Description("Job Location")]
+        JobLocation = 1,
+        [Description("Approved Per Hour Rate")]
+        ApprovedPerHourRate = 2,
+        [Description("Approved Visa Type")]
+        ApprovedVisaType = 3,
+        [Description("Max Notice period (Days)")]
+        MaxNoticeperiodDays = 4,
+        
+    }
+
+    public enum SelectabilityType
+    {
+
+        [Description("Technology Stack")]
+        TechnologyStack = 1,
+        [Description("Career Progression")]
+        CareerProgression = 2,
+        [Description("Industry")]
+        Industry = 3,
+        [Description("Domain")]
+        Domain = 4,
+        [Description("Project")]
+        Project = 5,
+        [Description("Previous Employers")]
+        PreviousEmployers = 6,
+        [Description("Academics")]
+        Academics = 7,
+    }
+
+    public enum SkillGeneralType
+    {
+
+        [Description("Logical")]
+        Logical = 1,
+        [Description("Analytical")]
+        Analytical = 2,
+        [Description("Communication")]
+        Communication = 3
+    }
 }

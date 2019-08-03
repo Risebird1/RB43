@@ -336,11 +336,25 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
-                    ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                    ViewBag.QualityController = _irfService.GetQualityController();
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+
+                    var joinabilityType = from JoinabilityType s in Enum.GetValues(typeof(JoinabilityType))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JoinabilityTypeList = new SelectList(joinabilityType, "ID", "Name");
+
+                    var selectabilityTypes = from SelectabilityType s in Enum.GetValues(typeof(SelectabilityType))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.SelectabilityTypeList = new SelectList(selectabilityTypes, "ID", "Name");
+
+                    var skillGeneralTypes = from SkillGeneralType s in Enum.GetValues(typeof(SkillGeneralType))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.SkillGeneralTypeList = new SelectList(skillGeneralTypes, "ID", "Name");
+                    
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     return View(model);
                 }

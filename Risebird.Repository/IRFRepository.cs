@@ -121,6 +121,35 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<InterviewerVM> GetInterviewersforIRF()
+        {
+            IEnumerable<InterviewerVM> interviewersVm = new List<InterviewerVM>();
+            IEnumerable<Interviewer> interviewers = new List<Interviewer>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    interviewers = SqlMapper.Query<Interviewer>(
+                        con, "select * from Interviewer", null, commandType: Text);
+                    var idList = new List<int>();
+                    foreach (var item in interviewers)
+                    {
+                        idList.Add(item.UserId);
+                    }
+                    string ids = string.Join<int>(",", idList);
+                    interviewersVm = SqlMapper.Query<InterviewerVM>(
+                        con, "select * from UserList where id in (" + ids + ")", null, commandType: Text);
+                    return interviewersVm;
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<Level> GetLevels()
         {
             try
@@ -499,7 +528,7 @@ namespace Risebird.Repository
                     {
                         DynamicParameters param = new DynamicParameters();
                         param.Add("@irfIntId", irfDetails.id);
-                        param.Add("@InterviewerUserId", item.InterviewerId);
+                        param.Add("@InterviewerUserId", item.UserId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
 
