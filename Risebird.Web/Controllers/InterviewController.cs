@@ -358,9 +358,10 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddComments(int interviewId)
+        public async Task<IActionResult> AddComments(int interviewId, bool fromIRF = false)
         {
             ViewBag.Message = TempData["SuccessErrorMessageInterviewComment"];
+            ViewBag.FromIRF = fromIRF;
             try
             {
                 InterviewComments comments = _meetingService.GetInterviewComments(interviewId);
@@ -507,7 +508,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddReport(int interviewId, int irfId)
+        public IActionResult AddReport(int interviewId, int irfId, bool fromIRF = false)
         {
             try
             {
@@ -516,6 +517,8 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Client = "Client";
                 }
+
+                ViewBag.FromIRF = fromIRF;
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;

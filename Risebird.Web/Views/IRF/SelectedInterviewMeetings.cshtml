@@ -94,8 +94,8 @@
                                     <td> @item.JoiningStatusStatDesc  </td>
                                     <td> <a id="videoId" target="_blank" title="Resume" href=@item.videoLink>VideoLink</a> </td>
                                     <td class="text-right">
-                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.IRFId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId})'" title="Comment" class="btn btn-round btn-info btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.IRFId, fromIRF = true})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId, fromIRF = true})'" title="Comment" class="btn btn-round btn-info btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
 
                                     </td>
                                 </tr>
