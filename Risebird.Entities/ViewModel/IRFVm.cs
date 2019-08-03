@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -26,7 +27,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string CompanyType { get; set; }
 
-
+        [DisplayName("Job Level")]
+        public int? JobLevel { get; set; }
         public int ClientId { get; set; }
         [DisplayName("Job Country")]
         [Required]
@@ -62,6 +64,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Per Minute Rate(Rs.)")]
         [Required]
         public double PerMintuteRate { get; set; }
+        public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
         public IList<TransJoinability> Joinability { get; set; }
@@ -87,5 +90,7 @@ namespace Risebird.Entities.ViewModel
         public int NoOfIntterview { get; set; }
         public int RisebirdHr { get; set; }
         public double PerMintuteRate { get; set; }
+
+        public int JobLevel { get; set; }
     }
 }

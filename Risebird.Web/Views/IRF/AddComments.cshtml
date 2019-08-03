@@ -159,12 +159,12 @@
 
                                                         <td>
                                                             @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowComments()">
-                                                                    <span class="glyphicon glyphicon-plus"></span>
-                                                                </a>
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
 
-                                                                <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
-                                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                                </a>*@
+                                        <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
                                                             <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
 
@@ -194,12 +194,12 @@
 
                                                             <td>
                                                                 @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowComments()">
-                                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                                    </a>
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                            </a>
 
-                                                                    <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
-                                                                        <span class="glyphicon glyphicon-trash"></span>
-                                                                    </a>*@
+                                            <a class="btn border-white btn-sm btn-danger delete-comment" id="btnMinus">
+                                                <span class="glyphicon glyphicon-trash"></span>
+                                            </a>*@
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
                                                             </td>
@@ -214,22 +214,22 @@
 
                             </div>
 
-
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class="col-md-9">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
 
 
                             @Html.HiddenFor(m => m.IRFId)
                         </form>
 
                     </div>
-                    <div class="card-footer ">
-                        <div class="row">
-                            <label class="col-md-2"></label>
-                            <div class="col-md-9">
-                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <!-- end content-->
                 </div>
                 <!--  end card  -->

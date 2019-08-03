@@ -7,6 +7,19 @@ namespace Risebird.Entities.Enum
 {
     public enum InterviewStatus
     {
+        [Description("Proxy")]
+        Proxy = 1,
+        [Description("Selected")]
+        Selected = 2,
+        [Description("Rejected")]
+        Rejected = 3,
+        [Description("Border Line")]
+        BorderLine = 4
+
+    }
+
+    public enum MeetingStatus
+    {
         [Description("No Show")]
         NoShow = 1,
         [Description("Selected")]
@@ -18,6 +31,48 @@ namespace Risebird.Entities.Enum
 
     }
 
+    public enum OfferStatus
+    {
+        [Description("Offer Released")]
+        OfferReleased = 1,
+        [Description("Offer Accepted")]
+        OfferAccepted = 2,
+        [Description("Offer Denied")]
+        OfferDenied = 3,
+        [Description("Dropped")]
+        Dropped = 4
+
+    }
+
+    public enum JoiningStatus
+    {
+        [Description("Joined")]
+        Joining = 1,
+        [Description("Not Joined")]
+        NotJoining = 2
+        
+    }
+    public enum FinalInterviewMeetingStatus
+    {
+        [Description("No Show")]
+        NoShow = 1,
+        [Description("Selected")]
+        Selected = 2,
+        [Description("Rejected")]
+        Rejected = 3,
+        [Description("Border Line")]
+        BorderLine = 4
+
+    }
+
+    public enum PreparationStatus
+    {
+        [Description("Completed")]
+        Completed = 1,
+        [Description("Not Completed")]
+        NotCompleted = 2
+        
+    }
     public enum L2InterviewStatus
     {
         [Description("Selected")]
@@ -33,5 +88,20 @@ namespace Risebird.Entities.Enum
         Offered = 1,
         [Description("Not Offered")]
         NotOffered = 2
+    }
+
+    public enum JobLevels
+    {
+
+        [Description("SE")]
+        SE = 1,
+        [Description("SSE")]
+        SSE = 2,
+        [Description("Lead")]
+        Lead = 3,
+        [Description("Manager")]
+        Manager = 4,
+        [Description("Architect")]
+        Architect = 5
     }
 }

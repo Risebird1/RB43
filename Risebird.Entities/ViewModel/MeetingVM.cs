@@ -77,7 +77,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime dtCreatedOn { get; set; }
         [Display(Name = "Upload Resume")]
         public IFormFile File { get; set; }
-
+        public int? JobLevel { get; set; }
         public int? L2InterviewStatus { get; set; }
         public int? ClientInterviewStatus { get; set; }
         public string L2InterviewStatDesc { get; set; }

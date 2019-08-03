@@ -223,6 +223,7 @@ namespace Risebird.Business
                 model.ClientName = IRF.ClientName;
                 model.CompanyType = IRF.CompanyType;
                 model.EndDate = IRF.EndDate;
+                model.JobLevel = IRF.JobLevel;
 
                 var skillCount = transTechSkills.Count();
                 return model;
@@ -277,6 +278,20 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public bool CheckUniqueness(string value)
+        {
+            try
+            {
+                return _irfRepository.CheckUniqueness(value);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

@@ -144,6 +144,16 @@
 
 
                                         </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+
+                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+
+
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -181,8 +191,8 @@
                                     <div class="col-md-3 col-sm-3 px-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.OverallScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextBoxFor(model => model.OverallScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            <input class="form-control text-box single-line" id="OverallScore" name="OverallScore" type="text" value="@Model.OverallScore" readonly="readonly">
+                                            @*@Html.TextBoxFor(model => model.OverallScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                         </div>
@@ -357,6 +367,14 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.TextBoxFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line" })
+                                        </div>
+
+                                        
+
                                     </div><!--end of col-md-12-->
 
                                 </div>
@@ -418,6 +436,14 @@
 
                                                 </tbody>
                                             </table>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(m => m.SkillGeneralComments, new { @class = "form-control text-box single-line" })
+                                            </div>
+                                            
+
                                         </div>
                                     </div><!--end of col-md-12-->
 
@@ -481,6 +507,13 @@
 
                                                 </tbody>
                                             </table>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(m => m.JoinabilityComments, new { @class = "form-control text-box single-line" })
+                                            </div>
+                                            
+
                                         </div>
                                     </div><!--end of col-md-12-->
 
@@ -496,6 +529,7 @@
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="table-responsive">
+
                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                 <thead>
                                                     <tr>
@@ -544,6 +578,13 @@
 
                                                 </tbody>
                                             </table>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(m => m.SelectabilityComments, new { @class = "form-control text-box single-line" })
+                                            </div>
+                                            
+
                                         </div>
                                     </div><!--end of col-md-12-->
 
@@ -1028,6 +1069,88 @@
     }
 
     $(document).ready(function () {
+        debugger;
+
+        //shorter/better attempt
+        var weightageItems = $('[id$="WeightageActual"]');
+        for (i = 0; i < weightageItems.length; i++) {
+            var id = weightageItems[i].id;
+            var match = id.match(/\d+/g);
+            var digit = match[0];
+
+            var index = weightageItems[i].id.indexOf(digit);
+            var skillName = weightageItems[i].id.substring(0, index);
+            var reqLevel = $("#" + skillName + digit + "__RequiredLevelId").val();
+            var actLevel = $("#" + skillName + digit + "__ActualLevelId").val();
+            if (reqLevel <= actLevel) {
+                reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
+                $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
+            }
+            else
+                $("#" + skillName + digit + "__WeightageActual").val("0");
+        }
+
+
+
+        ////techSkillCollection
+        //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < techItems.length; i++) {
+        //    var reqLevel = $("#TechSkillReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#TechSkillReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////generalSkillCollection
+        //var genSkillItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < genSkillItems.length; i++) {
+        //    var reqLevel = $("#SkillGeneralReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#SkillGeneralReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#SkillGeneralReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////selectability
+        //var selectabilityItems = $('[id^="SelectabilityReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < selectabilityItems.length; i++) {
+        //    var reqLevel = $("#SelectabilityReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#SelectabilityReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#SelectabilityReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+        ////joinability
+        //var joinabilityItems = $('[id^="JoinabilityReportCollection"][id$="WeightageActual"]');
+
+        //for (i = 0; i < joinabilityItems.length; i++) {
+        //    var reqLevel = $("#JoinabilityReportCollection_" + i + "__RequiredLevelId").val();
+        //    var actLevel = $("#JoinabilityReportCollection_" + i + "__ActualLevelId").val();
+        //    if (reqLevel <= actLevel) {
+        //        reqWeight = $("#JoinabilityReportCollection_" + i + "__WeightageRequired").val();
+        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
+        //    }
+        //    else
+        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val("0");
+        //}
+
+
+        
+
 
         var items = $('[id$="WeightageActual"]');
         var totalCount = 0;

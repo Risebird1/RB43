@@ -226,6 +226,7 @@ namespace Risebird.Business
                 if(interviewReport.Count()>0)
                 {
                     //call Edit Feedbackform method
+                    
                     return EditInterviewReport(interviewReport.FirstOrDefault());
                 }
 
@@ -316,6 +317,8 @@ namespace Risebird.Business
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateEmail;
                     model.IRFId = irfId;
+                    model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
+                    
                     return model;
                 }
 
@@ -343,6 +346,7 @@ namespace Risebird.Business
             model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
+            model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
             return model;
         }
 

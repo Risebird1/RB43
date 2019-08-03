@@ -23,5 +23,6 @@ namespace Risebird.Business.Interface
         Task<IRFVm> GetEditIRF(int id);
         bool UpdateIRF(IRFVm model);
         IList<SkillComment> GetTechSkillComments(int id);
+        bool CheckUniqueness(string value);
     }
 }

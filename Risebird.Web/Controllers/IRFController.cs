@@ -54,9 +54,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                ViewBag.QualityController = _irfService.GetQualityController(); //new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
-
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
                 return View();
             }
             else
@@ -106,6 +108,11 @@ namespace Risebird.Web.Controllers
         public string GetQCSkills(string id)
         {
             return _irfService.GetQCSkills(Convert.ToInt16(id));
+        }
+
+        public bool CheckUniqueness(string value)
+        {
+            return _irfService.CheckUniqueness(value);
         }
 
         public IActionResult AddComments(string id)
@@ -240,6 +247,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
                     ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     return View(model);
                 }
@@ -288,6 +298,13 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        //private void GetDropDownList(IRFVm model)
+        //{
+        //    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+        //                            select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.JobLevelList = new SelectList(interviewStatuses, "ID", "Name");
+            
+        //}
 
         public IActionResult Stats(string id)
         {
