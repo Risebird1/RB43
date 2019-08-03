@@ -1703,12 +1703,14 @@
     });
 
 </script>
-@if (ViewBag.Client != null && (ViewBag.Client.Contains("Client")))
+@*@if (ViewBag.Client != null && (ViewBag.Client.Contains("Client")))*@
+@if(ViewBag.FromIRF)
 {
     <script type="text/javascript">
 
         $(document).ready(function () {
             $('#main-panel').find(":input").attr("disabled", true);
+            $('#main-panel').find(":button").attr("disabled", false);
         });
 
     </script>
