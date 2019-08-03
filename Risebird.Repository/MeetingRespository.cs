@@ -158,7 +158,8 @@ namespace Risebird.Repository
             parameters.Add("@IRFId", entity.IRFId); // Normal parametersmeters           
             parameters.Add("@interviewDate", entity.interviewDate);
             parameters.Add("@interviewSlot", entity.interviewSlot);
-            parameters.Add("@interviewDuration", entity.interviewDuration);           
+            parameters.Add("@interviewDuration", entity.interviewDuration);
+            parameters.Add("@candidateName", entity.candidateName);
             parameters.Add("@candidateEmail", entity.candidateEmail);
             parameters.Add("@@hrRiseBirdAssinged", entity.risebirdHR);
             parameters.Add("@resumeLink", entity.resumeLink);

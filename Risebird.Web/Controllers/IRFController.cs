@@ -306,5 +306,11 @@ namespace Risebird.Web.Controllers
             
         //}
 
+        public IActionResult Stats(string id)
+        {
+            return View();
+            
+        }
+
     }
 }
