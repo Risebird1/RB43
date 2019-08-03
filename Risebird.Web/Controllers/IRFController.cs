@@ -110,6 +110,11 @@ namespace Risebird.Web.Controllers
             return _irfService.GetQCSkills(Convert.ToInt16(id));
         }
 
+        public bool CheckUniqueness(string value)
+        {
+            return _irfService.CheckUniqueness(value);
+        }
+
         public IActionResult AddComments(string id)
         {
             if (HttpContext.Session.GetString("email") != null)

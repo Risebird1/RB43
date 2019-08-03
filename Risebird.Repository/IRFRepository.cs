@@ -257,6 +257,31 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public bool CheckUniqueness(string value)
+        {
+            try
+            {
+                var query = "Select * from IRF where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", value);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    if (results.Count() > 0)
+                        return false;
+                    else
+                        return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false; 
+            }
+           
+        }
         public IEnumerable<Users> GetUsers()
         {
             try

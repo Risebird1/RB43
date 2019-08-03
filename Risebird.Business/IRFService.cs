@@ -280,5 +280,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public bool CheckUniqueness(string value)
+        {
+            try
+            {
+                return _irfRepository.CheckUniqueness(value);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }
