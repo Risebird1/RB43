@@ -823,6 +823,7 @@ namespace Risebird.Repository
             parameters.Add("@@interviewerComment", entity.InterviewerComment);
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
+            parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
             parameters.Add("@qcStatus", entity.QCStatus);
             parameters.Add("@qcComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);

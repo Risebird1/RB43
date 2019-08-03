@@ -37,7 +37,7 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        <div class="toolbar">
+                        <div class="text-right">
                             @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                         </div>
                         <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -55,7 +55,7 @@
                                     <th>Final Interview Status</th>
                                     <th>Joining Status</th>
                                     <th>Video Link</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
+                                    <th class="disabled-sorting text-right">Feedback</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -72,7 +72,7 @@
                                     <th>Final Interview Status</th>
                                     <th>Joining Status</th>
                                     <th>Video Link</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
+                                    <th class="disabled-sorting text-right">Feedback</th>
                                 </tr>
                             </tfoot>
                             <tbody>
@@ -80,27 +80,24 @@
 
                                 @foreach (var item in Model)
                                 {
-                                <tr id=@item.IRFId>
+                                <tr id=@item.imid>
                                     <td> @item.interviewDate </td>
                                     <td> @item.candidateName </td>
                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                     <td> @item.ClientHrContact </td>
                                     <td> @item.comfirmationStatus</td>
-                                    <td> @item.expectedPerHourRate </td>
-                                    <td> @item.staffingAgency </td>
-                                    <td> @item.joiningTime </td>
-                                    <td> @item.L2InterviewStatDesc </td>
-                                    <td> @item.ClientInterviewStatDesc  </td>
+                                    <td> @item.MeetingStatusStatusDesc </td>
+                                    <td> @item.intervieweStatusStatDesc </td>
+                                    <td> @item.QCStatusStatusDesc </td>
+                                    <td> @item.PreparationStatusDesc </td>
+                                    <td> @item.ClientInterviewStatDesc </td>
+                                    <td> @item.JoiningStatusStatDesc  </td>
+                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.videoLink>VideoLink</a> </td>
                                     <td class="text-right">
-                                        @*<span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>*@
+                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.IRFId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
                                         <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId})'" title="Comment" class="btn btn-round btn-info btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
 
                                     </td>
-
-                                    @*<td>*@
-                                    @*<i type="submit" onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" class="fa fa-pencil-square-o" style="color:green;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Assign Yourself" data-original-title="Tooltip on bottom"></i>*@
-                                    @*<i class="fa fa-remove hover" style="color:red;font-size: 18px;" data-toggle="tooltip" data-placement="bottom" title="Unassign" data-original-title="Tooltip on bottom" onclick="javascript:UnAssignInterviewer('@item.id');"></i>*@
-                                    @*</td>*@
                                 </tr>
                                 }
                             </tbody>

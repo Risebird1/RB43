@@ -803,7 +803,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -811,11 +810,8 @@ namespace Risebird.Repository
                     var result =  SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
-
                 }
-
             }
-
             catch (SqlException e)
             {
                  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
