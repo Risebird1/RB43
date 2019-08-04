@@ -15,6 +15,7 @@ using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper;
 
+
 namespace Risebird.Web.Controllers
 {
     [Authorize]
@@ -522,7 +523,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                
+                GetStatusList(model);
                 return View(model);
 
             }
@@ -539,6 +540,37 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                if (model.AudioFile != null)
+                {
+                    byte[] audiofileData = new byte[model.AudioFile.Length];
+                    string uploadedaudioFileURL = _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", audiofileData);
+                    if (uploadedaudioFileURL == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                        GetStatusList(model);
+                        return View("AddReport", model);
+                    }
+                    else
+                    {
+                        model.AudioLink = uploadedaudioFileURL;
+                    }
+                }
+                if (model.VideoFile != null)
+                {
+                    byte[] videofileData = new byte[model.VideoFile.Length];
+                    string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
+
+                    if (uploadedvideoFileURL == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                        GetStatusList(model);
+                        return View("AddReport", model);
+                    }
+                    else
+                    {
+                        model.VideoLink = uploadedvideoFileURL;
+                    }
+                }
                 if (_meetingService.AddInterviewReport(model).Result)
                 {
                     TempData["SuccessErrorMessage"] = "Report saved Successfully";
@@ -605,6 +637,19 @@ namespace Risebird.Web.Controllers
             var preparationStatuses = from PreparationStatus s in Enum.GetValues(typeof(PreparationStatus))
                                 select new { ID = (int)s, Name = s.GetDescription() };
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
+        }
+
+        private void GetStatusList(InterviewReport model)
+        {
+            var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+            var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+
+            model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
         }
     }
 

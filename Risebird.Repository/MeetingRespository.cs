@@ -487,6 +487,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
@@ -496,6 +498,14 @@ namespace Risebird.Repository
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+
+                    parameters.Add("@interviewId", reportDetails.InterviewId);
+                    parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
+                    parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
+                    parameters.Add("@interviewerComment", reportDetails.InterviewerComment);
+                    parameters.Add("@audiolink",reportDetails.AudioLink);
+                    parameters.Add("@videolink", reportDetails.VideoLink);
+
                     if (reportDetails.IsEdited)
                     {
                         var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -524,7 +534,7 @@ namespace Risebird.Repository
 
                     }
 
-                    if(reportDetails.TechSkillReportCollection!=null)
+                    if (reportDetails.TechSkillReportCollection!=null)
                     {
                         //update techskillreport table
                         foreach (var item in reportDetails.TechSkillReportCollection)
@@ -647,6 +657,8 @@ namespace Risebird.Repository
                         
                     }
 
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                            commandType: CommandType.StoredProcedure);
 
                     return true;
                 }

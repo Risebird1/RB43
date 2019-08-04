@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Risebird.Entities.ViewModel
 {
@@ -56,6 +58,26 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Job Level")]
         public string JobLevelName { get; set; }
+
+        public int? InterviewStatus { get; set; }
+        public int? MeetingStatus { get; set; }
+        public string AudioLink { get; set; }
+        public string VideoLink { get; set; }
+
+
+        [Display(Name = "Interview Status")]
+        public SelectList InterviewStatusList { get; set; }
+
+        [Display(Name = "Meeting Status")]
+        public SelectList MeetingStatusList { get; set; }
+
+        [Display(Name = "Upload Audio")]
+        public IFormFile AudioFile { get; set; }
+
+        [Display(Name = "Upload Video")]
+        public IFormFile VideoFile { get; set; }
+        [Display(Name = "Interviewer Comment")]
+        public string InterviewerComment { get; set; }
 
     }
 }

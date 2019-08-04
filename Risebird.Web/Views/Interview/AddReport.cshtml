@@ -157,6 +157,67 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        
+                                        <video width="320" height="240" controls="controls">
+                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 px-1">
+                                            @*<div class="form-group">*@
+                                            @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
+                                            @{
+                                                if (Model.AudioLink != null)
+                                                {
+                                                    <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
+                                                }
+                                            }
+
+                                            @*</div>*@
+                                            @*<div class="form-group">*@
+                                            @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                            @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn " })
+                                            @{
+                                                if (Model.VideoLink != null)
+                                                {
+                                                    <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                }
+                                            }
+
+                                            @*</div>*@
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -373,7 +434,7 @@
                                             @Html.TextBoxFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line" })
                                         </div>
 
-                                        
+
 
                                     </div><!--end of col-md-12-->
 
@@ -442,7 +503,7 @@
 
                                                 @Html.TextBoxFor(m => m.SkillGeneralComments, new { @class = "form-control text-box single-line" })
                                             </div>
-                                            
+
 
                                         </div>
                                     </div><!--end of col-md-12-->
@@ -512,7 +573,7 @@
 
                                                 @Html.TextBoxFor(m => m.JoinabilityComments, new { @class = "form-control text-box single-line" })
                                             </div>
-                                            
+
 
                                         </div>
                                     </div><!--end of col-md-12-->
@@ -583,7 +644,7 @@
 
                                                 @Html.TextBoxFor(m => m.SelectabilityComments, new { @class = "form-control text-box single-line" })
                                             </div>
-                                            
+
 
                                         </div>
                                     </div><!--end of col-md-12-->
@@ -819,14 +880,14 @@
                                 </div>
 
                                 @*<div class="form-group col-sm-12">
-                                        <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
-                                        </div>
+            <div class="pull-right">
+                <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
+            </div>
 
-                                        <div>
-                                            <a href="/Interview/MyInterview">Back to List</a>
-                                        </div>
-                                    </div>*@
+            <div>
+                <a href="/Interview/MyInterview">Back to List</a>
+            </div>
+        </div>*@
 
 
 
