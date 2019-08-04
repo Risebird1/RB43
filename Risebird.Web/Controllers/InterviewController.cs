@@ -548,14 +548,16 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddReport(InterviewReport model)
+        public async Task<IActionResult> AddReport(InterviewReport model)
         {
             try
             {
                 if (model.AudioFile != null)
                 {
-                    byte[] audiofileData = new byte[model.AudioFile.Length];
-                    string uploadedaudioFileURL = _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", audiofileData);
+                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                    string uploadedaudioFileURL = blob.Uri.ToString();                 
                     if (uploadedaudioFileURL == null)
                     {
                         ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
@@ -569,9 +571,12 @@ namespace Risebird.Web.Controllers
                 }
                 if (model.VideoFile != null)
                 {
-                    byte[] videofileData = new byte[model.VideoFile.Length];
-                    string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
-
+                   // byte[] videofileData = new byte[model.VideoFile.Length];
+                   // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
+                    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName , "videos", model.VideoFile);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                    var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                    string uploadedvideoFileURL = blob.Uri.ToString();
                     if (uploadedvideoFileURL == null)
                     {
                         ModelState.AddModelError(String.Empty, "Video Upload is failed.");

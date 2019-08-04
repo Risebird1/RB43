@@ -79,5 +79,10 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Interviewer Comment")]
         public string InterviewerComment { get; set; }
 
+        [Display(Name ="Uploaded Candidate Resume")]
+        public string resumeLink { get; set; }
+        [Display(Name ="Interview Date")]
+        public string interviewDate { get; set; }
+
     }
 }
