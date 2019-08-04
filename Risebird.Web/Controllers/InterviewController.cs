@@ -209,7 +209,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Edit");
+                        return View("Edit", meetingUpdated);
                     }
                 }
                 else

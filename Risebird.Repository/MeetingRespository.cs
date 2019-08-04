@@ -167,8 +167,8 @@ namespace Risebird.Repository
             parameters.Add("@ClientHrContact", entity.ClientHrContact);
             parameters.Add("@comfirmationStatus", entity.comfirmationStatus);
             parameters.Add("@interviewer", entity.interviewer);
-            parameters.Add("@prefferedLocation", entity.prefferedLocation);
-            parameters.Add("@staffingAgenecy", entity.staffingAgency);
+            parameters.Add("@preferredLocation", entity.preferredLocation);
+            parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
             parameters.Add("@joiningTime", entity.joiningTime);            
             return parameters;
@@ -219,7 +219,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> usp_UpdateMeeting(MeetingVM meeting)
+        public async Task<bool> UpdateMeeting(MeetingVM meeting)
         {
             try
             {
@@ -241,9 +241,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
-            }
-
-            return false;
+            }            
         }
 
         public string AssignYourself(int meetingid, string interviewerMail)

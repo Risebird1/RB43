@@ -8,6 +8,7 @@ using System.Linq;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Risebird.Business
 {
@@ -84,7 +85,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.usp_UpdateMeeting(meetingToUpdate).Result;
+                return _meetingRespository.UpdateMeeting(meetingToUpdate).Result;
             }
 
             catch (Exception e)
