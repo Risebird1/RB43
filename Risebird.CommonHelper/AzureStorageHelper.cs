@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -286,12 +287,16 @@ namespace Risebird.CommonHelper
         /// <param name="connectionString"></param>
         /// <param name="isClient"></param>
         /// <returns></returns>
-        public string InsertBlob(string filename, string containerName, object blobFile)
+        public async Task InsertBlob(string filename, string containerName, IFormFile blobFile)
         {
             CloudBlockBlob blob;
             blob = GetCloudBlockBlobClient(containerName, filename);
-            blob.UploadTextAsync(JsonConvert.SerializeObject(blobFile));
-            return blob.Uri.ToString();
+            using (var fileStream = blobFile.OpenReadStream())
+            {
+               await  blob.UploadFromStreamAsync(fileStream).ConfigureAwait(false);
+            }
+           
+           
         }
 
         public async Task<string> InsertBlobCloudCompare(string filename, string containerName, MemoryStream blobFile)
