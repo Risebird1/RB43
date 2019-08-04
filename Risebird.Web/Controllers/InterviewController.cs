@@ -74,8 +74,11 @@ namespace Risebird.Web.Controllers
                             return View("AddInterview", model);
                         }
 
-                        byte[] fileData = new byte[meeting.File.Length];
-                        string uploadedFileURL = _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", fileData);
+                       
+                        await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
+                        string uploadedFileURL = blob.Uri.ToString();
                         List<Skill> skills = _skillService.GetSkills();
 
                         if (uploadedFileURL == null)
@@ -174,8 +177,11 @@ namespace Risebird.Web.Controllers
                         //String uploadedFileURL = String.Empty;
                         if ((meetingUpdated.File!=null))
                         {
-                            byte[] fileData = new byte[meetingUpdated.File.Length];
-                            string uploadedFileURL = _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", fileData);
+                            
+                            await _azureStorageHelper.InsertBlob(meetingUpdated.File.FileName, "resumes", meetingUpdated.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(meetingUpdated.File.FileName);
+                            string uploadedFileURL = blob.Uri.ToString();
                             if (uploadedFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
@@ -392,8 +398,12 @@ namespace Risebird.Web.Controllers
 
                     if (interviewComments.AudioFile != null)
                     {
-                        byte[] audiofileData = new byte[interviewComments.AudioFile.Length];
-                        string uploadedaudioFileURL = _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", audiofileData);
+                     
+                         await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                        var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
+                        string uploadedaudioFileURL = blob.Uri.ToString();
+
                         if (uploadedaudioFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
@@ -407,9 +417,11 @@ namespace Risebird.Web.Controllers
                     }
                     if (interviewComments.VideoFile != null)
                     {
-                        byte[] videofileData = new byte[interviewComments.VideoFile.Length];
-                        string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", videofileData);
-
+                    
+                        await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
                         if (uploadedvideoFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Video Upload is failed.");
