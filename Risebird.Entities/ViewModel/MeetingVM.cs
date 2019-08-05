@@ -47,16 +47,16 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Zoom Meeting Link.")]
         public string zoomLink { get; set; }
         [Display(Name = "Zoom Login Details")]
-        [Required(ErrorMessage = "Please enter Zoom Login Details.")]
+        //[Required(ErrorMessage = "Please enter Zoom Login Details.")]
         public string zoomDetails { get; set; }
         [Display(Name = "Risebird HR")]
         [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
-        [Display(Name = "Preffered Location")]
+        [Display(Name = "Preferred Location")]
         [Required(ErrorMessage = "Please enter Preffered Location.")]
-        public string prefferedLocation { get; set; }
+        public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
         [Required(ErrorMessage = "Please enter Staffing Agency.")]
         public string staffingAgency { get; set; }

@@ -8,6 +8,8 @@ using System.Linq;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.CommonHelper;
 
 namespace Risebird.Business
 {
@@ -84,7 +86,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.usp_UpdateMeeting(meetingToUpdate).Result;
+                return _meetingRespository.UpdateMeeting(meetingToUpdate).Result;
             }
 
             catch (Exception e)
@@ -340,6 +342,8 @@ namespace Risebird.Business
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
+           // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
+
             return model;
         }
 
