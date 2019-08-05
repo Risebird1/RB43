@@ -535,6 +535,13 @@ namespace Risebird.Web.Controllers
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name"); ;
+
+                //Get questions List for drop down
+                ViewBag.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+
                 GetStatusList(model);
                 return View(model);
 

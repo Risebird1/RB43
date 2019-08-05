@@ -83,6 +83,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string CompanyType { get; set; }
         public int ClientId { get; set; }
+        public string ClientCompName { get; set; }
         public string JobCountry { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

@@ -205,6 +205,26 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public IEnumerable<SkillComment> GetTechSkillComments(int IRFid)
+        {
+
+            try
+            {
+                var comments = _meetingRespository.GetTechSkillComments(IRFid);
+
+                if (comments == null)
+                    return null;
+                else
+                    return comments;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public bool UpdateComments(InterviewComments comments)
         {
             try
@@ -239,7 +259,7 @@ namespace Risebird.Business
                     var levels = _meetingRespository.GetLevels();
                     var skills = _meetingRespository.GetSkills();
                     var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
-                    var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
+                    //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
@@ -306,16 +326,16 @@ namespace Risebird.Business
 
                     model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
 
-                    var quesList = new List<QuestionsDiscussed>();
+                    //var quesList = new List<QuestionsDiscussed>();
 
-                    foreach (var item in questionDetails)
-                    {
-                        QuestionsDiscussed obj = new QuestionsDiscussed();
-                        obj.InterviewId = interviewId;
-                        obj.Comment = item.Comment;
-                        quesList.Add(obj);
-                    }
-                    model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
+                    //foreach (var item in questionDetails)
+                    //{
+                    //    QuestionsDiscussed obj = new QuestionsDiscussed();
+                    //    obj.InterviewId = interviewId;
+                    //    obj.Comment = item.Comment;
+                    //    quesList.Add(obj);
+                    //}
+                    //model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateEmail;
                     model.IRFId = irfId;

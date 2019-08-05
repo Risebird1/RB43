@@ -105,6 +105,21 @@ namespace Risebird.Entities.Enum
         Architect = 5
     }
 
+    public enum QuestionsLevel
+    {
+
+        [Description("Poor")]
+        Poor = 1,
+        [Description("Average")]
+        Average = 2,
+        [Description("Above Average")]
+        AboveAverage = 3,
+        [Description("Excellent")]
+        Excellent = 4,
+        [Description("Outstanding")]
+        Outstanding = 5
+    }
+
     public enum JoinabilityType
     {
 

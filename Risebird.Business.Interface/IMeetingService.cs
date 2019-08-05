@@ -23,5 +23,6 @@ namespace Risebird.Business.Interface
         InterviewComments GetInterviewComments(int interviewId);
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel);
+        IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
     }
 }

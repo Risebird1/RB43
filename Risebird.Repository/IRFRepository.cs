@@ -249,7 +249,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from IRF where IsDeleted = @IsDeleted";
+                var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
