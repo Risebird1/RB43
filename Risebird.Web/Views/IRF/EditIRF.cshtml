@@ -60,7 +60,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Forms</a>
-                <a class="navbar-brand">Edit Form</a>
+                <a class="navbar-brand">Edit IRF</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -120,7 +120,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Edit Form</h4>
+                        <h4 class="card-title">Edit IRF</h4>
                     </div>
                     <div class="card-body">
                         <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
@@ -129,12 +129,7 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="multiple_row">
-                                        <h2>Edit IRF</h2>
-                                    </div>
-                                </div>
-
+                              
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
