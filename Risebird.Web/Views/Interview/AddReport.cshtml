@@ -870,22 +870,16 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
-                                            @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                            @if (!Model.IsClientUser)
+                                            {
+                                                @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
 
-                                @*<div class="form-group col-sm-12">
-                                        <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary">
-                                        </div>
-
-                                        <div>
-                                            <a href="/Interview/MyInterview">Back to List</a>
-                                        </div>
-                                    </div>*@
-
+                              
 
 
 
@@ -973,109 +967,6 @@
     };
 </script>
 
-@*<script>
-        (function () {
-            var
-                form = $('.form'),
-                cache_width = form.width(),
-                a4 = [595.28, 841.89]; // for a4 size paper width and height
-
-            $('#create_pdf').on('click', function () {
-                $('body').scrollTop(0);
-                createPDF();
-            });
-            //create pdf
-            function createPDF() {
-
-                getCanvas().then(function (canvas) {
-                    var
-                        img = canvas.toDataURL("image/png"),
-                        doc = new jsPDF({
-                            unit: 'px',
-                            format: 'a4'
-                        });
-                    doc.addImage(img, 'JPEG', 20, 20);
-                    doc.save('InterviewReport.pdf');
-                    form.width(cache_width);
-                });
-            }
-
-            // create canvas object
-            function getCanvas() {
-                form.width((a4[0] * 1.33333) - 80).css('max-width', 'none');
-                return html2canvas(form, {
-                    imageTimeout: 2000,
-                    removeContainer: true
-                });
-            }
-
-        }());
-    </script>
-    <script>
-        /*
-     * jQuery helper plugin for examples and tests
-     */
-        (function ($) {
-            $.fn.html2canvas = function (options) {
-                var date = new Date(),
-                    $message = null,
-                    timeoutTimer = false,
-                    timer = date.getTime();
-                html2canvas.logging = options && options.logging;
-                html2canvas.Preload(this[0], $.extend({
-                    complete: function (images) {
-                        var queue = html2canvas.Parse(this[0], images, options),
-                            $canvas = $(html2canvas.Renderer(queue, options)),
-                            finishTime = new Date();
-
-                        $canvas.css({ position: 'absolute', left: 0, top: 0 }).appendTo(document.body);
-                        $canvas.siblings().toggle();
-
-                        $(window).click(function () {
-                            if (!$canvas.is(':visible')) {
-                                $canvas.toggle().siblings().toggle();
-                                throwMessage("Canvas Render visible");
-                            } else {
-                                $canvas.siblings().toggle();
-                                $canvas.toggle();
-                                throwMessage("Canvas Render hidden");
-                            }
-                        });
-                        throwMessage('Screenshot created in ' + ((finishTime.getTime() - timer) / 1000) + " seconds<br />", 4000);
-                    }
-                }, options));
-
-                function throwMessage(msg, duration) {
-                    window.clearTimeout(timeoutTimer);
-                    timeoutTimer = window.setTimeout(function () {
-                        $message.fadeOut(function () {
-                            $message.remove();
-                        });
-                    }, duration || 2000);
-                    if ($message)
-                        $message.remove();
-                    $message = $('<div ></div>').html(msg).css({
-                        margin: 0,
-                        padding: 10,
-                        background: "#000",
-                        opacity: 0.7,
-                        position: "fixed",
-                        top: 10,
-                        right: 10,
-                        fontFamily: 'Tahoma',
-                        color: '#fff',
-                        fontSize: 12,
-                        borderRadius: 12,
-                        width: 'auto',
-                        height: 'auto',
-                        textAlign: 'center',
-                        textDecoration: 'none'
-                    }).hide().fadeIn().appendTo('body');
-                }
-            };
-        })(jQuery);
-
-    </script>*@
 <script>
 
     function CalculateOverAll(id, value) {
@@ -1229,64 +1120,6 @@
                 $("#" + skillName + digit + "__WeightageActual").val("0");
         }
 
-
-
-        ////techSkillCollection
-        //var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-
-        //for (i = 0; i < techItems.length; i++) {
-        //    var reqLevel = $("#TechSkillReportCollection_" + i + "__RequiredLevelId").val();
-        //    var actLevel = $("#TechSkillReportCollection_" + i + "__ActualLevelId").val();
-        //    if (reqLevel <= actLevel) {
-        //        reqWeight = $("#TechSkillReportCollection_" + i + "__WeightageRequired").val();
-        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val(reqWeight);
-        //    }
-        //    else
-        //        $("#TechSkillReportCollection_" + i + "__WeightageActual").val("0");
-        //}
-
-        ////generalSkillCollection
-        //var genSkillItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-
-        //for (i = 0; i < genSkillItems.length; i++) {
-        //    var reqLevel = $("#SkillGeneralReportCollection_" + i + "__RequiredLevelId").val();
-        //    var actLevel = $("#SkillGeneralReportCollection_" + i + "__ActualLevelId").val();
-        //    if (reqLevel <= actLevel) {
-        //        reqWeight = $("#SkillGeneralReportCollection_" + i + "__WeightageRequired").val();
-        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val(reqWeight);
-        //    }
-        //    else
-        //        $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val("0");
-        //}
-
-        ////selectability
-        //var selectabilityItems = $('[id^="SelectabilityReportCollection"][id$="WeightageActual"]');
-
-        //for (i = 0; i < selectabilityItems.length; i++) {
-        //    var reqLevel = $("#SelectabilityReportCollection_" + i + "__RequiredLevelId").val();
-        //    var actLevel = $("#SelectabilityReportCollection_" + i + "__ActualLevelId").val();
-        //    if (reqLevel <= actLevel) {
-        //        reqWeight = $("#SelectabilityReportCollection_" + i + "__WeightageRequired").val();
-        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
-        //    }
-        //    else
-        //        $("#SelectabilityReportCollection_" + i + "__WeightageActual").val("0");
-        //}
-
-        ////joinability
-        //var joinabilityItems = $('[id^="JoinabilityReportCollection"][id$="WeightageActual"]');
-
-        //for (i = 0; i < joinabilityItems.length; i++) {
-        //    var reqLevel = $("#JoinabilityReportCollection_" + i + "__RequiredLevelId").val();
-        //    var actLevel = $("#JoinabilityReportCollection_" + i + "__ActualLevelId").val();
-        //    if (reqLevel <= actLevel) {
-        //        reqWeight = $("#JoinabilityReportCollection_" + i + "__WeightageRequired").val();
-        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val(reqWeight);
-        //    }
-        //    else
-        //        $("#JoinabilityReportCollection_" + i + "__WeightageActual").val("0");
-        //}
-        
 
         var items = $('[id$="WeightageActual"]');
         var totalCount = 0;
@@ -1844,18 +1677,6 @@
     });
 
 </script>
-@*@if (ViewBag.Client != null && (ViewBag.Client.Contains("Client")))*@
-@*@if (ViewBag.FromIRF)
-{
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            $('#main-panel').find(":input").attr("disabled", true);
-            $('#main-panel').find(":button").attr("disabled", false);
-        });
-
-    </script>
-}*@
 
 <script>
 

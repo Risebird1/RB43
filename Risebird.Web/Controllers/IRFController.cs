@@ -35,7 +35,12 @@ namespace Risebird.Web.Controllers
                 var irfList = _irfRepository.GetAllIRF();
                 if (prof != null && prof.Contains("Client"))
                 {
+                    ViewBag.IsClientUser = true;
                     irfList.ToList().ForEach(c => c.IsClientUser = true);
+                }
+                else
+                {
+                    ViewBag.IsClientUser = false;
                 }
                 if (TempData["SuccessErrorMessage"] != null)
                 {
@@ -336,6 +341,15 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    string prof = HttpContext.Session.GetString("profileName");                   
+                    if (prof != null && prof.Contains("Client"))
+                    {
+                        ViewBag.IsClientUser = true;                       
+                    }
+                    else
+                    {
+                        ViewBag.IsClientUser = false;
+                    }
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");

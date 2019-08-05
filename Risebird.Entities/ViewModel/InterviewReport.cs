@@ -84,5 +84,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name ="Interview Date")]
         public string interviewDate { get; set; }
 
+        public bool IsClientUser { get; set; }
+
     }
 }
