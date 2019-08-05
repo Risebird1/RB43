@@ -57,3 +57,4 @@ C:\Users\ankit\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\R
 C:\Users\ankit\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\Users\ankit\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\ankit\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache

@@ -94,5 +94,6 @@ namespace Risebird.Entities.ViewModel
         public double PerMintuteRate { get; set; }
 
         public int JobLevel { get; set; }
+        public bool IsClientUser { get; set; }
     }
 }

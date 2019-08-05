@@ -46,7 +46,7 @@
                                     <th>Interview Date</th>
                                     <th>Candidate Name</th>
                                     <th>Resume</th>
-                                    <th>Client HR Contact</th>
+                                    <th>Client HR</th>
                                     <th>Confirmation Status</th>
                                     <th>Meeting Status</th>
                                     <th>Selection Status</th>
@@ -54,7 +54,7 @@
                                     <th>Training Status</th>
                                     <th>Final Interview Status</th>
                                     <th>Joining Status</th>
-                                    <th>Video Link</th>
+                                    <th>Report Link</th>
                                     <th class="disabled-sorting text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -63,7 +63,7 @@
                                     <th>Interview Date</th>
                                     <th>Candidate Name</th>
                                     <th>Resume</th>
-                                    <th>Client HR Contact</th>
+                                    <th>Client HR</th>
                                     <th>Confirmation Status</th>
                                     <th>Meeting Status</th>
                                     <th>Selection Status</th>
@@ -71,7 +71,7 @@
                                     <th>Training Status</th>
                                     <th>Final Interview Status</th>
                                     <th>Joining Status</th>
-                                    <th>Video Link</th>
+                                    <th>Report Link</th>
                                     <th class="disabled-sorting text-right">Actions</th>
                                 </tr>
                             </tfoot>
@@ -92,12 +92,7 @@
                                     <td> @item.PreparationStatusDesc </td>
                                     <td> @item.ClientInterviewStatus </td>
                                     <td> @item.JoiningStatusStatDesc  </td>
-                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.videoLink>VideoLink</a> </td>
-                                    <td class="text-right">
-                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.IRFId, fromIRF = true})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.IRFId, fromIRF = true})'" title="Comment" class="btn btn-round btn-info btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-
-                                    </td>
+                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.IRFId})'>Report</a> </td>
                                 </tr>
                                 }
                             </tbody>

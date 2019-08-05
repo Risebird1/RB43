@@ -30,7 +30,13 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null)
             {
+                string prof = HttpContext.Session.GetString("profileName");
+                
                 var irfList = _irfRepository.GetAllIRF();
+                if (prof != null && prof.Contains("Client"))
+                {
+                    irfList.ToList().ForEach(c => c.IsClientUser = true);
+                }
                 if (TempData["SuccessErrorMessage"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -54,7 +60,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = _irfService.GetQualityController(); //new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                ViewBag.QualityController = _irfService.GetQualityController(); 
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -115,7 +121,7 @@ namespace Risebird.Web.Controllers
             return _irfService.CheckUniqueness(value);
         }
 
-        public IActionResult AddComments(string id)
+        public IActionResult SampleQuestions(string id)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -134,7 +140,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddComments(TechSkillComments model)
+        public IActionResult SampleQuestions(TechSkillComments model)
         {
             try
             {
