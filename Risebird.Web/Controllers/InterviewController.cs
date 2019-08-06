@@ -43,7 +43,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"];
                     var modelList = _meetingService.GetMeetingList();
-                    modelList = modelList.Select(x => { x.confirmationStatus = ((ConfirmationStatus) Convert.ToInt32(x.confirmationStatus) ).GetDescription(); return x; }).ToList();
+                    modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus) Convert.ToInt32(x.confirmationStatus) ).GetDescription(); return x; }).ToList();
                     
                     return View(modelList);
                 }
@@ -68,7 +68,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                    var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                select new { ID = (int)s, Name = s.GetDescription() };
                     meeting.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                     if (ModelState.IsValid)
@@ -133,7 +133,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = new MeetingVM();
-                var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                         select new { ID = (int)s, Name = s.GetDescription() };
                 model.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                 return View(model);
@@ -154,7 +154,7 @@ namespace Risebird.Web.Controllers
                 {
 
                     MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
-                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                    var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                select new { ID = (int)s, Name = s.GetDescription() };
                     meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
 
@@ -185,7 +185,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                    var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                select new { ID = (int)s, Name = s.GetDescription() };
                     meetingUpdated.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                     if (ModelState.IsValid)
@@ -326,7 +326,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var meetings = _meetingService.GetAllClientInterviews(emailid);                
-                meetings = meetings.Select(x => { x.confirmationStatus = ((ConfirmationStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); return x; }).ToList();
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); return x; }).ToList();
 
 
                 foreach (var m in meetings)

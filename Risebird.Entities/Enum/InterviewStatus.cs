@@ -18,7 +18,7 @@ namespace Risebird.Entities.Enum
 
     }
 
-    public enum ConfirmationStatus
+    public enum ReceiveMeetingStatus
     {
         [Description("Confirmed")]
         Confirmed = 1,
