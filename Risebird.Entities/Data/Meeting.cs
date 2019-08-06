@@ -15,7 +15,7 @@ namespace Risebird.Entities.Data
         public string candidateName { get; set; }
         public string ClientHrContact { get; set; }
         public string resumeLink { get; set; }
-        public string comfirmationStatus { get; set; }
+        public string confirmationStatus { get; set; }
         public string zoomLink { get; set; }
         public string zoomDetails { get; set; }
         public string risebirdHR { get; set; }

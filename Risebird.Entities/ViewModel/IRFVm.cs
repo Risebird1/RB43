@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string IRFId { get; set; }
 
-        [DisplayName("Client Name")]
+        [DisplayName("End Client Name")]
         [Required]
         public string ClientName { get; set; }
 
@@ -32,6 +32,7 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         [DisplayName("Job Country")]
         [Required]
+        [RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
         public string JobCountry { get; set; }
 
         [DisplayName("Start Date")]
@@ -73,6 +74,8 @@ namespace Risebird.Entities.ViewModel
         public IList<TransClientUser> ClientCollection { get; set; }
         public IList<TransQualityController> QualityController { get; set; }
         public IList<TransInterviewer> InterviewerCollection { get; set; }
+
+        public string ClientCompName { get; set; }
     }
 
     public class IRF

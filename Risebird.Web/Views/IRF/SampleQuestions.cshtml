@@ -72,7 +72,7 @@
                         <h4 class="card-title">Sample Questions</h4>
                     </div>
                     <div class="card-body">
-                        <form action="/IRF/AddComments" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+                        <form action="/IRF/SampleQuestions" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
 
                             <div class="row">
 
@@ -117,8 +117,7 @@
                                                         <tr>
                                                             <td>
 
-                                                                @Html.DropDownList("SkillCollection[" + i + "].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
-
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "form-control" })
                                                             </td>
 
                                                             <td>
