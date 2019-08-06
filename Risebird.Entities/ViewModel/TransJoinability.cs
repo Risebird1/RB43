@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -10,6 +11,7 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public int LevelId { get; set; }
         public string Type { get; set; }
+        [Required]
         public string Value { get; set; }
         public int Weightage { get; set; }
 

@@ -67,6 +67,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
+        [Required]
         public IList<TransJoinability> Joinability { get; set; }
         public IList<TransSelectability> Selectability { get; set; }
         public IList<TransClientUser> ClientCollection { get; set; }
@@ -82,6 +83,7 @@ namespace Risebird.Entities.ViewModel
         public string JDTiltle { get; set; }
         public string CompanyType { get; set; }
         public int ClientId { get; set; }
+        public string ClientCompName { get; set; }
         public string JobCountry { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -92,5 +94,6 @@ namespace Risebird.Entities.ViewModel
         public double PerMintuteRate { get; set; }
 
         public int JobLevel { get; set; }
+        public bool IsClientUser { get; set; }
     }
 }

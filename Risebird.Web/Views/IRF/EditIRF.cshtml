@@ -60,7 +60,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Forms</a>
-                <a class="navbar-brand">Edit Form</a>
+                <a class="navbar-brand">Edit IRF</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -120,7 +120,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Edit Form</h4>
+                        <h4 class="card-title">Edit IRF</h4>
                     </div>
                     <div class="card-body">
                         <form action="/IRF/EditIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
@@ -129,12 +129,7 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="multiple_row">
-                                        <h2>Edit IRF</h2>
-                                    </div>
-                                </div>
-
+                              
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -180,6 +175,8 @@
                                         @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">End Client Name</label>*@
                                         @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
+
                                         @*<input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">*@
                                     </div>
                                     <div class="form-group">
@@ -266,11 +263,11 @@
 
                                                         <td>
 
-                                                            @Html.DropDownList("SkillCollection[" + i + "].LevelId", (SelectList)ViewBag.LevelTech, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=>m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control" })
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("SkillCollection[" + i + "].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=>m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "form-control" })
                                                         </td>
 
                                                         <td>
@@ -325,17 +322,17 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("Joinability[" + i + "].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=> m.Joinability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control" })
 
                                                         </td>
                                                         <td>
-
-                                                            <select class="form-control" id="@("Joinability_"+i+"__Type")" name="Joinability[@i].Type">
+                                                            @Html.DropDownListFor(m=> m.Joinability[i].Type, (SelectList)ViewBag.JoinabilityTypeList, new { @class = "form-control" })
+                                                            @*<select class="form-control" id="@("Joinability_"+i+"__Type")" name="Joinability[@i].Type">
                                                                 <option value="Job Location">Job Location</option>
                                                                 <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
                                                                 <option value="Approved Visa Type">Approved Visa Type</option>
                                                                 <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                                                            </select>
+                                                            </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -399,12 +396,14 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("Selectability[" + i + "].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=>m.Selectability[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control" })
 
                                                         </td>
                                                         <td>
+                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)ViewBag.SelectabilityTypeList, new { @class = "form-control" })
 
-                                                            <select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
+
+                                                            @*<select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
                                                                 <option value="Technology Stack">Technology Stack</option>
                                                                 <option value="Career Progression">Career Progression</option>
                                                                 <option value="Industry">Industry</option>
@@ -412,7 +411,7 @@
                                                                 <option value="Project">Project</option>
                                                                 <option value="Previous Employers">Previous Employers</option>
                                                                 <option value="Academics">Academics</option>
-                                                            </select>
+                                                            </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -422,8 +421,8 @@
                                                             @Html.EditorFor(m => m.Selectability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
                                                         </td>
                                                         <td>
-                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteJoinabilityRow(0)" class="btn btn-round btn-danger btn-icon btn-sm DeleteJoinabilityRow"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteJoinabilityRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -461,15 +460,18 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("SkillGeneral[" + i + "].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=>m.SkillGeneral[i].LevelId, (SelectList)ViewBag.Level, new { @class = "form-control" })
 
                                                         </td>
                                                         <td>
-                                                            <select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)ViewBag.SkillGeneralTypeList, new { @class = "form-control" })
+
+
+                                                            @*<select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
                                                                 <option value="Logical">Logical</option>
                                                                 <option value="Analytical">Analytical</option>
                                                                 <option value="Communication">Communication</option>
-                                                            </select>
+                                                            </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -520,14 +522,13 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("ClientCollection[" + i + "].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=>m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("ClientCollection[" + i + "].ClientRoleId", (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientRoleId, (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
                                                         </td>
 
                                                         <td>
-
 
                                                             <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
@@ -565,7 +566,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("InterviewerCollection[" + i + "].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m=> m.InterviewerCollection[i].UserId, (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -613,7 +614,7 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("QualityController[" + i + "].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
+                                                            @Html.DropDownListFor(m=>m.QualityController[i].UserId, (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
                                                         </td>
 
                                                         <td>
@@ -621,9 +622,7 @@
                                                             @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
-
                                                         <td>
-
 
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
@@ -642,7 +641,10 @@
                                     <label class="col-md-2"></label>
                                     <div class="col-md-9">
                                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                        @if (ViewBag.IsClientUser == false)
+                                        {
+                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                        }
                                     </div>
                                 </div>
                             </div>

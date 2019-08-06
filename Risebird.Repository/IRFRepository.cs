@@ -121,6 +121,35 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<InterviewerVM> GetInterviewersforIRF()
+        {
+            IEnumerable<InterviewerVM> interviewersVm = new List<InterviewerVM>();
+            IEnumerable<Interviewer> interviewers = new List<Interviewer>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    interviewers = SqlMapper.Query<Interviewer>(
+                        con, "select * from Interviewer", null, commandType: Text);
+                    var idList = new List<int>();
+                    foreach (var item in interviewers)
+                    {
+                        idList.Add(item.UserId);
+                    }
+                    string ids = string.Join<int>(",", idList);
+                    interviewersVm = SqlMapper.Query<InterviewerVM>(
+                        con, "select * from UserList where id in (" + ids + ")", null, commandType: Text);
+                    return interviewersVm;
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<Level> GetLevels()
         {
             try
@@ -220,7 +249,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from IRF where IsDeleted = @IsDeleted";
+                var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -256,6 +285,31 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public bool CheckUniqueness(string value)
+        {
+            try
+            {
+                var query = "Select * from IRF where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", value);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    if (results.Count() > 0)
+                        return false;
+                    else
+                        return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false; 
+            }
+           
         }
         public IEnumerable<Users> GetUsers()
         {
@@ -474,7 +528,7 @@ namespace Risebird.Repository
                     {
                         DynamicParameters param = new DynamicParameters();
                         param.Add("@irfIntId", irfDetails.id);
-                        param.Add("@InterviewerUserId", item.InterviewerId);
+                        param.Add("@InterviewerUserId", item.UserId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
 
@@ -778,7 +832,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -786,11 +839,8 @@ namespace Risebird.Repository
                     var result =  SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
-
                 }
-
             }
-
             catch (SqlException e)
             {
                  _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);

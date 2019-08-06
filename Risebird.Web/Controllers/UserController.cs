@@ -508,8 +508,12 @@ namespace Risebird.Web.Controllers
                             return View("AddInterviewer", model);
                         }
 
-                        byte[] fileData = new byte[interviewer.File.Length];
-                        string uploadedFileURL = _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", fileData);
+                      
+                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                        string uploadedFileURL = blob.Uri.ToString();
+
                         List<Skill> skills = _skillService.GetSkills();
 
                         if (uploadedFileURL == null)
@@ -608,9 +612,11 @@ namespace Risebird.Web.Controllers
                     {
                         if (interviewer.File != null)
                         {
-                            byte[] fileData = new byte[interviewer.File.Length];
-                            uploadedFileURL = _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", fileData);
-
+                           
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                             uploadedFileURL = blob.Uri.ToString();
 
                             if (uploadedFileURL == null)
                             {
@@ -752,8 +758,12 @@ namespace Risebird.Web.Controllers
                         return View("AddQCInterviewer", qcinterviewer);
                     }
 
-                    byte[] fileData = new byte[qcinterviewer.File.Length];
-                    string uploadedFileURL = _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", fileData);
+                   
+                   await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
+                    string uploadedFileURL = blob.Uri.ToString();
+
                     List<Skill> skills = _skillService.GetSkills();
 
                     if (uploadedFileURL == null)

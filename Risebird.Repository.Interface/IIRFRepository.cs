@@ -34,5 +34,6 @@ namespace Risebird.Repository.Interface
         IEnumerable<SkillComment> GetTechSkillComments(int id);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
+        bool CheckUniqueness(string value);
     }
 }

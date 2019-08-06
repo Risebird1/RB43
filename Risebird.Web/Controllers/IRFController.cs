@@ -30,7 +30,18 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null)
             {
+                string prof = HttpContext.Session.GetString("profileName");
+                
                 var irfList = _irfRepository.GetAllIRF();
+                if (prof != null && prof.Contains("Client"))
+                {
+                    ViewBag.IsClientUser = true;
+                    irfList.ToList().ForEach(c => c.IsClientUser = true);
+                }
+                else
+                {
+                    ViewBag.IsClientUser = false;
+                }
                 if (TempData["SuccessErrorMessage"] != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -54,7 +65,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = _irfService.GetQualityController(); //new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
+                ViewBag.QualityController = _irfService.GetQualityController(); 
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -110,7 +121,12 @@ namespace Risebird.Web.Controllers
             return _irfService.GetQCSkills(Convert.ToInt16(id));
         }
 
-        public IActionResult AddComments(string id)
+        public bool CheckUniqueness(string value)
+        {
+            return _irfService.CheckUniqueness(value);
+        }
+
+        public IActionResult SampleQuestions(string id)
         {
             if (HttpContext.Session.GetString("email") != null)
             {
@@ -129,7 +145,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddComments(TechSkillComments model)
+        public IActionResult SampleQuestions(TechSkillComments model)
         {
             try
             {
@@ -191,6 +207,74 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult SelectedInterviewMeetings(string id, string irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null)
+                {
+                    var selectedMeeting = new List<MeetingVM>(); 
+                    var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                    ViewBag.IRF = irfId;
+                    foreach (var m in meetings)
+                    {
+                        if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                        {
+                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                        }
+                        if (m.L2InterviewStatus.HasValue)
+                        {
+                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        }
+                        if (m.JoiningStatus.HasValue)
+                        {
+                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        }
+                        if (m.PreparationStatus.HasValue)
+                        {
+                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        }
+                        if (m.OfferStatus.HasValue)
+                        {
+                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        }
+                        if (m.MeetingStatus.HasValue)
+                        {
+                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        }
+                        if (m.QCStatus.HasValue)
+                        {
+                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        }
+                        selectedMeeting.Add(m);
+                    }
+                    return View(selectedMeeting);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
+        [HttpGet]
         public IActionResult GetInterviewMeetings(string id, string irfId)
         {
             try
@@ -201,6 +285,10 @@ namespace Risebird.Web.Controllers
                     ViewBag.IRF = irfId;
                     foreach (var m in meetings)
                     {
+                        if (m.intervieweStatus.HasValue)
+                        {
+                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                        }
                         if (m.L2InterviewStatus.HasValue)
                         {
                             m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
@@ -208,6 +296,26 @@ namespace Risebird.Web.Controllers
                         if (m.L2InterviewStatus.HasValue)
                         {
                             m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        }
+                        if (m.JoiningStatus.HasValue)
+                        {
+                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        }
+                        if (m.PreparationStatus.HasValue)
+                        {
+                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        }
+                        if (m.OfferStatus.HasValue)
+                        {
+                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        }
+                        if (m.MeetingStatus.HasValue)
+                        {
+                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        }
+                        if (m.QCStatus.HasValue)
+                        {
+                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                         }
 
                     }
@@ -233,18 +341,41 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    string prof = HttpContext.Session.GetString("profileName");                   
+                    if (prof != null && prof.Contains("Client"))
+                    {
+                        ViewBag.IsClientUser = true;                       
+                    }
+                    else
+                    {
+                        ViewBag.IsClientUser = false;
+                    }
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "FirstName");
+                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "FirstName");
-                    ViewBag.QualityController = _irfService.GetQualityController();//new SelectList(_irfRepository.GetQualityController(), "id", "FirstName",1);
-                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "FirstName");
+                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                    ViewBag.QualityController = _irfService.GetQualityController();
+                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+
+                    var joinabilityType = from JoinabilityType s in Enum.GetValues(typeof(JoinabilityType))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JoinabilityTypeList = new SelectList(joinabilityType, "ID", "Name");
+
+                    var selectabilityTypes = from SelectabilityType s in Enum.GetValues(typeof(SelectabilityType))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.SelectabilityTypeList = new SelectList(selectabilityTypes, "ID", "Name");
+
+                    var skillGeneralTypes = from SkillGeneralType s in Enum.GetValues(typeof(SkillGeneralType))
+                                          select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.SkillGeneralTypeList = new SelectList(skillGeneralTypes, "ID", "Name");
+                    
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     return View(model);
                 }
@@ -301,7 +432,7 @@ namespace Risebird.Web.Controllers
             
         //}
 
-        public IActionResult Stats()
+        public IActionResult Stats(string id)
         {
             return View();
             
