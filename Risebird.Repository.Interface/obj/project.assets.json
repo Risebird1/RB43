@@ -12713,23 +12713,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\shajr\\.nuget\\packages\\": {},
+    "C:\\Users\\Admin\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\shajr\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
       "projectName": "Risebird.Repository.Interface",
-      "projectPath": "C:\\Users\\shajr\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
-      "packagesPath": "C:\\Users\\shajr\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\shajr\\source\\repos\\Risebird\\Risebird.Repository.Interface\\obj\\",
+      "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Repository.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\shajr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12742,8 +12742,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\shajr\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\shajr\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

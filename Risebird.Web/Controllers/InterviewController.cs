@@ -549,6 +549,10 @@ namespace Risebird.Web.Controllers
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name"); ;
 
+                var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                     select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name"); ;
+
                 //Get questions List for drop down
                 ViewBag.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 

@@ -375,7 +375,11 @@ namespace Risebird.Web.Controllers
                     var skillGeneralTypes = from SkillGeneralType s in Enum.GetValues(typeof(SkillGeneralType))
                                           select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.SkillGeneralTypeList = new SelectList(skillGeneralTypes, "ID", "Name");
-                    
+
+                    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     return View(model);
                 }

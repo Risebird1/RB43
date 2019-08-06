@@ -98,6 +98,15 @@ namespace Risebird.Entities.Enum
         NotOffered = 2
     }
 
+    public enum CompanyType
+    {
+
+        [Description("Product")]
+        Product = 1,
+        [Description("Service")]
+        Service = 2
+    }
+
     public enum JobLevels
     {
 
@@ -128,6 +137,15 @@ namespace Risebird.Entities.Enum
         Outstanding = 5
     }
 
+    public enum ConfirmationStatus
+    {
+
+        [Description("Selected")]
+        Selected = 1,
+        [Description("Rejected")]
+        Rejected = 2
+        
+    }
     public enum JoinabilityType
     {
 
