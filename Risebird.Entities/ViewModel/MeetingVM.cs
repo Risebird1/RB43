@@ -95,5 +95,7 @@ namespace Risebird.Entities.ViewModel
         public string QCStatusStatusDesc { get; set; }
         [Display(Name = "Confirmation Status")]
         public SelectList ConfirmationStatusList { get; set; }
+        [Display(Name = "Interview Slot")]
+        public SelectList InterviewSlotList { get; set; }
     }
 }
