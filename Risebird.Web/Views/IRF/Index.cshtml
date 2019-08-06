@@ -68,9 +68,9 @@
                     </button>
                 </div>
                 <a class="navbar-brand">
-                    Interview Forms
+                    Interview Request Forms
                 </a>
-            </div>           
+            </div>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -81,16 +81,18 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Interview Forms</h4>
+                        <h4 class="card-title">Interview Request Forms</h4>
                     </div>
-                    <div class="card-body">
+                    @if (ViewBag.IsClientUser == false)
+                    {
                         <div class="toolbar">
                             <!--        Here you can write extra buttons/actions for the toolbar              -->
                             <div class="text-right">
                                 <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
                             </div>
                         </div>
-                    </div>
+                    }
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -152,15 +154,15 @@
                                         <i class="now-ui-icons fa fa-trash"></i>
                                     </button>
                                 }
-                                    <button type="button" onclick="javascript:stats('@item.id');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
-                                        <i class="now-ui-icons fa fa-industry"></i>
-                                    </button>
-                                   
-                                </div>
+                                <button type="button" onclick="javascript:stats('@item.id');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                    <i class="now-ui-icons fa fa-industry"></i>
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                 </div>
-            }         
+            }
         </div>
         <!-- end row -->
     </div>
@@ -228,8 +230,8 @@
 }
 <script type="text/javascript">
     function DeleteIRF(id) {
-       
-       
+
+
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -240,7 +242,7 @@
             confirmButtonText: 'Yes, delete it!'
         }).then((id) => {
             if (id => 0) {
-              
+
                 var url = '/IRF/DeleteIRF?id=' + id;
                 window.location.href = url;
                 Swal.fire(
@@ -249,7 +251,7 @@
                     'success'
                 )
             }
-            else{
+            else {
                 Swal.fire(
                     'Cancelled',
                     'Your file has been not deleted successfully.',
@@ -266,7 +268,7 @@
         window.location.href = url;
     };
 
-    
+
     function SelectedInterviewMeetings(id, IRFid) {
 
         var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;

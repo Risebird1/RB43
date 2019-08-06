@@ -526,14 +526,15 @@ namespace Risebird.Web.Controllers
             try
             {
                 string prof = HttpContext.Session.GetString("profileName");
-                if (prof != null && prof.Contains("Client"))
-                {
-                    ViewBag.Client = "Client";
-                }
+               
                          
                 ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (prof != null && prof.Contains("Client"))
+                {
+                    model.IsClientUser = true;
+                }
                 var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name"); ;
