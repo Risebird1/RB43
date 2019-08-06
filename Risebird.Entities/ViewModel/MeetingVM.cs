@@ -42,7 +42,7 @@ namespace Risebird.Entities.ViewModel
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
-        public string comfirmationStatus { get; set; }
+        public string confirmationStatus { get; set; }
         [Display(Name = "Zoom Meeting Link")]
         [Required(ErrorMessage = "Please enter Zoom Meeting Link.")]
         public string zoomLink { get; set; }
@@ -93,5 +93,7 @@ namespace Risebird.Entities.ViewModel
         public string OfferStatusStatDesc { get; set; }
         public string MeetingStatusStatusDesc { get; set; }
         public string QCStatusStatusDesc { get; set; }
+        [Display(Name = "Confirmation Status")]
+        public SelectList ConfirmationStatusList { get; set; }
     }
 }

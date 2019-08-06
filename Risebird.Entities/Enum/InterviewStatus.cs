@@ -18,6 +18,14 @@ namespace Risebird.Entities.Enum
 
     }
 
+    public enum ConfirmationStatus
+    {
+        [Description("Confirmed")]
+        Confirmed = 1,
+        [Description("Cancelled")]
+        Cancelled = 2
+    }
+
     public enum MeetingStatus
     {
         [Description("No Show")]

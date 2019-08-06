@@ -42,7 +42,10 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterview"];
-                    return View(_meetingService.GetMeetingList());
+                    var modelList = _meetingService.GetMeetingList();
+                    modelList = modelList.Select(x => { x.confirmationStatus = ((ConfirmationStatus) Convert.ToInt32(x.confirmationStatus) ).GetDescription(); return x; }).ToList();
+                    
+                    return View(modelList);
                 }
                 else
                 {
@@ -65,16 +68,16 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                               select new { ID = (int)s, Name = s.GetDescription() };
+                    meeting.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                     if (ModelState.IsValid)
                     {
                         if (meeting.File == null)
                         {
                             ModelState.AddModelError(String.Empty, "Please upload a resume.");
-                            var model = new MeetingVM();
-
-                            return View("AddInterview", model);
+                            return View("Add", meeting);
                         }
-
                        
                         await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -85,9 +88,8 @@ namespace Risebird.Web.Controllers
                         if (uploadedFileURL == null)
                         {
                             ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
-                            var model = new MeetingVM();
 
-                            return View("AddInterview", model);
+                            return View("Add", meeting);
                         }
 
                         else
@@ -108,8 +110,8 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        var model = new MeetingVM();
-                        return View("Add", model);
+                       
+                        return View("Add", meeting);
                     }
                 }
                 else
@@ -131,6 +133,9 @@ namespace Risebird.Web.Controllers
             try
             {
                 var model = new MeetingVM();
+                var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                model.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                 return View(model);
             }
             catch (Exception ex)
@@ -147,10 +152,17 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+
                     MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
+                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                               select new { ID = (int)s, Name = s.GetDescription() };
+                    meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
 
                     if (meetingToUpdate != null)
+                    {
+                        TempData["ResumeLink"] = meetingToUpdate.resumeLink;
                         return View("Edit", meetingToUpdate);
+                    }
                     else
                         return RedirectToAction("Index");
                 }
@@ -173,8 +185,12 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
+                    var confirmationStatuses = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                               select new { ID = (int)s, Name = s.GetDescription() };
+                    meetingUpdated.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
                     if (ModelState.IsValid)
                     {
+                        meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
                         //String uploadedFileURL = String.Empty;
                         if ((meetingUpdated.File!=null))
                         {
@@ -195,14 +211,6 @@ namespace Risebird.Web.Controllers
                             meetingUpdated.resumeLink = uploadedFileURL;
                         }
 
-                        //if (uploadedFileURL == null)
-                        //{
-                        //    ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
-                        //    var model = new MeetingVM();
-
-                        //    return View("Edit");
-
-                        //}
                         if (_meetingService.UpdateMeeting(meetingUpdated))
                         {
                             TempData["SuccessErrorMessageInterview"] = "Meeting is updated Successfully";
@@ -317,8 +325,10 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
 
-                var meetings = _meetingService.GetAllClientInterviews(emailid);
-               
+                var meetings = _meetingService.GetAllClientInterviews(emailid);                
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ConfirmationStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); return x; }).ToList();
+
+
                 foreach (var m in meetings)
                 {
                     if (m.intervieweStatus.HasValue)
