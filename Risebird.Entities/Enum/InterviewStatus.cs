@@ -26,6 +26,14 @@ namespace Risebird.Entities.Enum
         Cancelled = 2
     }
 
+    public enum InterviewSlots
+    {
+        [Description("Morning")]
+        Morning = 1,
+        [Description("Evening")]
+        Evening = 2
+    }
+
     public enum MeetingStatus
     {
         [Description("No Show")]

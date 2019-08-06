@@ -47,7 +47,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageInterview"];
                         var modelList = _meetingService.GetMeetingList();
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); return x; }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
                         return View(modelList);
                     }
@@ -84,6 +84,11 @@ namespace Risebird.Web.Controllers
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         meeting.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
+
+                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        meeting.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+
                         if (ModelState.IsValid)
                         {
                             if (meeting.File == null)
@@ -160,6 +165,9 @@ namespace Risebird.Web.Controllers
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         model.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
+                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        model.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         return View(model);
                     }
                     else
@@ -194,7 +202,9 @@ namespace Risebird.Web.Controllers
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
-
+                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         if (meetingToUpdate != null)
                         {
                             TempData["ResumeLink"] = meetingToUpdate.resumeLink;
@@ -234,6 +244,9 @@ namespace Risebird.Web.Controllers
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         meetingUpdated.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
+                        var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
+                                                select new { ID = (int)s, Name = s.GetDescription() };
+                        meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         if (ModelState.IsValid)
                         {
                             meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
