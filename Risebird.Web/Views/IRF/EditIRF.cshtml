@@ -133,8 +133,8 @@
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.TextBoxFor(m => m.IRFId, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
 
@@ -142,9 +142,11 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 px-1">
                                     <div class="form-group">
-                                        @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="Name">Client Name</label>*@
-                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })
+                                        @*@Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })*@
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" for="Name">Client Name</label>
+                                        @*@Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })*@
+                                        @Html.TextBoxFor(m => m.ClientCompName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
 
                                     </div>
                                 </div>
@@ -165,10 +167,13 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        <select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
+
+                                        @Html.DropDownListFor(m => m.CompanyType, (SelectList)ViewBag.CompanyTypeList, new { @class = "form-control" })
+
+                                        @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
                                             <option value="Product">Product</option>
                                             <option value="Service">Service</option>
-                                        </select>
+                                        </select>*@
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -189,12 +194,16 @@
                                 <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkStartDate(this.value)" } })
+                                        <label class="text-danger" id="startDateCheck" style="color:red"></label>
+
                                         @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkEndDate(this.value)" } })
+                                        <label class="text-danger" id="endDateCheck" style="color:red"></label>
+
                                         @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -213,12 +222,12 @@
                                 <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PerMintuteRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.EditorFor(model => model.PerMintuteRate, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
                                         @Html.ValidationMessageFor(model => model.PerMintuteRate, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @Html.DropDownList("RisebirdHr", (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control" })
+                                        @Html.DropDownListFor(m=>m.RisebirdHr, (SelectList)ViewBag.RiseBirdHR, new { @class = "form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
 
@@ -692,6 +701,77 @@
 </div>
 
 <script>
+    function checkStartDate(val) {
+        debugger;
+        if (val == "") {
+            document.getElementById("startDateCheck").innerHTML = "";
+            return;
+        }
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var StartDate = new Date(year, month, date);
+
+
+        var d = new Date();
+        var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        if (StartDate < currentDate) {
+            document.getElementById("btnUpload").disabled = true;
+            document.getElementById("startDateCheck").innerHTML = "Start Date should be greater than or equal to Current Date";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("startDateCheck").innerHTML = "";
+            document.getElementById("btnUpload").disabled = false;
+
+        }
+        if (document.getElementById("EndDate").value != "") {
+            checkEndDate(document.getElementById("EndDate").value);
+        }
+
+    }
+
+    function checkEndDate(val) {
+        debugger;
+        if (val == "") {
+            return;
+        }
+        var startDateValue = document.getElementById("StartDate").value;
+
+        //end Date object creation
+        var year = val.substring(0, 4);
+        var month = parseInt(val.substring(5, 7)) - 1;
+        var date = val.substring(8, 10);
+        var endDate = new Date(year, month, date);
+
+        //start Date object creation
+
+        if (startDateValue == "") {
+            document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
+            document.getElementById("StartDate").focus();
+            return;
+        }
+        var yearStart = startDateValue.substring(0, 4);
+        var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
+        var dateStart = startDateValue.substring(8, 10);
+        var startDate = new Date(yearStart, monthStart, dateStart);
+
+
+        if (endDate <= startDate) {
+            document.getElementById("btnUpload").disabled = true;
+            document.getElementById("endDateCheck").innerHTML = "End Date should be greater than Start Date";
+            document.getElementById("EndDate").focus();
+            return;
+        }
+        else {
+            document.getElementById("endDateCheck").innerHTML = "";
+            document.getElementById("btnUpload").disabled = false;
+            return;
+        }
+
+    }
+
     function AddRow() {
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;

@@ -90,6 +90,15 @@ namespace Risebird.Entities.Enum
         NotOffered = 2
     }
 
+    public enum CompanyType
+    {
+
+        [Description("Product")]
+        Product = 1,
+        [Description("Service")]
+        Service = 2
+    }
+
     public enum JobLevels
     {
 
