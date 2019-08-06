@@ -219,7 +219,9 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_AddClientUser", parameters,
                         commandType: CommandType.StoredProcedure);
+
                     return true;
+                   
                 }
             }
 
@@ -332,6 +334,7 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
+            parameters.Add("@message", SqlDbType.VarChar, direction: ParameterDirection.Output);
 
             return parameters;
         }

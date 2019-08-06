@@ -56,7 +56,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QuerySingleAsync<SelectabilityMatrix>(con, "[usp_GetJoinabilityMatrixById]", parameters,
+                    return await SqlMapper.QuerySingleAsync<SelectabilityMatrix>(con, "[usp_GetSelectablityMatrixById]", parameters,
                         commandType: CommandType.StoredProcedure);
                 }
             }
