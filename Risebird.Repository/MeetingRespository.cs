@@ -99,7 +99,7 @@ namespace Risebird.Repository
             return null;
         }
 
-         public async Task<IEnumerable<ClientInterviewVM>> GetAllClientInterviews(string emailID)
+         public async Task<IEnumerable<MeetingVM>> GetAllClientInterviews(string emailID)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("emailID", emailID);
-                    return await SqlMapper.QueryAsync<ClientInterviewVM>(con, "usp_GetClientInterview", parameters,
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientInterview", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -165,10 +165,10 @@ namespace Risebird.Repository
             parameters.Add("@resumeLink", entity.resumeLink);
             parameters.Add("@zoomLink", entity.zoomLink);
             parameters.Add("@ClientHrContact", entity.ClientHrContact);
-            parameters.Add("@comfirmationStatus", entity.comfirmationStatus);
+            parameters.Add("@comfirmationStatus", entity.confirmationStatus);
             parameters.Add("@interviewer", entity.interviewer);
-            parameters.Add("@prefferedLocation", entity.prefferedLocation);
-            parameters.Add("@staffingAgenecy", entity.staffingAgency);
+            parameters.Add("@preferredLocation", entity.preferredLocation);
+            parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
             parameters.Add("@joiningTime", entity.joiningTime);            
             return parameters;
@@ -219,7 +219,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> usp_UpdateMeeting(MeetingVM meeting)
+        public async Task<bool> UpdateMeeting(MeetingVM meeting)
         {
             try
             {
@@ -241,9 +241,7 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
-            }
-
-            return false;
+            }            
         }
 
         public string AssignYourself(int meetingid, string interviewerMail)
@@ -489,6 +487,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
+                    InterviewComments interviewComments = new InterviewComments();
+                    DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
                     paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
@@ -498,6 +498,14 @@ namespace Risebird.Repository
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+
+                    parameters.Add("@interviewId", reportDetails.InterviewId);
+                    parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
+                    parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
+                    parameters.Add("@interviewerComment", reportDetails.InterviewerComment);
+                    parameters.Add("@audiolink",reportDetails.AudioLink);
+                    parameters.Add("@videolink", reportDetails.VideoLink);
+
                     if (reportDetails.IsEdited)
                     {
                         var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
@@ -526,7 +534,7 @@ namespace Risebird.Repository
 
                     }
 
-                    if(reportDetails.TechSkillReportCollection!=null)
+                    if (reportDetails.TechSkillReportCollection!=null)
                     {
                         //update techskillreport table
                         foreach (var item in reportDetails.TechSkillReportCollection)
@@ -649,6 +657,8 @@ namespace Risebird.Repository
                         
                     }
 
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
+                            commandType: CommandType.StoredProcedure);
 
                     return true;
                 }
@@ -823,6 +833,7 @@ namespace Risebird.Repository
             parameters.Add("@@interviewerComment", entity.InterviewerComment);
             parameters.Add("@fraudCheckStatus", entity.FraudCheckStatus);
             parameters.Add("@hrComment", entity.HRComment);
+            parameters.Add("@ClientInterviewStatus", entity.FinalInterviewMeetingStatus);
             parameters.Add("@qcStatus", entity.QCStatus);
             parameters.Add("@qcComment", entity.QCComment);
             parameters.Add("@trainingStatus", entity.TrainingStatus);

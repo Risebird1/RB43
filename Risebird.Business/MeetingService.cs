@@ -8,6 +8,8 @@ using System.Linq;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.CommonHelper;
 
 namespace Risebird.Business
 {
@@ -84,7 +86,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.usp_UpdateMeeting(meetingToUpdate).Result;
+                return _meetingRespository.UpdateMeeting(meetingToUpdate).Result;
             }
 
             catch (Exception e)
@@ -122,7 +124,7 @@ namespace Risebird.Business
             }
         }
 
-        public List<ClientInterviewVM> GetAllClientInterviews(string emailId)
+        public List<MeetingVM> GetAllClientInterviews(string emailId)
         {
             try
             {
@@ -203,6 +205,26 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public IEnumerable<SkillComment> GetTechSkillComments(int IRFid)
+        {
+
+            try
+            {
+                var comments = _meetingRespository.GetTechSkillComments(IRFid);
+
+                if (comments == null)
+                    return null;
+                else
+                    return comments;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public bool UpdateComments(InterviewComments comments)
         {
             try
@@ -237,7 +259,7 @@ namespace Risebird.Business
                     var levels = _meetingRespository.GetLevels();
                     var skills = _meetingRespository.GetSkills();
                     var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
-                    var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
+                    //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
                     var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
@@ -304,16 +326,16 @@ namespace Risebird.Business
 
                     model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
 
-                    var quesList = new List<QuestionsDiscussed>();
+                    //var quesList = new List<QuestionsDiscussed>();
 
-                    foreach (var item in questionDetails)
-                    {
-                        QuestionsDiscussed obj = new QuestionsDiscussed();
-                        obj.InterviewId = interviewId;
-                        obj.Comment = item.Comment;
-                        quesList.Add(obj);
-                    }
-                    model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
+                    //foreach (var item in questionDetails)
+                    //{
+                    //    QuestionsDiscussed obj = new QuestionsDiscussed();
+                    //    obj.InterviewId = interviewId;
+                    //    obj.Comment = item.Comment;
+                    //    quesList.Add(obj);
+                    //}
+                    //model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateEmail;
                     model.IRFId = irfId;
@@ -321,13 +343,6 @@ namespace Risebird.Business
                     
                     return model;
                 }
-
-
-                
-                
-               
-                
-
             }
 
             catch (Exception e)
@@ -347,6 +362,8 @@ namespace Risebird.Business
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
+           // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
+
             return model;
         }
 

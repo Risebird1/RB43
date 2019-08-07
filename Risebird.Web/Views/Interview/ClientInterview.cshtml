@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.ClientInterviewVM>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
     ViewData["Title"] = "Client Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -37,51 +37,52 @@
                             <thead>
                                 <tr>
                                     <th>Interview Date</th>
-                                    <th>Candidate Email</th>
-                                    <th>Client HR Contact</th>
+                                    <th>Candidate Name</th>
                                     <th>Resume</th>
-                                    <th>Preferred Location</th>
-                                    <th>Expected Rate Per Hour</th>
-                                    <th>Staffing Agency</th>
-                                    <th>Joining Time</th>
-                                    <th>L2 Interview Status</th>
-                                    <th>Client Interview Status</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
+                                    <th>Client HR </th>
+                                    <th>Confirmation Status</th>
+                                    <th>Meeting Status</th>
+                                    <th>Selection Status</th>
+                                    <th>QC Status</th>
+                                    <th>Training Status</th>
+                                    <th>Final Interview Status</th>
+                                    <th>Joining Status</th>
+                                    <th>Report Link</th>                                  
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
                                     <th>Interview Date</th>
-                                    <th>Candidate Email</th>
-                                    <th>Client HR Contact</th>
+                                    <th>Candidate Name</th>
                                     <th>Resume</th>
-                                    <th>Preferred Location</th>
-                                    <th>Expected Rate Per Hour</th>
-                                    <th>Staffing Agency</th>
-                                    <th>Joining Time</th>
-                                    <th>L2 Interview Status</th>
-                                    <th>Client Interview Status</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
+                                    <th>Client HR </th>
+                                    <th>Confirmation Status</th>
+                                    <th>Meeting Status</th>
+                                    <th>Selection Status</th>
+                                    <th>QC Status</th>
+                                    <th>Training Status</th>
+                                    <th>Final Interview Status</th>
+                                    <th>Joining Status</th>
+                                    <th>Report Link</th>                                  
                                 </tr>
                             </tfoot>
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                <tr id=@item.id>
+                                <tr id=@item.imid>
                                     <td> @item.interviewDate </td>
-                                    <td> @item.candidateEmail </td>
-                                    <td> @item.ClientHrContact </td>
+                                    <td> @item.candidateName </td>
                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                    <td> @item.PreferredLocation</td>
-                                    <td> @item.ExpectedPerHourRate </td>
-                                    <td> @item.staffingAgenecy </td>
-                                    <td> @item.joiningTime </td>
-                                    <td> @item.L2InterviewStatDesc </td>
+                                    <td> @item.ClientHrContact </td>
+                                    <td> @item.confirmationStatus</td>
+                                    <td> @item.MeetingStatusStatusDesc </td>
+                                    <td> @item.intervieweStatusStatDesc </td>
+                                    <td> @item.QCStatusStatusDesc </td>
+                                    <td> @item.PreparationStatusDesc </td>
                                     <td> @item.ClientInterviewStatDesc </td>
-                                    <td class="text-right">
-                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comments" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>
-                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                    </td>
+                                    <td> @item.JoiningStatusStatDesc  </td>
+                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.IRFId})'>Report</a> </td>
+                                   
                                 </tr>
                                 }
                             </tbody>

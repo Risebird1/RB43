@@ -203,6 +203,7 @@ namespace Risebird.Business
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
+                model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
                 model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                 model.JDLink = IRF.JDLink;
@@ -278,6 +279,20 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+        }
+
+        public bool CheckUniqueness(string value)
+        {
+            try
+            {
+                return _irfRepository.CheckUniqueness(value);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
             }
         }
     }

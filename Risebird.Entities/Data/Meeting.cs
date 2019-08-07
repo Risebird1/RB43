@@ -12,9 +12,10 @@ namespace Risebird.Entities.Data
         public string interviewDuration { get; set; }
         public string primaryskill { get; set; }
         public string candidateEmail { get; set; }
+        public string candidateName { get; set; }
         public string ClientHrContact { get; set; }
         public string resumeLink { get; set; }
-        public string comfirmationStatus { get; set; }
+        public string confirmationStatus { get; set; }
         public string zoomLink { get; set; }
         public string zoomDetails { get; set; }
         public string risebirdHR { get; set; }
@@ -36,6 +37,7 @@ namespace Risebird.Entities.Data
         public string staffingAgenecy { get; set; }
         public string joiningTime { get; set; }
         public int irfIntId { get; set; }
+        public string JDLink { get; set; }
 
 
     }

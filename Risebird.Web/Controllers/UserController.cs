@@ -42,7 +42,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageUser"];
                     return View(_userService.GetRisebirdUsers());
@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
@@ -91,7 +91,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     if (ModelState.IsValid)
                     {
@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     UserList user = _userService.GetUser(id);
 
@@ -170,7 +170,7 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     if (ModelState.IsValid)
                     {
@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     if (_userService.DeleteUser(id))
                     {
@@ -450,7 +450,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     ViewBag.Message = TempData["SuccessErrorMessageInterviewer"];
                     return View(_userService.GetInterviewers());
@@ -471,7 +471,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new InterviewerVM();
                     model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
@@ -495,7 +495,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     if (ModelState.IsValid)
                     {
@@ -508,8 +508,12 @@ namespace Risebird.Web.Controllers
                             return View("AddInterviewer", model);
                         }
 
-                        byte[] fileData = new byte[interviewer.File.Length];
-                        string uploadedFileURL = _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", fileData);
+                      
+                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                        string uploadedFileURL = blob.Uri.ToString();
+
                         List<Skill> skills = _skillService.GetSkills();
 
                         if (uploadedFileURL == null)
@@ -569,7 +573,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     InterviewerVM interviewerVM = _userService.GetInterviewer(id);
 
@@ -600,7 +604,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     interviewer.ResumeLink = TempData["ResumeLink"].ToString();
                     string uploadedFileURL = null;
@@ -608,9 +612,11 @@ namespace Risebird.Web.Controllers
                     {
                         if (interviewer.File != null)
                         {
-                            byte[] fileData = new byte[interviewer.File.Length];
-                            uploadedFileURL = _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", fileData);
-
+                           
+                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                             uploadedFileURL = blob.Uri.ToString();
 
                             if (uploadedFileURL == null)
                             {
@@ -676,7 +682,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     if (_userService.DeleteInterviewer(id))
                     {
@@ -752,8 +758,12 @@ namespace Risebird.Web.Controllers
                         return View("AddQCInterviewer", qcinterviewer);
                     }
 
-                    byte[] fileData = new byte[qcinterviewer.File.Length];
-                    string uploadedFileURL = _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", fileData);
+                   
+                   await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
+                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                    var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
+                    string uploadedFileURL = blob.Uri.ToString();
+
                     List<Skill> skills = _skillService.GetSkills();
 
                     if (uploadedFileURL == null)

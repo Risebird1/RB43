@@ -18,16 +18,32 @@ namespace Risebird.Entities.Enum
 
     }
 
+    public enum ReceiveMeetingStatus
+    {
+        [Description("Confirmed")]
+        Confirmed = 1,
+        [Description("Cancelled")]
+        Cancelled = 2
+    }
+
+    public enum InterviewSlots
+    {
+        [Description("Morning")]
+        Morning = 1,
+        [Description("Evening")]
+        Evening = 2
+    }
+
     public enum MeetingStatus
     {
         [Description("No Show")]
         NoShow = 1,
-        [Description("Selected")]
-        Selected = 2,
-        [Description("Rejected")]
-        Rejected = 3,
-        [Description("Border Line")]
-        BorderLine = 4
+        [Description("Scheduled")]
+        Scheduled = 2,
+        [Description("Dropped")]
+        Dropped = 3,
+        [Description("Completed")]
+        Completed = 4
 
     }
 
@@ -37,10 +53,10 @@ namespace Risebird.Entities.Enum
         OfferReleased = 1,
         [Description("Offer Accepted")]
         OfferAccepted = 2,
-        [Description("Offer Denied")]
+        [Description("Offer Declined")]
         OfferDenied = 3,
-        [Description("Dropped")]
-        Dropped = 4
+        [Description("Not offered")]
+        Notoffered = 4
 
     }
 
@@ -58,10 +74,10 @@ namespace Risebird.Entities.Enum
         NoShow = 1,
         [Description("Selected")]
         Selected = 2,
-        [Description("Rejected")]
-        Rejected = 3,
-        [Description("Border Line")]
-        BorderLine = 4
+        [Description("Completed")]
+        Completed = 3,
+        [Description("Dropped")]
+        Dropped = 4
 
     }
 
@@ -90,6 +106,15 @@ namespace Risebird.Entities.Enum
         NotOffered = 2
     }
 
+    public enum CompanyType
+    {
+
+        [Description("Product")]
+        Product = 1,
+        [Description("Service")]
+        Service = 2
+    }
+
     public enum JobLevels
     {
 
@@ -103,5 +128,73 @@ namespace Risebird.Entities.Enum
         Manager = 4,
         [Description("Architect")]
         Architect = 5
+    }
+
+    public enum QuestionsLevel
+    {
+
+        [Description("Poor")]
+        Poor = 1,
+        [Description("Average")]
+        Average = 2,
+        [Description("Above Average")]
+        AboveAverage = 3,
+        [Description("Excellent")]
+        Excellent = 4,
+        [Description("Outstanding")]
+        Outstanding = 5
+    }
+
+    public enum ConfirmationStatus
+    {
+
+        [Description("Selected")]
+        Selected = 1,
+        [Description("Rejected")]
+        Rejected = 2
+        
+    }
+    public enum JoinabilityType
+    {
+
+        [Description("Job Location")]
+        JobLocation = 1,
+        [Description("Approved Per Hour Rate")]
+        ApprovedPerHourRate = 2,
+        [Description("Approved Visa Type")]
+        ApprovedVisaType = 3,
+        [Description("Max Notice period (Days)")]
+        MaxNoticeperiodDays = 4,
+        
+    }
+
+    public enum SelectabilityType
+    {
+
+        [Description("Technology Stack")]
+        TechnologyStack = 1,
+        [Description("Career Progression")]
+        CareerProgression = 2,
+        [Description("Industry")]
+        Industry = 3,
+        [Description("Domain")]
+        Domain = 4,
+        [Description("Project")]
+        Project = 5,
+        [Description("Previous Employers")]
+        PreviousEmployers = 6,
+        [Description("Academics")]
+        Academics = 7,
+    }
+
+    public enum SkillGeneralType
+    {
+
+        [Description("Logical")]
+        Logical = 1,
+        [Description("Analytical")]
+        Analytical = 2,
+        [Description("Communication")]
+        Communication = 3
     }
 }

@@ -42,21 +42,21 @@ namespace Risebird.Entities.ViewModel
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
-        public string comfirmationStatus { get; set; }
+        public string confirmationStatus { get; set; }
         [Display(Name = "Zoom Meeting Link")]
         [Required(ErrorMessage = "Please enter Zoom Meeting Link.")]
         public string zoomLink { get; set; }
         [Display(Name = "Zoom Login Details")]
-        [Required(ErrorMessage = "Please enter Zoom Login Details.")]
+        //[Required(ErrorMessage = "Please enter Zoom Login Details.")]
         public string zoomDetails { get; set; }
         [Display(Name = "Risebird HR")]
         [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
         public string interviewer { get; set; }
-        [Display(Name = "Preffered Location")]
+        [Display(Name = "Preferred Location")]
         [Required(ErrorMessage = "Please enter Preffered Location.")]
-        public string prefferedLocation { get; set; }
+        public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
         [Required(ErrorMessage = "Please enter Staffing Agency.")]
         public string staffingAgency { get; set; }
@@ -67,7 +67,8 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Joining Time.")]
         public string joiningTime { get; set; }
         public string interviewerComment { get; set; }
-        public string intervieweStatus { get; set; }
+        public int? intervieweStatus { get; set; }
+        public string intervieweStatusStatDesc { get; set; }
         public string selectionStatus { get; set; }
         public string videoLink { get; set; }
         public string reportLink { get; set; }
@@ -82,5 +83,19 @@ namespace Risebird.Entities.ViewModel
         public int? ClientInterviewStatus { get; set; }
         public string L2InterviewStatDesc { get; set; }
         public string ClientInterviewStatDesc { get; set; }
+        public int? JoiningStatus { get; set; }
+        public int? PreparationStatus { get; set; }
+        public int? OfferStatus { get; set; }
+        public int? MeetingStatus { get; set; }
+        public int? QCStatus { get; set; }
+        public string JoiningStatusStatDesc { get; set; }
+        public string PreparationStatusDesc { get; set; }
+        public string OfferStatusStatDesc { get; set; }
+        public string MeetingStatusStatusDesc { get; set; }
+        public string QCStatusStatusDesc { get; set; }
+        [Display(Name = "Confirmation Status")]
+        public SelectList ConfirmationStatusList { get; set; }
+        [Display(Name = "Interview Slot")]
+        public SelectList InterviewSlotList { get; set; }
     }
 }
