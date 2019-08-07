@@ -215,11 +215,12 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.confirmationStatus, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
+                                            @Html.DropDownListFor(m => m.confirmationStatus, (SelectList)ViewBag.ConfirmationTypeList, new { @class = "form-control" })
 
-                                            <select class="form-control text-box single-line" id="confirmationStatus" name="confirmationStatus" type="select" value="">
+                                            @*<select class="form-control text-box single-line" id="confirmationStatus" name="confirmationStatus" type="select" value="">
                                                 <option value="Selected">Selected</option>
                                                 <option value="Rejected">Rejected</option>
-                                            </select>
+                                            </select>*@
                                             @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
 
 

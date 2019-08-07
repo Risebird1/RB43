@@ -165,7 +165,7 @@ namespace Risebird.Repository
             parameters.Add("@resumeLink", entity.resumeLink);
             parameters.Add("@zoomLink", entity.zoomLink);
             parameters.Add("@ClientHrContact", entity.ClientHrContact);
-            parameters.Add("@comfirmationStatus", entity.comfirmationStatus);
+            parameters.Add("@comfirmationStatus", entity.confirmationStatus);
             parameters.Add("@interviewer", entity.interviewer);
             parameters.Add("@preferredLocation", entity.preferredLocation);
             parameters.Add("@staffingAgency", entity.staffingAgency);

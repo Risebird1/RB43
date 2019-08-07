@@ -26,7 +26,7 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var Totinvites = _dashboardService.GetInvitecnt();
                     ViewBag.Totinvites = Totinvites.Count;

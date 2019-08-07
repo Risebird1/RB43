@@ -18,6 +18,22 @@ namespace Risebird.Entities.Enum
 
     }
 
+    public enum ReceiveMeetingStatus
+    {
+        [Description("Confirmed")]
+        Confirmed = 1,
+        [Description("Cancelled")]
+        Cancelled = 2
+    }
+
+    public enum InterviewSlots
+    {
+        [Description("Morning")]
+        Morning = 1,
+        [Description("Evening")]
+        Evening = 2
+    }
+
     public enum MeetingStatus
     {
         [Description("No Show")]
@@ -129,6 +145,15 @@ namespace Risebird.Entities.Enum
         Outstanding = 5
     }
 
+    public enum ConfirmationStatus
+    {
+
+        [Description("Selected")]
+        Selected = 1,
+        [Description("Rejected")]
+        Rejected = 2
+        
+    }
     public enum JoinabilityType
     {
 
