@@ -28,25 +28,32 @@ namespace Risebird.Web.Controllers
         }
         public IActionResult Index()
         {
-            if (HttpContext.Session.GetString("email") != null)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                string prof = HttpContext.Session.GetString("profileName");
-                
-                var irfList = _irfRepository.GetAllIRF();
-                if (prof != null && prof.Contains("Client"))
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    ViewBag.IsClientUser = true;
-                    irfList.ToList().ForEach(c => c.IsClientUser = true);
+                    var irfList = _irfRepository.GetAllIRF();
+                    if (profileName != null && profileName.Contains("Client"))
+                    {
+                        ViewBag.IsClientUser = true;
+                        irfList.ToList().ForEach(c => c.IsClientUser = true);
+                    }
+                    else
+                    {
+                        ViewBag.IsClientUser = false;
+                    }
+                    if (TempData["SuccessErrorMessage"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                    }
+                    return View(irfList);
                 }
                 else
                 {
-                    ViewBag.IsClientUser = false;
+                    return RedirectToAction("SignOut", "Account");
                 }
-                if (TempData["SuccessErrorMessage"] != null)
-                {
-                    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                }
-                return View(irfList);
             }
             else
             {
@@ -92,18 +99,26 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.AddIRFDetails(irfDetails).Result)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        TempData["SuccessErrorMessage"] = "IRF is added Successfully";
-                        return RedirectToAction("Index");
+                        if (_irfService.AddIRFDetails(irfDetails).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF is added Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("SignOut", "Account");
                     }
                 }
                 else
@@ -117,7 +132,6 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessage"] = "Adding IRF has failed";
                 return RedirectToAction("Index");
             }
-
         }
 
         public string GetInterviewerSkills(string id)
@@ -125,6 +139,7 @@ namespace Risebird.Web.Controllers
             var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
             return name;
         }
+
         public string GetQCSkills(string id)
         {
             return _irfService.GetQCSkills(Convert.ToInt16(id));
@@ -137,15 +152,15 @@ namespace Risebird.Web.Controllers
 
         public IActionResult SampleQuestions(string id)
         {
-            if (HttpContext.Session.GetString("email") != null)
-            {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {              
                 TechSkillComments model = new TechSkillComments();
                 var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
                 //if (result.Count() > 0)
                 model.SkillCollection = result;
                 ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
                 model.IRFId = Convert.ToInt16(id);
-                return View(model);
+                return View(model);               
             }
             else
             {
@@ -158,8 +173,8 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
-                {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {                   
                     if (_irfService.AddSkillComments(model))
                     {
                         TempData["SuccessErrorMessage"] = "Comments saved Successfully";
@@ -169,7 +184,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessage"] = "Comments were not saved.";
                         return RedirectToAction("Index");
-                    }
+                    }                    
                 }
                 else
                 {
@@ -189,17 +204,26 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
-                        return RedirectToAction("Index");
+                        if (_irfService.DeleteIRF(Convert.ToInt16(id)).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF deleted Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "IRF delete Failed";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("SignOut", "Account");
                     }
                 }
                 else
@@ -221,53 +245,62 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var selectedMeeting = new List<MeetingVM>(); 
-                    var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
-                    ViewBag.IRF = irfId;
-                    foreach (var m in meetings)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        ViewBag.IRF = irfId;
+                        foreach (var m in meetings)
                         {
-                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                            if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                            }
+                            else
+                            {
+                                continue;
+                            }
 
-                        if (m.L2InterviewStatus.HasValue)
-                        {
-                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            selectedMeeting.Add(m);
                         }
-                        if (m.L2InterviewStatus.HasValue)
-                        {
-                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                        }
-                        if (m.JoiningStatus.HasValue)
-                        {
-                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                        }
-                        if (m.PreparationStatus.HasValue)
-                        {
-                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                        }
-                        if (m.OfferStatus.HasValue)
-                        {
-                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
-                        }
-                        if (m.MeetingStatus.HasValue)
-                        {
-                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                        }
-                        if (m.QCStatus.HasValue)
-                        {
-                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        }
-                        selectedMeeting.Add(m);
+                        return View(selectedMeeting);
                     }
-                    return View(selectedMeeting);
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
                 }
                 else
                 {
@@ -288,47 +321,56 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
-                    ViewBag.IRF = irfId;
-                    foreach (var m in meetings)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        if (m.intervieweStatus.HasValue)
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        ViewBag.IRF = irfId;
+                        foreach (var m in meetings)
                         {
-                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
-                        }
-                        if (m.L2InterviewStatus.HasValue)
-                        {
-                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                        }
-                        if (m.L2InterviewStatus.HasValue)
-                        {
-                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                        }
-                        if (m.JoiningStatus.HasValue)
-                        {
-                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                        }
-                        if (m.PreparationStatus.HasValue)
-                        {
-                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                        }
-                        if (m.OfferStatus.HasValue)
-                        {
-                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
-                        }
-                        if (m.MeetingStatus.HasValue)
-                        {
-                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                        }
-                        if (m.QCStatus.HasValue)
-                        {
-                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        }
+                            if (m.intervieweStatus.HasValue)
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
 
+                        }
+                        return View(meetings);
                     }
-                    return View(meetings);
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
                 }
                 else
                 {
@@ -370,9 +412,9 @@ namespace Risebird.Web.Controllers
                     ViewBag.QualityController = _irfService.GetQualityController();
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
-                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                        var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                        ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
                     model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                     model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
@@ -403,19 +445,27 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.UpdateIRF(model))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        TempData["SuccessErrorMessage"] = "IRF saved Successfully";
-                        return RedirectToAction("Index");
+                        if (_irfService.UpdateIRF(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("SignOut", "Account");
                     }
-
                 }
                 else
                 {
@@ -429,19 +479,12 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-
-        //private void GetDropDownList(IRFVm model)
-        //{
-        //    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-        //                            select new { ID = (int)s, Name = s.GetDescription() };
-        //    model.JobLevelList = new SelectList(interviewStatuses, "ID", "Name");
             
-        //}
 
         public IActionResult Stats(string id)
         {
             return View();
-            
+
         }
 
     }
