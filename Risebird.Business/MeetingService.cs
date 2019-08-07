@@ -257,6 +257,7 @@ namespace Risebird.Business
                     var model = new InterviewReport();
                     //get all values from database
                     var levels = _meetingRespository.GetLevels();
+                    var levelTech = _meetingRespository.GetLevelTech();
                     var skills = _meetingRespository.GetSkills();
                     var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
                     //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
@@ -272,8 +273,8 @@ namespace Risebird.Business
                     {
                         TechSkillReport obj = new TechSkillReport();
                         obj.InterviewId = interviewId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
                         obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
                         obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
                         obj.WeightageRequired = item.Weightage;
