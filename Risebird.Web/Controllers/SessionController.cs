@@ -30,7 +30,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
-            string userEmailId = string.Empty; 
+            string userEmailId = string.Empty;
             try
             {
                 var userClaims = User.Identity as ClaimsIdentity;
@@ -67,7 +67,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, userEmailId);
                 return null;
-            }            
+            }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex, userEmailId);
                 return null;
-            }            
+            }
         }
 
         /// <summary>
@@ -104,10 +104,12 @@ namespace Risebird.Web.Controllers
             string userEmailId = string.Empty;
             try
             {
-                var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
-                var token = HttpContext.Session.GetString("Token");
-                if (token != null)
+                if (User.Identity.IsAuthenticated)
                 {
+                    var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
+                    var token = HttpContext.Session.GetString("Token");
+                    if (token != null)
+                    {
                         HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
                         HttpContext.Session.Clear();
                         CookieOptions option = new CookieOptions();
@@ -116,23 +118,29 @@ namespace Risebird.Web.Controllers
                             option.Expires = DateTime.Now.AddDays(-1);
                             Response.Cookies.Append("Risebirdportal.Session", "", option);
                         }
-                    
+
+                    }
+                    else
+                    {
+                        // Removing Session
+                        HttpContext.Session.Clear();
+                        CookieOptions option = new CookieOptions();
+                        if (Request.Cookies["Risebirdportal.Session"] != null)
+                        {
+                            option.Expires = DateTime.Now.AddDays(-1);
+                            Response.Cookies.Append("Risebirdportal.Session", "", option);
+                        }
+                    }
+
+                    return SignOut(new AuthenticationProperties { RedirectUri = callbackUrl },
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        OpenIdConnectDefaults.AuthenticationScheme);
                 }
                 else
                 {
-                    // Removing Session
-                    HttpContext.Session.Clear();
-                    CookieOptions option = new CookieOptions();
-                    if (Request.Cookies["Risebirdportal.Session"] != null)
-                    {
-                        option.Expires = DateTime.Now.AddDays(-1);
-                        Response.Cookies.Append("Risebirdportal.Session", "", option);
-                    }
+                    return RedirectToAction("SignIn", "Account");
                 }
-                
-                 SignOut(new AuthenticationProperties { RedirectUri = callbackUrl },
-                    CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
-                return RedirectToAction("SignIn", "Session");
+
             }
             catch (Exception ex)
             {
@@ -147,10 +155,10 @@ namespace Risebird.Web.Controllers
         /// <returns></returns>
         [HttpGet]
         public IActionResult SignedOut()
-        {           
+        {
             try
-            {               
-                if (User!= null && User.Identity!=null && User.Identity.IsAuthenticated)
+            {
+                if (User != null && User.Identity != null && User.Identity.IsAuthenticated)
                 {
                     // Redirect to home page if the user is authenticated.
                     return RedirectToAction(nameof(HomeController.Index), "Home");
