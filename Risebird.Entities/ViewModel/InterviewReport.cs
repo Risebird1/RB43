@@ -86,5 +86,11 @@ namespace Risebird.Entities.ViewModel
 
         public bool IsClientUser { get; set; }
 
+        public SelectList Level { get; set; }
+        public SelectList LevelTech { get; set; }
+        public SelectList QuestionsLevelList { get; set; }
+        public SelectList ConfirmationTypeList { get; set; }
+        public SelectList QuestionsList { get; set; }
+
     }
 }

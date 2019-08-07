@@ -4625,7 +4625,7 @@
   },
   "libraries": {
     "Libuv/1.10.0": {
-      "sha512": "GsCf4q+eyaI49rCPlgYxdxa1SQCysXFFdSJWdstrwxytg4+VPYLYrXD4AT2rjHVJ+UF7SSWX9CapWEYaU4ejVQ==",
+      "sha512": "lgDqozqVhVQ+YeXZdD/nh1s0noRPw12Z6XJ4EEmdcZYd8qIbiAIg6sfiQeHWpglurv2TPj8pSfRiUNGaRGSBWw==",
       "type": "package",
       "path": "libuv/1.10.0",
       "files": [
@@ -4667,7 +4667,7 @@
       ]
     },
     "Microsoft.ApplicationInsights.AspNetCore/2.1.1": {
-      "sha512": "kiGmzl9Cav34dF7AHVMoJxdJJQEeLB8KZGNwX1LjImG9iem5hGk4DkHpW7/m9Nh3DrL8IKSL3mqQo+IPqWfMRQ==",
+      "sha512": "HsN6IUHa3Wg0jltWR7e2N/eji6JmfUTsNiBSoagK5e+nTeXz1Sn5W0P8X7K1cxCAZTK4xHMIUlD/EFk+/7b7Fw==",
       "type": "package",
       "path": "microsoft.applicationinsights.aspnetcore/2.1.1",
       "files": [
@@ -5637,7 +5637,7 @@
       ]
     },
     "Microsoft.Azure.KeyVault/2.3.2": {
-      "sha512": "A82ESUdfLz2wMhYuPxrwf/fA7JVt3IARgeMCG3TsaLtxUxa9RBKX3f0zdnKmvBvJ/u1/5g03OLR26GPekqY5HQ==",
+      "sha512": "yDH55c/EKEv4n3wUajrgh7KGm801/hbdkbOD+A2Axyie+4IKhzf+9CH3k8E90DfCO6OdcChKPS2YqmckVl6J2A==",
       "type": "package",
       "path": "microsoft.azure.keyvault/2.3.2",
       "files": [
@@ -5654,7 +5654,7 @@
       ]
     },
     "Microsoft.Azure.KeyVault.WebKey/2.0.7": {
-      "sha512": "MVSYao62R9rwl9KF+IsJm+XBLupJj1ma2lfwNeFlSWziXGAopnYK+YkDWqABOqNIV9kpza/MvNBxITzhlJIyIw==",
+      "sha512": "1dGRG0RqG4fCYzb+TXex9aPnMdTkRv+2TlCqmvp/MAyNZ1B3cZJ8tGSTKNE9MtDbxxTHJJlsFiX9Qx/HpwFG7Q==",
       "type": "package",
       "path": "microsoft.azure.keyvault.webkey/2.0.7",
       "files": [
@@ -7011,7 +7011,7 @@
       ]
     },
     "Microsoft.NETCore.Platforms/2.0.0": {
-      "sha512": "VdLJOCXhZaEMY7Hm2GKiULmn7IEPFE4XC5LPSfBVCUIA8YLZVh846gtfBJalsPQF2PlzdD7ecX7DZEulJ402ZQ==",
+      "sha512": "CCf4NjmDOoise7FAij2VPuHIgKKsu696vkTwhOkPVQfLsTmB2WLFfQ4yeO5Udtk8FD636UBMx6Y9eovzJKT76A==",
       "type": "package",
       "path": "microsoft.netcore.platforms/2.0.0",
       "files": [
@@ -7041,7 +7041,7 @@
       ]
     },
     "Microsoft.Rest.ClientRuntime/2.3.8": {
-      "sha512": "Hj96LBoCwKY2VQKfSCVGGPV1sSumVjuYnrlpBwL4JSTnSK4b6ZxjLtXj8LgmKav8xJ2gps+UN7eI3hHVFKvBFw==",
+      "sha512": "QWtcuaiHYDz/zDIkzupegr7O5bagWfAuEtbBYDKfAkERxTK4U6moxi6cgSinElJXCJ47WRcnhQVXbs/F229jgg==",
       "type": "package",
       "path": "microsoft.rest.clientruntime/2.3.8",
       "files": [
@@ -7058,7 +7058,7 @@
       ]
     },
     "Microsoft.Rest.ClientRuntime.Azure/3.3.7": {
-      "sha512": "6u8JIuvrztse4tPOcvNzAJuzGBP0uY+Ijggk8ZYhp0siGEZ1XfZylf1vpNGUicvwcrhhoIgDW73Z1L6QGssr2g==",
+      "sha512": "CgO+/QV35GIEYaV3x1pqWWxj/F95FBXNU9Npfu7zISs1wQVCeMzmSsKx1QKdCWwJt/+wx151sT0Rff8Bxbe2Eg==",
       "type": "package",
       "path": "microsoft.rest.clientruntime.azure/3.3.7",
       "files": [
@@ -7318,7 +7318,7 @@
       ]
     },
     "Newtonsoft.Json.Bson/1.0.1": {
-      "sha512": "5PYT/IqQ+UK31AmZiSS102R6EsTo+LGTSI8bp7WAUqDKaF4wHXD8U9u4WxTI1vc64tYi++8p3dk3WWNqPFgldw==",
+      "sha512": "W5Ke5xei9yS0ljQZuT75VgSp5M43eCPm5hHAelvKyGGU4dV7hYCmtwdsxoADb/exO6pYHeu/Iki43TdYPzfESQ==",
       "type": "package",
       "path": "newtonsoft.json.bson/1.0.1",
       "files": [
@@ -7734,7 +7734,7 @@
       ]
     },
     "StackExchange.Redis.StrongName/1.2.4": {
-      "sha512": "qrfSB1BnmM17V20A4yvvNA0HNiDgnBd/CcjaeMKMA4qtup1uuBUMyhl20oj31fRVo71E/fXTbmQCuM9ytBJs6w==",
+      "sha512": "xUEJG7H/l8cMd0C1Q4ImP6RRfivfwRZrvlscxPH1s9ffRLSXyhMsaGriq7x3ulGejqneN/zzwYf4guAsv7DA5g==",
       "type": "package",
       "path": "stackexchange.redis.strongname/1.2.4",
       "files": [
@@ -8981,7 +8981,7 @@
       ]
     },
     "System.Interactive.Async/3.1.1": {
-      "sha512": "hZccYiIE5RS1/J9Tb/BNtosAGVggdlsJm4Ojdu+gDV0p4AIi+LUfUogMKkRacljQEJd2AG6vYzvcjhQFkqoZmw==",
+      "sha512": "x9y2omkjEudKbIVuhUzeWw7ZlouEzpk4W98woCEq1lq9gJxERBKRKDTHF5JPEws9E0f4/Uei/2vLxEy1IrfmMg==",
       "type": "package",
       "path": "system.interactive.async/3.1.1",
       "files": [
@@ -10668,7 +10668,7 @@
       ]
     },
     "System.Runtime.Serialization.Formatters/4.3.0": {
-      "sha512": "KT591AkTNFOTbhZlaeMVvfax3RqhH1EJlcwF50Wm7sfnBLuHiOeZRRKrr1ns3NESkM20KPZ5Ol/ueMq5vg4QoQ==",
+      "sha512": "voaCUwVE/liZ5gecwXh9BRq1X3cw2F9VA64kCjek1gF0ec25iQAPqPUPCQDYtYtbSHP0aIYg2ktcJoAt3NKeWg==",
       "type": "package",
       "path": "system.runtime.serialization.formatters/4.3.0",
       "files": [
@@ -12040,7 +12040,7 @@
       ]
     },
     "System.Xml.XmlDocument/4.3.0": {
-      "sha512": "lJ8AxvkX7GQxpC6GFCeBj8ThYVyQczx2+f/cWHJU8tjS7YfI6Cv6bon70jVEgs2CiFbmmM8b9j1oZVx0dSI2Ww==",
+      "sha512": "dk0n2ir9oSzrhduDhhJRE+3z6JssJsFs4U/6NEjEJLXXWVGv0i4qG1rMS0Y7HMY6X4ZOWfCDnlz2mwq3mhmVTw==",
       "type": "package",
       "path": "system.xml.xmldocument/4.3.0",
       "files": [
@@ -12257,23 +12257,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ankit\\.nuget\\packages\\": {},
+    "C:\\Users\\PrashantVish1S\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectUniqueName": "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "projectName": "Risebird.CommonHelper.Interface",
-      "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
-      "packagesPath": "C:\\Users\\ankit\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\obj\\",
+      "projectPath": "C:\\FIles\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
+      "outputPath": "C:\\FIles\\Risebird.CommonHelper.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\ankit\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\PrashantVish1S\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12281,13 +12281,14 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "http://nuget.grapecity.com/nuget": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\FIles\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

@@ -462,6 +462,22 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<LevelTech>(
+                        con, "select * from LevelTech", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public IEnumerable<Skill> GetSkills()
         {
             try
@@ -765,7 +781,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillReport.*, [Level].[Name] as RequiredLevel from TechSkillReport inner join [Level] on TechSkillReport.RequiredLevelId=[Level].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
+                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillReport.*, [LevelTech].[Name] as RequiredLevel from TechSkillReport inner join [LevelTech] on TechSkillReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

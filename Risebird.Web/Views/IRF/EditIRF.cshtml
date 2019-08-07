@@ -126,7 +126,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownListFor(m => m.CompanyType, (SelectList)ViewBag.CompanyTypeList, new { @class = "form-control" })
+                                        @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control" })
 
                                         @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
                                             <option value="Product">Product</option>
@@ -293,7 +293,7 @@
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m=> m.Joinability[i].Type, (SelectList)ViewBag.JoinabilityTypeList, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m=> m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
                                                             @*<select class="form-control" id="@("Joinability_"+i+"__Type")" name="Joinability[@i].Type">
                                                                 <option value="Job Location">Job Location</option>
                                                                 <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
@@ -367,7 +367,7 @@
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)ViewBag.SelectabilityTypeList, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control" })
 
 
                                                             @*<select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
@@ -431,7 +431,7 @@
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)ViewBag.SkillGeneralTypeList, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control" })
 
 
                                                             @*<select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">

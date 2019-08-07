@@ -35,5 +35,9 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         IEnumerable<LevelTech> GetLevelTech();
         bool CheckUniqueness(string value);
+        IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
+        IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
+        IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
+
     }
 }

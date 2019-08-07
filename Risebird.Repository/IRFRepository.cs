@@ -909,5 +909,56 @@ namespace Risebird.Repository
             }
 
         }
+
+        public IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<JoinabilityMatrix>(
+                        con, "select * from JoinabilityMatrix", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<SelectabilityMatrix>(
+                        con, "select * from SelectabilityMatrix", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<GeneralSkillMatrix>(
+                        con, "select * from GeneralSkillMatrix", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }

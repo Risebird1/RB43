@@ -129,11 +129,12 @@
                                         @Html.LabelFor(model => model.CompanyType, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
+                                        @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
 
-                                        <select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
+                                        @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
                                             <option value="Product">Product</option>
                                             <option value="Service">Service</option>
-                                        </select>
+                                        </select>*@
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
 
 
@@ -344,13 +345,14 @@
 
                                                     </td>
                                                     <td>
+                                                        @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
 
-                                                        <select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
+                                                        @*<select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
                                                             <option value="Job Location">Job Location</option>
                                                             <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
                                                             <option value="Approved Visa Type">Approved Visa Type</option>
                                                             <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                                                        </select>
+                                                        </select>*@
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
@@ -406,8 +408,9 @@
 
                                                     </td>
                                                     <td>
+                                                        @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "form-control" })
 
-                                                        <select class="form-control" id="Selectability_0__Type" name="Selectability[0].Type">
+                                                        @*<select class="form-control" id="Selectability_0__Type" name="Selectability[0].Type">
                                                             <option value="Technology Stack">Technology Stack</option>
                                                             <option value="Career Progression">Career Progression</option>
                                                             <option value="Industry">Industry</option>
@@ -415,7 +418,7 @@
                                                             <option value="Project">Project</option>
                                                             <option value="Previous Employers">Previous Employers</option>
                                                             <option value="Academics">Academics</option>
-                                                        </select>
+                                                        </select>*@
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
@@ -472,11 +475,13 @@
 
                                                     </td>
                                                     <td>
-                                                        <select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
+                                                        @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control" })
+
+                                                        @*<select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
                                                             <option value="Logical">Logical</option>
                                                             <option value="Analytical">Analytical</option>
                                                             <option value="Communication">Communication</option>
-                                                        </select>
+                                                        </select>*@
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
