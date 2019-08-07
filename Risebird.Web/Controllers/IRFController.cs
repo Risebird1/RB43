@@ -253,6 +253,7 @@ namespace Risebird.Web.Controllers
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         foreach (var m in meetings)
                         {
@@ -328,6 +329,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         foreach (var m in meetings)
                         {
