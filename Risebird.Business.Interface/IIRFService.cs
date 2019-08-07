@@ -24,5 +24,9 @@ namespace Risebird.Business.Interface
         bool UpdateIRF(IRFVm model);
         IList<SkillComment> GetTechSkillComments(int id);
         bool CheckUniqueness(string value);
+
+        IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
+        IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
+        IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
     }
 }

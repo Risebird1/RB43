@@ -63,30 +63,30 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            if (HttpContext.Session.GetString("email") != null)
             {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
-                {
-                    ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-                    ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                    ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
-                    ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                    ViewBag.QualityController = _irfService.GetQualityController();
-                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
-                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Account");
-                }
+                var model = new IRFVm();
+                model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+                model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+
+                ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+                ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                ViewBag.QualityController = _irfService.GetQualityController(); 
+                ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+                var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+                ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
+
+                var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                return View(model);
             }
             else
             {
@@ -392,57 +392,42 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
-                    {                        
-                        if (profileName.Contains("Client"))
-                        {
-                            ViewBag.IsClientUser = true;
-                        }
-                        else
-                        {
-                            ViewBag.IsClientUser = false;
-                        }
-                        ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
-                        ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
-                        ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
-                        ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                        ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
-                        ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                        ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                        ViewBag.QualityController = _irfService.GetQualityController();
-                        ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
+                    string prof = HttpContext.Session.GetString("profileName");                   
+                    if (prof != null && prof.Contains("Client"))
+                    {
+                        ViewBag.IsClientUser = true;                       
+                    }
+                    else
+                    {
+                        ViewBag.IsClientUser = false;
+                    }
+                    var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
+                    ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
+                    ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+                    ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+                    ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
+                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                    ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
+                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                    ViewBag.QualityController = _irfService.GetQualityController();
+                    ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
                         var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                         select new { ID = (int)s, Name = s.GetDescription() };
                         ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
-                        var joinabilityType = from JoinabilityType s in Enum.GetValues(typeof(JoinabilityType))
-                                              select new { ID = (int)s, Name = s.GetDescription() };
-                        ViewBag.JoinabilityTypeList = new SelectList(joinabilityType, "ID", "Name");
+                    model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+                    model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+                    model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                    
+                    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
 
-                        var selectabilityTypes = from SelectabilityType s in Enum.GetValues(typeof(SelectabilityType))
-                                                 select new { ID = (int)s, Name = s.GetDescription() };
-                        ViewBag.SelectabilityTypeList = new SelectList(selectabilityTypes, "ID", "Name");
-
-                        var skillGeneralTypes = from SkillGeneralType s in Enum.GetValues(typeof(SkillGeneralType))
-                                                select new { ID = (int)s, Name = s.GetDescription() };
-                        ViewBag.SkillGeneralTypeList = new SelectList(skillGeneralTypes, "ID", "Name");
-
-                        var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                           select new { ID = (int)s, Name = s.GetDescription() };
-                        ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-
-                        var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
-                        return View(model);
-                    }
-                    else
-                    {
-                        return RedirectToAction("SignOut", "Account");
-                    }
+                    
+                    return View(model);
                 }
                 else
                 {
