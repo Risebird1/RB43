@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -12,14 +13,21 @@ using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Repository;
 using Risebird.Repository.Interface;
+using Risebird.Web.Hepler;
+using System;
 
 namespace Risebird.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -27,7 +35,7 @@ namespace Risebird.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConfiguration>(Configuration);
+         
             //Configure session state
             services.AddDistributedRedisCache(options =>
             {
@@ -35,20 +43,32 @@ namespace Risebird.Web
                 options.Configuration = "risebirdportal.redis.cache.windows.net:6380,password=CZQPNXSRw87bjTASEORqVE58vcDaI562tJcSyt8IJnA=,ssl=True,abortConnect=False";
             });
             services.AddAuthentication(sharedOptions =>
-            {
-                sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddAzureAd(options => Configuration.Bind("AzureAd", options))
-            .AddCookie();
+                {
+                    sharedOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    sharedOptions.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                })
+                .AddAzureAdB2C(options => Configuration.Bind("Authentication:AzureAdB2C", options))
+                .AddCookie();
+
             services.AddSession(o =>
             {
                 o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 o.Cookie.Name = "Risebirdportal.Session";
                 o.Cookie.HttpOnly = true;
+                o.Cookie.IsEssential = true;
             });
+
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.IsEssential = true;
+                options.Cookie.HttpOnly = true;
+            });
+            
             //Dependency injection
             DependencyMapping(services);
         }
@@ -66,10 +86,20 @@ namespace Risebird.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
             app.UseSession();
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always,
+                MinimumSameSitePolicy = SameSiteMode.None
+
+            });
             app.UseAuthentication();
-            app.UseMvc(routes =>
+            //Antiforgery token secure
+            app.UseAntiforgeryTokens();
+            app.UseHttpsRedirection();
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.UseStaticFiles(); app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
@@ -108,6 +138,14 @@ namespace Risebird.Web
             services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();
             services.AddScoped<ISelectabilityMatrixService, SelectabilityMatrixService>();
             services.AddScoped<IIRFService, IRFService>();
+        }
+    }
+     //Global level antiforgery token security to stop malicious scripts
+    public static class ApplicationBuilderExtensions
+    {
+        public static IApplicationBuilder UseAntiforgeryTokens(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<ValidateAntiForgeryTokenMiddleware>();
         }
     }
 }

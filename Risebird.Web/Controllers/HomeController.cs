@@ -5,16 +5,21 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Risebird.Business.Interface;
 using System.Security.Claims;
+using Risebird.Web.Hepler;
+using Microsoft.Extensions.Options;
 
 namespace Risebird.Web.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
+        AzureAdB2COptions AzureAdB2COptions;
         private IUserService _userService;
-        public HomeController(IUserService userService)
+        public HomeController(IUserService userService,
+            IOptions<AzureAdB2COptions> azureAdB2COptions)
         {
             _userService = userService;
+            AzureAdB2COptions = azureAdB2COptions.Value;
         }
         public IActionResult Index()
         {
@@ -24,7 +29,7 @@ namespace Risebird.Web.Controllers
                 //You get the user’s first and last name below:
                 string name = userClaims?.FindFirst("name")?.Value;
                 // The 'Name' claim can be used for showing the username                
-                string emailId = userClaims?.FindFirst(ClaimTypes.Email)?.Value;
+                string emailId = userClaims?.FindFirst("emails")?.Value;
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId);
                 if (menus != null)
                 {                   
