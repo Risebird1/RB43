@@ -203,6 +203,7 @@ namespace Risebird.Business
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
+                model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
                 model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
                 model.JDLink = IRF.JDLink;

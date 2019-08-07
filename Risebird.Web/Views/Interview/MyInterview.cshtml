@@ -87,29 +87,28 @@
                                 <tbody>
 
 
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr id=@item.id>
-                                            <td> @item.interviewDate </td>
-                                            <td> @item.interviewSlot </td>
-                                            <td> @item.interviewDuration </td>
-                                            <td> @item.candidateName</td>
-                                            <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
-                                            <td> @item.JDLink</td>
-                                            <td> @item.risebirdHR</td>
-                                            <td class="text-right">
-                                                <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
-
-                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                @foreach (var item in Model)
+                                {
+                                <tr id=@item.id>
+                                    <td> @item.interviewDate </td>
+                                    <td> @item.interviewSlot </td>
+                                    <td> @item.interviewDuration </td>
+                                    <td> @item.candidateName</td>
+                                    <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
+                                    <td> @item.JDLink</td>
+                                    <td> @item.risebirdHR</td>
+                                    <td class="text-right">
+                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "IRF", new {id= item.irfIntId})'"  title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
+                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                    </td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                        <!-- end content-->
-                    </div>
+                    <!-- end content-->
+                </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
