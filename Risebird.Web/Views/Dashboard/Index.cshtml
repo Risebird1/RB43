@@ -356,7 +356,8 @@
 
    window.onload = function () {
         var pending='@ViewBag.Totinvites';
-        var chart = new CanvasJS.Chart("invitesPending", {
+       var chart = new CanvasJS.Chart("invitesPending", {
+           theme: "light2", 
             width: 350,//in pixels
             height: 200,//in pixels
             animationEnabled: true,
@@ -367,7 +368,7 @@
                 fontWeight: "normal"
             },
             data: [{
-                type: "doughnut",
+                type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 17,
@@ -385,7 +386,8 @@
         chart.render();
 
 
-        var chart = new CanvasJS.Chart("invitesAccepted", {
+       var chart = new CanvasJS.Chart("invitesAccepted", {
+           theme: "light2", 
             width: 300,//in pixels
             height: 200,//in pixels
             animationEnabled: true,
@@ -396,7 +398,7 @@
                 fontWeight: "normal"
             },
             data: [{
-                type: "doughnut",
+                type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 17,
@@ -413,13 +415,14 @@
         });
         chart.render();
 
-        var chart = new CanvasJS.Chart("interviewers", {
+       var chart = new CanvasJS.Chart("interviewers", {
+           theme: "light2", 
             width: 350,//in pixels
             height: 200,//in pixels
             animationEnabled: true,
             title: null,
             data: [{
-                type: "doughnut",
+                type: "pie",
                 startAngle: 60,
                 innerRadius: 55,
                 indexLabelFontSize: 15,
