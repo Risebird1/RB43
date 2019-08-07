@@ -295,5 +295,50 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix()
+        {
+            try
+            {
+                return _irfRepository.GetJoinabilityMatrix();
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix()
+        {
+            try
+            {
+                return _irfRepository.GetGeneralSkillMatrix();
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix()
+        {
+            try
+            {
+                return _irfRepository.GetSelectabilityMatrix();
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }

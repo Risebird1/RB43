@@ -58,6 +58,11 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null)
             {
+                var model = new IRFVm();
+                model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+                model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+
                 ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                 ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -70,7 +75,11 @@ namespace Risebird.Web.Controllers
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
                 ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
-                return View();
+
+                var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+                model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                return View(model);
             }
             else
             {
@@ -350,6 +359,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IsClientUser = false;
                     }
+                    var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
@@ -364,23 +374,15 @@ namespace Risebird.Web.Controllers
                                     select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
-                    var joinabilityType = from JoinabilityType s in Enum.GetValues(typeof(JoinabilityType))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.JoinabilityTypeList = new SelectList(joinabilityType, "ID", "Name");
-
-                    var selectabilityTypes = from SelectabilityType s in Enum.GetValues(typeof(SelectabilityType))
-                                          select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.SelectabilityTypeList = new SelectList(selectabilityTypes, "ID", "Name");
-
-                    var skillGeneralTypes = from SkillGeneralType s in Enum.GetValues(typeof(SkillGeneralType))
-                                          select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.SkillGeneralTypeList = new SelectList(skillGeneralTypes, "ID", "Name");
-
+                    model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
+                    model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
+                    model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                    
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                     select new { ID = (int)s, Name = s.GetDescription() };
-                    ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
 
-                    var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
+                    
                     return View(model);
                 }
                 else

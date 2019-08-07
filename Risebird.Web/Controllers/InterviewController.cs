@@ -527,26 +527,13 @@ namespace Risebird.Web.Controllers
             {
                 string prof = HttpContext.Session.GetString("profileName");
                
-                         
-                ViewBag.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
-                ViewBag.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
                 if (prof != null && prof.Contains("Client"))
                 {
                     model.IsClientUser = true;
                 }
-                var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name"); ;
-
-                var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
-                                     select new { ID = (int)s, Name = s.GetDescription() };
-                ViewBag.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name"); ;
-
-                //Get questions List for drop down
-                ViewBag.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
-
-                GetStatusList(model);
+                
+                GetStatusList(model, irfId);
                 return View(model);
 
             }
@@ -613,7 +600,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Report was not saved.";
                 return RedirectToAction("Index");
             }
@@ -667,7 +654,7 @@ namespace Risebird.Web.Controllers
             model.PreparationStatusList = new SelectList(preparationStatuses, "ID", "Name");
         }
 
-        private void GetStatusList(InterviewReport model)
+        private void GetStatusList(InterviewReport model, int irfId = 0)
         {
             var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
@@ -677,6 +664,18 @@ namespace Risebird.Web.Controllers
                                   select new { ID = (int)s, Name = s.GetDescription() };
 
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
+            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name"); 
+            model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
+            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+            var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.ConfirmationTypeList= new SelectList(confirmationTypes, "ID", "Name"); ;
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+
+            
 
         }
     }
