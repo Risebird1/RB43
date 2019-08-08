@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Risebird.Business;
@@ -68,7 +69,13 @@ namespace Risebird.Web
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
             });
-            
+            //Set this values according to your requirements  
+            services.Configure<FormOptions>(o => {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
+
             //Dependency injection
             DependencyMapping(services);
         }

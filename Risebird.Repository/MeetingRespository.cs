@@ -777,6 +777,28 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<string> GetIRFName(int id)
+        {
+            try
+            {
+                var query = "Select IRFId from IRF where IsDeleted = @IsDeleted and id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
         {
             try
