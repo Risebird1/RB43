@@ -132,7 +132,24 @@
     </footer>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
 
+        });
+        var table = $('#meeting').DataTable();
+    });
+</script>
 
 <script type="text/javascript">
 
