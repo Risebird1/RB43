@@ -340,6 +340,7 @@ namespace Risebird.Business
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateEmail;
                     model.IRFId = irfId;
+                    model.IRFName = interviewReport.FirstOrDefault().IRFName;
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     
                     return model;

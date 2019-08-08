@@ -12,6 +12,8 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public int IRFId { get; set; }
+        public string IRFName { get; set; }
+
         public int InterviewId { get; set; }
 
         [DisplayName("Candidate's Mail")]

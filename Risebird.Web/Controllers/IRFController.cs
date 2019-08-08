@@ -19,12 +19,16 @@ namespace Risebird.Web.Controllers
     {
         private IIRFRepository _irfRepository;
         private IIRFService _irfService;
+        private IAzureStorageHelper _azureStorageHelper;
+        private IMeetingService _meetingService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper)
         {
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
+            _meetingService = meetingService;
+            _azureStorageHelper = azureStorageHelper;
         }
         public IActionResult Index()
         {
@@ -255,6 +259,8 @@ namespace Risebird.Web.Controllers
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+                        //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
                         {
                             if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
@@ -331,6 +337,8 @@ namespace Risebird.Web.Controllers
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+                        //ViewBag.IsSelected = false;
                         foreach (var m in meetings)
                         {
                             if (m.intervieweStatus.HasValue)
@@ -489,5 +497,120 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult AddReport(int interviewId, int irfId, bool IsSelected = false)
+        {
+            try
+            {
+                string prof = HttpContext.Session.GetString("profileName");
+
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+                if (prof != null && prof.Contains("Client"))
+                {
+                    model.IsClientUser = true;
+                }
+                ViewBag.IsSelected = IsSelected;
+                GetStatusList(model, irfId);
+                return View(model);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyInterview");
+            }
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReport(InterviewReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (model.AudioFile != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                        var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                        string uploadedaudioFileURL = blob.Uri.ToString();
+                        if (uploadedaudioFileURL == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                            GetStatusList(model);
+                            return View("AddReport", model);
+                        }
+                        else
+                        {
+                            model.AudioLink = uploadedaudioFileURL;
+                        }
+                    }
+                    if (model.VideoFile != null)
+                    {
+                        // byte[] videofileData = new byte[model.VideoFile.Length];
+                        // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
+                        await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                        var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                        string uploadedvideoFileURL = blob.Uri.ToString();
+                        if (uploadedvideoFileURL == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                            GetStatusList(model);
+                            return View("AddReport", model);
+                        }
+                        else
+                        {
+                            model.VideoLink = uploadedvideoFileURL;
+                        }
+                    }
+                    if (_meetingService.AddInterviewReport(model).Result)
+                    {
+                        TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                        return RedirectToAction("AddReport",new { interviewId = model.InterviewId, irfId = model.IRFId});
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Report was not saved.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Report was not saved.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        private void GetStatusList(InterviewReport model, int irfId = 0)
+        {
+            var interviewStatuses = from InterviewStatus s in Enum.GetValues(typeof(InterviewStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.InterviewStatusList = new SelectList(interviewStatuses, "ID", "Name");
+
+            var meetingStatuses = from MeetingStatus s in Enum.GetValues(typeof(MeetingStatus))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+
+            model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
+
+            model.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
+            model.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
+            var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
+            var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name"); ;
+            model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+
+        }
     }
 }

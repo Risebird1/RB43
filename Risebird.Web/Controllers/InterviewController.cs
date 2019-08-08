@@ -25,14 +25,16 @@ namespace Risebird.Web.Controllers
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
+        private IIRFService _iRFService;
         private IIRFRepository _iRFRepository;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
             _iRFRepository = iRFRepository;
+            _iRFService = iRFService;
         }
 
         public async Task<IActionResult> Index()
@@ -799,8 +801,56 @@ namespace Risebird.Web.Controllers
             model.ConfirmationTypeList= new SelectList(confirmationTypes, "ID", "Name"); ;
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
-            
+        }
 
+        public IActionResult SampleQuestions(string id)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                TechSkillComments model = new TechSkillComments();
+                var result = _iRFService.GetTechSkillComments(Convert.ToInt16(id));
+                //if (result.Count() > 0)
+                model.SkillCollection = result;
+                ViewBag.Skills = new SelectList(_iRFService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
+                model.IRFId = Convert.ToInt16(id);
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Account");
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SampleQuestions(TechSkillComments model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_iRFService.AddSkillComments(model))
+                    {
+                        TempData["SuccessErrorMessage"] = "Comments saved Successfully";
+                        return RedirectToAction("MyInterview");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Comments were not saved.";
+                        return RedirectToAction("MyInterview");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Comments were not saved";
+                return RedirectToAction("MyInterview");
+            }
         }
     }
 
