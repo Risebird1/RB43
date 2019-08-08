@@ -242,7 +242,6 @@
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     var IdIRF = dataID;
-                    debugger;
                     $.ajax({
                         url: '/IRF/DeleteIRF?id=' + IdIRF,
                         success: function (result) {
