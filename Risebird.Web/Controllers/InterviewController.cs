@@ -274,12 +274,12 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateMeeting(meetingUpdated))
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Meeting is updated Successfully";
+                                TempData["SuccessErrorMessageInterview"] = "Meeting has been updated Successfully";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterview"] = "Updating meeting is Failed";
+                                TempData["SuccessErrorMessageInterview"] = "Meeting update has Failed";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -351,6 +351,10 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                        }
                         return View(myInterview);
                     }
                     //else
@@ -832,12 +836,12 @@ namespace Risebird.Web.Controllers
                 {
                     if (_iRFService.AddSkillComments(model))
                     {
-                        TempData["SuccessErrorMessage"] = "Comments saved Successfully";
+                        TempData["SuccessErrorMessage"] = "Questions saved Successfully";
                         return RedirectToAction("MyInterview");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Comments were not saved.";
+                        TempData["SuccessErrorMessage"] = "Questions were not saved.";
                         return RedirectToAction("MyInterview");
                     }
                 }
@@ -850,7 +854,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Comments were not saved";
+                TempData["SuccessErrorMessage"] = "Questions were not saved";
                 return RedirectToAction("MyInterview");
             }
         }

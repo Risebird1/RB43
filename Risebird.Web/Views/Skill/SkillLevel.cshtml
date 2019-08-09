@@ -143,18 +143,67 @@
     });
     function DeleteEntityfromEnvironment(skillId, Name) {
 
-        var confirmMessageBox = confirm('Are you sure you want to delete skill level' + Name + ' ?');
-        if (confirmMessageBox) {
-            if (skillId != '') {
-                $.ajax({
-                    url: '/Skill/DeleteSkillLevel',
-                    data: { 'id': skillId },
-                    type: 'get',
-                    success: function (data) {
-                        window.location = data.url;
-                    }
-                });
+        //var confirmMessageBox = confirm('Are you sure you want to delete skill level' + Name + ' ?');
+        //if (confirmMessageBox) {
+        //    if (skillId != '') {
+        //        $.ajax({
+        //            url: '/Skill/DeleteSkillLevel',
+        //            data: { 'id': skillId },
+        //            type: 'get',
+        //            success: function (data) {
+        //                window.location = data.url;
+        //            }
+        //        });
+        //    }
+        //}
+        swal.fire({
+            title: 'Are you sure you want to delete skill level' + Name + '?',
+            text: "It will be permanently deleted !",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/Skill/DeleteSkillLevel',
+                        data: { 'id': skillId },
+                        type: 'get',
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>Your file has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Skill/SkillLevel";
+                })
             }
-        }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Not deleted!',
+                    'error'
+                )
+            }
+        })
     }
 </script>

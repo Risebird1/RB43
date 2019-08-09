@@ -52,6 +52,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                     }
+                    //ViewBag.Message = "Failed";
                     return View(irfList);
                 }
                 else
@@ -116,7 +117,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Skill is Failed";
+                            TempData["SuccessErrorMessage"] = "Adding IRF has Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -181,12 +182,12 @@ namespace Risebird.Web.Controllers
                 {                   
                     if (_irfService.AddSkillComments(model))
                     {
-                        TempData["SuccessErrorMessage"] = "Comments saved Successfully";
+                        TempData["SuccessErrorMessage"] = "Questions saved Successfully";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Comments were not saved.";
+                        TempData["SuccessErrorMessage"] = "Questions were not saved.";
                         return RedirectToAction("Index");
                     }                    
                 }
@@ -199,7 +200,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Comments were not saved";
+                TempData["SuccessErrorMessage"] = "Questions were not saved";
                 return RedirectToAction("Index");
             }
         }
