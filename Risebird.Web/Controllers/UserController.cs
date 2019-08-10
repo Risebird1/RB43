@@ -49,7 +49,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception)
@@ -76,7 +76,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 
@@ -198,7 +198,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -229,7 +229,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 
@@ -256,7 +256,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception)
@@ -281,7 +281,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -326,7 +326,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -357,7 +357,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 
@@ -389,7 +389,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 
@@ -430,7 +430,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -457,7 +457,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception)
@@ -480,7 +480,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -557,7 +557,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -588,7 +588,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 
@@ -667,7 +667,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
             catch (Exception ex)
@@ -697,7 +697,7 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
 

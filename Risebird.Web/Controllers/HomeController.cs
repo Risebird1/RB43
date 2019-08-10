@@ -39,17 +39,17 @@ namespace Risebird.Web.Controllers
                     var menuAccess = menus.Where(x => x.dAccess)?.FirstOrDefault();
                     if (menuAccess == null)
                     {
-                        return RedirectToAction("SignOut", "Account");
+                        return RedirectToAction("SignOut", "Session");
                     }
                     var menuslink = menuAccess.sUrl.Split('/');
                     return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
                 }
                 else
                 {
-                    return RedirectToAction("SignOut", "Account");
+                    return RedirectToAction("SignOut", "Session");
                 }
             }
-            return RedirectToAction("SignOut", "Account");
+            return RedirectToAction("SignOut", "Session");
         }
         public IActionResult About()
         {
