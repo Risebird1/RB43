@@ -179,7 +179,7 @@
         //}
        
         swal.fire({
-            title: 'Are you sure you want to delete QC interviewer' + EmailId + '?',
+            title: 'Are you sure you want to delete QC interviewer ' + EmailId + '?',
             text: "It will be permanently deleted !",
             type: 'warning',
             showCancelButton: true,
@@ -215,7 +215,7 @@
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
-                }).then(function () {
+                }).then(function (result) {
                     window.location = "/User/QCInterviewers";
                 })
             }

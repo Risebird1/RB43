@@ -67,8 +67,9 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
-                    profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
-                    profiles = profiles.Where(x => x.Name != "Client").ToList();
+
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };                   
+                    profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
 
@@ -143,8 +144,10 @@ namespace Risebird.Web.Controllers
                     if (user != null)
                     {
                         List<Profile> profiles = _profileService.GetProfile();
-                        profiles = profiles.Where(x => x.Name != "Interviewer").ToList();
-                        profiles = profiles.Where(x => x.Name != "Client").ToList();
+
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };
+                        profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
+
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
                         return View("UserUpdate", user);
                     }
@@ -624,7 +627,7 @@ namespace Risebird.Web.Controllers
                                 var model = new InterviewerVM();
                                 model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
-                                return View("AddInterviewer", model);
+                                return View("InterviewerUpdate", model);
                             }
                             else
                                 interviewer.ResumeLink = uploadedFileURL;
@@ -636,7 +639,7 @@ namespace Risebird.Web.Controllers
                             var model = new InterviewerVM();
                             model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
-                            return View("AddInterviewer", model);
+                            return View("InterviewerUpdate", model);
                         }
 
 
@@ -803,6 +806,147 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer addition is Failed";
                 return RedirectToAction("QCInterviewers");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditQCInterviewer(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    QCInterviewerVM qcinterviewerVM = _userService.GetQCInterviewer(id);
+
+                    if (qcinterviewerVM != null)
+                    {
+                        qcinterviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+                        TempData["ResumeLink"] = qcinterviewerVM.ResumeLink;
+                        return View("QCInterviewerUpdate", qcinterviewerVM);
+                    }
+                    else
+                        return RedirectToAction("QCInterviewers");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("QCInterviewers");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditQCInterviewer(QCInterviewerVM qcInterviewer)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    qcInterviewer.ResumeLink = TempData["ResumeLink"].ToString();
+                    string uploadedFileURL = null;
+                    if (ModelState.IsValid)
+                    {
+                        if (qcInterviewer.File != null)
+                        {
+
+                            await _azureStorageHelper.InsertBlob(qcInterviewer.File.FileName, "resumes", qcInterviewer.File);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(qcInterviewer.File.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+
+                            if (uploadedFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                                var model = new InterviewerVM();
+                                model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                                return View("QCInterviewerUpdate", model);
+                            }
+                            else
+                                qcInterviewer.ResumeLink = uploadedFileURL;
+                        }
+
+                        if (String.IsNullOrEmpty(qcInterviewer.PrimarySkill))
+                        {
+                            ModelState.AddModelError(String.Empty, "Please mention Skill");
+                            var model = new InterviewerVM();
+                            model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                            return View("QCInterviewerUpdate", model);
+                        }
+
+
+                        if (_userService.UpdateQCInterviewer(qcInterviewer))
+                        {
+                            TempData["SuccessErrorMessageQCInterviewer"] = "QCInterviewer is Updated Successfully";
+                            return RedirectToAction("QCInterviewers");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageQCInterviewer"] = "QCInterviewer update is Failed";
+                            return RedirectToAction("Interviewers");
+                        }
+                    }
+
+                    else
+                    {
+                        var model = new InterviewerVM();
+                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                        //ModelStateEntry i;
+                        //ModelState.TryGetValue("SelectedSkillIds", out i);
+                        //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
+                        //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
+
+                        return View("QCInterviewerUpdate", model);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageQCInterviewer"] = "QCInterviewer update is Failed";
+                return RedirectToAction("QCInterviewers");
+            }
+        }
+
+        public async Task<IActionResult> DeleteQCInterviewer(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteQCInterviewer(id))
+                    {
+                        TempData["SuccessErrorMessageQCInterviewer"] = "QC Interviewer is deleted Successfully";
+                        return Json(new { url = Url.Action("QCInterviewers", "User") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageQCInterviewer"] = "Deletion of QCInterviewer Failed";
+                        return Json(new { url = Url.Action("QCInterviewers", "User") });
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
+                return RedirectToAction("Interviewers");
             }
         }
 

@@ -461,6 +461,7 @@
 
                                                         <th class="table_heading">Required Level</th>
                                                         <th class="table_heading">Type</th>
+                                                        <th class="table_heading">Value</th>
                                                         <th class="table_heading">Actual Level</th>
                                                         <th class="table_heading">Required Weightage</th>
                                                         <th class="table_heading">Actual Weightage</th>
@@ -471,29 +472,32 @@
                                                     {
                                                         @for (int i = 0; i < Model.SkillGeneralReportCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                    <tr>
 
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
 
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                        <td>
+                                                            @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
 
 
-                                                            </tr>
+                                                    </tr>
 
                                                         }
 
@@ -531,6 +535,7 @@
 
                                                         <th class="table_heading">Required Level</th>
                                                         <th class="table_heading">Type</th>
+                                                        <th class="table_heading">Value</th>
                                                         <th class="table_heading">Actual Level</th>
                                                         <th class="table_heading">Required Weightage</th>
                                                         <th class="table_heading">Actual Weightage</th>
@@ -541,30 +546,33 @@
                                                     {
                                                         @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                    <tr>
 
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
 
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                        <td>
+                                                            @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
 
-                                                                @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
+                                                        @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
 
-                                                            </tr>
+                                                    </tr>
 
                                                         }
                                                     }
@@ -602,6 +610,7 @@
 
                                                         <th class="table_heading">Required Level</th>
                                                         <th class="table_heading">Type</th>
+                                                        <th class="table_heading">Value</th>
                                                         <th class="table_heading">Actual Level</th>
                                                         <th class="table_heading">Required Weightage</th>
                                                         <th class="table_heading">Actual Weightage</th>
@@ -612,30 +621,33 @@
                                                     {
                                                         @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                    <tr>
 
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Type, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
 
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                        <td>
+                                                            @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
 
-                                                                @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
+                                                        @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
 
-                                                            </tr>
+                                                    </tr>
 
                                                         }
                                                     }

@@ -201,6 +201,9 @@
     <Content Update="Views\User\AddQCInterviewer.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\User\QCInterviewerUpdate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\User\QCInterviewers.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
