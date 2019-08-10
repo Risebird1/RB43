@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -14,6 +15,8 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string Value { get; set; }
         public int Weightage { get; set; }
+        [NotMapped]
+        public String Name { get; set; }
 
     }
 }

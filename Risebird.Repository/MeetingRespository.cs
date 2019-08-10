@@ -365,7 +365,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransSkillGeneral where IRFId = @IRFId";
+                var query = "Select tsg.*, gsm.Name as Name from TransSkillGeneral tsg join GeneralSkillMatrix gsm on tsg.type = gsm.Id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -386,7 +386,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransJoinability where IRFId = @IRFId";
+                var query = "Select tj.*, jm.Name as Name from TransJoinability tj join JoinabilityMatrix jm on tj.type = jm.Id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -407,7 +407,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransSelectability where IRFId = @IRFId";
+                var query = "Select ts.*, sm.Name as Name from TransSelectability ts join SelectabilityMatrix sm on ts.type = sm.id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

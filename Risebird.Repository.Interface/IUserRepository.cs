@@ -28,5 +28,10 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteInterviewer(int id);
         Task<InterviewerVM> GetInterviewer(int id);
         Task<bool> UpdateInterviewer(InterviewerVM Interviewer);
+
+        Task<QCInterviewerVM> GetQCInterviewer(int id);
+        Task<bool> UpdateQCInterviewer(QCInterviewerVM qcInterviewer);
+
+        Task<bool> DeleteQCInterviewer(int id);
     }
 }

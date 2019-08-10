@@ -96,21 +96,27 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                        <div class="col-md-6">
-                                            @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control" })
-                                        </div>
+                                    @*<div class="form-group">*@
+                                    @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                    <div class="col-md-6">
+                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control" })
                                     </div>
+                                    @*</div>*@                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12">
 
-                                    <div class="form-group col-sm-12">
-                                        <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Add QCInterviewer" class="btn btn btn-primary" />
-                                        </div>
-                                        <div>
-                                            @Html.ActionLink("Back to List", "QCInterviewers", "User", new { @class = "btn btn-link" })
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12">
+                                <div class="pull-right">
+                                    <input type="submit" id="btnUpload" value="Save QCInterviewer" class="btn btn btn-primary" />
+                                </div>
+                                <div>
+                                    @Html.ActionLink("Back to List", "QCInterviewers", "User", new { @class = "btn btn-fill btn-label", @role = "button" })
                                 </div>
                             </div>
                         </div>

@@ -292,6 +292,54 @@ namespace Risebird.Business
             }
         }
 
+        public QCInterviewerVM GetQCInterviewer(int id)
+        {
+            try
+            {
+                var interviewer = _userRepository.GetQCInterviewer(id);
+
+                if (interviewer == null)
+                    return null;
+                else
+                    return interviewer.Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateQCInterviewer(QCInterviewerVM qcInterviewer)
+        {
+            try
+            {
+                return _userRepository.UpdateQCInterviewer(qcInterviewer).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool DeleteQCInterviewer(int id)
+        {
+            try
+            {
+                return _userRepository.DeleteQCInterviewer(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
         #endregion
     }
 }

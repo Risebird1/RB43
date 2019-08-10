@@ -522,12 +522,12 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> AddQCInterviewer(QCInterviewerVM qcinterviewer)
+        public async Task<bool> AddQCInterviewer(QCInterviewerVM qcInterviewer)
         {
             try
             {
                 //Set the parameters to be passed to store procedure
-                DynamicParameters parameters = SetStoredProcedureParameterForQCInterviewer(qcinterviewer);
+                DynamicParameters parameters = SetStoredProcedureParameterForQCInterviewer(qcInterviewer);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -550,6 +550,84 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<QCInterviewerVM> GetQCInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<QCInterviewerVM>(con, "usp_GetQCInterviewerById", parameters,
+                        commandType: CommandType.StoredProcedure);
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> UpdateQCInterviewer(QCInterviewerVM qcInterviewer)
+        {
+            try
+            {
+                DynamicParameters parameters = SetStoredProcedureParameterForQCInterviewer(qcInterviewer);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateQCInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteQCInterviewer(int id)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_DeleteQCInterviewer", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         private DynamicParameters SetStoredProcedureParameterForQCInterviewer(QCInterviewerVM entity)
         {
             var parameters = new DynamicParameters();

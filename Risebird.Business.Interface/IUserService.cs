@@ -28,6 +28,9 @@ namespace Risebird.Business.Interface
         InterviewerVM GetInterviewer(int id);
         bool DeleteInterviewer(int id);
         bool UpdateInterviewer(InterviewerVM interviewer);
+        QCInterviewerVM GetQCInterviewer(int id);
+        bool UpdateQCInterviewer(QCInterviewerVM qcInterviewer);
+        bool DeleteQCInterviewer(int id);
 
     }
 }

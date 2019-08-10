@@ -297,6 +297,8 @@ namespace Risebird.Business
                         obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
                         obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
                         obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
                         obj.WeightageRequired = item.Weightage;
                         genSkillList.Add(obj);
                     }
@@ -312,7 +314,9 @@ namespace Risebird.Business
                         obj.InterviewId = interviewId;
                         obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
                         obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Name = item.Name;
                         obj.Type = item.Type;
+                        obj.Value = item.Value;
                         obj.WeightageRequired = item.Weightage;
                         joinabilityList.Add(obj);
                     }
@@ -326,6 +330,8 @@ namespace Risebird.Business
                         obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
                         obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
                         obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
                         obj.WeightageRequired = item.Weightage;
                         selectabilityList.Add(obj);
                     }
