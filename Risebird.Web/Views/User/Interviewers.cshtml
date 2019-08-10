@@ -46,6 +46,7 @@
                                     <th>Primary Skills</th>
                                     <th>Resume Link</th>
                                     <th>Approved</th>
+                                    <th>Slots</th>
                                     <th>No Of Interview</th>
                                     <th>SuccessRate</th>
                                     <th class="disabled-sorting text-right">Actions</th>
@@ -60,6 +61,7 @@
                                     <th>Primary Skills</th>
                                     <th>Resume Link</th>
                                     <th>Approved</th>
+                                    <th>Slots</th>
                                     <th>No Of Interview</th>
                                     <th>SuccessRate</th>
                                     <th class="disabled-sorting text-right">Actions</th>
@@ -75,6 +77,7 @@
                                         <td>@item.MobileNumber</td>
                                         <td><textarea>@item.PrimarySkill</textarea></td>
                                         <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                        <td><textarea>@item.Slots</textarea></td>
                                         @if (@item.IsApproved == true)
                                         {
                                             <td>Approved</td>
@@ -177,7 +180,7 @@
         //    }
         //}
 
-        debugger;
+       
         swal.fire({
             title: 'Are you sure you want to delete interviewer' + EmailId + '?',
             text: "It will be permanently deleted !",
