@@ -23,7 +23,7 @@ namespace Risebird.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            string jsonContent = await req.Content.ReadAsStringAsync();
+            //string jsonContent = await req.Content.ReadAsStringAsync();
             //log.Info(jsonContent);
             string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
             //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
@@ -39,7 +39,7 @@ namespace Risebird.Functions
             string candidateEmail = string.Empty;
             string hrRiseBirdAssinged = string.Empty;
             string resumeLink = string.Empty;
-            string comfirmationStatus = string.Empty;
+            string comfirmationStatus = "1";
             string zoomLink = string.Empty;
             string zoomDetails = string.Empty;
             string interviewer = string.Empty;
@@ -63,11 +63,11 @@ namespace Risebird.Functions
                         .ToUpper();
                     if (eventType == "CANCELED")
                     {
-                        comfirmationStatus = "Cancelled";
+                        comfirmationStatus = "2";
                     }
                     else
                     {
-                        comfirmationStatus = "Confirmed";
+                        comfirmationStatus = "1";
                     }
                 }
                 //else if (((JProperty)mainDetails).Name == "time")
@@ -96,11 +96,11 @@ namespace Risebird.Functions
                                 var interviewDatestr = ((JProperty)mainFamilies1).Value["invitee_start_time"].ToString();
                                 if (interviewDatestr.Contains("AM"))
                                 {
-                                    slot = "Morning";
+                                    slot = "1";
                                 }
                                 else
                                 {
-                                    slot = "Evening";
+                                    slot = "2";
                                 }
 
                                 interviewDate = Convert.ToDateTime(interviewDatestr);
@@ -224,13 +224,13 @@ namespace Risebird.Functions
                 client.DefaultRequestHeaders.ExpectContinue = false;
                 //throw new Exception();
                 log.Info("Send mail based on IRF matched interviwer.");
-                HttpResponseMessage response = await client.GetAsync("/api/Scheduler?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
+                HttpResponseMessage response = await client.GetAsync("/api/Scheduler/IRFBasedInterviewerMail?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
                 var httpresponse = response.Content.ReadAsStringAsync().Result;
                 log.Info($"httpsresponce for Auto sIRF Mail send:{httpresponse} ");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                log.Info($"Failed to send mail to IRF: " + IRFID + " interviews exception:{ex.Message} ");
+                log.Info($"Failed to send mail to IRF: " + IRFID + " interviews exception: "+ex.Message);
             }
             //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
             return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
