@@ -103,7 +103,7 @@ namespace Risebird.Web
             });
             app.UseAuthentication();
             //Antiforgery token secure
-            app.UseAntiforgeryTokens();
+            //app.UseAntiforgeryTokens();
             app.UseHttpsRedirection();
             app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseStaticFiles(); app.UseMvc(routes =>
