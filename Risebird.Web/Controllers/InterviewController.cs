@@ -802,9 +802,7 @@ namespace Risebird.Web.Controllers
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-            var confirmationTypes = from ConfirmationStatus s in Enum.GetValues(typeof(ConfirmationStatus))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-            model.ConfirmationTypeList= new SelectList(confirmationTypes, "ID", "Name"); ;
+      
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
         }

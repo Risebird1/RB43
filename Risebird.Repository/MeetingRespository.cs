@@ -507,7 +507,7 @@ namespace Risebird.Repository
                     DynamicParameters parameters = new DynamicParameters();
                     DynamicParameters paramx = new DynamicParameters();
                     paramx.Add("@InterviewId", reportDetails.InterviewId);
-                    paramx.Add("@confirmationStatus", reportDetails.confirmationStatus);
+                    paramx.Add("@confirmationStatus", "");
                     paramx.Add("@OverallScore", reportDetails.OverallScore);
                     paramx.Add("@Rating", reportDetails.Rating);
                     paramx.Add("@TechSkillComments", reportDetails.TechSkillComments);
