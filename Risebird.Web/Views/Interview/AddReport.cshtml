@@ -1097,17 +1097,19 @@
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
-
         var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
             width: 400,//in pixels
             height: 200,//in pixels
             animationEnabled: true,
-            title: null,
+            title: {
+                text: "Score Chart"
+            },
             data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
+                type: "column",
+                //startAngle: 60,
+                //innerRadius: 55,
+                indexLabelFontSize: 8,
                 indexLabel: "{label}  {y}",
                 toolTipContent: "<b>{label} </b>({y})",
                 dataPoints: arr
@@ -1116,7 +1118,7 @@
         });
         chart.render();
 
-
+        
     }
 
     $(document).ready(function () {

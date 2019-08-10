@@ -48,9 +48,14 @@ namespace Risebird.Business
                 if (_meetingRespository.AddMeeting(meeting).Result)
                 {
                     var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.IRFId);
-                    if (interviwers != null)
+                    if (interviwers != null && string.IsNullOrEmpty(meeting.interviewer))
                     {
                         _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
+                        return true;
+                    }
+                    else if(!string.IsNullOrEmpty(meeting.interviewer))
+                    {
+                        _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
                         return true;
                     }
                 }

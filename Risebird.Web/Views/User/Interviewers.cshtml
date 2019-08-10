@@ -77,7 +77,7 @@
                                         <td>@item.MobileNumber</td>
                                         <td><textarea>@item.PrimarySkill</textarea></td>
                                         <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
-                                        <td><textarea>@item.Slots</textarea></td>
+                                       
                                         @if (@item.IsApproved == true)
                                         {
                                             <td>Approved</td>
@@ -86,7 +86,7 @@
                                         {
                                             <td>Not Approved</td>
                                         }
-
+                                        <td><textarea>@item.Slots</textarea></td>
                                         <td>@item.NoOfInterview</td>
                                         <td>@item.SuccessRate</td>
                                         <td class="text-right">
