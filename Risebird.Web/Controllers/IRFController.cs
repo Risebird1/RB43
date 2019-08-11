@@ -524,6 +524,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddReport(InterviewReport model)
         {

@@ -78,7 +78,7 @@
                 <div class="card">
                     <div class="card-body">
                         <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
-                        <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -862,20 +862,22 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
+                                            
+                                            @{
+                                                if (ViewBag.IsSelected)
+                                                {
+                                                @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                            if (ViewBag.IsSelected)
-                                            {
-                                            @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                }
+                                                else
+                                                {
+                                                @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                            }
-                                            else
-                                            {
-                                            @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                                            }
-                                            @if (!Model.IsClientUser)
-                                            {
-                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                }
+                                                @if (!Model.IsClientUser)
+                                                {
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                }
                                             }
                                         </div>
                                     </div>

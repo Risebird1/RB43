@@ -250,16 +250,22 @@ namespace Risebird.Business
                 
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId);
-                if(interviewReport.Count()>0)
+                if(interviewReport.Count()>0 && interviewReport.FirstOrDefault().Rating>0)
                 {
                     //call Edit Feedbackform method
                     
                     return EditInterviewReport(interviewReport.FirstOrDefault());
                 }
 
+               
+                    
+               
+
                 else
                 {
-                    var model = new InterviewReport();
+                    
+                    var model = interviewReport.Count()>0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    model.IsEdited = model.InterviewId > 0;
                     //get all values from database
                     var levels = _meetingRespository.GetLevels();
                     var levelTech = _meetingRespository.GetLevelTech();
@@ -349,7 +355,7 @@ namespace Risebird.Business
                     //}
                     //model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
                     model.InterviewId = interviewId;
-                    model.CandidateName = interviewDetails.candidateEmail;
+                    model.CandidateName = string.IsNullOrEmpty(model.CandidateName)? interviewDetails.candidateName : model.CandidateName;
                     model.IRFId = irfId;
                     model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
@@ -367,7 +373,7 @@ namespace Risebird.Business
 
         private InterviewReport EditInterviewReport(InterviewReport model )
         {
-            model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
+            model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));            
             model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
             model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));

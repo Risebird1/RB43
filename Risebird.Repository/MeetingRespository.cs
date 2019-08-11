@@ -581,7 +581,7 @@ namespace Risebird.Repository
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Type,
+                                Type = item.Name,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
@@ -601,7 +601,7 @@ namespace Risebird.Repository
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Type,
+                                Type = item.Name,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
@@ -620,7 +620,7 @@ namespace Risebird.Repository
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Type,
+                                Type = item.Name,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
@@ -718,7 +718,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select JoinabilityReport.*, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
