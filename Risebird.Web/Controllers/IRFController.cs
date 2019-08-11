@@ -12,6 +12,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.CommonHelper;
+using System.Data;
 
 namespace Risebird.Web.Controllers
 {
@@ -82,7 +83,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = _irfService.GetQualityController(); 
+                ViewBag.QualityController = _irfService.GetQualityController();
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -158,14 +159,14 @@ namespace Risebird.Web.Controllers
         public IActionResult SampleQuestions(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {              
+            {
                 TechSkillComments model = new TechSkillComments();
                 var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
                 //if (result.Count() > 0)
                 model.SkillCollection = result;
                 ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
                 model.IRFId = Convert.ToInt16(id);
-                return View(model);               
+                return View(model);
             }
             else
             {
@@ -179,7 +180,7 @@ namespace Risebird.Web.Controllers
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {                   
+                {
                     if (_irfService.AddSkillComments(model))
                     {
                         TempData["SuccessErrorMessage"] = "Questions saved Successfully";
@@ -189,7 +190,7 @@ namespace Risebird.Web.Controllers
                     {
                         TempData["SuccessErrorMessage"] = "Questions were not saved.";
                         return RedirectToAction("Index");
-                    }                    
+                    }
                 }
                 else
                 {
@@ -403,10 +404,10 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    string prof = HttpContext.Session.GetString("profileName");                   
+                    string prof = HttpContext.Session.GetString("profileName");
                     if (prof != null && prof.Contains("Client"))
                     {
-                        ViewBag.IsClientUser = true;                       
+                        ViewBag.IsClientUser = true;
                     }
                     else
                     {
@@ -423,19 +424,19 @@ namespace Risebird.Web.Controllers
                     ViewBag.QualityController = _irfService.GetQualityController();
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
-                        var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                                        select new { ID = (int)s, Name = s.GetDescription() };
-                        ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
+                    var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                    ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
 
                     model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                     model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                     model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
-                    
+
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
+                                       select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
 
-                    
+
                     return View(model);
                 }
                 else
@@ -490,7 +491,7 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
-            
+
 
         public IActionResult Stats(string id)
         {
@@ -570,7 +571,7 @@ namespace Risebird.Web.Controllers
                     if (_meetingService.AddInterviewReport(model).Result)
                     {
                         TempData["SuccessErrorMessage"] = "Report saved Successfully";
-                        return RedirectToAction("AddReport",new { interviewId = model.InterviewId, irfId = model.IRFId});
+                        return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
                     }
                     else
                     {
@@ -611,6 +612,228 @@ namespace Risebird.Web.Controllers
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.ConfirmationTypeList = new SelectList(confirmationTypes, "ID", "Name"); ;
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
+
+        }
+
+
+        [HttpGet]
+        public IActionResult NewChart()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var id = 81;
+                        var irfId = "SCALASAPRK1001";
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        var noShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1).Count();
+                        var ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now).Count();
+                        var DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3).Count();
+                        var CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4).Count();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+
+
+                        //[Description("No Show")]
+                        //NoShow = 1,
+                        //[Description("Scheduled")]
+                        //Scheduled = 2,
+                        //[Description("Dropped")]
+                        //Dropped = 3,
+                        //[Description("Completed")]
+                        //Completed = 4
+
+
+                        List<object> iData = new List<object>();
+
+                        DataTable dt = new DataTable();
+                        dt.Columns.Add("Meeting Status", System.Type.GetType("System.String"));
+                        dt.Columns.Add("Count", System.Type.GetType("System.Int32"));
+
+                        DataRow dr = dt.NewRow();
+                        dr["Meeting Status"] = "No Show";
+                        dr["Count"] = noShowCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Meeting Status"] = "Scheduled";
+                        dr["Count"] = ScheduledCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Meeting Status"] = "Dropped";
+                        dr["Count"] = DroppedCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Meeting Status"] = "Completed";
+                        dr["Count"] = CompletedCount;
+                        dt.Rows.Add(dr);
+                        //Looping and extracting each DataColumn to List<Object>  
+                        foreach (DataColumn dc in dt.Columns)
+                        {
+                            List<object> x = new List<object>();
+                            x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                            iData.Add(x);
+                        }
+                        //Source data returned as JSON  
+                        return Json(iData);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+
+
+        }
+
+
+        [HttpGet]
+        public IActionResult NewChartSelected()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var id = 81;
+                        var irfId = "SCALASAPRK1001";
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+
+                        var ProxyCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 1).Count();
+                        var SelectedCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 2).Count();
+                        var RejectedCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 3).Count();
+                        var BorderLineCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 4).Count();
+
+
+                        //meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+                        //                 [Description("Proxy")]
+                        //Proxy = 1,
+                        //[Description("Selected")]
+                        //Selected = 2,
+                        //[Description("Rejected")]
+                        //Rejected = 3,
+                        //[Description("Border Line")]
+                        //BorderLine = 4
+
+                        //ViewBag.IsSelected = true;
+                        //foreach (var m in meetings)
+                        //{
+                        //    if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                        //    {
+                        //        m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                        //    }
+                        //    else
+                        //    {
+                        //        continue;
+                        //    }
+
+                        //    if (m.L2InterviewStatus.HasValue)
+                        //    {
+                        //        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                        //    }
+                        //    if (m.L2InterviewStatus.HasValue)
+                        //    {
+                        //        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        //    }
+                        //    if (m.JoiningStatus.HasValue)
+                        //    {
+                        //        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        //    }
+                        //    if (m.PreparationStatus.HasValue)
+                        //    {
+                        //        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        //    }
+                        //    if (m.OfferStatus.HasValue)
+                        //    {
+                        //        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        //    }
+                        //    if (m.MeetingStatus.HasValue)
+                        //    {
+                        //        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        //    }
+                        //    if (m.QCStatus.HasValue)
+                        //    {
+                        //        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        //    }
+                        //    selectedMeeting.Add(m);
+                        //}
+                        List<object> iData = new List<object>();
+                        //Creating sample data  
+                        DataTable dt = new DataTable();
+                        dt.Columns.Add("Interview Status", System.Type.GetType("System.String"));
+                        dt.Columns.Add("Count", System.Type.GetType("System.Int32"));
+
+                        DataRow dr = dt.NewRow();
+                        dr["Interview Status"] = "ProxyCount";
+                        dr["Count"] = ProxyCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Interview Status"] = "Selected";
+                        dr["Count"] = SelectedCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Interview Status"] = "Rejected";
+                        dr["Count"] = RejectedCount;
+                        dt.Rows.Add(dr);
+
+                        dr = dt.NewRow();
+                        dr["Interview Status"] = "BorderLine";
+                        dr["Count"] = BorderLineCount;
+                        dt.Rows.Add(dr);
+                        //Looping and extracting each DataColumn to List<Object>  
+                        foreach (DataColumn dc in dt.Columns)
+                        {
+                            List<object> x = new List<object>();
+                            x = (from DataRow drr in dt.Rows select drr[dc.ColumnName]).ToList();
+                            iData.Add(x);
+                        }
+                        //Source data returned as JSON  
+                        return Json(iData);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+
 
         }
     }

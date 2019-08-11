@@ -9,7 +9,7 @@
 
 <style>
     .canvasjs-chart-credit {
-        display:none;
+        display: none;
     }
 
     .table-responsive {
@@ -66,7 +66,7 @@
                     Interview Report
                 </a>
             </div>
-           
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -75,7 +75,7 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">                    
+                <div class="card">
                     <div class="card-body">
                         <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
                         <form action="/Interview/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
@@ -93,7 +93,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })                                        
+                                            @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                         </div>
                                     </div>
@@ -140,7 +140,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
-                                                <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>                                               
+                                                <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                                     <div id="scoreChart" style="height: 200px; width: 40%;"></div>
                                                 </div>
@@ -223,9 +223,9 @@
                                             @Html.DropDownListFor(m => m.confirmationStatus, (SelectList)Model.ConfirmationTypeList, new { @class = "form-control" })
 
                                             @*<select class="form-control text-box single-line" id="confirmationStatus" name="confirmationStatus" type="select" value="">
-                                                <option value="Selected">Selected</option>
-                                                <option value="Rejected">Rejected</option>
-                                            </select>*@
+                                                    <option value="Selected">Selected</option>
+                                                    <option value="Rejected">Rejected</option>
+                                                </select>*@
                                             @Html.ValidationMessageFor(model => model.confirmationStatus, "", new { @class = "text-danger" })
 
 
@@ -243,17 +243,17 @@
 
                                     </div>
                                     @*<div class="col-md-3 col-sm-3 px-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.OverallScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            <input class="form-control text-box single-line" id="OverallScore" name="OverallScore" type="text" value="@Model.OverallScore" readonly="readonly">
-                                            @Html.TextBoxFor(model => model.OverallScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.OverallScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                <input class="form-control text-box single-line" id="OverallScore" name="OverallScore" type="text" value="@Model.OverallScore" readonly="readonly">
+                                                @Html.TextBoxFor(model => model.OverallScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
-                                        </div>
+                                            </div>
 
-                                    </div>*@
+                                        </div>*@
 
-                                    
+
                                 </div>
 
                                 <div class="row">
@@ -295,12 +295,12 @@
 
 
                                                                 @*<select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
-                                                                    <option value="1">Poor</option>
-                                                                    <option value="2">Average</option>
-                                                                    <option value="3">Above Average</option>
-                                                                    <option value="4">Excellent</option>
-                                                                    <option value="5">Outstanding</option>
-                                                                </select>*@
+                                                                        <option value="1">Poor</option>
+                                                                        <option value="2">Average</option>
+                                                                        <option value="3">Above Average</option>
+                                                                        <option value="4">Excellent</option>
+                                                                        <option value="5">Outstanding</option>
+                                                                    </select>*@
                                                             </td>
 
                                                             <td>
@@ -878,8 +878,12 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
+
                                             @if (!Model.IsClientUser)
                                             {
+
+                                               // @Html.ActionLink("Back to List", "Index", Url.ActionContext.RouteData.Values["controller"].ToString(), htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
                                                 @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                                 <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
                                             }
@@ -887,7 +891,7 @@
                                     </div>
                                 </div>
 
-                              
+
 
 
 
@@ -978,7 +982,7 @@
 <script>
 
     function CalculateOverAll(id, value) {
-        
+
         value = parseInt(value);
         var index;
         var skillName;
@@ -1690,7 +1694,7 @@
 <script>
 
     window.onload = function () {
-        
+
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
@@ -1752,7 +1756,7 @@
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
-        
+
 
         var chart = new CanvasJS.Chart("scoreChart", {
             theme: "light2", // "light1", "light2", "dark1", "dark2"
