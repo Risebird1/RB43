@@ -499,7 +499,6 @@ namespace Risebird.Repository
         {
             try
             {
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
@@ -514,7 +513,6 @@ namespace Risebird.Repository
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
-
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
                     parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
@@ -526,9 +524,8 @@ namespace Risebird.Repository
                     {
                         var result=SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,
                                             commandType: CommandType.StoredProcedure);
-                       
-                    }
 
+                    }
                     else
                     {
                         //add to interviewReport table
@@ -566,22 +563,20 @@ namespace Risebird.Repository
                                 WeightageActual = item.WeightageActual
                             }).Result;
                         }
-
                     }
-                    
 
                     if(reportDetails.SkillGeneralReportCollection!=null)
                     {
                         //update general skill report table
                         foreach (var item in reportDetails.SkillGeneralReportCollection)
                         {
-
-                            string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            string sqlSkillGeneralReport = "INSERT INTO SkillGeneralReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @Value,@ActualLevelId, @WeightageRequired, @WeightageActual);";
                             var result2 = con.ExecuteAsync(sqlSkillGeneralReport, new
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
                                 Type = item.Name,
+                                Value= item.Value,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
@@ -596,12 +591,13 @@ namespace Risebird.Repository
                         foreach (var item in reportDetails.JoinabilityReportCollection)
                         {
 
-                            string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
                             var result3 = con.Execute(sqlJoinReport, new
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
                                 Type = item.Name,
+                                Value= item.Value,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
@@ -614,19 +610,18 @@ namespace Risebird.Repository
                         //update Selectability Report table
                         foreach (var item in reportDetails.SelectabilityReportCollection)
                         {
-
-                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
                             var result3 = con.Execute(sqlSelectableReport, new
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 RequiredLevelId = item.RequiredLevelId,
                                 Type = item.Name,
+                                Value = item.Value,
                                 ActualLevelId = item.ActualLevelId,
                                 WeightageRequired = item.WeightageRequired,
                                 WeightageActual = item.WeightageActual
                             });
                         }
-
                     }
                     
                     if(reportDetails.QuestionsCollection !=null)
@@ -634,16 +629,14 @@ namespace Risebird.Repository
                         //update questions discussed table
                         foreach (var item in reportDetails.QuestionsCollection)
                         {
-                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment ,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
+                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
                             var result3 = con.Execute(sqlJoinReport, new
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 Comment = item.Comment,
                                 RatingId = item.RatingId,
-                                Timing = item.Timing,
-
+                                Timing = item.Timing
                             });
-
                         }
                     }
 
@@ -668,7 +661,6 @@ namespace Risebird.Repository
                             VoicePersonalUnsatisfactory = reportDetails.Proctoring.VoicePersonalUnsatisfactory,
                             VoiceSuspicious = reportDetails.Proctoring.VoiceSuspicious,
                             LinkedInPhotoVerification = reportDetails.Proctoring.LinkedInPhotoVerification
-
                         });
                         
                     }
@@ -739,7 +731,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SelectabilityReport.*, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -824,7 +816,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select SkillGeneralReport.*, [Level].[Name] as RequiredLevel from SkillGeneralReport inner join [Level] on SkillGeneralReport.RequiredLevelId=[Level].id where InterviewId = @id";
+                var query = "select SkillGeneralReport.*,SkillGeneralReport.Type as Name, [Level].[Name] as RequiredLevel from SkillGeneralReport inner join [Level] on SkillGeneralReport.RequiredLevelId=[Level].id where InterviewId = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

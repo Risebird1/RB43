@@ -20,7 +20,7 @@ namespace Risebird.Business
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper,IApplicationErrorLogger applicationErrorLogger)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -32,7 +32,7 @@ namespace Risebird.Business
         {
             try
             {
-                return  _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                return _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
             }
             catch (Exception ex)
             {
@@ -53,13 +53,13 @@ namespace Risebird.Business
                         _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.interviewDate.ToString());
                         return true;
                     }
-                    else if(!string.IsNullOrEmpty(meeting.interviewer))
+                    else if (!string.IsNullOrEmpty(meeting.interviewer))
                     {
                         _notificationHelper.SendInterviewerMailOnAssinment(meeting.interviewer, meeting.interviewDate.ToString());
                         return true;
                     }
                 }
-                return false;                
+                return false;
             }
             catch (Exception ex)
             {
@@ -105,8 +105,8 @@ namespace Risebird.Business
         {
             try
             {
-               var openMeeting= _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
-               return openMeeting;
+                var openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                return openMeeting;
             }
             catch (Exception ex)
             {
@@ -175,8 +175,8 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-        }       
-        
+        }
+
         public bool UnassignYourself(int meetingid)
         {
             try
@@ -236,7 +236,7 @@ namespace Risebird.Business
             {
                 return _meetingRespository.UpdateComments(comments).Result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
@@ -247,24 +247,16 @@ namespace Risebird.Business
         {
             try
             {
-                
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId);
-                if(interviewReport.Count()>0 && interviewReport.FirstOrDefault().Rating>0)
+                if (interviewReport.Count() > 0 && interviewReport.FirstOrDefault().Rating > 0)
                 {
                     //call Edit Feedbackform method
-                    
                     return EditInterviewReport(interviewReport.FirstOrDefault());
                 }
-
-               
-                    
-               
-
                 else
                 {
-                    
-                    var model = interviewReport.Count()>0 ? interviewReport.FirstOrDefault() : new InterviewReport();
+                    var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
                     var levels = _meetingRespository.GetLevels();
@@ -344,22 +336,14 @@ namespace Risebird.Business
 
                     model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
 
-                    //var quesList = new List<QuestionsDiscussed>();
-
-                    //foreach (var item in questionDetails)
-                    //{
-                    //    QuestionsDiscussed obj = new QuestionsDiscussed();
-                    //    obj.InterviewId = interviewId;
-                    //    obj.Comment = item.Comment;
-                    //    quesList.Add(obj);
-                    //}
-                    //model.QuestionsCollection = (IList<QuestionsDiscussed>)quesList;
                     model.InterviewId = interviewId;
-                    model.CandidateName = string.IsNullOrEmpty(model.CandidateName)? interviewDetails.candidateName : model.CandidateName;
+                    model.CandidateName = interviewDetails.candidateName;
+                    model.interviewDate = interviewDetails.interviewDate.ToString();
+                    model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
                     model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
-                    
+
                     return model;
                 }
             }
@@ -371,9 +355,9 @@ namespace Risebird.Business
             }
         }
 
-        private InterviewReport EditInterviewReport(InterviewReport model )
+        private InterviewReport EditInterviewReport(InterviewReport model)
         {
-            model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));            
+            model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
             model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
             model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
@@ -381,7 +365,7 @@ namespace Risebird.Business
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
             model.JobLevelName = Enum.GetName(typeof(JobLevels), model.JobLevel);
-           // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
+            // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
 
             return model;
         }
@@ -401,8 +385,5 @@ namespace Risebird.Business
         }
     }
 }
-
-
-
 
 

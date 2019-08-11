@@ -226,8 +226,6 @@
                                     </div>
                                 </div>
 
-
-
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -267,12 +265,12 @@
 
 
                                                                 @*<select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
-                                                                        <option value="1">Poor</option>
-                                                                        <option value="2">Average</option>
-                                                                        <option value="3">Above Average</option>
-                                                                        <option value="4">Excellent</option>
-                                                                        <option value="5">Outstanding</option>
-                                                                    </select>*@
+                                            <option value="1">Poor</option>
+                                            <option value="2">Average</option>
+                                            <option value="3">Above Average</option>
+                                            <option value="4">Excellent</option>
+                                            <option value="5">Outstanding</option>
+                                        </select>*@
                                                             </td>
 
                                                             <td>
@@ -306,12 +304,12 @@
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
                                                                     @*<select class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId">
-                                                                            <option value="1">Poor</option>
-                                                                            <option value="2">Average</option>
-                                                                            <option value="3">Above Average</option>
-                                                                            <option value="4">Excellent</option>
-                                                                            <option value="5">Outstanding</option>
-                                                                        </select>*@
+                                                <option value="1">Poor</option>
+                                                <option value="2">Average</option>
+                                                <option value="3">Above Average</option>
+                                                <option value="4">Excellent</option>
+                                                <option value="5">Outstanding</option>
+                                            </select>*@
                                                                 </td>
 
                                                                 <td>
@@ -853,7 +851,6 @@
 
                                 </div>
 
-
                                 @Html.HiddenFor(m => m.id)
                                 @Html.HiddenFor(m => m.IRFId)
                                 @Html.HiddenFor(m => m.InterviewId)
@@ -862,19 +859,19 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
-                                            
+
                                             @{
                                                 if (ViewBag.IsSelected)
                                                 {
-                                                @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                                 }
                                                 else
                                                 {
-                                                @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                                 }
-                                                @if (!Model.IsClientUser)
+                                                @if (!@Model.IsClientUser)
                                                 {
                                                     <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
                                                 }

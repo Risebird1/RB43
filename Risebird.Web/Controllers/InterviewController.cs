@@ -650,13 +650,13 @@ namespace Risebird.Web.Controllers
             try
             {
                 string prof = HttpContext.Session.GetString("profileName");
-               
+
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
                 if (prof != null && prof.Contains("Client"))
                 {
                     model.IsClientUser = true;
                 }
-                
+
                 GetStatusList(model, irfId);
                 return View(model);
 
@@ -676,59 +676,83 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (model.AudioFile != null)
-                {
-                    await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                    var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                    string uploadedaudioFileURL = blob.Uri.ToString();
-                    if (uploadedaudioFileURL == null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                        profileName == "Quality Controller")
                     {
-                        ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                        GetStatusList(model);
-                        return View("AddReport", model);
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                GetStatusList(model);
+                                return View("AddReport", model);
+                            }
+                            else
+                            {
+                                model.AudioLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        if (model.VideoFile != null)
+                        {
+                            // byte[] videofileData = new byte[model.VideoFile.Length];
+                            // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
+                            await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            if (uploadedvideoFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                GetStatusList(model);
+                                return View("AddReport", model);
+                            }
+                            else
+                            {
+                                model.VideoLink = uploadedvideoFileURL;
+                            }
+                        }
+
+                        if (_meetingService.AddInterviewReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            if (profileName == "Admin" || profileName == "HR")
+                            {
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            return RedirectToAction("MyInterview");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Report was not saved.";
+                            if (profileName == "Admin" || profileName == "HR")
+                            {
+                                return RedirectToAction("Index");
+                            }
+                            else
+                                return RedirectToAction("MyInterview");
+                        }
                     }
                     else
                     {
-                        model.AudioLink = uploadedaudioFileURL;
+                        return RedirectToAction("SignOut", "Session");
                     }
-                }
-                if (model.VideoFile != null)
-                {
-                    // byte[] videofileData = new byte[model.VideoFile.Length];
-                    // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
-                    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                    var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
-                    string uploadedvideoFileURL = blob.Uri.ToString();
-                    if (uploadedvideoFileURL == null)
-                    {
-                        ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                        GetStatusList(model);
-                        return View("AddReport", model);
-                    }
-                    else
-                    {
-                        model.VideoLink = uploadedvideoFileURL;
-                    }
-                }
-                if (_meetingService.AddInterviewReport(model).Result)
-                {
-                    TempData["SuccessErrorMessage"] = "Report saved Successfully";
-                    return RedirectToAction("MyInterview");
-                }
-                else
-                {
-                    TempData["SuccessErrorMessage"] = "Report was not saved.";
-                    return RedirectToAction("MyInterview");
-                }
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
+
             }
             catch (Exception ex)
             {
@@ -797,12 +821,12 @@ namespace Risebird.Web.Controllers
 
             model.MeetingStatusList = new SelectList(meetingStatuses, "ID", "Name");
 
-            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name"); 
+            model.Level = new SelectList(_iRFRepository.GetLevels(), "id", "Name");
             model.LevelTech = new SelectList(_iRFRepository.GetLevelTech(), "id", "Name");
             var questionsLevel = from QuestionsLevel s in Enum.GetValues(typeof(QuestionsLevel))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
-      
+
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
 
         }
