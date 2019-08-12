@@ -67,7 +67,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Joining Time.")]
         public string joiningTime { get; set; }
         public string interviewerComment { get; set; }
-        public int? intervieweStatus { get; set; }
+        public int? InterviewStatus { get; set; }
         public string intervieweStatusStatDesc { get; set; }
         public string selectionStatus { get; set; }
         public string videoLink { get; set; }
@@ -81,6 +81,8 @@ namespace Risebird.Entities.ViewModel
         public int? JobLevel { get; set; }
         public int? L2InterviewStatus { get; set; }
         public int? ClientInterviewStatus { get; set; }
+        public int? FraudCheckStatus { get; set; }
+        public int? TrainingStatus { get; set; }
         public string L2InterviewStatDesc { get; set; }
         public string ClientInterviewStatDesc { get; set; }
         public int? JoiningStatus { get; set; }

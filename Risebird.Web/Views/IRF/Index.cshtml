@@ -148,15 +148,16 @@
                                 <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
+                               
+                                <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                    <i class="now-ui-icons fa fa-industry"></i>
+                                </button>
                                 @if (!@item.IsClientUser)
                                 {
                                     <button type="button" onclick="javascript:DeleteIRF('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Delete">
                                         <i class="now-ui-icons fa fa-trash"></i>
                                     </button>
                                 }
-                                <button type="button" onclick="javascript:stats('@item.id');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
-                                    <i class="now-ui-icons fa fa-industry"></i>
-                                </button>
 
                             </div>
                         </div>
@@ -338,9 +339,9 @@
         var url = '/IRF/EditIRF?id=' + id;
         window.location.href = url;
     };
-    function stats(id) {
+    function stats(id, IRFid) {
 
-        var url = '/IRF/Stats?id=' + id;
+        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
 </script>

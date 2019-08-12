@@ -408,9 +408,9 @@ namespace Risebird.Web.Controllers
 
                     foreach (var m in meetings)
                     {
-                        if (m.intervieweStatus.HasValue)
+                        if (m.InterviewStatus.HasValue)
                         {
-                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                         }
                         if (m.L2InterviewStatus.HasValue)
                         {

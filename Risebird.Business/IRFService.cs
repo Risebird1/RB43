@@ -183,14 +183,14 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetIRFInterviewMeetings(int id, string email = null)
+        public List<MeetingVM> GetIRFInterviewMeetings(int id,string profileName, string email)
         {
             try
             {
                 int role =0;
                 var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
                 
-                if(email != string.Empty)
+                if(email != string.Empty && profileName == "Client")
                 {
                     var clients = _irfRepository.GetTransClientUser(id);
                     foreach (var item in clients)

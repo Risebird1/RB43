@@ -33,9 +33,12 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Interview Stats</h4>
+                        <h4 class="card-title">Interview Stats For <b>@ViewBag.IRF</b></h4>
                     </div>
                     <div class="card-body">
+                        <div class="text-right">
+                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                        </div>
                         <div class="row">
                             <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">

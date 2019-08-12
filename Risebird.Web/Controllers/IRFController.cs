@@ -270,24 +270,21 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        string email = string.Empty;
-                        if (profileName == "Client")
-                        {
-                            email = HttpContext.Session.GetString("email");
-                        }
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), email);
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
                         //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
                         {
-                            if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
+                            if (m.InterviewStatus.HasValue && m.InterviewStatus.Value == 2)
                             {
-                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                             }
                             else
                             {
@@ -354,23 +351,20 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        string email = string.Empty;
-                        if (profileName == "Client")
-                        {
-                            email = HttpContext.Session.GetString("email");
-                        }
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), email);
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
                         //ViewBag.IsSelected = false;
                         foreach (var m in meetings)
                         {
-                            if (m.intervieweStatus.HasValue)
+                            if (m.InterviewStatus.HasValue)
                             {
-                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                             }
                             if (m.L2InterviewStatus.HasValue)
                             {
@@ -518,8 +512,12 @@ namespace Risebird.Web.Controllers
         }
 
 
-        public IActionResult Stats(string id)
+        public IActionResult Stats(string id, string irfId)
         {
+            TempData["id"] = id;
+            TempData["irfId"] = irfId;
+            TempData.Keep();
+            ViewBag.IRF = irfId;
             return View();
 
         }
@@ -665,33 +663,23 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string id = TempData.Peek("id").ToString();
+                string irfId= TempData.Peek("irfId").ToString();
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        var id = 81;
-                        var irfId = "SCALASAPRK1001";
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
                         var noShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1).Count();
                         var ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now).Count();
                         var DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3).Count();
                         var CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4).Count();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-
-
-
-                        //[Description("No Show")]
-                        //NoShow = 1,
-                        //[Description("Scheduled")]
-                        //Scheduled = 2,
-                        //[Description("Dropped")]
-                        //Dropped = 3,
-                        //[Description("Completed")]
-                        //Completed = 4
-
 
                         List<object> iData = new List<object>();
 
@@ -754,78 +742,28 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string id = TempData.Peek("id").ToString();
+                string irfId = TempData.Peek("irfId").ToString();
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        var id = 81;
-                        var irfId = "SCALASAPRK1001";
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
 
-                        var ProxyCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 1).Count();
-                        var SelectedCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 2).Count();
-                        var RejectedCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 3).Count();
-                        var BorderLineCount = meetings.Where(x => x.intervieweStatus.HasValue && x.intervieweStatus.Value == 4).Count();
+                        var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
+                        var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
+                        var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
+                        var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
 
 
-                        //meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
-
-                        //                 [Description("Proxy")]
-                        //Proxy = 1,
-                        //[Description("Selected")]
-                        //Selected = 2,
-                        //[Description("Rejected")]
-                        //Rejected = 3,
-                        //[Description("Border Line")]
-                        //BorderLine = 4
-
-                        //ViewBag.IsSelected = true;
-                        //foreach (var m in meetings)
-                        //{
-                        //    if (m.intervieweStatus.HasValue && m.intervieweStatus.Value == 2)
-                        //    {
-                        //        m.intervieweStatusStatDesc = ((InterviewStatus)(m.intervieweStatus)).GetDescription();
-                        //    }
-                        //    else
-                        //    {
-                        //        continue;
-                        //    }
-
-                        //    if (m.L2InterviewStatus.HasValue)
-                        //    {
-                        //        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                        //    }
-                        //    if (m.L2InterviewStatus.HasValue)
-                        //    {
-                        //        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                        //    }
-                        //    if (m.JoiningStatus.HasValue)
-                        //    {
-                        //        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                        //    }
-                        //    if (m.PreparationStatus.HasValue)
-                        //    {
-                        //        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                        //    }
-                        //    if (m.OfferStatus.HasValue)
-                        //    {
-                        //        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
-                        //    }
-                        //    if (m.MeetingStatus.HasValue)
-                        //    {
-                        //        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                        //    }
-                        //    if (m.QCStatus.HasValue)
-                        //    {
-                        //        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        //    }
-                        //    selectedMeeting.Add(m);
-                        //}
                         List<object> iData = new List<object>();
                         //Creating sample data  
                         DataTable dt = new DataTable();
