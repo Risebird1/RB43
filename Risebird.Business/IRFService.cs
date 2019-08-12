@@ -183,7 +183,7 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetIRFInterviewMeetings(int id, string email)
+        public List<MeetingVM> GetIRFInterviewMeetings(int id, string email = null)
         {
             try
             {
