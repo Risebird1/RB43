@@ -32,6 +32,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Candidate Email Id.")]
         public string candidateEmail { get; set; }
         [Required(ErrorMessage = "Please enter Candidate Name.")]
+        [Display(Name = "Candidate Name")]
         public string candidateName { get; set; }
         [Display(Name = "Client HR")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",

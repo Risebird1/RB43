@@ -111,7 +111,6 @@ namespace Risebird.Web.Controllers
 
                                 return View("Add", meeting);
                             }
-
                             else
                             {
                                 meeting.resumeLink = uploadedFileURL;
