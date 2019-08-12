@@ -17,7 +17,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<ClientRole> GetClientRoles();
         IEnumerable<Users> GetQualityController();
         Task<bool> AddIRFDetails(IRFVm irfDetails);
-        IEnumerable<IRF> GetAllIRF();
+        IEnumerable<IRF> GetAllIRF(string emailid, string profileName);
         IEnumerable<Interviewer> GetInterviewerSkills();
         IEnumerable<TransSkill> GetSkillsbyIRFid(int id);
         IEnumerable<TransClientUser> GetTransClientUser(int id);
@@ -39,6 +39,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         string GetQuestionSkills(string id);
+        IRF EditIRF(int irfId);
 
     }
 }

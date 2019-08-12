@@ -37,9 +37,11 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    var irfList = _irfRepository.GetAllIRF();
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName);
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         ViewBag.IsClientUser = true;

@@ -239,7 +239,7 @@ namespace Risebird.Business
                 var model = new IRFVm();
 
                 //get all values from database
-                var IRF = _irfRepository.GetAllIRF().Where(x => x.id == id).FirstOrDefault();
+                var IRF = _irfRepository.EditIRF(id);
                 var transTechSkills = _irfRepository.GetSkillsbyIRFid(id);
                 var transSkillsGeneral = _irfRepository.GetSkillsGeneralbyIRFid(id);
                 var transJoinability = _irfRepository.GetTransJoinability(id);
