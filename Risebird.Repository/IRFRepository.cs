@@ -287,6 +287,27 @@ namespace Risebird.Repository
             return null;
         }
 
+        public string GetQuestionSkills(string id)
+        {
+            try
+            {
+                var query = "select [Name] from Skill where id=(select Skill from [TechSkillComments] where Comment = @id)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.ToList().FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public bool CheckUniqueness(string value)
         {
             try
@@ -694,7 +715,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from TransClientUser where IRFId = @IRFId";
+                var query = "select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

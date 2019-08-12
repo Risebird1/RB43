@@ -38,6 +38,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
+        string GetQuestionSkills(string id);
 
     }
 }

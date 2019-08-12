@@ -115,6 +115,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string GetQuestionSkills(string id)
+        {
+            try
+            {
+                return _irfRepository.GetQuestionSkills(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
 
         public IEnumerable<Skill> GetTechSkills(int id)
@@ -170,11 +183,46 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetIRFInterviewMeetings(int id)
+        public List<MeetingVM> GetIRFInterviewMeetings(int id, string email)
         {
             try
             {
-                return _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
+                int role =0;
+                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
+                
+                if(email != string.Empty)
+                {
+                    var clients = _irfRepository.GetTransClientUser(id);
+                    foreach (var item in clients)
+                    {
+                        if (item.EmailId == email)
+                        {
+                            role = item.ClientRoleId;
+                            break;
+                        }
+                    }
+                    if(role ==0)
+                    {
+                        return new List<MeetingVM>();
+                    }
+                    if (role == 1)
+                    {
+                        result = result.Where(m => m.ClientHrContact == email).ToList();
+                        return result;
+                    }
+                    else if (role == 4)
+                    {
+                        result = result.Where(m => m.staffingAgency == email).ToList();
+                        return result;
+                    }
+                    else
+                        return result;
+                }
+                else
+                {
+                    return result;
+                }
+                
             }
 
             catch (Exception e)

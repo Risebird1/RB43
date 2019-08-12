@@ -29,5 +29,6 @@ namespace Risebird.Entities.ViewModel
         public int IRFId { get; set; }
         public int ClientUserId { get; set; }
         public int ClientRoleId { get; set; }
+        public string EmailId { get; set; }
     }
 }

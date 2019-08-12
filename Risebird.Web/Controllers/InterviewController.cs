@@ -495,55 +495,65 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
-
-                        if (interviewComments.AudioFile != null)
+                        var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                        profileName = profileName.Replace("\"", "");
+                        if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                        profileName == "Quality Controller")
                         {
-
-                            await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                            var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
-                            string uploadedaudioFileURL = blob.Uri.ToString();
-
-                            if (uploadedaudioFileURL == null)
+                            if (interviewComments.AudioFile != null)
                             {
-                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                                GetStatusList(interviewComments);
-                                return View("InterviewComments", interviewComments);
+
+                                await _azureStorageHelper.InsertBlob(interviewComments.AudioFile.FileName, "audios", interviewComments.AudioFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                                var blob = containerRef.GetBlockBlobReference(interviewComments.AudioFile.FileName);
+                                string uploadedaudioFileURL = blob.Uri.ToString();
+
+                                if (uploadedaudioFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                    GetStatusList(interviewComments);
+                                    return View("InterviewComments", interviewComments);
+                                }
+                                else
+                                {
+                                    interviewComments.AudioLink = uploadedaudioFileURL;
+                                }
+                            }
+                            if (interviewComments.VideoFile != null)
+                            {
+
+                                await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
+                                string uploadedvideoFileURL = blob.Uri.ToString();
+                                if (uploadedvideoFileURL == null)
+                                {
+                                    ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                    GetStatusList(interviewComments);
+                                    //return View("InterviewComments", interviewComments);
+                                }
+                                else
+                                {
+                                    interviewComments.VideoLink = uploadedvideoFileURL;
+                                }
+                            }
+
+                            if (_meetingService.UpdateComments(interviewComments))
+                            {
+                                TempData["SuccessErrorMessageInterviewComment"] = "Report are updated Successfully";
+                                return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
                             {
-                                interviewComments.AudioLink = uploadedaudioFileURL;
+                                TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
+                                return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
-                        }
-                        if (interviewComments.VideoFile != null)
-                        {
-
-                            await _azureStorageHelper.InsertBlob(interviewComments.VideoFile.FileName, "videos", interviewComments.VideoFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                            var blob = containerRef.GetBlockBlobReference(interviewComments.VideoFile.FileName);
-                            string uploadedvideoFileURL = blob.Uri.ToString();
-                            if (uploadedvideoFileURL == null)
-                            {
-                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                                GetStatusList(interviewComments);
-                                //return View("InterviewComments", interviewComments);
-                            }
-                            else
-                            {
-                                interviewComments.VideoLink = uploadedvideoFileURL;
-                            }
-                        }
-
-                        if (_meetingService.UpdateComments(interviewComments))
-                        {
-                            TempData["SuccessErrorMessageInterviewComment"] = "Report are updated Successfully";
-                            return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
-                            return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
+                            return RedirectToAction("SignOut", "Session");
                         }
+                        
                     }
                     else
                     {
@@ -598,9 +608,20 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var result = _meetingService.AssignYourself(model.id, model.Interviewer);
-                    ViewBag.Message = result;
-                    return RedirectToAction("OpenInterview");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                        profileName == "Quality Controller")
+                    {
+                        var result = _meetingService.AssignYourself(model.id, model.Interviewer);
+                        ViewBag.Message = result;
+                        return RedirectToAction("OpenInterview");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                    
                 }
                 else
                 {
@@ -620,16 +641,27 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_meetingService.UnassignYourself(id))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                        profileName == "Quality Controller")
                     {
-                        TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
-                        return Json(new { url = Url.Action("MyInterview", "Interview") });
+                        if (_meetingService.UnassignYourself(id))
+                        {
+                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
+                            return Json(new { url = Url.Action("MyInterview", "Interview") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                            return Json(new { url = Url.Action("MyInterview", "Interview") });
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
-                        return Json(new { url = Url.Action("MyInterview", "Interview") });
+                        return RedirectToAction("SignOut", "Session");
                     }
+                    
                 }
                 else
                 {
@@ -656,7 +688,14 @@ namespace Risebird.Web.Controllers
                 {
                     model.IsClientUser = true;
                 }
-
+                if (model.QuestionsCollection == null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
                 GetStatusList(model, irfId);
                 return View(model);
 
@@ -856,16 +895,26 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_iRFService.AddSkillComments(model))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName =="Interviewer" || profileName == "Quality Controller")
                     {
-                        TempData["SuccessErrorMessage"] = "Questions saved Successfully";
-                        return RedirectToAction("MyInterview");
+                        if (_iRFService.AddSkillComments(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "Questions saved Successfully";
+                            return RedirectToAction("MyInterview");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Questions were not saved.";
+                            return RedirectToAction("MyInterview");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Questions were not saved.";
-                        return RedirectToAction("MyInterview");
+                        return RedirectToAction("SignOut", "Session");
                     }
+                   
                 }
                 else
                 {

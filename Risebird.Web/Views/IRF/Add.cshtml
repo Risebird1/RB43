@@ -638,19 +638,12 @@
                                                     </td>
 
                                                     <td>
-                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                         @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowQualityController()">
-                                                                <span class="glyphicon glyphicon-plus"></span>
-                                                            </a>
-
-                                                            <a class="btn border-white btn-sm btn-danger delete-qualityController" id="btnMinus" onclick="DeleteRowClient(0)">
-                                                                <span class="glyphicon glyphicon-trash"></span>
-                                                            </a>*@
+                                                        
 
                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>

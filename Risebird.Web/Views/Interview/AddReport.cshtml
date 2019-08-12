@@ -241,6 +241,7 @@
                                                     <tr>
 
                                                         <th class="table_heading">Questions</th>
+                                                        <th class="table_heading">SkillName</th>
                                                         <th class="table_heading">Rating</th>
                                                         <th class="table_heading">Time(Min)</th>
                                                         <th class="table_heading">Action</th>
@@ -249,82 +250,83 @@
                                                 <tbody>
                                                     @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
                                                     {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line" })
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
 
-                                                                @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
-                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" type="text" value="">*@
+                                                            @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
+                                                            @*<input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" type="text" value="">*@
 
 
 
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                        </td>
+                                                        <td>
+                                                            @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
 
-                                                                @*<select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
-                                                                    <option value="1">Poor</option>
-                                                                    <option value="2">Average</option>
-                                                                    <option value="3">Above Average</option>
-                                                                    <option value="4">Excellent</option>
-                                                                    <option value="5">Outstanding</option>
-                                                                </select>*@
-                                                            </td>
+                                                            @*<select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
+                <option value="1">Poor</option>
+                <option value="2">Average</option>
+                <option value="3">Above Average</option>
+                <option value="4">Excellent</option>
+                <option value="5">Outstanding</option>
+            </select>*@
+                                                        </td>
 
-                                                            <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
 
-                                                                @*@Html.EditorFor(m => m.QuestionsCollection[].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })*@
+                                                            @*@Html.EditorFor(m => m.QuestionsCollection[].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })*@
 
-                                                            </td>
+                                                        </td>
 
-                                                            <td>
+                                                        <td>
 
-                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                            </td>
-                                                        </tr>
+                                                        </td>
+                                                    </tr>
                                                     }
                                                     else
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line" })
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
-                                                                    @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
+                                                            @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
 
-                                                                </td>
-                                                                <td>
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </td>
+                                                        <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
-                                                                    @*<select class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId">
-                                                                            <option value="1">Poor</option>
-                                                                            <option value="2">Average</option>
-                                                                            <option value="3">Above Average</option>
-                                                                            <option value="4">Excellent</option>
-                                                                            <option value="5">Outstanding</option>
-                                                                        </select>*@
-                                                                </td>
+                                                            
+                                                        </td>
 
-                                                                <td>
+                                                        <td>
 
-                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                                            @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
 
-                                                                </td>
+                                                        </td>
 
-                                                                <td>
+                                                        <td>
 
-                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                </td>
-                                                            </tr>
+                                                        </td>
+                                                    </tr>
 
 
                                                         }
@@ -1223,6 +1225,42 @@
         $.validator.unobtrusive.parse(document);
 
     }
+
+    function QuestionChanged(id , val ) {
+        debugger;
+        var index = id.charAt(20);
+        var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetQuestionSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+    $(document).ready(function () {
+        //Perform Ajax request.
+        var count = '@ViewBag.QuestionsDiscussedCount';
+        //Get Question Skills
+        if (count == null || parseInt(count) == 0) {
+            var val = $("#QuestionsCollection_0__Comment").val();
+            $.ajax({
+                type: "GET",
+                url: "/IRF/GetQuestionSkills",
+                data: { 'id': val },
+                success: function (data) {
+                    $("#QuestionsCollection_0__SkillName").val(data);
+                }
+            });
+
+        }
+        
+
+    });
 
     function AddJoinabilityRow() {
         var table = document.getElementById("JoinabilityTable");

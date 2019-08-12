@@ -629,13 +629,14 @@ namespace Risebird.Repository
                         //update questions discussed table
                         foreach (var item in reportDetails.QuestionsCollection)
                         {
-                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment,RatingId, Timing) Values (@InterviewId, @Comment, @RatingId, @Timing);";
+                            string sqlJoinReport = "INSERT INTO QuestionsDiscussed (InterviewId, Comment,RatingId, Timing, SkillName) Values (@InterviewId, @Comment, @RatingId, @Timing, @SkillName);";
                             var result3 = con.Execute(sqlJoinReport, new
                             {
                                 InterviewId = reportDetails.InterviewId,
                                 Comment = item.Comment,
                                 RatingId = item.RatingId,
-                                Timing = item.Timing
+                                Timing = item.Timing,
+                                SkillName = item.SkillName
                             });
                         }
                     }

@@ -17,7 +17,7 @@ namespace Risebird.Business.Interface
         bool AddSkillComments(TechSkillComments skillComments);
         List<string> GetListOfInterviwerBasedOnIRFId(string irfId);
         Task<bool> DeleteIRF(int id);
-        List<MeetingVM> GetIRFInterviewMeetings(int id);
+        List<MeetingVM> GetIRFInterviewMeetings(int id, string email);
         string GetQCSkills(int id);
         SelectList GetQualityController();
         Task<IRFVm> GetEditIRF(int id);
@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
+        string GetQuestionSkills(string id);
     }
 }

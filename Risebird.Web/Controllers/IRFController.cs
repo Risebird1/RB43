@@ -150,6 +150,11 @@ namespace Risebird.Web.Controllers
             return _irfService.GetQCSkills(Convert.ToInt16(id));
         }
 
+        public string GetQuestionSkills(string id)
+        {
+            return _irfService.GetQuestionSkills(id);
+        }
+
         public bool CheckUniqueness(string value)
         {
             return _irfService.CheckUniqueness(value);
@@ -179,17 +184,27 @@ namespace Risebird.Web.Controllers
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {                   
-                    if (_irfService.AddSkillComments(model))
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if(profileName == "Admin" || profileName == "HR")
                     {
-                        TempData["SuccessErrorMessage"] = "Questions saved Successfully";
-                        return RedirectToAction("Index");
+                        if (_irfService.AddSkillComments(model))
+                        {
+                            TempData["SuccessErrorMessage"] = "Questions saved Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Questions were not saved.";
+                            return RedirectToAction("Index");
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Questions were not saved.";
-                        return RedirectToAction("Index");
-                    }                    
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                                     
                 }
                 else
                 {
@@ -256,8 +271,13 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        string email = string.Empty;
+                        if (profileName == "Client")
+                        {
+                            email = HttpContext.Session.GetString("email");
+                        }
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), email);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -335,7 +355,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id));
+                        string email = string.Empty;
+                        if (profileName == "Client")
+                        {
+                            email = HttpContext.Session.GetString("email");
+                        }
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), email);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -511,6 +536,14 @@ namespace Risebird.Web.Controllers
                     model.IsClientUser = true;
                 }
                 ViewBag.IsSelected = IsSelected;
+                if(model.QuestionsCollection==null)
+                {
+                    ViewBag.QuestionsDiscussedCount = 0;
+                }
+                else
+                {
+                    ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
+                }
                 GetStatusList(model, irfId);
                 return View(model);
 
@@ -532,52 +565,62 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (model.AudioFile != null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
                     {
-                        await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
-                        var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
-                        string uploadedaudioFileURL = blob.Uri.ToString();
-                        if (uploadedaudioFileURL == null)
+                        if (model.AudioFile != null)
                         {
-                            ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
-                            GetStatusList(model);
-                            return View("AddReport", model);
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Audio Upload is failed.");
+                                GetStatusList(model);
+                                return View("AddReport", model);
+                            }
+                            else
+                            {
+                                model.AudioLink = uploadedaudioFileURL;
+                            }
+                        }
+                        if (model.VideoFile != null)
+                        {
+                            // byte[] videofileData = new byte[model.VideoFile.Length];
+                            // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
+                            await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            if (uploadedvideoFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Video Upload is failed.");
+                                GetStatusList(model);
+                                return View("AddReport", model);
+                            }
+                            else
+                            {
+                                model.VideoLink = uploadedvideoFileURL;
+                            }
+                        }
+                        if (_meetingService.AddInterviewReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
                         }
                         else
                         {
-                            model.AudioLink = uploadedaudioFileURL;
+                            TempData["SuccessErrorMessage"] = "Report was not saved.";
+                            return RedirectToAction("Index");
                         }
-                    }
-                    if (model.VideoFile != null)
-                    {
-                        // byte[] videofileData = new byte[model.VideoFile.Length];
-                        // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
-                        await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                        var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
-                        string uploadedvideoFileURL = blob.Uri.ToString();
-                        if (uploadedvideoFileURL == null)
-                        {
-                            ModelState.AddModelError(String.Empty, "Video Upload is failed.");
-                            GetStatusList(model);
-                            return View("AddReport", model);
-                        }
-                        else
-                        {
-                            model.VideoLink = uploadedvideoFileURL;
-                        }
-                    }
-                    if (_meetingService.AddInterviewReport(model).Result)
-                    {
-                        TempData["SuccessErrorMessage"] = "Report saved Successfully";
-                        return RedirectToAction("AddReport",new { interviewId = model.InterviewId, irfId = model.IRFId});
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Report was not saved.";
-                        return RedirectToAction("Index");
+                        return RedirectToAction("SignOut", "Session");
                     }
+                    
                 }
                 else
                 {
