@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -23,11 +25,11 @@ namespace Risebird.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            string jsonContent = await req.Content.ReadAsStringAsync();
+            //string jsonContent = await req.Content.ReadAsStringAsync();
             //log.Info(jsonContent);
-            //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
-            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-           // dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+            string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
             string clientName = string.Empty;
             string JobRole = string.Empty;
@@ -93,7 +95,7 @@ namespace Risebird.Functions
                                 hrRiseBirdAssinged = JsonConvert.DeserializeObject<JArray>(rbhrassigned)[0]["email"]
                                     .Value<string>();
 
-                                var interviewDatestr = ((JProperty)mainFamilies1).Value["invitee_start_time"].ToString();
+                                var interviewDatestr = ((JProperty)mainFamilies1).Value["start_time"].ToString();
                                 if (interviewDatestr.Contains("AM"))
                                 {
                                     slot = "1";
@@ -114,8 +116,8 @@ namespace Risebird.Functions
                                 }
                                 catch (Exception)
                                 {
-                                } 
-                               
+                                }
+
                                 candidateEmail = ((JProperty)mainFamilies1).Value["email"].ToString();
                                 isReschedule = ((JProperty)mainFamilies1).Value["is_reschedule"].ToString();
                             }
@@ -213,24 +215,53 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
                 cmd.ExecuteScalar();
 
-                log.Info("Build update in database ended.");
+                log.Info("Interview update in database ended.");
             }
+            if (!string.IsNullOrEmpty(IRFID))
+            {
+                try
+                {
+                    var mailMessage = new MailMessage();
+                    mailMessage.From = new MailAddress("hire@risebird.io", "Risebird Notification");
+                    using (SqlConnection conn = new SqlConnection(str))
+                    {
+                        conn.Open();
+                        SqlCommand cmd = new SqlCommand(
+                            "usp_ListOfIRFInterviwer", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        var reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            mailMessage.To.Add(new MailAddress(reader.GetString(0), null));
+                        }
+                        mailMessage.Subject = "New Interview has been scheduled on date: " + interviewDate;
+                       
+                        StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("You have received this communication as an interview has been scheduled based on your matching skills on date: " + interviewDate +" .");
+                        msgBody.AppendLine(
+                            "Kindly login over RisebirdPortal.com and click on Open Interview menu and assign yourself.");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Note: It is first come first assign.");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Thank You, Team Risebird");
+                      
+                        mailMessage.Body = msgBody.ToString();
+                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                        smtpClient.Credentials = credentials;
 
-            try
-            {
-                HttpClient client = new HttpClient();
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["PortalBaseUri"].ToString());
-                client.DefaultRequestHeaders.ExpectContinue = false;
-                //throw new Exception();
-                log.Info("Send mail based on IRF matched interviwer.");
-                HttpResponseMessage response = await client.GetAsync("/api/Scheduler/IRFBasedInterviewerMail?IRFID=" + IRFID + "&interviewDate=" + interviewDate.ToString()).ConfigureAwait(false);
-                var httpresponse = response.Content.ReadAsStringAsync().Result;
-                log.Info($"httpsresponce for Auto sIRF Mail send:{httpresponse} ");
-            }
-            catch (Exception ex)
-            {
-                log.Info($"Failed to send mail to IRF: " + IRFID + " interviews exception: "+ex.Message);
+                        smtpClient.Send(mailMessage);
+                        log.Info("Interview mail sent ro interviewer.");
+                    }
+                }
+                catch (Exception)
+                {
+                    log.Error($"Failed to send mail. Please check all filled and try again.");
+                }
             }
             //  return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
             return req.CreateResponse(HttpStatusCode.OK, "Hello " + "Ok");
