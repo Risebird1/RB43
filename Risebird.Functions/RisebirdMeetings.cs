@@ -255,7 +255,7 @@ namespace Risebird.Functions
                         smtpClient.Credentials = credentials;
 
                         smtpClient.Send(mailMessage);
-                        log.Info("Interview mail sent ro interviewer.");
+                        log.Info("Interview mail sent to interviewer.");
                     }
                 }
                 catch (Exception)
