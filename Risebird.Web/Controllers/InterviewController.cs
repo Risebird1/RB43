@@ -349,7 +349,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        var myInterview = _meetingService.GetAllAssignedInterviews("interview6@risebird.io");
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();

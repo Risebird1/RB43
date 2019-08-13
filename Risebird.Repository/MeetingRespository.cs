@@ -513,6 +513,8 @@ namespace Risebird.Repository
                     paramx.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
                     paramx.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     paramx.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+                    paramx.Add("@ProctoringCount", reportDetails.ProctoringCount);
+
                     parameters.Add("@interviewId", reportDetails.InterviewId);
                     parameters.Add("@interviewStatus", reportDetails.InterviewStatus);
                     parameters.Add("@MeetingStatus", reportDetails.MeetingStatus);
@@ -529,7 +531,7 @@ namespace Risebird.Repository
                     else
                     {
                         //add to interviewReport table
-                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments);";
+                        string sqlInsertReport = "INSERT INTO InterviewReport (IRFId, InterviewId, CandidateName,confirmationStatus,OverallScore, Rating, TechSkillComments, SkillGeneralComments, SelectabilityComments, JoinabilityComments, ProctoringCount ) Values (@IRFId, @InterviewId, @CandidateName, @confirmationStatus, @OverallScore, @Rating, @TechSkillComments, @SkillGeneralComments, @SelectabilityComments, @JoinabilityComments, @ProctoringCount);";
                         var affectedRows = con.ExecuteAsync(sqlInsertReport, new
                         {
                             IRFId = reportDetails.IRFId,
@@ -542,6 +544,7 @@ namespace Risebird.Repository
                             SkillGeneralComments = reportDetails.SkillGeneralComments,
                             SelectabilityComments = reportDetails.SelectabilityComments,
                             JoinabilityComments = reportDetails.JoinabilityComments,
+                            ProctoringCount = reportDetails.ProctoringCount
 
                         }).Result;
 

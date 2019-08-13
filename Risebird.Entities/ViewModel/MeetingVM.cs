@@ -39,7 +39,12 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         //[Required(ErrorMessage = "Please enter Client HR Email Id.")]
         public string ClientHrContact { get; set; }
-        
+
+        [Display(Name = "Current Employer")]
+        public string CurrentEmployer { get; set; }
+
+        [Display(Name = "Current Renumeration")]
+        public double CurrentRenumeration { get; set; }
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]

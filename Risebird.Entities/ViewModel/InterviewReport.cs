@@ -16,7 +16,7 @@ namespace Risebird.Entities.ViewModel
 
         public int InterviewId { get; set; }
 
-        [DisplayName("Candidate's Mail")]
+        [DisplayName("Candidate's Name")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         [Required]
@@ -33,6 +33,11 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Overall Rating")]
         [Required]
         public int Rating{ get; set; }
+        [Display(Name = "Current Employer")]
+        public string CurrentEmployer { get; set; }
+
+        [Display(Name = "Expected Per Hour Rate")]
+        public string expectedPerHourRate { get; set; }
 
         public ProctoringReport Proctoring { get; set; }
 
@@ -65,6 +70,8 @@ namespace Risebird.Entities.ViewModel
         public int? MeetingStatus { get; set; }
         public string AudioLink { get; set; }
         public string VideoLink { get; set; }
+        [DisplayName("Preferred Location")]
+        public string PreferredLocation { get; set; }
 
 
         [Display(Name = "Interview Status")]
@@ -93,6 +100,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList QuestionsLevelList { get; set; }
         public SelectList ConfirmationTypeList { get; set; }
         public SelectList QuestionsList { get; set; }
+        [Display(Name = "Proctoring Count")]
+        public int ProctoringCount { get; set; }
 
     }
 }
