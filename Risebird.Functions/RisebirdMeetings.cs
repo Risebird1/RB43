@@ -25,11 +25,11 @@ namespace Risebird.Functions
         {
             log.Info("C# HTTP trigger function processed a request.");
 
-            //string jsonContent = await req.Content.ReadAsStringAsync();
+            string jsonContent = await req.Content.ReadAsStringAsync();
             //log.Info(jsonContent);
-            string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
-            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
-            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+            //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
+            dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
+            //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
             string eventType = string.Empty;
             string clientName = string.Empty;
             string JobRole = string.Empty;
@@ -236,26 +236,26 @@ namespace Risebird.Functions
                             mailMessage.To.Add(new MailAddress(reader.GetString(0), null));
                         }
                         mailMessage.Subject = "New Interview has been scheduled on date: " + interviewDate;
-                       
+
                         StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
-                        msgBody.AppendLine("You have received this communication as an interview has been scheduled based on your matching skills on date: " + interviewDate +" .");
+                        msgBody.AppendLine("You have received this communication as an interview has been scheduled based on your matching skills on date: " + interviewDate + " .");
                         msgBody.AppendLine(
-                            "Kindly login over RisebirdPortal.com and click on Open Interview menu and assign yourself.");
+                            "Kindly login over risebird portal and click on Open Interview menu and assign yourself.");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Note: It is first come first assign.");
                         msgBody.Append("\n");
                         msgBody.Append("\n");
                         msgBody.AppendLine("Thank You, Team Risebird");
-                      
+
                         mailMessage.Body = msgBody.ToString();
                         SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
                         System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
                         smtpClient.Credentials = credentials;
 
                         smtpClient.Send(mailMessage);
-                        log.Info("Interview mail sent ro interviewer.");
+                        log.Info("Interview mail sent to interviewer.");
                     }
                 }
                 catch (Exception)
