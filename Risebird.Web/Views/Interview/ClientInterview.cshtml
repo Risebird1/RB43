@@ -43,11 +43,11 @@
                                     <th>Confirmation Status</th>
                                     <th>Meeting Status</th>
                                     <th>Selection Status</th>
-                                    <th>QC Status</th>
-                                    <th>Training Status</th>
-                                    <th>Final Interview Status</th>
-                                    <th>Joining Status</th>
-                                    <th>Report Link</th>                                  
+                                    <th>Current Employer</th>
+                                    <th>Expected Per Hour Rate</th>
+                                    <th>Preferred Location</th>
+                                    <th>Staffing Agency</th>
+                                    <th>Report Link</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -59,11 +59,11 @@
                                     <th>Confirmation Status</th>
                                     <th>Meeting Status</th>
                                     <th>Selection Status</th>
-                                    <th>QC Status</th>
-                                    <th>Training Status</th>
-                                    <th>Final Interview Status</th>
-                                    <th>Joining Status</th>
-                                    <th>Report Link</th>                                  
+                                    <th>Current Employer</th>
+                                    <th>Expected Per Hour Rate</th>
+                                    <th>Preferred Location</th>
+                                    <th>Staffing Agency</th>
+                                    <th>Report Link</th>
                                 </tr>
                             </tfoot>
                             <tbody>
@@ -77,12 +77,12 @@
                                     <td> @item.confirmationStatus</td>
                                     <td> @item.MeetingStatusStatusDesc </td>
                                     <td> @item.intervieweStatusStatDesc </td>
-                                    <td> @item.QCStatusStatusDesc </td>
-                                    <td> @item.PreparationStatusDesc </td>
-                                    <td> @item.ClientInterviewStatDesc </td>
-                                    <td> @item.JoiningStatusStatDesc  </td>
+                                    <td> @item.CurrentEmployer </td>
+                                    <td> @item.expectedPerHourRate </td>
+                                    <td> @item.preferredLocation </td>
+                                    <td>@item.staffingAgency</td>
                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.IRFId})'>Report</a> </td>
-                                   
+
                                 </tr>
                                 }
                             </tbody>
