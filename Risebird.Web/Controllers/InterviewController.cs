@@ -47,7 +47,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        ViewBag.Message = TempData["SuccessErrorMessageInterview"]?.ToString();
+                        if(TempData["SuccessErrorMessageInterview"]!=null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
+                        }
+                        
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -349,7 +354,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetAllAssignedInterviews("interview6@risebird.io");
+                        var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();

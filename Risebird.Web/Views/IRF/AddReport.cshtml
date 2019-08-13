@@ -706,7 +706,7 @@
                                                             <label class="form-control" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -715,7 +715,7 @@
                                                             <label class="form-control" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -730,7 +730,7 @@
                                                             <label class="form-control" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -747,7 +747,7 @@
                                                             <label class="form-control" for="LipsOverhead">Using overhead light</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -757,7 +757,7 @@
                                                             <label class="form-control" for="LipsDarklight">Dark light in the room or on the face</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -767,7 +767,7 @@
                                                             <label class="form-control" for="LipsHeadphone">Using Headphone in front of Lips</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -783,7 +783,7 @@
                                                             <label class="form-control" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -800,7 +800,7 @@
                                                             <label class="form-control" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -810,7 +810,7 @@
                                                             <label class="form-control" for="DesktopScreenSharing">Sharing screen but not desktop</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -826,7 +826,7 @@
                                                             <label class="form-control" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -836,7 +836,7 @@
                                                             <label class="form-control" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" , @onchange="CountProctoring(this.value)"})
+                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" , @onchange="CountProctoring(this.value)"})
                                                         </td>
 
                                                     </tr>
@@ -846,7 +846,7 @@
                                                             <label class="form-control" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -856,7 +856,7 @@
                                                             <label class="form-control" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -872,7 +872,7 @@
                                                             <label class="form-control" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
                                                         </td>
                                                         <td>
-                                                            @Html.EditorFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)" })
                                                             @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
 
                                                         </td>
@@ -1008,10 +1008,23 @@
     
     function CountProctoring(value) {
 
-        var total = $("#ProctoringCount").val();
-        var newTotal = parseInt(total) + parseInt(value);
-        $("#ProctoringCount").val(newTotal);
+        debugger;
+        if (value == "" || value == null) {
+            return;
+        }
 
+        var proctoringItems = $('[id^="Proctoring_"]');
+        var proctoringTotal = 0;
+        for (i = 0; i < proctoringItems.length; i++) {
+            proctoringTotal += parseInt(proctoringItems[i].value);
+        }
+        $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("background-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("background-color", "white");
+        }
     }
 
     function CalculateOverAll(id, value) {
@@ -1156,6 +1169,12 @@
             proctoringTotal += parseInt(proctoringItems[i].value);
         }
         $("#ProctoringCount").val(proctoringTotal);
+        if (parseInt(proctoringTotal) > 0) {
+            $("#ProctoringCount").css("background-color", "red");
+        }
+        else {
+            $("#ProctoringCount").css("background-color", "white");
+        }
 
         //shorter/better attempt
         var weightageItems = $('[id$="WeightageActual"]');
