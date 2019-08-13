@@ -44,7 +44,11 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    ViewBag.Message = TempData["SuccessErrorMessageUser"];
+                    if(TempData["SuccessErrorMessageUser"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageUser"].ToString();
+                        TempData.Remove("SuccessErrorMessageUser");
+                    }
                     return View(_userService.GetRisebirdUsers());
                 }
                 else
@@ -254,7 +258,13 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
-                    ViewBag.Message = TempData["SuccessErrorMessageClientUser"];
+                    if(TempData["SuccessErrorMessageClientUser"]!=null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageClientUser"].ToString();
+                        TempData.Remove("SuccessErrorMessageClientUser");
+
+                    }
+
                     return View(_userService.GetClientUsers());
                 }
                 else
@@ -420,7 +430,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageClientUser"] = "Updating Client User is Failed";
+                            TempData["SuccessErrorMessageClientUser"] = "Updating Client User Failed";
                             return RedirectToAction("ClientUsers");
                         }
                     }
@@ -455,7 +465,13 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"];
+                    if(TempData["SuccessErrorMessageInterviewer"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterviewer");
+
+                    }
+
                     return View(_userService.GetInterviewers());
                 }
                 else
@@ -694,7 +710,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageInterviewer"] = "Deletion of Intervieer Failed";
+                        TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
                         return Json(new { url = Url.Action("Interviewers", "User") });
                     }
                 }
@@ -719,7 +735,12 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                ViewBag.Message = TempData["SuccessErrorMessageInterviewer"];
+                if(TempData["SuccessErrorMessageInterviewer"]!=null)
+                {
+                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                    TempData.Remove("SuccessErrorMessageInterviewer");
+
+                }
                 return View(_userService.GetQCInterviewers());
             }
             catch (Exception)

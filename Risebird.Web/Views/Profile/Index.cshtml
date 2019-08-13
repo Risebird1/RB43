@@ -24,7 +24,7 @@
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
             </button>
-           
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -48,7 +48,7 @@
                                 <tr>
                                     <th hidden></th>
                                     <th>Name</th>
-                                    <th>Description</th>                                   
+                                    <th>Description</th>
                                     <th class="disabled-sorting text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -63,18 +63,18 @@
                             <tbody>
                                 @foreach (var item in Model)
                                 {
-                                <tr id=@item.id>
-                                    <td hidden>@item.id</td>
-                                    <td>@item.Name</td>
-                                    <td>@item.Description</td>
-                                    <td class="text-right">
-                                        @if (!@item.isDelete)
-                                        {
-                                            <span onclick="location.href = '@Url.Action("EditProfile", "Profile", new { id = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
-                                        }
-                                    </td>                                   
-                                </tr>
+                                    <tr id=@item.id>
+                                        <td hidden>@item.id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td class="text-right">
+                                            @if (!@item.isDelete)
+                                            {
+                                                <span onclick="location.href = '@Url.Action("EditProfile", "Profile", new { id = item.id})'" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>
@@ -120,6 +120,61 @@
 
 
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Succesful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Profile/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Profile/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
 
 <script>
     $(document).ready(function () {
@@ -146,7 +201,7 @@
 
 
     });
-    function DeleteEntityfromEnvironment(profileId,Name) {
+    function DeleteEntityfromEnvironment(profileId, Name) {
 
         //var confirmMessageBox = confirm('Are you sure you want to delete profile ' + Name + ' ?');
         //if (confirmMessageBox) {

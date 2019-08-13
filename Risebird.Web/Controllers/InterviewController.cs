@@ -47,7 +47,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        ViewBag.Message = TempData["SuccessErrorMessageInterview"];
+                        ViewBag.Message = TempData["SuccessErrorMessageInterview"]?.ToString();
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -353,6 +353,8 @@ namespace Risebird.Web.Controllers
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                            //TempData.Clear();
                         }
                         return View(myInterview);
                     }
@@ -539,12 +541,12 @@ namespace Risebird.Web.Controllers
 
                             if (_meetingService.UpdateComments(interviewComments))
                             {
-                                TempData["SuccessErrorMessageInterviewComment"] = "Report are updated Successfully";
+                                TempData["SuccessErrorMessageInterview"] = "Comments added Successfully";
                                 return RedirectToAction("AddComments", new { interviewId = interviewComments.InterviewId });
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
+                                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
                                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
                             }
                         }
@@ -569,7 +571,7 @@ namespace Risebird.Web.Controllers
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                TempData["SuccessErrorMessageInterviewComment"] = "Report update is failed";
+                TempData["SuccessErrorMessageInterview"] = "Comments add failed";
                 return RedirectToAction("Action", new { interviewId = interviewComments.InterviewId });
             }
         }
@@ -762,7 +764,7 @@ namespace Risebird.Web.Controllers
 
                         if (_meetingService.AddInterviewReport(model).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Report saved Successfully";
+                            TempData["SuccessErrorMessageInterview"] = "Report saved Successfully";
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 return RedirectToAction("Index");
@@ -772,7 +774,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Report was not saved.";
+                            TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
                             if (profileName == "Admin" || profileName == "HR")
                             {
                                 return RedirectToAction("Index");
@@ -795,7 +797,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Report was not saved.";
+                TempData["SuccessErrorMessageInterview"] = "Report was not saved.";
                 return RedirectToAction("Index");
             }
         }
