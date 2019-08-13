@@ -233,7 +233,52 @@
     </script>
     <!-- PAGE CONTENT WRAPPER -->*@
 
+<style>
+   
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+     
+    }
 
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+     
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+    table {
+        white-space: nowrap;
+    }
+
+    td.wordwrap {
+        display: inline-block;
+        max-width: 250px;
+        min-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: top !important;
+        white-space: nowrap;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip;
+        white-space: normal;
+        word-break: break-all;
+    }
+ 
+
+    /*table.dataTable > thead > tr > th {
+        max-width: 200px !important;
+    }*/
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+</style>
 
 
 
@@ -307,7 +352,7 @@
     </div>
     <div class="content">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" >
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Interview</h4>
@@ -318,77 +363,79 @@
                                 <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
                             </div>
                         </div>
-                        <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
+                        <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                            <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
 
-                                    <th>IRF ID</th>
-                                    <th>Client HR</th>
-                                    <th>Interview Date</th>
-                                    <th>Interview Duration</th>
-                                    <th>Candidate Email</th>
-                                    <th>Resume Detail</th>
-                                    <th>Confrimation Status</th>
-                                    <th>Staffing Agenecy</th>
-                                    <th>Zoom Link</th>
-                                    <th>Risebird HR</th>
-                                    <th>Interviewer</th>
-                                    <th>Expected Joining Time</th>
-                                    <th>Preferred Location</th>
-                                    <th>Expected Per Hour Rate</th>
-                                    <th>Interview Device Details</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>IRF ID</th>
-                                    <th>Client HR</th>
-                                    <th>Interview Date</th>
-                                    <th>Interview Duration</th>
-                                    <th>Candidate Email</th>
-                                    <th>Resume Detail</th>
-                                    <th>Confrimation Status</th>
-                                    <th>Staffing Agency</th>
-                                    <th>Zoom Link</th>
-                                    <th>Risebird HR</th>
-                                    <th>Interviewer</th>
-                                    <th>Expected Joining Time</th>
-                                    <th>Preferred Location</th>
-                                    <th>Expected Per Hour Rate</th>
-                                    <th>Interview Device Details</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr id=@item.id>
-                                        <td title=@item.IRFID> @item.IRFID </td>
-                                        <td> @item.ClientHrContact </td>
-                                        <td> @item.interviewDate </td>
-                                        <td> @item.interviewDuration </td>
-                                        <td> @item.candidateEmail</td>
-                                        <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
-                                        <td> @item.confirmationStatus</td>
-                                        <td>@item.staffingAgenecy</td>
-                                        <td> @item.zoomLink</td>
-                                        <td> @item.risebirdHR</td>
-                                        <td> @item.interviewer</td>
-                                        <td> @item.joiningTime</td>
-                                        <td> @item.PreferredLocation</td>
-                                        <td> @item.ExpectedPerHourRate</td>
-                                        <td> @item.interviewOnDevice</td>
-                                        <td class="text-right">
-                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                            @*<span  onclick="location.href = '@Url.Action("SendReport", "Interview", new { id = item.id})'" title="SendReport" class="btn btn-round btn-danger btn-icon btn-sm remove"><i class="fas fa-envelope"></i></span>*@
-                                        </td>
+                                        <th>IRF ID</th>
+                                        <th>Client HR</th>
+                                        <th>Interview Date</th>
+                                        <th>Interview Duration</th>
+                                        <th>Candidate Email</th>
+                                        <th>Resume Detail</th>
+                                        <th>Confrimation Status</th>
+                                        <th>Staffing Agenecy</th>
+                                        <th>Zoom Link</th>
+                                        <th>Risebird HR</th>
+                                        <th>Interviewer</th>
+                                        <th>Expected Joining Time</th>
+                                        <th>Preferred Location</th>
+                                        <th>Expected Per Hour Rate</th>
+                                        <th>Interview Device Details</th>
+                                        <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>IRF ID</th>
+                                        <th>Client HR</th>
+                                        <th>Interview Date</th>
+                                        <th>Interview Duration</th>
+                                        <th>Candidate Email</th>
+                                        <th>Resume Detail</th>
+                                        <th>Confrimation Status</th>
+                                        <th>Staffing Agency</th>
+                                        <th>Zoom Link</th>
+                                        <th>Risebird HR</th>
+                                        <th>Interviewer</th>
+                                        <th>Expected Joining Time</th>
+                                        <th>Preferred Location</th>
+                                        <th>Expected Per Hour Rate</th>
+                                        <th>Interview Device Details</th>
+                                        <th class="disabled-sorting text-right">Actions</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr id=@item.id>
+                                            <td title=@item.IRFID> @item.IRFID </td>
+                                            <td> @item.ClientHrContact </td>
+                                            <td> @item.interviewDate </td>
+                                            <td> @item.interviewDuration </td>
+                                            <td> @item.candidateEmail</td>
+                                            <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
+                                            <td> @item.confirmationStatus</td>
+                                            <td>@item.staffingAgenecy</td>
+                                            <td class="wordwrap"> @item.zoomLink</td>
+                                            <td> @item.risebirdHR</td>
+                                            <td> @item.interviewer</td>
+                                            <td> @item.joiningTime</td>
+                                            <td> @item.PreferredLocation</td>
+                                            <td> @item.ExpectedPerHourRate</td>
+                                            <td class="wordwrap"> @item.interviewOnDevice</td>
+                                            <td class="text-right">
+                                                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                @*<span  onclick="location.href = '@Url.Action("SendReport", "Interview", new { id = item.id})'" title="SendReport" class="btn btn-round btn-danger btn-icon btn-sm remove"><i class="fas fa-envelope"></i></span>*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <!-- end content-->
                 </div>
@@ -492,7 +539,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            responsive: true,
+            responsive: false,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",
