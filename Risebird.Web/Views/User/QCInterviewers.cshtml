@@ -4,6 +4,38 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+</style>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -32,69 +64,79 @@
                         <h4 class="card-title">QCInterviewers</h4>
                     </div>
                     <div class="card-body">
-                        <div class="toolbar">
-                            <div class="text-right">
-                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add QC interviewer" onclick="location.href='@Url.Action("AddQCInterviewer","User")'" data-original-title="Tooltip on top"> Add QCInterviewer</span></button>
-                            </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <table id="qcinterviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email Id</th>
-                                    <th>Mobile Number</th>
-                                    <th>Primary Skills</th>
-                                    <th>Resume Link</th>
-                                    <th>Approved</th>
-                                    <th>No Of Interview</th>
-                                    <th>SuccessRate</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email Id</th>
-                                    <th>Mobile Number</th>
-                                    <th>Primary Skills</th>
-                                    <th>Resume Link</th>
-                                    <th>Approved</th>
-                                    <th>No Of Interview</th>
-                                    <th>SuccessRate</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr id=@item.id>
-                                        <td>@item.FirstName</td>
-                                        <td>@item.LastName</td>
-                                        <td>@item.EmailId</td>
-                                        <td>@item.MobileNumber</td>
-                                        <td><textarea>@item.PrimarySkill</textarea></td>
-                                        <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
-                                        @if (@item.IsApproved == true)
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="text-right">
+                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add QC interviewer" onclick="location.href='@Url.Action("AddQCInterviewer","User")'" data-original-title="Tooltip on top"> Add QCInterviewer</span></button>
+                                </div>
+                            </div>
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <table id="qcinterviewer" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email Id</th>
+                                            <th>Mobile Number</th>
+                                            <th>Primary Skills</th>
+                                            <th>Resume Link</th>
+                                            <th>Approved</th>
+                                            <th>No Of Interview</th>
+                                            <th>SuccessRate</th>
+                                            <th class="disabled-sorting text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email Id</th>
+                                            <th>Mobile Number</th>
+                                            <th>Primary Skills</th>
+                                            <th>Resume Link</th>
+                                            <th>Approved</th>
+                                            <th>No Of Interview</th>
+                                            <th>SuccessRate</th>
+                                            <th class="disabled-sorting text-right">Actions</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        @foreach (var item in Model)
                                         {
-                                            <td>Approved</td>
-                                        }
-                                        else
-                                        {
-                                            <td>Not Approved</td>
-                                        }
+                                            <tr id=@item.id>
+                                                <td>@item.FirstName</td>
+                                                <td>@item.LastName</td>
+                                                <td>@item.EmailId</td>
+                                                <td>@item.MobileNumber</td>
+                                                <td><textarea>@item.PrimarySkill</textarea></td>
+                                                <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                                @if (@item.IsApproved == true)
+                                                {
+                                                    <td>Approved</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not Approved</td>
+                                                }
 
-                                        <td>@item.NoOfInterview</td>
-                                        <td>@item.SuccessRate</td>
-                                        <td class="text-right">
-                                            <span onclick="location.href = '@Url.Action("EditQCInterviewer", "User", new { id = item.id})'" title="Click here to edit QC interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete QC interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                                                <td>@item.NoOfInterview</td>
+                                                <td>@item.SuccessRate</td>
+                                                <td class="text-right">
+                                                    <span onclick="location.href = '@Url.Action("EditQCInterviewer", "User", new { id = item.id})'" title="Click here to edit QC interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete QC interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+
+
                     </div>
                     <!-- end content-->
                 </div>
@@ -283,4 +325,30 @@
             }
         })
     }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#qcinterviewer").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#qcinterviewer").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#qcinterviewer").show();
+        }, 2000);
+    };
+    //// script for loader ends here
 </script>

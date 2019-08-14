@@ -3,6 +3,24 @@
     ViewData["Title"] = "Selectability";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<style>
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+</style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -31,43 +49,50 @@
                         <h4 class="card-title">Selectability Matrix</h4>
                     </div>
                     <div class="card-body">
-                        <div class="toolbar">
-                            <div class="text-right">
-                                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add selectability" onclick="location.href='@Url.Action("AddSelectability","Selectability")'" data-original-title="Tooltip on top"> Add Selectability</span></button>
-                            </div>
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                            <thead>
-                                <tr>
-                                    <th hidden></th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th hidden></th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th class="disabled-sorting text-right">Actions</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr id=@item.id>
-                                        <td hidden>@item.id</td>
-                                        <td>@item.Name</td>
-                                        <td>@item.Description</td>
-                                        <td class="text-right">
-                                            <span onclick="location.href = '@Url.Action("EditSelectability", "Selectability", new { id = item.id})'" title="Click here to edit selectability" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to edit selectability" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
-                                        </td>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="text-right">
+                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add selectability" onclick="location.href='@Url.Action("AddSelectability","Selectability")'" data-original-title="Tooltip on top"> Add Selectability</span></button>
+                                </div>
+                            </div>
+                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th hidden></th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th hidden></th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th class="disabled-sorting text-right">Actions</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr id=@item.id>
+                                            <td hidden>@item.id</td>
+                                            <td>@item.Name</td>
+                                            <td>@item.Description</td>
+                                            <td class="text-right">
+                                                <span onclick="location.href = '@Url.Action("EditSelectability", "Selectability", new { id = item.id})'" title="Click here to edit selectability" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to edit selectability" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+
                     </div>
                     <!-- end content-->
                 </div>
@@ -256,4 +281,30 @@
             }
         })
     }
+</script>
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#skillLevel").hide();
+    var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        $("#skillLevel").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#skillLevel").show();
+        }, 2000);
+    };
+    //// script for loader ends here
 </script>
