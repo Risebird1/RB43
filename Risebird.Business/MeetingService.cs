@@ -247,8 +247,14 @@ namespace Risebird.Business
         {
             try
             {
+                //check whether an IRF exists for the given IRFId
+                var check = _meetingRespository.GetIRFbyId(irfId);
+                if(!check)
+                {
+                    return null;
+                }
                 // check whether a feedback for the interviewId has already been submitted
-                var interviewReport = _meetingRespository.GetInterviewReportById(interviewId);
+                var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
                 if (interviewReport.Count() > 0 && interviewReport.FirstOrDefault().Rating > 0)
                 {
                     //call Edit Feedbackform method
