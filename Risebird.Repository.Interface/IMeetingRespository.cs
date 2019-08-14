@@ -29,7 +29,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Skill> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
-        IEnumerable<InterviewReport> GetInterviewReportById(int id);
+        IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId=0);
 
         IEnumerable<JoinabilityReport> GetJoinabilityReport(int id);
         IEnumerable<SelectabilityReport> GetSelectabilityReport(int id);
@@ -39,6 +39,7 @@ namespace Risebird.Repository.Interface
         ProctoringReport GetProctoringReport(int id);
         IEnumerable<LevelTech> GetLevelTech();
         IEnumerable<string> GetIRFName(int id);
+        bool GetIRFbyId(int irfId);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }

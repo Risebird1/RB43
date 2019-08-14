@@ -690,12 +690,13 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<InterviewReport> GetInterviewReportById(int id)
+        public IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId=0)
         {
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewId", id);
+                dynamicParameters.Add("@InterviewId", id);//@IrfId
+                dynamicParameters.Add("@IrfId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<InterviewReport>(con, "usp_GetInterviewReportById", dynamicParameters,
@@ -855,6 +856,36 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+        public bool GetIRFbyId(int irfId)
+        {
+            try
+            {
+                var query = "Select * from IRF where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<IRF>(query, dynamicParameters);
+                    if(result.Count()>0)
+                    {
+                        return true;
+                    }
+                    else
+                    return false;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
         }
 
 
