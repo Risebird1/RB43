@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class MailController : Controller
     {
         private INotificationHelper _notificationHelper;

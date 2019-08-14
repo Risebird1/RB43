@@ -18,7 +18,6 @@ using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
-    [Authorize]
     public class InterviewController : Controller
     {
         private IMeetingService _meetingService;
@@ -37,6 +36,7 @@ namespace Risebird.Web.Controllers
             _iRFService = iRFService;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -47,12 +47,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if(TempData["SuccessErrorMessageInterview"]!=null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        
+
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -78,6 +78,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(MeetingVM meeting)
         {
             try
@@ -156,6 +157,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Add()
         {
@@ -193,6 +195,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -236,7 +239,9 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(MeetingVM meetingUpdated)
         {
             try
@@ -302,7 +307,6 @@ namespace Risebird.Web.Controllers
                     return RedirectToAction("SignOut", "Session");
                 }
             }
-
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
@@ -311,7 +315,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> OpenInterview()
         {
             try
@@ -320,16 +325,16 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    //if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer" || profileName == "Quality Controller")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         return View(_meetingService.GetAllOpenInterviews(emailid));
                     }
-                    //else
-                    //{
-                    //    return RedirectToAction("SignOut", "Session");
-                    //}
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
@@ -342,6 +347,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> MyInterview()
         {
             try
@@ -350,7 +358,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    //if (profileName == "Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Interviewer" || profileName == "Quality Controller")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -363,10 +371,10 @@ namespace Risebird.Web.Controllers
                         }
                         return View(myInterview);
                     }
-                    //else
-                    //{
-                    //    return RedirectToAction("SignOut", "Session");
-                    //}
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
                 }
                 else
                 {
@@ -379,6 +387,9 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> QCInterview()
         {
             try
@@ -401,6 +412,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> ClientInterview()
         {
             try
@@ -461,6 +474,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddComments(int interviewId)
         {
@@ -492,6 +506,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddComments(InterviewComments interviewComments)
         {
@@ -559,7 +574,7 @@ namespace Risebird.Web.Controllers
                         {
                             return RedirectToAction("SignOut", "Session");
                         }
-                        
+
                     }
                     else
                     {
@@ -581,6 +596,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
         {
@@ -616,7 +632,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if(profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
                         var result = _meetingService.AssignYourself(model.id, model.Interviewer);
@@ -627,7 +643,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -641,6 +657,8 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id)
         {
             try
@@ -649,7 +667,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if(profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
                         if (_meetingService.UnassignYourself(id))
@@ -667,7 +685,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -687,13 +705,26 @@ namespace Risebird.Web.Controllers
         {
             try
             {
-                string prof = HttpContext.Session.GetString("profileName");
+                string profileName = HttpContext.Session.GetString("profileName");
+                if (profileName != null)
+                {
+                    profileName = profileName.Replace("\"", "");
+                }
 
                 var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                if (prof != null && prof.Contains("Client"))
+                if (model == null)
                 {
-                    model.IsClientUser = true;
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    else if (profileName != null && (profileName == "Interviewer" ||
+                                                     profileName == "Quality Controller"))
+                    {
+                        return RedirectToAction("MyInterview");
+                    }
                 }
+
                 if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
@@ -702,7 +733,9 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+
                 GetStatusList(model, irfId);
+
                 return View(model);
 
             }
@@ -711,9 +744,9 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyInterview");
             }
-
         }
 
+        [Authorize]
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
@@ -775,7 +808,7 @@ namespace Risebird.Web.Controllers
                                 return RedirectToAction("Index");
                             }
                             else
-                            return RedirectToAction("MyInterview");
+                                return RedirectToAction("MyInterview");
                         }
                         else
                         {
@@ -797,7 +830,6 @@ namespace Risebird.Web.Controllers
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-
             }
             catch (Exception ex)
             {
@@ -873,9 +905,10 @@ namespace Risebird.Web.Controllers
             model.QuestionsLevelList = new SelectList(questionsLevel, "ID", "Name");
 
             model.QuestionsList = new SelectList(_meetingService.GetTechSkillComments(irfId), "Comment", "Comment");
-
         }
 
+        [Authorize]
+        [HttpGet]
         public IActionResult SampleQuestions(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -893,6 +926,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult SampleQuestions(TechSkillComments model)
@@ -903,7 +938,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName =="Interviewer" || profileName == "Quality Controller")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "Quality Controller")
                     {
                         if (_iRFService.AddSkillComments(model))
                         {
@@ -920,13 +955,12 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                   
+
                 }
                 else
                 {
                     return RedirectToAction("SignOut", "Session");
                 }
-
             }
             catch (Exception ex)
             {

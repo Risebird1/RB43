@@ -217,7 +217,7 @@ namespace Risebird.Functions
 
                 log.Info("Interview update in database ended.");
             }
-            if (!string.IsNullOrEmpty(IRFID))
+            if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "1")
             {
                 try
                 {
