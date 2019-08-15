@@ -286,7 +286,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted and id =@id";
+                var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted and IRF.id =@id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
                 dynamicParameters.Add("@id", irfId);
