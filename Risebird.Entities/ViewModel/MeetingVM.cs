@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHrContact { get; set; }
 
         [Display(Name = "Current Employer")]
-        public string CurrentEmployer { get; set; }
+        public string currentEmployerName { get; set; }
 
         [Display(Name = "Current Renumeration")]
         public double CurrentRenumeration { get; set; }
