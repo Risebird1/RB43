@@ -216,7 +216,7 @@
 
 
             if (msg.includes("Success")) {
-                swal({
+                swal.fire({
                     title: 'Succesful',
                     text: '@ViewBag.Message',
                     type: 'success',
@@ -237,7 +237,7 @@
   
             }
             else {
-                swal({
+                swal.fire({
                     title: 'Failed',
                     text: '@ViewBag.Message',
                     type: 'error',
