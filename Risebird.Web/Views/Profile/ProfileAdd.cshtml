@@ -4,76 +4,102 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
+
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
-
-                <a class="navbar-brand breadcrumscolor" href="/Profile/Index">Profile</a>
-                <a class="navbar-brand">Add</a>
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Profile</a>
+                <a class="navbar-brand">Add Profile</a>
             </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
         </div>
     </nav>
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    @using (Html.BeginForm("Add", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
-    {
-
-        @Html.AntiForgeryToken()
+    <div class="content">
         <div class="row">
-            <div class="col-md-12 edit-build nova-cont">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">Add Profile</h4>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Add Profile</h4>
                     </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-horizontal">
-                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                        <div class="col-md-6 col-sm-6">
-                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <div class="card-body">
+
+
+                        @using (Html.BeginForm("Add", "Profile", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-horizontal">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        <div class="col-md-6 col-sm-6 pr-1">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.IsAdmin, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.CheckBoxFor(model => model.IsAdmin, new { @class = "checkbox-margin" })
+                                                @Html.ValidationMessageFor(model => model.IsAdmin, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                        </div>
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                        <div class="col-md-6 col-sm-6">
-                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.IsAdmin, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                        <div class="col-md-6 col-sm-6">
-                                            @Html.CheckBoxFor(model => model.IsAdmin, new { @class = "checkbox-margin" })
-                                            @Html.ValidationMessageFor(model => model.IsAdmin, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group col-sm-12">
-                                        <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Add Profile" class="btn btn btn-primary" />
-                                        </div>
-                                        <div>
-                                            @Html.ActionLink("Back to List", "Index", "Profile", new { @class = "btn btn-link" })
-                                        </div>
+                            </div>
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class="col-md-9">
+                                        @Html.ActionLink("Back to List", "Index", "Profile", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div>
                 </div>
+                <!--  end card  -->
             </div>
+            <!-- end col-md-12 -->
         </div>
-    }
+        <!-- end row -->
+    </div>
     <footer class="footer">
         <div class=" container-fluid ">
             <nav>
@@ -104,17 +130,17 @@
         </div>
     </footer>
 </div>
-    <style>
-        .fa-spinner {
-            font-size: 18px;
-            position: relative;
-            top: 6px;
-            left: 4px;
-        }
+<style>
+    .fa-spinner {
+        font-size: 18px;
+        position: relative;
+        top: 6px;
+        left: 4px;
+    }
 
-        .checkbox-margin {
-            margin-top: 8px !important;
-        }
-    </style>
+    .checkbox-margin {
+        margin-top: 8px !important;
+    }
+</style>
 
 
