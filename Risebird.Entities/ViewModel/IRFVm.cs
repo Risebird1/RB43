@@ -62,7 +62,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int RisebirdHr { get; set; }
 
-        [DisplayName("Per Minute Rate(Rs.)")]
+        [DisplayName("Per Interview Rate(Rs.)")]
         [Required]
         public double PerMintuteRate { get; set; }
         public SelectList JobLevelList { get; set; }
