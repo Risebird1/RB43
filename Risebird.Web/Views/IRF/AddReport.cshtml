@@ -905,10 +905,7 @@
                                                     @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                                 }
-                                                @if (!@Model.IsClientUser)
-                                                {
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
-                                                }
+                                               
                                             }
                                         </div>
                                     </div>

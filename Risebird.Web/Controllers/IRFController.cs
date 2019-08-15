@@ -560,11 +560,7 @@ namespace Risebird.Web.Controllers
                 {
                    return RedirectToAction("Index");
                 }
-
-                if (prof != null && prof.Contains("Client"))
-                {
-                    model.IsClientUser = true;
-                }
+            
                 ViewBag.IsSelected = IsSelected;
                 if (model.QuestionsCollection == null)
                 {
