@@ -88,6 +88,7 @@ C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CoreCompileInputs.cache
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
 C:\Users\ankit\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
