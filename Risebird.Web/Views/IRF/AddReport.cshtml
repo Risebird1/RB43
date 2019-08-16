@@ -128,9 +128,9 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.TextBoxFor(m => m.CurrentEmployer, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
@@ -1003,7 +1003,6 @@
     
     function CountProctoring(value) {
 
-        debugger;
         if (value == "" || value == null) {
             return;
         }
@@ -1015,10 +1014,10 @@
         }
         $("#ProctoringCount").val(proctoringTotal);
         if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("background-color", "red");
+            $("#ProctoringCount").css("border-color", "red");
         }
         else {
-            $("#ProctoringCount").css("background-color", "white");
+            $("#ProctoringCount").css("border-color", "white");
         }
     }
 
@@ -1156,8 +1155,6 @@
 
     $(document).ready(function () {
 
-    // proctoring calculation
-        debugger;
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
         for (i = 0; i < proctoringItems.length; i++) {
