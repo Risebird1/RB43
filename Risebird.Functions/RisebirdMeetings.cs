@@ -55,6 +55,7 @@ namespace Risebird.Functions
             string staffingAgenecy = string.Empty;
             string joiningTime = string.Empty;
             string interviewOnDevice = string.Empty;
+            string currentEmployerName = string.Empty;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -141,7 +142,7 @@ namespace Risebird.Functions
                                         JobRole = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("HR coordinator"))
+                                        .Contains("HR Coordinator"))
                                     {
                                         ClientHrContact = ((JContainer)questions)["answer"].ToString();
                                     }
@@ -151,22 +152,27 @@ namespace Risebird.Functions
                                         IRFID = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Your preferred location"))
+                                        .Contains("Preferred Location"))
                                     {
                                         prefferedLocation = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Per Hour rate"))
+                                        .Contains("Current Employer Name"))
+                                    {
+                                        currentEmployerName = ((JContainer)questions)["answer"].ToString();
+                                    }
+                                    else if (((JContainer)questions)["question"].ToString()
+                                        .Contains("Per Hour Rate"))
                                     {
                                         expectedPerHourRate = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("staffing agency"))
+                                        .Contains("Staffing Agency"))
                                     {
                                         staffingAgenecy = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("you can join"))
+                                        .Contains("Notice Period"))
                                     {
                                         joiningTime = ((JContainer)questions)["answer"].ToString();
                                     }
@@ -213,11 +219,12 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@staffingAgenecy", staffingAgenecy));
                 cmd.Parameters.Add(new SqlParameter("@joiningTime", joiningTime));
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
+                cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
                 cmd.ExecuteScalar();
 
                 log.Info("Interview update in database ended.");
             }
-            if (!string.IsNullOrEmpty(IRFID))
+            if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "1")
             {
                 try
                 {

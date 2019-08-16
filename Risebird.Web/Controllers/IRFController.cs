@@ -13,6 +13,7 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using Risebird.CommonHelper;
 using System.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Risebird.Web.Controllers
 {
@@ -31,6 +32,8 @@ namespace Risebird.Web.Controllers
             _meetingService = meetingService;
             _azureStorageHelper = azureStorageHelper;
         }
+
+        [Authorize]
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -68,6 +71,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        [Authorize]
         [HttpGet]
         public IActionResult Add()
         {
@@ -102,7 +107,9 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult AddIRF(IRFVm irfDetails)
         {
             try
@@ -142,27 +149,32 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         public string GetInterviewerSkills(string id)
         {
             var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
             return name;
         }
 
+        [Authorize]
         public string GetQCSkills(string id)
         {
             return _irfService.GetQCSkills(Convert.ToInt16(id));
         }
 
+        [Authorize]
         public string GetQuestionSkills(string id)
         {
             return _irfService.GetQuestionSkills(id);
         }
 
+        [Authorize]
         public bool CheckUniqueness(string value)
         {
             return _irfService.CheckUniqueness(value);
         }
 
+        [Authorize]
         public IActionResult SampleQuestions(string id)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -181,6 +193,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult SampleQuestions(TechSkillComments model)
         {
@@ -190,7 +203,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if(profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR")
                     {
                         if (_irfService.AddSkillComments(model))
                         {
@@ -207,7 +220,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                                     
+
                 }
                 else
                 {
@@ -223,6 +236,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult DeleteIRF(string id)
         {
             try
@@ -263,6 +277,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult SelectedInterviewMeetings(string id, string irfId)
         {
@@ -344,6 +359,7 @@ namespace Risebird.Web.Controllers
         }
 
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetInterviewMeetings(string id, string irfId)
         {
@@ -418,6 +434,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult EditIRF(string id)
         {
@@ -473,6 +490,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult EditIRF(IRFVm model)
         {
@@ -513,7 +531,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
+        [Authorize]
         public IActionResult Stats(string id, string irfId)
         {
             TempData["id"] = id;
@@ -531,21 +549,31 @@ namespace Risebird.Web.Controllers
             {
                 string prof = HttpContext.Session.GetString("profileName");
 
-                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
-                if (prof != null && prof.Contains("Client"))
+                if (prof != null)
                 {
-                    model.IsClientUser = true;
+                    prof = prof.Replace("\"", "");
                 }
+
+                var model = _meetingService.GetInteviewReport(interviewId, irfId).Result;
+
+                if (model == null)
+                {
+                   return RedirectToAction("Index");
+                }
+            
                 ViewBag.IsSelected = IsSelected;
-                if(model.QuestionsCollection==null)
+                if (model.QuestionsCollection == null)
                 {
                     ViewBag.QuestionsDiscussedCount = 0;
                 }
-                else
+                else 
                 {
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
+
+                
                 GetStatusList(model, irfId);
+                
                 return View(model);
 
             }
@@ -557,6 +585,7 @@ namespace Risebird.Web.Controllers
 
         }
 
+        [Authorize]
         [HttpPost]
         [DisableRequestSizeLimit]
         [ValidateAntiForgeryToken]
@@ -621,7 +650,7 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("SignOut", "Session");
                     }
-                    
+
                 }
                 else
                 {
@@ -659,14 +688,14 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult NewChart()
         {
             try
             {
                 string id = TempData.Peek("id").ToString();
-                string irfId= TempData.Peek("irfId").ToString();
+                string irfId = TempData.Peek("irfId").ToString();
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -738,7 +767,7 @@ namespace Risebird.Web.Controllers
 
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult NewChartSelected()
         {
@@ -763,7 +792,7 @@ namespace Risebird.Web.Controllers
                         var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
 
 
-                        
+
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
                         List<object> iData = new List<object>();
@@ -816,9 +845,6 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
-
-
-
         }
     }
 }
