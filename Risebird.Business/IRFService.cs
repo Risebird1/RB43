@@ -101,12 +101,59 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public IEnumerable<Interviewer> GetInterviewers(string skills)
+        {
+            try
+            {
+                var interviewers = _irfRepository.GetInterviewerSkills();
+                var skillList = skills.Split(",");
+                //skillList.RemoveAt()
+                var list = new List<Interviewer>();
+                foreach (var item in interviewers)
+                {
+                    foreach (var skill in skillList)
+                    {
+                        if (skill == "")
+                            continue;
+                        var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
+                        if(item.PrimarySkill.Contains(skillName))
+                        {
+                            list.Add(item);
+                            break;
+                        }
+                    }
+                }
+                list.Distinct();
+                
+                return list;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
         public string GetQCSkills(int id)
         {
             try
             {
                 return _irfRepository.GetQCSkills(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public string GetClientUserRole(int id)
+        {
+            try
+            {
+                return _irfRepository.GetClientUserRole(id);
             }
 
             catch (Exception e)
@@ -387,6 +434,20 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
+        }
+        public IEnumerable<Users> GetClientUser(int id)
+        {
+            try
+            {
+
+                return _irfRepository.GetClientUser(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            
         }
     }
 }

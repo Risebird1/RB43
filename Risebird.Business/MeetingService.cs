@@ -349,7 +349,7 @@ namespace Risebird.Business
                     model.IRFId = irfId;
                     model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
-                    model.CurrentEmployer = interviewDetails.currentEmployerName;
+                    model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
                     return model;
@@ -376,7 +376,7 @@ namespace Risebird.Business
             var interviewMeetingsDetails = _meetingRespository.GetInterviewMeetingById(model.InterviewId).Result;
             model.PreferredLocation = interviewMeetingsDetails.preferredLocation;
             model.resumeLink = interviewMeetingsDetails.resumeLink;
-            model.CurrentEmployer = interviewMeetingsDetails.currentEmployerName;
+            model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
             // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
 

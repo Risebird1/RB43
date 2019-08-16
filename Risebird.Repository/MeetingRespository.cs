@@ -161,16 +161,17 @@ namespace Risebird.Repository
             parameters.Add("@interviewDuration", entity.interviewDuration);
             parameters.Add("@candidateName", entity.candidateName);
             parameters.Add("@candidateEmail", entity.candidateEmail);
-            parameters.Add("@@hrRiseBirdAssinged", entity.risebirdHR);
+            parameters.Add("@hrRiseBirdAssinged", entity.risebirdHR);
             parameters.Add("@resumeLink", entity.resumeLink);
             parameters.Add("@zoomLink", entity.zoomLink);
             parameters.Add("@ClientHrContact", entity.ClientHrContact);
             parameters.Add("@comfirmationStatus", entity.confirmationStatus);
             parameters.Add("@interviewer", entity.interviewer);
             parameters.Add("@preferredLocation", entity.preferredLocation);
-            parameters.Add("@staffingAgency", entity.staffingAgency);
             parameters.Add("@expectedPerHourRate", entity.expectedPerHourRate);
-            parameters.Add("@joiningTime", entity.joiningTime);            
+            parameters.Add("@joiningTime", entity.joiningTime);
+            parameters.Add("@staffingAgency", entity.staffingAgency);
+            parameters.Add("@currentEmployerName", entity.currentEmployerName);
             return parameters;
         }
         public async Task<bool> AddMeeting(MeetingVM meeting)
