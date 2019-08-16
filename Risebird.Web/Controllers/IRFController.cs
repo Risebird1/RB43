@@ -157,9 +157,33 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        public SelectList GetInterviewers(string skills)
+        {
+
+            var list = new List<SelectListItem>();
+            var interviewers = _irfService.GetInterviewers(skills);
+            
+            if (interviewers != null && interviewers.Count() > 0)
+            {
+                return new SelectList(interviewers, "UserId", "EmailId");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "0" });
+            //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+            return new SelectList(list, "Value", "Text");
+        }
+
+        [Authorize]
         public string GetQCSkills(string id)
         {
             return _irfService.GetQCSkills(Convert.ToInt16(id));
+        }
+
+        //GetClientUserRole
+        [Authorize]
+        public string GetClientUserRole(string id)
+        {
+            return _irfService.GetClientUserRole(Convert.ToInt16(id));
         }
 
         [Authorize]
@@ -845,6 +869,20 @@ namespace Risebird.Web.Controllers
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Index");
             }
+        }
+
+        public SelectList GetClientUser(int clientId)
+        {
+            var list = new List<SelectListItem>();
+            var clientUsers = _irfService.GetClientUser(clientId);
+            if (clientUsers!=null && clientUsers.Count() > 0)
+            {
+                return new SelectList(clientUsers, "id", "FirstName");
+            }
+            else
+                list.Add(new SelectListItem { Text = "No Client User", Value = "0" });
+                //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
+                return new SelectList(list, "Value", "Text");
         }
     }
 }

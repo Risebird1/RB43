@@ -29,5 +29,8 @@ namespace Risebird.Business.Interface
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
         string GetQuestionSkills(string id);
+        IEnumerable<Users> GetClientUser(int id);
+        string GetClientUserRole(int id);
+        IEnumerable<Interviewer> GetInterviewers(string skills);
     }
 }

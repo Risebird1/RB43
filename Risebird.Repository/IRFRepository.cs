@@ -191,7 +191,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<Interviewer>(
-                        con, "select * from Interviewer", null, commandType: Text);
+                        con, "select Interviewer.*, UserList.[EmailId] from Interviewer inner join UserList on Interviewer.UserId = UserList.id", null, commandType: Text);
                 }
             }
             catch (SqlException ex)
@@ -308,6 +308,26 @@ namespace Risebird.Repository
             try
             {
                 var query = "Select PrimarySkill from QualityController where UserId = @UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.ToList().FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string GetClientUserRole(int userId)
+        {
+            try
+            {
+                var query = "select [Name] from ClientRole where id =(select RoleId from ClientUser where UserId = @UserId)" ;
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@UserId", userId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -476,7 +496,7 @@ namespace Risebird.Repository
                         DynamicParameters param1 = new DynamicParameters();
                         param1.Add("@irfIntId", irfID);
                         param1.Add("@ClientUserId", item.ClientUserId);
-                        param1.Add("@ClientRoleId", item.ClientRoleId);
+                        //param1.Add("@ClientRoleId", item.ClientRoleId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
                                 commandType: CommandType.StoredProcedure);
 
@@ -599,7 +619,7 @@ namespace Risebird.Repository
                         DynamicParameters param1 = new DynamicParameters();
                         param1.Add("@irfIntId", irfDetails.id);
                         param1.Add("@ClientUserId", item.ClientUserId);
-                        param1.Add("@ClientRoleId", item.ClientRoleId);
+                        //param1.Add("@ClientRoleId", item.ClientRoleId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
                                 commandType: CommandType.StoredProcedure);
 
@@ -752,7 +772,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
+                //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
+                var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";                                     
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1010,6 +1031,41 @@ namespace Risebird.Repository
                 {
                     return SqlMapper.Query<GeneralSkillMatrix>(
                         con, "select * from GeneralSkillMatrix", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<Users> GetClientUser(int id)
+        {
+            IEnumerable<ClientUserDTO> clientUsers = new List<ClientUserDTO>();
+            IEnumerable<Users> clients = new List<Users>();
+            try
+            {
+                var query = "select * from ClientUser where ClientId = @ClientId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ClientId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    clientUsers = con.Query<ClientUserDTO>(query, dynamicParameters);
+                    if (clientUsers == null || clientUsers.Count() == 0)
+                        return clients;
+                   
+                    //clientUsers = SqlMapper.Query<ClientUserDTO>(
+                        //con, "select * from ClientUser", null, commandType: Text);
+                    var idList = new List<int>();
+                    foreach (var item in clientUsers)
+                    {
+                        idList.Add(item.UserId);
+                    }
+                    string ids = string.Join<int>(",", idList);
+                    clients = SqlMapper.Query<Users>(
+                        con, "select * from UserList where id in (" + ids + ")", null, commandType: Text);
+                    return clients;
                 }
             }
             catch (SqlException ex)

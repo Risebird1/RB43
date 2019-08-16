@@ -237,7 +237,7 @@
 
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "form-control", @onchange = "TechSkillChanged()" })
                                                         </td>
 
                                                         <td>
@@ -494,10 +494,13 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control" })
+                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownListFor(m => m.ClientCollection[i].ClientRoleId, (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
+                                                            @*@Html.DropDownListFor(m => m.ClientCollection[i].ClientRoleId, (SelectList)ViewBag.ClientRole, new { @class = "form-control" })*@
+
+                                                            @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
+
                                                         </td>
 
                                                         <td>
@@ -664,6 +667,67 @@
 </div>
 
 <script>
+    function TechSkillChanged() {
+        
+        //var index = id.charAt(16);
+        var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
+        //var arr = [];
+        var skills = "";
+        for (i = 0; i < techSkills.length; i++) {
+            //arr.push(techSkills[i].value);
+            skills = skills + ',' + techSkills[i].value;
+        }
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewers",
+            data: { 'skills': skills },
+            success: function (data) {
+
+                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+                for (i = 0; i < drpdowns.length; i++) {
+                    $("#" + drpdowns[i].id + " option").remove();
+                }
+                //var drpdwnId = $("#InterviewerCollection_" + index + "__InterviewerId");
+                ////drpdwnId.options.length = 0;
+                //$("#InterviewerCollection_" + index + "__InterviewerId option").remove();
+
+                if (data.length > 0) {
+
+                    for (i = 0; i < drpdowns.length; i++) {
+                        //$("#" + drpdowns[i].id).append(option);
+
+
+                        $(data).each(function () {
+                            var option = $("<option />");
+
+                            //Set Text part.
+                            option.html(this.text);
+
+                            //Set Value part.
+                            option.val(this.value);
+
+                            //Add the Option element to DropDownList.
+
+                            $("#" + drpdowns[i].id).append(option);
+
+                            //drpdwnId.append(option);
+                        });
+
+                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);                             
+
+                    }
+
+
+
+                }
+
+
+            }
+        });
+
+    }
+
+
     function checkStartDate(val) {
       
         if (val == "") {
@@ -1080,6 +1144,22 @@
 
     }
 
+    function ClientUserChanged(val, id) {
+
+        var index = id.charAt(17);
+        var roleElementid = 'ClientCollection_' + index + '__Role';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetClientUserRole",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + roleElementid).val(data);
+            }
+        });
+
+
+    }
+
     function QCChanged(val, id) {
 
         var index = id.charAt(18);
@@ -1098,6 +1178,8 @@
 
 
     $(document).ready(function () {
+
+        TechSkillChanged();
         //Perform Ajax request.
         //var id = $("#InterviewerCollection_0__InterviewerId").val();
         //$.ajax({

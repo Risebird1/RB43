@@ -40,6 +40,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         string GetQuestionSkills(string id);
         IRF EditIRF(int irfId);
+        IEnumerable<Users> GetClientUser(int id);
+        string GetClientUserRole(int userId);
 
     }
 }
