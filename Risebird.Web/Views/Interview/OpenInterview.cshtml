@@ -104,18 +104,33 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                            <tr id=@item.id>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.interviewSlot </td>
-                                                <td> @item.interviewDuration </td>
-                                                <td> @item.candidateName</td>
-                                                <td>  <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
+                                        <tr id=@item.id>
+                                            <td> @item.interviewDate </td>
+                                            <td> @item.interviewSlot </td>
+                                            <td> @item.interviewDuration </td>
+                                            <td> @item.candidateName</td>
+                                            @if (item.resumeLink != null && item.resumeLink != "")
+                                            {
+                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                            }
+                                            else
+                                            {
+                                                <td>No Resume</td>
+                                            }
+                                            @if (item.JDLink != null && item.JDLink != "")
+                                            {
                                                 <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                <td> @item.risebirdHR</td>
-                                                <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                </td>
-                                            </tr>
+                                            }
+                                            else
+                                            {
+                                                <td>No JD</td>
+                                            }
+                                            
+                                            <td> @item.risebirdHR</td>
+                                            <td class="text-right">
+                                                <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                            </td>
+                                        </tr>
                                         }
                                     </tbody>
                                 </table>
