@@ -119,7 +119,13 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
                                                 <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else{
+                                                    <td>No Resume</td>
+                                                }
                                                 <td> @item.ClientHrContact </td>
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc </td>

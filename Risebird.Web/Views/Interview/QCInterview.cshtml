@@ -85,6 +85,7 @@
                                             <th>Candidate Email</th>
                                             <th>Primary Skills</th>
                                             <th>Resume</th>
+                                            <th>JD Link</th>
                                             <th>Risebird HR</th>
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
@@ -96,6 +97,7 @@
                                             <th>Candidate Email</th>
                                             <th>Primary Skills</th>
                                             <th>Resume</th>
+                                            <th>JD Link</th>
                                             <th>Risebird HR</th>
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
@@ -108,7 +110,21 @@
                                                 <td> @item.interviewDuration </td>
                                                 <td> @item.candidateEmail</td>
                                                 <td> @item.primaryskill</td>
-                                                <td><a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a></td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else{
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.JDLink != null && item.JDLink != "")
+                                                {
+                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                }
+                                                else{
+                                                    <td>No JD</td>
+                                                }
+
                                                 <td> @item.risebirdHR</td>
                                                 <td class="text-right">
                                                     <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comments" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-comment"></i></span>
