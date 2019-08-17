@@ -308,7 +308,7 @@
                                         </a>*@
 
                                                             <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -374,7 +374,7 @@
                                         </a>*@
 
                                                             <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -440,7 +440,7 @@
                                         </a>*@
 
                                                             <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -505,7 +505,7 @@
 
 
                                                             <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteSkillGeneralRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -559,7 +559,7 @@
 
 
                                                             <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -611,7 +611,7 @@
                                         </a>*@
 
                                                             <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'InterviewerId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -654,7 +654,7 @@
 
 
                                                             <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowClient(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')"  class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -1417,27 +1417,149 @@
         $.validator.unobtrusive.parse(document);
 
     }
-    $(document).on('click', '.delete-row', function (event) {
+    //$(document).on('click', '.delete-row', function (event) {
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
 
-            alert('Must have atleast one Skill');
-            return false;
-        }
+    //        alert('Must have atleast one Skill');
+    //        return false;
+    //    }
 
-        else {
+    //    else {
 
-            var currentvalue = $(this).attr('value');
+    //        var currentvalue = $(this).attr('value');
 
-            $(this).closest('tr').remove();
+    //        $(this).closest('tr').remove();
 
-        }
+    //    }
 
-    });
+    //});
 
-    $(document).on('click', '.delete-joinability', function (event) {
+    //$(document).on('click', '.delete-joinability', function (event) {
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
+
+    //        alert('Must have atleast one Row');
+    //        return false;
+    //    }
+
+    //    else {
+
+    //        var currentvalue = $(this).attr('value');
+
+    //        $(this).closest('tr').remove();
+
+    //    }
+
+    //});
+
+    //$(document).on('click', '.delete-skillgeneral', function (event) {
+
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
+
+    //        alert('Must have atleast one Row');
+    //        return false;
+    //    }
+
+    //    else {
+
+    //        var currentvalue = $(this).attr('value');
+
+    //        $(this).closest('tr').remove();
+
+    //    }
+
+    //});
+
+    //$(document).on('click', '.delete-client', function (event) {
+
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
+
+    //        alert('Must have atleast one Row');
+    //        return false;
+    //    }
+
+    //    else {
+    //        debugger;
+    //        var currentvalue = $(this).attr('value');
+    //        var closestRow = $(this).closest('tr');
+    //        $(this).closest('tr').remove();
+
+    //    }
+
+    //});
+
+
+    //DeleteRowClient
+
+    //function DeleteRowClient(element, collectionName) {
+    //    debugger;
+    //    if ($(element).parents('tbody').find('tr').length === 1) {
+
+    //        alert('Must have atleast one Row');
+    //        return false;
+    //    }
+
+    //    else {
+            
+    //        //var currentvalue = $(this).attr('value');
+    //        var closestRow = $(element).closest('tr');
+    //        var currentIndex = closestRow[0].sectionRowIndex;
+    //        var totalRows = $(element).parents('tbody').find('tr').length;
+    //        var maxIndex = totalRows - 1;
+    //        if (currentIndex == maxIndex) {
+    //            $(element).closest('tr').remove();
+    //        }
+    //        //ClientCollection_1__ClientRoleId
+    //        else {
+    //            $(element).closest('tr').remove();
+    //            var startIndex = currentIndex + 1;
+    //            var endIndex = maxIndex + 1;
+    //            for (i = startIndex; i < endIndex; i++) {
+    //                var elem1 = document.getElementById("ClientCollection_" + i + "__ClientUserId");
+    //                elem1.id = "ClientCollection_" + (i - 1) + "__ClientUserId";
+    //                //name="ClientCollection[3].ClientUserId"
+    //                elem1.name = "ClientCollection[" + (i - 1) + "].ClientUserId";
+    //                elem2 = document.getElementById("ClientCollection_" + i + "__ClientRoleId");
+    //                elem2.id = "ClientCollection_" + (i - 1) + "__ClientRoleId";
+    //                elem2.name = "ClientCollection[" + (i - 1) + "].ClientRoleId";
+                    
+    //            }
+
+    //        }
+
+
+            
+
+    //    }
+
+
+    //}
+
+
+
+    //$(document).on('click', '.delete-interviewer', function (event) {
+
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
+
+    //        alert('Must have atleast one Interviewers');
+    //        return false;
+    //    }
+
+    //    else {
+
+    //        var currentvalue = $(this).attr('value');
+
+    //        $(this).closest('tr').remove();
+
+    //    }
+
+    //});
+
+
+    function DeleteRow(element, collectionName, tdOne, tdTwo) {
+        
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
             return false;
@@ -1445,17 +1567,40 @@
 
         else {
 
-            var currentvalue = $(this).attr('value');
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-            $(this).closest('tr').remove();
+                }
+
+            }
 
         }
 
-    });
 
-    $(document).on('click', '.delete-skillgeneral', function (event) {
+    }
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+        
+        if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
             return false;
@@ -1463,102 +1608,100 @@
 
         else {
 
-            var currentvalue = $(this).attr('value');
+            //var currentvalue = $(this).attr('value');
+            var closestRow = $(element).closest('tr');
+            var currentIndex = closestRow[0].sectionRowIndex;
+            var totalRows = $(element).parents('tbody').find('tr').length;
+            var maxIndex = totalRows - 1;
+            if (currentIndex == maxIndex) {
+                $(element).closest('tr').remove();
+            }
+            //ClientCollection_1__ClientRoleId
+            else {
+                $(element).closest('tr').remove();
+                var startIndex = currentIndex + 1;
+                var endIndex = maxIndex + 1;
+                for (i = startIndex; i < endIndex; i++) {
+                    var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                    elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                    //name="ClientCollection[3].ClientUserId"
+                    elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+                    var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
 
-            $(this).closest('tr').remove();
+                    var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                    elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                    elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
 
-        }
+                    if (tdFour != '') {
+                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+                    }
+                    
 
-    });
+                }
 
-    $(document).on('click', '.delete-client', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Row');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
-
-        }
-
-    });
-
-    $(document).on('click', '.delete-interviewer', function (event) {
-
-        if ($(this).parents('tbody').find('tr').length === 1) {
-
-            alert('Must have atleast one Interviewers');
-            return false;
-        }
-
-        else {
-
-            var currentvalue = $(this).attr('value');
-
-            $(this).closest('tr').remove();
+            }
 
         }
 
-    });
 
-    $(document).on('click', '.delete-selectability', function (event) {
+    }
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    //$(document).on('click', '.delete-selectability', function (event) {
 
-            alert('Must have atleast one Selectability Criteria.');
-            return false;
-        }
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
 
-        else {
+    //        alert('Must have atleast one Selectability Criteria.');
+    //        return false;
+    //    }
 
-            var currentvalue = $(this).attr('value');
+    //    else {
 
-            $(this).closest('tr').remove();
+    //        var currentvalue = $(this).attr('value');
 
-        }
+    //        $(this).closest('tr').remove();
 
-    });
+    //    }
 
-    $(document).on('click', '.delete-qualityController', function (event) {
+    //});
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    //$(document).on('click', '.delete-qualityController', function (event) {
 
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
 
-        else {
+    //        alert('Must have atleast one Quality Controller');
+    //        return false;
+    //    }
 
-            var currentvalue = $(this).attr('value');
+    //    else {
 
-            $(this).closest('tr').remove();
+    //        var currentvalue = $(this).attr('value');
 
-        }
+    //        $(this).closest('tr').remove();
 
-    });
+    //    }
 
-    $(document).on('click', '.delete-controller', function (event) {
+    //});
 
-        if ($(this).parents('tbody').find('tr').length === 1) {
+    //$(document).on('click', '.delete-controller', function (event) {
 
-            alert('Must have atleast one Quality Controller');
-            return false;
-        }
+    //    if ($(this).parents('tbody').find('tr').length === 1) {
 
-        else {
+    //        alert('Must have atleast one Quality Controller');
+    //        return false;
+    //    }
 
-            var currentvalue = $(this).attr('value');
+    //    else {
 
-            $(this).closest('tr').remove();
+    //        var currentvalue = $(this).attr('value');
 
-        }
+    //        $(this).closest('tr').remove();
 
-    });
+    //    }
+
+    //});
 
 </script>
