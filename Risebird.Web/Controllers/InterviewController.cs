@@ -18,6 +18,7 @@ using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class InterviewController : Controller
     {
         private IMeetingService _meetingService;

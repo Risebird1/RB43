@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class IRFController : Controller
     {
         private IIRFRepository _irfRepository;
@@ -323,7 +324,7 @@ namespace Risebird.Web.Controllers
                         //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
                         {
-                            if (m.InterviewStatus.HasValue && m.InterviewStatus.Value == 2)
+                            if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                             {
                                 m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                             }
@@ -480,7 +481,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
-                    ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
+                    ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
                     ViewBag.QualityController = _irfService.GetQualityController();

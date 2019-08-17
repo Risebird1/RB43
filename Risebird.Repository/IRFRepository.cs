@@ -544,99 +544,129 @@ namespace Risebird.Repository
                 {
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
                        commandType: CommandType.StoredProcedure);
+
                     
-                    foreach (var item in irfDetails.Joinability)
+
+                    if (irfDetails.Joinability!=null)
                     {
-                        string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlJoinability, new
+                        foreach (var item in irfDetails.Joinability)
                         {
-                            IRFId = irfDetails.id,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+                            string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                            var affectedRows = con.ExecuteAsync(sqlJoinability, new
+                            {
+                                IRFId = irfDetails.id,
+                                LevelId = item.LevelId,
+                                Type = item.Type,
+                                Value = item.Value,
+                                Weightage = item.Weightage
+                            }).Result;
+                        }
                     }
 
-                    foreach (var item in irfDetails.Selectability)
+                    if (irfDetails.Selectability != null)
                     {
-                        string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSelectability, new
+                        foreach (var item in irfDetails.Selectability)
                         {
-                            IRFId = irfDetails.id,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+                            string sqlSelectability = "INSERT INTO TransSelectability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                            var affectedRows = con.ExecuteAsync(sqlSelectability, new
+                            {
+                                IRFId = irfDetails.id,
+                                LevelId = item.LevelId,
+                                Type = item.Type,
+                                Value = item.Value,
+                                Weightage = item.Weightage
+                            }).Result;
+                        }
                     }
-
-
                     //update general skill table
-                    foreach (var item in irfDetails.SkillGeneral)
-                    {
 
-                        string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
-                        var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+                    if (irfDetails.SkillGeneral != null)
+                    {
+                        foreach (var item in irfDetails.SkillGeneral)
                         {
-                            IRFId = irfDetails.id,
-                            LevelId = item.LevelId,
-                            Type = item.Type,
-                            Value = item.Value,
-                            Weightage = item.Weightage
-                        }).Result;
+
+                            string sqlSkillGeneral = "INSERT INTO TransSkillGeneral (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
+                            var affectedRows = con.ExecuteAsync(sqlSkillGeneral, new
+                            {
+                                IRFId = irfDetails.id,
+                                LevelId = item.LevelId,
+                                Type = item.Type,
+                                Value = item.Value,
+                                Weightage = item.Weightage
+                            }).Result;
+                        }
                     }
+
+
 
                     //update tech skill table
-                    foreach (var item in irfDetails.SkillCollection)
+                    if (irfDetails.SkillCollection != null)
                     {
-
-                        string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
-                        var affectedRows = con.Execute(sqlSkillTech, new
+                        foreach (var item in irfDetails.SkillCollection)
                         {
-                            IRFId = irfDetails.id,
-                            LevelId = item.LevelId,
-                            SkillId = item.SkillId,
-                            Weightage = item.Weightage
-                        });
+
+                            string sqlSkillTech = "INSERT INTO TransTechSkill (IRFId, LevelId, SkillId, Weightage) Values (@IRFId, @LevelId, @SkillId, @Weightage);";
+                            var affectedRows = con.Execute(sqlSkillTech, new
+                            {
+                                IRFId = irfDetails.id,
+                                LevelId = item.LevelId,
+                                SkillId = item.SkillId,
+                                Weightage = item.Weightage
+                            });
+                        }
                     }
+                   
+                    
 
                     //update trans interviewer table
-                    foreach (var item in irfDetails.InterviewerCollection)
-                    {
-                        DynamicParameters param = new DynamicParameters();
-                        param.Add("@irfIntId", irfDetails.id);
-                        param.Add("@InterviewerUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
-                                commandType: CommandType.StoredProcedure);
 
+                    if (irfDetails.InterviewerCollection != null)
+                    {
+                        foreach (var item in irfDetails.InterviewerCollection)
+                        {
+                            DynamicParameters param = new DynamicParameters();
+                            param.Add("@irfIntId", irfDetails.id);
+                            param.Add("@InterviewerUserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
+                                    commandType: CommandType.StoredProcedure);
+
+                        }
                     }
+                    
 
                     //update trans Client table
 
-                    foreach (var item in irfDetails.ClientCollection)
+                    if (irfDetails.ClientCollection != null)
                     {
-                        DynamicParameters param1 = new DynamicParameters();
-                        param1.Add("@irfIntId", irfDetails.id);
-                        param1.Add("@ClientUserId", item.ClientUserId);
-                        //param1.Add("@ClientRoleId", item.ClientRoleId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
-                                commandType: CommandType.StoredProcedure);
+                        foreach (var item in irfDetails.ClientCollection)
+                        {
+                            DynamicParameters param1 = new DynamicParameters();
+                            param1.Add("@irfIntId", irfDetails.id);
+                            param1.Add("@ClientUserId", item.ClientUserId);
+                            //param1.Add("@ClientRoleId", item.ClientRoleId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransClientUser", param1,
+                                    commandType: CommandType.StoredProcedure);
 
+                        }
                     }
+
+                    
 
                     //update trans QC table
 
-                    foreach (var item in irfDetails.QualityController)
+                    if (irfDetails.QualityController != null)
                     {
-                        DynamicParameters param2 = new DynamicParameters();
-                        param2.Add("@irfIntId", irfDetails.id);
-                        param2.Add("@QCUserId", item.UserId);
-                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
-                                commandType: CommandType.StoredProcedure);
+                        foreach (var item in irfDetails.QualityController)
+                        {
+                            DynamicParameters param2 = new DynamicParameters();
+                            param2.Add("@irfIntId", irfDetails.id);
+                            param2.Add("@QCUserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
+                                    commandType: CommandType.StoredProcedure);
 
+                        }
                     }
-
+                    
                     return true;
                 }
 
