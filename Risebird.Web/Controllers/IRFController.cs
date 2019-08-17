@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Risebird.Web.Controllers
 {
+    [Authorize]
     public class IRFController : Controller
     {
         private IIRFRepository _irfRepository;
@@ -323,7 +324,7 @@ namespace Risebird.Web.Controllers
                         //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
                         {
-                            if (m.InterviewStatus.HasValue && m.InterviewStatus.Value == 2)
+                            if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                             {
                                 m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                             }

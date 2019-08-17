@@ -1048,7 +1048,7 @@
         if (required <= value) {
             var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
             $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#E3E3E3");
+            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
 
         }
         else {
@@ -1183,7 +1183,7 @@
             if (reqLevel <= actLevel) {
                 reqWeight = $("#" + skillName + digit + "__WeightageRequired").val();
                 $("#" + skillName + digit + "__WeightageActual").val(reqWeight);
-                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#E3E3E3");
+                $("#" + skillName + digit + "__ActualLevelId").css("border-color", "#008000");
             }
             else {
                 $("#" + skillName + digit + "__WeightageActual").val("0");
