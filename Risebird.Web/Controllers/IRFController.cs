@@ -477,13 +477,18 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
+                    string skills = string.Empty;
+                    foreach (var item in model.SkillCollection)
+                    {
+                        skills = skills + "," + item.SkillId;
+                    }
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                    ViewBag.Interviewers = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
                     ViewBag.QualityController = _irfService.GetQualityController();
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
@@ -878,7 +883,7 @@ namespace Risebird.Web.Controllers
             var clientUsers = _irfService.GetClientUser(clientId);
             if (clientUsers!=null && clientUsers.Count() > 0)
             {
-                return new SelectList(clientUsers, "id", "FirstName");
+                return new SelectList(clientUsers, "id", "EmailId");
             }
             else
                 list.Add(new SelectListItem { Text = "No Client User", Value = "0" });
