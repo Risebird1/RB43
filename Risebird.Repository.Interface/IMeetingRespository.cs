@@ -40,6 +40,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<LevelTech> GetLevelTech();
         IEnumerable<string> GetIRFName(int id);
         bool GetIRFbyId(int irfId);
+        IEnumerable<IRF> GetIRFList();
+        IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }

@@ -58,6 +58,7 @@ namespace Risebird.Web.Controllers
                     if (TempData["SuccessErrorMessage"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                        TempData.Remove("SuccessErrorMessage");
                     }
                     //ViewBag.Message = "Failed";
                     return View(irfList);

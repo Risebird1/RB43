@@ -87,6 +87,36 @@ namespace Risebird.Business
             }
         }
 
+        public SelectList GetIRFList()
+        {
+            try
+            {
+                return new SelectList(_meetingRespository.GetIRFList(), "IRFId", "IRFId");
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<TransClientUser> GetClientsByRoles(string IRF)
+        {
+            try
+            {
+                
+                return _meetingRespository.GetClientsByRoles(IRF);
+                
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public bool UpdateMeeting(MeetingVM meetingToUpdate)
         {
             try

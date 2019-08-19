@@ -215,7 +215,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -393,6 +393,25 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransJoinability>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<IRF> GetIRFList()
+        {
+            try
+            {
+                var query = "Select * from IRF";
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query);
                     return results;
                 }
 
@@ -889,6 +908,26 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<TransClientUser> GetClientsByRoles(string IRF)
+        {
+            try
+            {
+                var query = "select UserList.EmailId, a.* from (select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)) as a inner join UserList on a.ClientUserId = UserList.id";//"select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";//"Select * from TransClientUser where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRF);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
 
         private DynamicParameters SetStoredProcedureParameterForComments(InterviewComments entity)
