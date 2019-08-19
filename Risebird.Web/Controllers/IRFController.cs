@@ -737,7 +737,7 @@ namespace Risebird.Web.Controllers
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
                         var noShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1).Count();
-                        var ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now).Count();
+                        var ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus =="1").Count();
                         var DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3).Count();
                         var CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4).Count();
                         ViewBag.IRF = irfId;

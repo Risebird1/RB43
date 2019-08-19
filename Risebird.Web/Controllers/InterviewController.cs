@@ -375,7 +375,9 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        return View(_meetingService.GetAllOpenInterviews(emailid));
+                        var meetings = _meetingService.GetAllOpenInterviews(emailid);
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        return View(meetings);
                     }
                     else
                     {
@@ -409,6 +411,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
