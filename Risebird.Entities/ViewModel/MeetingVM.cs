@@ -105,5 +105,9 @@ namespace Risebird.Entities.ViewModel
         public SelectList ConfirmationStatusList { get; set; }
         [Display(Name = "Interview Slot")]
         public SelectList InterviewSlotList { get; set; }
+        public SelectList IRFList { get; set; }
+        public SelectList ClientHrContactList { get; set; }
+        public SelectList StaffingAgencyList { get; set; }
+
     }
 }

@@ -148,7 +148,7 @@
                                 <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
-                               
+
                                 <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
                                     <i class="now-ui-icons fa fa-industry"></i>
                                 </button>
@@ -209,24 +209,19 @@
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-      
+
         function my_code() {
             var msg = '@ViewBag.Message';
 
 
 
             if (msg.includes("Success")) {
-                swal.fire({
-                    title: 'Succesful',
+                swal({
+                    title: 'Successful',
                     text: '@ViewBag.Message',
                     type: 'success',
                     showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-                    
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
+
                 },
                     function (value) //confirm
                     {
@@ -234,22 +229,17 @@
                         window.location.href = '/IRF/Index';
                     }
                 )
-  
+
             }
             else {
-                swal.fire({
+                swal({
                     title: 'Failed',
                     text: '@ViewBag.Message',
                     type: 'error',
                     showConfirmButton: true
-                    //allowOutsideClick: true,
-                    //confirmButtonText: "Ok",
-                    //closeOnConfirm: true
-                    
-                    //confirmButtonText: 'Ok',
-                    //allowOutsideClick: true
+
                 },
-                    function () 
+                    function ()
                     {
                         window.location.href = '/IRF/Index';
                     }
@@ -260,14 +250,14 @@
 
         window.onload = my_code();
     </script>
-    
+
 }
 
 
 
 <script type="text/javascript">
     function DeleteIRF(dataID) {
-        
+
         var IdIRF = dataID;
         swal.fire({
             title: 'Are you sure?',

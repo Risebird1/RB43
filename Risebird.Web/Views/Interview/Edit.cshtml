@@ -54,7 +54,8 @@
                                 <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "form-control", @onchange = "IRFChanged(this.value)" })
+                                        @*@Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -106,7 +107,9 @@
 
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "form-control" })
+
+                                        @*@Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -148,8 +151,9 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.staffingAgency, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownListFor(model => model.staffingAgency, Model.StaffingAgencyList, new { @class = "form-control" })
 
-                                        @Html.EditorFor(model => model.staffingAgency, new { htmlAttributes = new { @class = "form-control" } })
+                                        @*@Html.EditorFor(model => model.staffingAgency, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.staffingAgency, "", new { @class = "text-danger" })
 
                                     </div>
@@ -232,6 +236,86 @@
         left: 4px;
     }
 </style>
+
+<script>
+
+    function IRFChanged(val) {
+
+        debugger;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetClientsByRoles",
+            data: { 'val': val },
+            success: function (data) {
+
+                var drpdownClientHR = $("#ClientHrContact");
+                var drpdownStaffingAgency = $("#staffingAgency");
+                $("#ClientHrContact option").remove();
+                $("#staffingAgency option").remove();
+
+                //check if the data array contains atleast one of each roles
+                var arr = [];
+
+                for (i = 0; i < data.length; i++) {
+                    arr.push(data[i].value);
+                }
+                var CH = arr.indexOf("1");
+                var SA = arr.indexOf("4");
+
+                if (CH == (-1)) {
+                    var opt = $("<option />");
+
+                    //Set Text part.
+                    opt.html("No Client HR");
+
+                    //Set Value part.
+                    opt.val("");
+                    drpdownClientHR.append(opt);
+                }
+                if (SA == (-1)) {
+                    var optn = $("<option />");
+
+                    //Set Text part.
+                    optn.html("No Staffing Agency");
+
+                    //Set Value part.
+                    optn.val("");
+                    drpdownStaffingAgency.append(optn);
+                }
+
+                if (CH == (-1) && SA == (-1)) {
+                    return;
+                }
+                if (data.length > 0) {
+
+                    $(data).each(function () {
+                        var option = $("<option />");
+
+                        //Set Text part.
+                        option.html(this.text);
+
+                        //Set Value part.
+                        option.val(this.text);
+
+                        if (this.value != null && this.value == 1) {
+                            drpdownClientHR.append(option);
+                        }
+                        else if (this.value != null && this.value == 4) {
+                            drpdownStaffingAgency.append(option);
+                        }
+
+                    });
+
+
+                }
+
+
+            }
+        });
+
+    }
+</script>
 
 
 

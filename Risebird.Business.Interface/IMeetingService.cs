@@ -1,4 +1,5 @@
-﻿using Risebird.Entities.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,5 +25,7 @@ namespace Risebird.Business.Interface
         Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<bool> AddInterviewReport(InterviewReport reportModel);
         IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
+        SelectList GetIRFList();
+        IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
     }
 }

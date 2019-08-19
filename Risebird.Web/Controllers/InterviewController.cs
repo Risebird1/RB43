@@ -170,6 +170,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        var list = new List<SelectListItem>();
+                        list.Add(new SelectListItem { Text = "No Clients", Value = "" });
                         var model = new MeetingVM();
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
@@ -177,6 +179,27 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         model.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+                        model.IRFList = _meetingService.GetIRFList();
+                        var clients = _meetingService.GetClientsByRoles(model.IRFList.First().Text);
+                        if((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x=> x.ClientRoleId==1)).Count()==0)
+                        {
+                            model.ClientHrContactList = new SelectList(list, "Value", "Text");
+                        }
+                        else
+                        {
+                            model.ClientHrContactList = new SelectList(clients.Where(x => x.ClientRoleId == 1), "EmailId", "EmailId");
+
+                        }
+                        if ((clients.Where(x => x.ClientRoleId == 4) == null) || (clients.Where(x => x.ClientRoleId == 4)).Count() == 0)
+                        {
+                            model.StaffingAgencyList = new SelectList(list, "Value", "Text");
+                        }
+                        else
+                        {
+                            model.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
+
+                        }
+
                         return View(model);
                     }
                     else
@@ -208,6 +231,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        var list = new List<SelectListItem>();
+                        list.Add(new SelectListItem { Text = "No Clients", Value = "" });
                         MeetingVM meetingToUpdate = _meetingService.GetMeeting(id);
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
@@ -215,6 +240,26 @@ namespace Risebird.Web.Controllers
                         var interviewslotList = from InterviewSlots s in Enum.GetValues(typeof(InterviewSlots))
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
+                        meetingToUpdate.IRFList = _meetingService.GetIRFList();
+                        var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFList.First().Text);
+                        if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
+                        {
+                            meetingToUpdate.ClientHrContactList = new SelectList(list, "Value", "Text");
+                        }
+                        else
+                        {
+                            meetingToUpdate.ClientHrContactList = new SelectList(clients.Where(x => x.ClientRoleId == 1), "EmailId", "EmailId");
+
+                        }
+                        if ((clients.Where(x => x.ClientRoleId == 4) == null) || (clients.Where(x => x.ClientRoleId == 4)).Count() == 0)
+                        {
+                            meetingToUpdate.StaffingAgencyList = new SelectList(list, "Value", "Text");
+                        }
+                        else
+                        {
+                            meetingToUpdate.StaffingAgencyList = new SelectList(clients.Where(x => x.ClientRoleId == 4), "EmailId", "EmailId");
+
+                        }
                         if (meetingToUpdate != null)
                         {
                             TempData["ResumeLink"] = meetingToUpdate.resumeLink;
@@ -969,6 +1014,24 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessage"] = "Questions were not saved";
                 return RedirectToAction("MyInterview");
             }
+        }
+
+        //GetClientsByRoles
+        public SelectList GetClientsByRoles(string val)
+        {
+            var list = new List<SelectListItem>();
+            var clients = _meetingService.GetClientsByRoles(val);
+            if (clients != null && clients.Count() > 0)
+            {
+                return new SelectList(_meetingService.GetClientsByRoles(val), "ClientRoleId", "EmailId");
+            }
+            else
+            {
+                list.Add(new SelectListItem { Text = "No Clients", Value = "" });
+                return new SelectList(list, "Value", "Text");
+            }
+                
+
         }
     }
 
