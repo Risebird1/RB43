@@ -239,9 +239,10 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
+                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
-                            mailMessage.To.Add(new MailAddress(reader.GetString(0), null));
+                            mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
                         }
                         mailMessage.Subject = "New Interview has been scheduled on date: " + interviewDate;
 
