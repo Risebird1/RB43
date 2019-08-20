@@ -81,6 +81,9 @@ namespace Risebird.Entities.ViewModel
         public string fraudSyncComment { get; set; }
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
+        [Display(Name = "Mobile Number")]
+        [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
+        public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }
         [Display(Name = "Upload Resume")]
         public IFormFile File { get; set; }
