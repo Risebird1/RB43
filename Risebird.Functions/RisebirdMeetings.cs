@@ -26,7 +26,7 @@ namespace Risebird.Functions
             log.Info("C# HTTP trigger function processed a request.");
 
             string jsonContent = await req.Content.ReadAsStringAsync();
-            //log.Info(jsonContent);
+            log.Info(jsonContent);
             //string jsonString = File.ReadAllText(@"c:\prem\json.txt", Encoding.UTF8);
             dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonContent);
             //dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
@@ -128,7 +128,7 @@ namespace Risebird.Functions
                                 foreach (var questions in ((JProperty)mainFamilies1).First.Children())
                                 {
                                     if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Your Resume Link"))
+                                        .Contains("Resume Link"))
                                     {
                                         resumeLink = ((JContainer)questions)["answer"].ToString();
                                     }
