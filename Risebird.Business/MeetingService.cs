@@ -32,7 +32,8 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                
+                return _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {

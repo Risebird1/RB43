@@ -7,7 +7,7 @@ namespace Risebird.Entities.Data
         public int id { get; set; }
         public string clientName { get; set; }
         public string JobRole { get; set; }
-        public string interviewDate { get; set; }
+        public DateTime interviewDate { get; set; }
         public string interviewSlot { get; set; }
         public string interviewDuration { get; set; }
         public string primaryskill { get; set; }

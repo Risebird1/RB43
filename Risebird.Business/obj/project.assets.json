@@ -12365,11 +12365,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj",
       "projectName": "Risebird.Business",
-      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj",
+      "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -12388,14 +12388,14 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             }
           }
         }
