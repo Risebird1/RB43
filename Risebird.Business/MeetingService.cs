@@ -383,6 +383,7 @@ namespace Risebird.Business
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
+                    model.IsEdited = false;
                     return model;
                 }
             }

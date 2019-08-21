@@ -12,7 +12,7 @@
             <div class="navbar-wrapper">
 
                 <a class="navbar-brand breadcrumscolor" href="/Client/List">Client</a>
-                <a class="navbar-brand">Add</a>
+                <a class="navbar-brand">Add Client</a>
             </div>
         </div>
     </nav>
@@ -53,10 +53,14 @@
 
                                     <div class="form-group col-sm-12">
                                         <div class="pull-right">
-                                            <input type="submit" id="btnUpload" value="Add Client" class="btn btn btn-primary" />
+                                            <input type="submit" id="btnUpload" value="Submit" class="btn btn btn-primary" />
+
+                                            @*<input type="submit" id="btnUpload" value="Add Client" class="btn btn btn-primary" />*@
                                         </div>
                                         <div>
-                                            @Html.ActionLink("Back to List", "List", "Client", new { @class = "btn btn-link" })
+                                            @Html.ActionLink("Back to List", "List", "Client", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                                            @*@Html.ActionLink("Back to List", "List", "Client", new { @class = "btn btn-link" })*@
                                         </div>
                                     </div>
                                 </div>

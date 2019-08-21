@@ -11,8 +11,8 @@
         <div class="container-fluid">
             <div class="navbar-wrapper">
 
-                <a class="navbar-brand breadcrumscolor" href="/User/Interviewers">Interviewers</a>
-                <a class="navbar-brand">Update</a>
+                <a class="navbar-brand breadcrumscolor" href="/User/QCInterviewers">QCInterviewers</a>
+                <a class="navbar-brand">Update QCInterviewers</a>
             </div>
         </div>
     </nav>
@@ -118,12 +118,18 @@
                             </div>
                         </div>
                         <div class="row">
+
                             <div class="form-group col-sm-12">
                                 <div class="pull-right">
-                                    <input type="submit" id="btnUpload" value="Update QCInterviewer" class="btn btn btn-primary" />
+                                    <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary" />
+
+                                    @*<input type="submit" id="btnUpload" value="Update QCInterviewer" class="btn btn btn-primary" />*@
                                 </div>
                                 <div>
-                                    @Html.ActionLink("Back to List", "QCInterviewers", "User", new { @class = "btn btn-fill btn-label", @role = "button" })
+                                    @Html.ActionLink("Back to List", "QCInterviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+
+                                    @*@Html.ActionLink("Back to List", "QCInterviewers", "User", new { @class = "btn btn-fill btn-label", @role = "button" })*@
                                 </div>
                             </div>
                         </div>

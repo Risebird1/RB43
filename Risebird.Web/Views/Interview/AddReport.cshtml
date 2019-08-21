@@ -913,8 +913,19 @@
                                         <div class="col-md-9">
                                             @if (!Model.IsClientUser)
                                             {
+
                                                 @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                if (Model.IsEdited)
+                                                {
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                                }
+
+
+
                                             }
                                         </div>
                                     </div>
