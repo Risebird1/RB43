@@ -43,24 +43,9 @@
                             <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        @*<h5 class="card-category">Simple with gradient</h5>*@
                                         <h4 class="card-title">Meetings status Report</h4>
-                                        @*<div class="dropdown">
-                                                <button type="button" class="btn btn-round dropdown-toggle btn-outline-default btn-icon no-caret" data-toggle="dropdown">
-                                                    <i class="now-ui-icons loader_gear"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-                                                    <a class="dropdown-item text-danger" href="#">Remove Data</a>
-                                                </div>
-                                            </div>*@
                                     </div>
                                     <div class="card-body">
-                                        @*<div class="chart-area">
-
-                                            </div>*@
                                         <canvas id="myChart"></canvas>
                                     </div>
                                     <div class="card-footer">
@@ -73,24 +58,9 @@
                             <div class="col-md-5 mr-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        @*<h5 class="card-category">With numbers and grid</h5>*@
                                         <h4 class="card-title">Interview Status Report</h4>
-                                        @*<div class="dropdown">
-                                                <button type="button" class="btn btn-round dropdown-toggle btn-outline-default btn-icon no-caret" data-toggle="dropdown">
-                                                    <i class="now-ui-icons loader_gear"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-                                                    <a class="dropdown-item text-danger" href="#">Remove Data</a>
-                                                </div>
-                                            </div>*@
                                     </div>
                                     <div class="card-body">
-                                        @*<div class="chart-area">
-                                                <canvas id="lineChartExampleWithNumbersAndGrid"></canvas>
-                                            </div>*@
                                         <canvas id="myChartselected"></canvas>
                                     </div>
                                     <div class="card-footer">
@@ -100,45 +70,23 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-10 mr-auto" style="margin-left: auto;">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">HR staffing status Report</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="ctx" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        @*<div class="row">
-                                <div class="col-md-5 ml-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h5 class="card-category">Simple with grids and numbers</h5>
-                                            <h4 class="card-title">Bar Chart</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-area">
-                                                <canvas id="barChartSimpleGradientsNumbers"></canvas>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="stats">
-                                                <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-5 mr-auto">
-                                    <div class="card card-chart">
-                                        <div class="card-header">
-                                            <h5 class="card-category">Multiple bars no gradient</h5>
-                                            <h4 class="card-title">Bar Chart 2</h4>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="chart-area">
-                                                <canvas id="barChartMultipleBarsNoGradient"></canvas>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="stats">
-                                                <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>*@
+                       
                     </div>
 
                 </div>
@@ -253,6 +201,82 @@
             });
         }
     });
+
+
+
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
+            // create 12 datasets, since we have 12 items
+            // data[0] = labels[0] (data for first bar - 'Standing costs') | data[1] = labels[1] (data for second bar - 'Running costs')
+            // put 0, if there is no data for the particular bar
+            datasets: [{
+                label: 'Washing and cleaning',
+                data: [0, 8],
+                backgroundColor: '#22aa99'
+            }, {
+                label: 'Traffic tickets',
+                data: [0, 2],
+                backgroundColor: '#994499'
+            }, {
+                label: 'Tolls',
+                data: [0, 1],
+                backgroundColor: '#316395'
+            }, {
+                label: 'Parking',
+                data: [5, 2],
+                backgroundColor: '#b82e2e'
+            }, {
+                label: 'Car tax',
+                data: [0, 1],
+                backgroundColor: '#66aa00'
+            }, {
+                label: 'Repairs and improvements',
+                data: [0, 2],
+                backgroundColor: '#dd4477'
+            }, {
+                label: 'Maintenance',
+                data: [6, 1],
+                backgroundColor: '#0099c6'
+            }, {
+                label: 'Inspection',
+                data: [0, 2],
+                backgroundColor: '#990099'
+            }, {
+                label: 'Loan interest',
+                data: [0, 3],
+                backgroundColor: '#109618'
+            }, {
+                label: 'Depreciation of the vehicle',
+                data: [0, 2],
+                backgroundColor: '#109618'
+            }, {
+                label: 'Fuel',
+                data: [0, 1],
+                backgroundColor: '#dc3912'
+            }, {
+                label: 'Insurance and Breakdown cover',
+                data: [4, 0],
+                backgroundColor: '#3366cc'
+            }]
+        },
+        options: {
+            responsive: false,
+            legend: {
+                position: 'right' // place legend on the right side of chart
+            },
+            scales: {
+                xAxes: [{
+                    stacked: true // this should be set to make the bars stacked
+                }],
+                yAxes: [{
+                    stacked: true // this also..
+                }]
+            }
+        }
+    });
+
 
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
