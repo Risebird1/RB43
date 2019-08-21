@@ -230,8 +230,9 @@
                                     <div class="col-md-6 col-sm-6 px-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-                                            @Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })
+                                            @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
                                             @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -456,7 +457,7 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.TextBoxFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line" })
+                                            @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                         </div>
 
 
@@ -530,7 +531,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextBoxFor(m => m.SkillGeneralComments, new { @class = "form-control text-box single-line" })
+                                                @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                             </div>
 
 
@@ -604,7 +605,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextBoxFor(m => m.JoinabilityComments, new { @class = "form-control text-box single-line" })
+                                                @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                             </div>
 
 
@@ -679,7 +680,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextBoxFor(m => m.SelectabilityComments, new { @class = "form-control text-box single-line" })
+                                                @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                             </div>
 
 
