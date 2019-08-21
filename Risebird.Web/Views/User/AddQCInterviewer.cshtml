@@ -99,7 +99,7 @@
                                     @*<div class="form-group">*@
                                     @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
                                     <div class="col-md-6">
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
                                     @*</div>*@                                    
                                 </div>
