@@ -19,20 +19,22 @@ namespace Risebird.Business
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
+        private IIRFRepository _irfRepository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfFService;
             _notificationHelper = notificationHelper;
+            _irfRepository = irfRepository;
         }
 
         public List<Meeting> GetMeetingList()
         {
             try
             {
-                
+
                 return _meetingRespository.GetAllInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
@@ -106,9 +108,9 @@ namespace Risebird.Business
         {
             try
             {
-                
+
                 return _meetingRespository.GetClientsByRoles(IRF);
-                
+
             }
 
             catch (Exception e)
@@ -208,12 +210,24 @@ namespace Risebird.Business
             }
         }
 
-        public bool UnassignYourself(int meetingid)
+        public bool UnassignYourself(int meetingid, string email)
         {
             try
             {
-                return _meetingRespository.UnassignYourself(meetingid).Result;
+                var meeting = _meetingRespository.GetInterviewMeetingById(meetingid);
 
+                if (meeting != null && meeting.Result != null)
+                {
+                    _meetingRespository.UnassignYourself(meetingid);
+                    var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                    if (interviwers != null)
+                    {
+                        interviwers.Remove(email);
+                        _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
+                        return true;
+                    }
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -280,7 +294,7 @@ namespace Risebird.Business
             {
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
-                if(!check)
+                if (!check)
                 {
                     return null;
                 }
@@ -419,7 +433,22 @@ namespace Risebird.Business
         {
             try
             {
-                return _meetingRespository.AddInterviewReport(reportModel).Result;
+                await _meetingRespository.AddInterviewReport(reportModel);
+                if(reportModel.InterviewStatus.HasValue)
+                {
+                   // if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
+                    {
+                        var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
+                        var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
+
+                        var interviewDate = reportModel.interviewDate;
+                        var candidateName = reportModel.CandidateName;
+                        var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
+                        _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, IRFID, candidateName, intervieweStatusStatDesc);
+                    }                    
+                }
+                
+                return true;
             }
 
             catch (Exception e)

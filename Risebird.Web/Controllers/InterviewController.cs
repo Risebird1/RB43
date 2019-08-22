@@ -716,10 +716,12 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (_meetingService.UnassignYourself(id))
+                        if (_meetingService.UnassignYourself(id, email))
                         {
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
