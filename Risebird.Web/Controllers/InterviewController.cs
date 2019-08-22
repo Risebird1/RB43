@@ -241,7 +241,7 @@ namespace Risebird.Web.Controllers
                                                 select new { ID = (int)s, Name = s.GetDescription() };
                         meetingToUpdate.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         meetingToUpdate.IRFList = _meetingService.GetIRFList();
-                        var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFList.First().Text);
+                        var clients = _meetingService.GetClientsByRoles(meetingToUpdate.IRFId);
                         if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
                         {
                             meetingToUpdate.ClientHrContactList = new SelectList(list, "Value", "Text");
