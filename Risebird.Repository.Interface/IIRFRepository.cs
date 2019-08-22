@@ -42,6 +42,7 @@ namespace Risebird.Repository.Interface
         IRF EditIRF(int irfId);
         IEnumerable<Users> GetClientUser(int id);
         string GetClientUserRole(int userId);
+        string GetIRFNameBasedOnId(int irfID);
 
     }
 }

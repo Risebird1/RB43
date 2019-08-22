@@ -1104,5 +1104,25 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public string GetIRFNameBasedOnId(int irfID)
+        {
+            try
+            {
+                var query = "Select IRFId from IRF where id = @irfID";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfID", irfID);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 }
