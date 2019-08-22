@@ -408,7 +408,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select * from IRF";
+                var query = "Select * from IRF where IsDeleted= 0";
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

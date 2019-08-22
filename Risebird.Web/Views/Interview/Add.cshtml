@@ -5,6 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -25,7 +29,7 @@
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
             </button>
-            
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -99,7 +103,7 @@
                                 <div class="col-lg-4  col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientHrContact, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "form-control"})
+                                        @Html.DropDownListFor(model => model.ClientHrContact, Model.ClientHrContactList, new { @class = "form-control" })
 
                                         @*@Html.EditorFor(model => model.ClientHrContact, new { htmlAttributes = new { @class = "form-control" } })*@
                                         @Html.ValidationMessageFor(model => model.ClientHrContact, "", new { @class = "text-danger" })
@@ -130,7 +134,7 @@
                                     <div class="">
                                         @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept=".doc, .docx, .pdf, .txt" })
+                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                     </div>
                                 </div>
@@ -244,7 +248,7 @@
                 $("#ClientHrContact option").remove();
                 $("#staffingAgency option").remove();
 
-                //check if the data array contains atleast one of each roles                
+                //check if the data array contains atleast one of each roles
                 var arr = [];
 
                 for (i = 0; i < data.length; i++) {
@@ -254,7 +258,7 @@
                 var SA = arr.indexOf("4");
 
                 if (CH == (-1)) {
-                    var opt= $("<option />");
+                    var opt = $("<option />");
 
                     //Set Text part.
                     opt.html("No Client HR");
@@ -294,10 +298,10 @@
                         else if (this.value != null && this.value == 4) {
                             drpdownStaffingAgency.append(option);
                         }
-                        
+
                     });
 
-                   
+
                 }
 
 

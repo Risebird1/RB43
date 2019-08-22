@@ -129,9 +129,9 @@
                                         @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control" })
 
                                         @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
-                                                <option value="Product">Product</option>
-                                                <option value="Service">Service</option>
-                                            </select>*@
+                        <option value="Product">Product</option>
+                        <option value="Service">Service</option>
+                    </select>*@
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -153,12 +153,12 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                         @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                        <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck"  style="display:none;"></span>
+                                        <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></span>
                                         @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.EndDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line",@Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
+                                        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.EndDate.ToString("dd/MM/yyyy"), @onblur = "checkEndDate(this.value)" } })
                                         <span class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="endDateCheck" style="display:none;"></span>
                                         @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
                                     </div>
@@ -296,11 +296,11 @@
                                                         <td>
                                                             @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
                                                             @*<select class="form-control" id="@("Joinability_"+i+"__Type")" name="Joinability[@i].Type">
-                                <option value="Job Location">Job Location</option>
-                                <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
-                                <option value="Approved Visa Type">Approved Visa Type</option>
-                                <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                            </select>*@
+                                            <option value="Job Location">Job Location</option>
+                                            <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
+                                            <option value="Approved Visa Type">Approved Visa Type</option>
+                                            <option value="Max Notice period (Days)">Max Notice period (Days)</option>
+                                        </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -314,12 +314,12 @@
                                                         </td>
                                                         <td>
                                                             @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                <span class="glyphicon glyphicon-plus"></span>
-                            </a>
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
 
-                            <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                <span class="glyphicon glyphicon-trash"></span>
-                            </a>*@
+                                        <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
                                                             <div class="form-control">
                                                                 <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
@@ -374,14 +374,14 @@
 
 
                                                             @*<select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
-                                <option value="Technology Stack">Technology Stack</option>
-                                <option value="Career Progression">Career Progression</option>
-                                <option value="Industry">Industry</option>
-                                <option value="Domain">Domain</option>
-                                <option value="Project">Project</option>
-                                <option value="Previous Employers">Previous Employers</option>
-                                <option value="Academics">Academics</option>
-                            </select>*@
+                                            <option value="Technology Stack">Technology Stack</option>
+                                            <option value="Career Progression">Career Progression</option>
+                                            <option value="Industry">Industry</option>
+                                            <option value="Domain">Domain</option>
+                                            <option value="Project">Project</option>
+                                            <option value="Previous Employers">Previous Employers</option>
+                                            <option value="Academics">Academics</option>
+                                        </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -441,10 +441,10 @@
 
 
                                                             @*<select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
-                                <option value="Logical">Logical</option>
-                                <option value="Analytical">Analytical</option>
-                                <option value="Communication">Communication</option>
-                            </select>*@
+                                            <option value="Logical">Logical</option>
+                                            <option value="Analytical">Analytical</option>
+                                            <option value="Communication">Communication</option>
+                                        </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -494,7 +494,7 @@
                                             </thead>
                                             <tbody>
 
-                                                
+
 
                                                 @for (int i = 0; i < Model.ClientCollection.Count(); i++)
                                                 {
@@ -617,6 +617,12 @@
                                     </div>
                                 </div><!--end of col-md-12-->
                             </div>
+
+                            <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
+                            <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
+                            <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
+                            <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:red; margin-left:415px"></label>
+
                             <div class="card-footer ">
                                 <div class="row">
                                     <label class="col-md-2"></label>
@@ -689,10 +695,22 @@
                 inCorrectCount = inCorrectCount + 1;
                 // Label should be populated here
                 document.getElementById(skillArray[i] + "_WeightageError").innerHTML = "Weightage total should be equal to 100.";
+                if (skillArray[i] == "SkillCollection") {
+                    var labelName = "Tech Skills";
+                }
+                else if (skillArray[i] == "SkillGeneral") {
+                    var labelName = "General Skills";
+                }
+                else {
+                    var labelName = skillArray[i];
+                }
+                document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "Weightage total for " + labelName + " should be equal to 100.";
 
             }
             else {
                 document.getElementById(skillArray[i] + "_WeightageError").innerHTML = "";
+                document.getElementById(skillArray[i] + "_WeightageErrorDown").innerHTML = "";
+
             }
 
         }

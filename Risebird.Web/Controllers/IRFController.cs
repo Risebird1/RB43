@@ -891,5 +891,154 @@ namespace Risebird.Web.Controllers
                 //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
                 return new SelectList(list, "Value", "Text");
         }
+
+
+        //NewChartClientsData
+        [Authorize]
+        [HttpGet]
+        public IActionResult NewChartClientHRData()
+        {
+            try
+            {
+                string id = TempData.Peek("id").ToString();
+                string irfId = TempData.Peek("irfId").ToString();
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+                        var clientHRList = new List<string>();
+                        var chartHRData = new List<ClientChartData>();
+                        var clientUserList = _irfRepository.GetTransClientUser(Convert.ToInt16(id));
+                        foreach (var item in clientUserList)
+                        {
+                            if (item.ClientRoleId == 1)
+                            {
+                                clientHRList.Add(item.EmailId);
+                            }
+                         
+                        }
+                        foreach (var item in clientHRList)
+                        {
+                            var obj = new ClientChartData();
+                            obj.Name = item;
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.ClientHrContact == item).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.ClientHrContact == item).Count(); ;
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.ClientHrContact == item).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.ClientHrContact == item).Count();
+                            chartHRData.Add(obj);
+                            //check for this if condition
+                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
+                            //{
+                                
+                            //}
+                            
+                        }
+                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
+                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
+                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
+                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
+
+
+
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+                        return Json(chartHRData);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult NewChartStaffingData()
+        {
+            try
+            {
+                string id = TempData.Peek("id").ToString();
+                string irfId = TempData.Peek("irfId").ToString();
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+                        var staffingAgencyList = new List<string>();
+                        var chartData = new List<ClientChartData>();
+                        var clientUserList = _irfRepository.GetTransClientUser(Convert.ToInt16(id));
+                        foreach (var item in clientUserList)
+                        {
+                            if (item.ClientRoleId == 4)
+                            {
+                                staffingAgencyList.Add(item.EmailId);
+                            }
+                           
+                        }
+                        foreach (var item in staffingAgencyList)
+                        {
+                            var obj = new ClientChartData();
+                            obj.Name = item;
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.staffingAgency == item).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.staffingAgency == item).Count(); ;
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.staffingAgency == item).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.staffingAgency == item).Count();
+                            chartData.Add(obj);
+                            //check for this if condition
+                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
+                            //{
+
+                            //}
+                        }
+                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
+                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
+                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
+                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
+
+
+
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+
+                        return Json(chartData);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
