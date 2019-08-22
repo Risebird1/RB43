@@ -927,10 +927,10 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartData();
                             obj.Name = item;
-                            obj.NoShowCount = 4;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.ClientHrContact == item).Count();
-                            obj.ScheduledCount = 6;//meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.ClientHrContact == item).Count(); ;
-                            obj.CompletedCount = 7;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.ClientHrContact == item).Count();
-                            obj.DroppedCount = 11;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.ClientHrContact == item).Count();
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.ClientHrContact == item).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.ClientHrContact == item).Count(); ;
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.ClientHrContact == item).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.ClientHrContact == item).Count();
                             chartHRData.Add(obj);
                             //check for this if condition
                             //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
@@ -1001,10 +1001,10 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartData();
                             obj.Name = item;
-                            obj.NoShowCount = 21;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.staffingAgency == item).Count();
-                            obj.ScheduledCount = 11;//meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.staffingAgency == item).Count(); ;
-                            obj.CompletedCount = 12;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.staffingAgency == item).Count();
-                            obj.DroppedCount = 14;//meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.staffingAgency == item).Count();
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && x.staffingAgency == item).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && x.staffingAgency == item).Count(); ;
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && x.staffingAgency == item).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && x.staffingAgency == item).Count();
                             chartData.Add(obj);
                             //check for this if condition
                             //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
