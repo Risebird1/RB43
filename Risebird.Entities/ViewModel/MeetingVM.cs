@@ -41,6 +41,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientHrContact { get; set; }
 
         [Display(Name = "Current Employer")]
+        [Required(ErrorMessage = "Please enter Current Employer.")]
         public string currentEmployerName { get; set; }
 
         [Display(Name = "Current Renumeration")]
@@ -59,6 +60,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
+        [Required(ErrorMessage = "Please enter Interviewer.")]
         public string interviewer { get; set; }
         [Display(Name = "Preferred Location")]
         [Required(ErrorMessage = "Please enter Preffered Location.")]
@@ -83,6 +85,7 @@ namespace Risebird.Entities.ViewModel
         public string trainableComment { get; set; }
         [Display(Name = "Mobile Number")]
         [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
+        [Required(ErrorMessage = "Please enter a valid Mobile Number.")]
         public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }
         [Display(Name = "Upload Resume")]
