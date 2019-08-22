@@ -60,7 +60,6 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Risebird HR Email Id.")]
         public string risebirdHR { get; set; }
         [Display(Name = "Interviewer")]
-        [Required(ErrorMessage = "Please enter Interviewer.")]
         public string interviewer { get; set; }
         [Display(Name = "Preferred Location")]
         [Required(ErrorMessage = "Please enter Preffered Location.")]
