@@ -40,7 +40,7 @@ namespace Risebird.Entities.ViewModel
         public string IRFID { get; set; }
         public string PreferredLocation { get; set; }
         public string ExpectedPerHourRate { get; set; }
-        public string staffingAgenecy { get; set; }
+        public string staffingAgency { get; set; }
         public string joiningTime { get; set; }
         public int irfIntId { get; set; }
         public int? L2InterviewStatus { get; set; }
