@@ -58,15 +58,52 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+
+        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string IRFId,string candidateName, string interviewStatus)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var clientUser in clientUsers)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId, null));
+                }
+                object[] parameters = new object[] { meetingDate, candidateName, IRFId , interviewStatus };
+                mailMessage.Subject = candidateName+" Interview Completion Alert";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientMailTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+
+
+
+
         public string SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate)
         {
             try
             {                
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");               
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 foreach (var mails in interviwers)
                 {
-                    mailMessage.To.Add(new MailAddress(mails, null));
+                    mailMessage.Bcc.Add(new MailAddress(mails, null));
                 }
                 object[] parameters = new object[] { meetingDate };
                 mailMessage.Subject = "New Interview has been scheduled on date: "+ meetingDate;

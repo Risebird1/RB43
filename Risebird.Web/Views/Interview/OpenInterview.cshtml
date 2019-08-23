@@ -54,7 +54,7 @@
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>         
+            </button>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -104,42 +104,42 @@
                                     <tbody>
                                         @foreach (var item in Model)
                                         {
-                                        <tr id=@item.id>
-                                            <td> @item.interviewDate </td>
-                                            <td> @item.interviewSlot </td>
-                                            <td> @item.interviewDuration </td>
-                                            <td> @item.candidateName</td>
-                                            @if (item.resumeLink != null && item.resumeLink != "")
-                                            {
-                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                            }
-                                            else
-                                            {
-                                                <td>No Resume</td>
-                                            }
-                                            @if (item.JDLink != null && item.JDLink != "")
-                                            {
-                                                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                            }
-                                            else
-                                            {
-                                                <td>No JD</td>
-                                            }
-                                            
-                                            <td> @item.risebirdHR</td>
-                                            <td class="text-right">
-                                                <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                            </td>
-                                        </tr>
+                                            <tr id=@item.id>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.interviewSlot </td>
+                                                <td> @item.interviewDuration </td>
+                                                <td> @item.candidateName</td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.JDLink != null && item.JDLink != "")
+                                                {
+                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No JD</td>
+                                                }
+
+                                                <td> @item.risebirdHR</td>
+                                                <td class="text-right">
+                                                    <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                </td>
+                                            </tr>
                                         }
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                         </div>
                     </div>
-                        <!-- end content-->
-                    </div>
+                    <!-- end content-->
+                </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
@@ -177,7 +177,59 @@
     </footer>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Interview/OpenInterview';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Interview/OpenInterview';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
 
 
 <script type="text/javascript">
@@ -222,12 +274,12 @@
             $("#OpeninterviewList").show();
         }, 2000);
     };
-        //// script for loader ends here
+    //// script for loader ends here
 </script>
 
 
 
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+@*@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
@@ -252,5 +304,5 @@
             });
         };
     </script>
-}
+}*@
 <!-- PAGE CONTENT WRAPPER -->

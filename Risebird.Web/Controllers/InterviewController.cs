@@ -377,6 +377,12 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = _meetingService.GetAllOpenInterviews(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
                         return View(meetings);
                     }
                     else
@@ -685,6 +691,7 @@ namespace Risebird.Web.Controllers
                         profileName == "Quality Controller")
                     {
                         var result = _meetingService.AssignYourself(model.id, model.Interviewer);
+                        TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
                     }
@@ -716,10 +723,12 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (_meetingService.UnassignYourself(id))
+                        if (_meetingService.UnassignYourself(id, email))
                         {
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });

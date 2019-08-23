@@ -240,7 +240,7 @@
     };
     //// script for loader ends here
 </script>
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+@*@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
 {
     <script type="text/javascript">
         window.onload = function ()
@@ -265,27 +265,81 @@
             });
         };
     </script>
-}
+}*@
 
 
 
 <script type="text/javascript">
     function UnAssignInterviewer(meetingId) {
 
-        var confirmMessageBox = confirm('Are you sure you wish to Unassign?');
-        if (confirmMessageBox) {
-            if (meetingId != '') {
-                $.ajax({
-                    url: '/Interview/UnassignYourself',
-                    data: { 'id': meetingId },
-                    type: 'get',
-                    success: function (data) {
-                        window.location = data.url;
-                    }
-                });
+        //var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The Interview will be unassigned!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, unassign me!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/Interview/UnassignYourself?id=' + meetingId,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Unassigned!',
+                    type: 'success',
+                    html: '<p>You have been unassigned.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Interview/MyInterview";
+                })
             }
-        }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your were not unassigned :)',
+                    'error'
+                )
+            }
+        })
     }
+
+
+
+    //function UnAssignInterviewer(meetingId) {
+
+    //    var confirmMessageBox = confirm('Are you sure you wish to Unassign?');
+    //    if (confirmMessageBox) {
+    //        if (meetingId != '') {
+    //            $.ajax({
+    //                url: '/Interview/UnassignYourself',
+    //                data: { 'id': meetingId },
+    //                type: 'get',
+    //                success: function (data) {
+    //                    window.location = data.url;
+    //                }
+    //            });
+    //        }
+    //    }
+    //}
 
 </script>
 

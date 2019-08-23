@@ -71,10 +71,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-10 mr-auto" style="margin-left: auto; display: none">
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Client HR status Report</h4>
+                                        <h4 class="card-title">HR Staffing Meeting status Report</h4>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
@@ -86,13 +86,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-10 mr-auto" style="margin-left: auto; display: none">
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Staffing Agency status Report</h4>
+                                        <h4 class="card-title">HR Staffing Interview status Report</h4>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="clientIndivStaffing" style="display: block;height: 350px;width: 100%;"></canvas>
+                                        <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
@@ -145,7 +145,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-            
+           
             var aData = chData;
             var aLabels = aData[0];
             var aDatasets1 = aData[1];
@@ -217,85 +217,9 @@
             });
         }
     });
-
-
-
-    //var chart = new Chart(clientIndiv, {
-    //    type: 'bar',
-    //    data: {
-    //        labels: ['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
-    //        // create 12 datasets, since we have 12 items
-    //        // data[0] = labels[0] (data for first bar - 'Standing costs') | data[1] = labels[1] (data for second bar - 'Running costs')
-    //        // put 0, if there is no data for the particular bar
-    //        datasets: [{
-    //            label: 'Washing and cleaning',
-    //            data: [0, 8],
-    //            backgroundColor: '#22aa99'
-    //        }, {
-    //            label: 'Traffic tickets',
-    //            data: [0, 2],
-    //            backgroundColor: '#994499'
-    //        }, {
-    //            label: 'Tolls',
-    //            data: [0, 1],
-    //            backgroundColor: '#316395'
-    //        }, {
-    //            label: 'Parking',
-    //            data: [5, 2],
-    //            backgroundColor: '#b82e2e'
-    //        }, {
-    //            label: 'Car tax',
-    //            data: [0, 1],
-    //            backgroundColor: '#66aa00'
-    //        }, {
-    //            label: 'Repairs and improvements',
-    //            data: [0, 2],
-    //            backgroundColor: '#dd4477'
-    //        }, {
-    //            label: 'Maintenance',
-    //            data: [6, 1],
-    //            backgroundColor: '#0099c6'
-    //        }, {
-    //            label: 'Inspection',
-    //            data: [0, 2],
-    //            backgroundColor: '#990099'
-    //        }, {
-    //            label: 'Loan interest',
-    //            data: [0, 3],
-    //            backgroundColor: '#109618'
-    //        }, {
-    //            label: 'Depreciation of the vehicle',
-    //            data: [0, 2],
-    //            backgroundColor: '#109618'
-    //        }, {
-    //            label: 'Fuel',
-    //            data: [0, 1],
-    //            backgroundColor: '#dc3912'
-    //        }, {
-    //            label: 'Insurance and Breakdown cover',
-    //            data: [4, 0],
-    //            backgroundColor: '#3366cc'
-    //        }]
-    //    },
-    //    options: {
-    //        responsive: false,
-    //        legend: {
-    //            position: 'right' // place legend on the right side of chart
-    //        },
-    //        scales: {
-    //            xAxes: [{
-    //                stacked: true // this should be set to make the bars stacked
-    //            }],
-    //            yAxes: [{
-    //                stacked: true // this also..
-    //            }]
-    //        }
-    //    }
-    //});
-
-
+    
     $.ajax({
-        url: '/IRF/NewChartClientHRData',
+        url: '/IRF/NewChartClientMeetingData',
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -313,17 +237,17 @@
                 yData2.push(chData[i].scheduledCount);
                 yData3.push(chData[i].droppedCount);
                 yData4.push(chData[i].completedCount);
-
+              
             }
 
             var yDataSets = [{
                 label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }, {
                     label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                    label: 'Completed', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }
             ]
             var chart = new Chart(clientIndiv, {
@@ -336,18 +260,18 @@
                     datasets: yDataSets
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
                     legend: {
-                        position: 'right' // place legend on the right side of chart
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right',
+                        // place legend on the right side of chart
                     },
                     scales: {
-                        xAxes: [{
-                            stacked: true // this should be set to make the bars stacked
-                        }],
-                        yAxes: [{
-                            stacked: true // this also..
-                        }]
-                    }
+                        xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked:true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                    },
                 }
             });
             
@@ -356,11 +280,11 @@
     });
 
     $.ajax({
-        url: '/IRF/NewChartStaffingData',
+        url: '/IRF/NewChartClientFeedbackData',
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-
+            
            
             var xAxisData = [];
             var yData1 = [];
@@ -370,24 +294,24 @@
 
             for (i = 0; i < chData.length; i++) {
                 xAxisData.push(chData[i].name);
-                yData1.push(chData[i].noShowCount);
-                yData2.push(chData[i].scheduledCount);
-                yData3.push(chData[i].droppedCount);
-                yData4.push(chData[i].completedCount);
+                yData1.push(chData[i].proxyCount);
+                yData2.push(chData[i].selectedCount);
+                yData3.push(chData[i].rejectedCount);
+                yData4.push(chData[i].borderLineCount);
 
             }
 
             var yDataSets = [{
-                label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                label: 'Proxy', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }, {
-                label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                label: 'Completed', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }
             ]
-            var chart = new Chart(clientIndivStaffing, {
+            var chart = new Chart(clientIndivFeedback, {
                 type: 'bar',
                 data: {
                     labels: xAxisData,//['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
@@ -397,18 +321,18 @@
                     datasets: yDataSets
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
                     legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
                         position: 'right' // place legend on the right side of chart
                     },
                     scales: {
                         xAxes: [{
-                            stacked: true // this should be set to make the bars stacked
-                        }],
-                        yAxes: [{
-                            stacked: true // this also..
-                        }]
-                    }
+                            gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked: true, scaleLabel: { display: false, labelString: '' }}],                                                           
+                        yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                    },
                 }
             });
 
