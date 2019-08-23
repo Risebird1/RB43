@@ -39,7 +39,7 @@ namespace Risebird.CommonHelper
                 var toMails = model.TO.Split(";");
                 foreach (var mails in toMails)
                 {
-                    mailMessage.To.Add(new MailAddress(mails, null));
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
 
                 mailMessage.Subject = model.Subject;
@@ -68,7 +68,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 foreach (var clientUser in clientUsers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId, null));
+                    mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
                 object[] parameters = new object[] { meetingDate, candidateName, IRFId , interviewStatus };
                 mailMessage.Subject = candidateName+" Interview Completion Alert";
@@ -103,7 +103,7 @@ namespace Risebird.CommonHelper
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
                 foreach (var mails in interviwers)
                 {
-                    mailMessage.Bcc.Add(new MailAddress(mails, null));
+                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
                 object[] parameters = new object[] { meetingDate };
                 mailMessage.Subject = "New Interview has been scheduled on date: "+ meetingDate;
@@ -131,7 +131,7 @@ namespace Risebird.CommonHelper
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 
-                mailMessage.To.Add(new MailAddress(interviwers, null));
+                mailMessage.To.Add(new MailAddress(interviwers.ToLower(), null));
                 
                 object[] parameters = new object[] { meetingDate };
                 mailMessage.Subject = "New Interview has been assigned on date: " + meetingDate;

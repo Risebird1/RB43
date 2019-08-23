@@ -121,7 +121,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 meeting.resumeLink = uploadedFileURL;
-
+                                meeting.candidateEmail = meeting.candidateEmail.ToLower();
                                 if (_meetingService.AddMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
@@ -326,7 +326,7 @@ namespace Risebird.Web.Controllers
 
                                 meetingUpdated.resumeLink = uploadedFileURL;
                             }
-
+                            meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
                             if (_meetingService.UpdateMeeting(meetingUpdated))
                             {
                                 TempData["SuccessErrorMessageInterview"] = "Meeting has been updated Successfully";
@@ -690,7 +690,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        var result = _meetingService.AssignYourself(model.id, model.Interviewer);
+                        var result = _meetingService.AssignYourself(model.id, model.Interviewer.ToLower());
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
@@ -728,7 +728,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (_meetingService.UnassignYourself(id, email))
+                        if (_meetingService.UnassignYourself(id, email.ToLower()))
                         {
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
