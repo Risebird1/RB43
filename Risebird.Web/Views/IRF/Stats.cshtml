@@ -269,7 +269,7 @@
                         // place legend on the right side of chart
                     },
                     scales: {
-                        xAxes: [{ gridLines: { display: false }, display: true, stacked:true, scaleLabel: { display: false, labelString: '' } }],
+                        xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked:true, scaleLabel: { display: false, labelString: '' } }],
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
                 }
@@ -329,7 +329,8 @@
                         position: 'right' // place legend on the right side of chart
                     },
                     scales: {
-                        xAxes: [{ gridLines: { display: false }, display: true, stacked:true, scaleLabel: { display: false, labelString: '' } }],
+                        xAxes: [{
+                            gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked: true, scaleLabel: { display: false, labelString: '' }}],                                                           
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
                 }
