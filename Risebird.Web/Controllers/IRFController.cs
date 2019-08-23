@@ -833,7 +833,7 @@ namespace Risebird.Web.Controllers
                         dt.Columns.Add("Count", System.Type.GetType("System.Int32"));
 
                         DataRow dr = dt.NewRow();
-                        dr["Interview Status"] = "ProxyCount";
+                        dr["Interview Status"] = "Proxy";
                         dr["Count"] = ProxyCount;
                         dt.Rows.Add(dr);
 
