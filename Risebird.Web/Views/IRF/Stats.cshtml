@@ -71,10 +71,10 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-10 mr-auto" style="margin-left: auto; display: none">
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Client HR status Report</h4>
+                                        <h4 class="card-title">HR Staffing Meeting status Report</h4>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
@@ -86,13 +86,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-10 mr-auto" style="margin-left: auto; display: none">
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Staffing Agency status Report</h4>
+                                        <h4 class="card-title">HR Staffing Interview status Report</h4>
                                     </div>
                                     <div class="card-body">
-                                        <canvas id="clientIndivStaffing" style="display: block;height: 350px;width: 100%;"></canvas>
+                                        <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
                                     <div class="card-footer">
                                         <div class="stats">
@@ -145,7 +145,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-            
+            debugger;
             var aData = chData;
             var aLabels = aData[0];
             var aDatasets1 = aData[1];
@@ -295,7 +295,7 @@
 
 
     $.ajax({
-        url: '/IRF/NewChartClientHRData',
+        url: '/IRF/NewChartClientMeetingData',
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
@@ -313,17 +313,17 @@
                 yData2.push(chData[i].scheduledCount);
                 yData3.push(chData[i].droppedCount);
                 yData4.push(chData[i].completedCount);
-
+              
             }
 
             var yDataSets = [{
                 label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }, {
                     label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                    label: 'Completed', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }
             ]
             var chart = new Chart(clientIndiv, {
@@ -356,11 +356,11 @@
     });
 
     $.ajax({
-        url: '/IRF/NewChartStaffingData',
+        url: '/IRF/NewChartClientFeedbackData',
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-
+            debugger;
            
             var xAxisData = [];
             var yData1 = [];
@@ -370,24 +370,24 @@
 
             for (i = 0; i < chData.length; i++) {
                 xAxisData.push(chData[i].name);
-                yData1.push(chData[i].noShowCount);
-                yData2.push(chData[i].scheduledCount);
-                yData3.push(chData[i].droppedCount);
-                yData4.push(chData[i].completedCount);
+                yData1.push(chData[i].proxyCount);
+                yData2.push(chData[i].selectedCount);
+                yData3.push(chData[i].rejectedCount);
+                yData4.push(chData[i].borderLineCount);
 
             }
 
             var yDataSets = [{
-                label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                label: 'Proxy', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }, {
-                label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                    label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                label: 'Completed', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                    label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }
             ]
-            var chart = new Chart(clientIndivStaffing, {
+            var chart = new Chart(clientIndivFeedback, {
                 type: 'bar',
                 data: {
                     labels: xAxisData,//['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
