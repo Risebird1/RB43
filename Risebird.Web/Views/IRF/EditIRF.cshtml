@@ -866,10 +866,10 @@
     function AddRow() {
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Tech Skills.");
-            return;
-        }
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Tech Skills.");
+        //    return;
+        //}
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1106,10 +1106,10 @@
     function AddRowInterviewer() {
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Interviewers.");
-            return;
-        }
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
