@@ -56,6 +56,7 @@ namespace Risebird.Functions
             string joiningTime = string.Empty;
             string interviewOnDevice = string.Empty;
             string currentEmployerName = string.Empty;
+            string textreminder = string.Empty;
             var children = stuff.Children().GetEnumerator();
             while (children.MoveNext())
             {
@@ -121,14 +122,15 @@ namespace Risebird.Functions
                                 }
 
                                 candidateEmail = ((JProperty)mainFamilies1).Value["email"].ToString();
+                                textreminder= ((JProperty)mainFamilies1).Value["text_reminder_number"].ToString();
                                 isReschedule = ((JProperty)mainFamilies1).Value["is_reschedule"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.questions_and_answers")
                             {
                                 foreach (var questions in ((JProperty)mainFamilies1).First.Children())
                                 {
-                                    if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Resume Link"))
+                                    if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("resume link"))
                                     {
                                         resumeLink = ((JContainer)questions)["answer"].ToString();
                                     }
@@ -137,47 +139,47 @@ namespace Risebird.Functions
                                     //{
                                     //    JobRole = ((JContainer)questions)["answer"].ToString();
                                     //}
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Level you are applying for"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("level you are applying for"))
                                     {
                                         JobRole = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("HR Coordinator"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("hr coordinator"))
                                     {
                                         ClientHrContact = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Interview Channel ID"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("interview channel id"))
                                     {
                                         IRFID = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Preferred Location"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("preferred location"))
                                     {
                                         prefferedLocation = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Current Employer Name"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("current employer name"))
                                     {
                                         currentEmployerName = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Per Hour Rate"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("per hour rate"))
                                     {
                                         expectedPerHourRate = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Staffing Agency"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("staffing agency"))
                                     {
                                         staffingAgenecy = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
-                                        .Contains("Notice Period"))
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
+                                        .Contains("notice period"))
                                     {
                                         joiningTime = ((JContainer)questions)["answer"].ToString();
                                     }
-                                    else if (((JContainer)questions)["question"].ToString()
+                                    else if (((JContainer)questions)["question"].ToString().ToLower()
                                         .Contains("infra for the video interview"))
                                     {
                                         interviewOnDevice = ((JContainer)questions)["answer"].ToString();
@@ -221,6 +223,7 @@ namespace Risebird.Functions
                 cmd.Parameters.Add(new SqlParameter("@joiningTime", joiningTime));
                 cmd.Parameters.Add(new SqlParameter("@interviewOnDevice", interviewOnDevice));
                 cmd.Parameters.Add(new SqlParameter("@currentEmployerName", currentEmployerName));
+                cmd.Parameters.Add(new SqlParameter("@textreminder", textreminder));
                 cmd.ExecuteScalar();
 
                 log.Info("Interview update in database ended.");
