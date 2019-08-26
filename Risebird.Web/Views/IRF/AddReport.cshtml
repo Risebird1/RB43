@@ -258,7 +258,7 @@
                                        @*</div>*@
                                    </div>
 
-                                   <div class="col-md-10">
+                                   @*<div class="col-md-10">
                                        Upload Video
                                        <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
                                        Add a link
@@ -270,7 +270,7 @@
 
                                        @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
                                        @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                   </div>
+                                   </div>*@
 
 
                                    <div class="col-md-6 col-sm-6 px-1"  id= "uploadDiv">
