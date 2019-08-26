@@ -46,6 +46,7 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Current Renumeration")]
         public double CurrentRenumeration { get; set; }
+        [Display(Name = "Resume Link")]
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]

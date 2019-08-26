@@ -194,10 +194,32 @@
 
                                     </div>
                                     <div class="form-group">
+                                        Upload File
+                                        <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
+                                        Add a link
+                                        <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                        None
+                                        <input id="JD" name="JD" value="None" type="radio" checked="checked" onclick="RadioChanged(this.value)">
+                                    </div>
+                                    <div class="form-group" style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                         @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
 
+                                    </div>
+                                    <div class="" style="display:none" id="uploadDiv">
+                                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
+                                    </div>
+                                    <div class="">
+                                        @{
+                                            if (!String.IsNullOrEmpty(Model.JDLink))
+                                            {
+                                                <a id="audioId" target="_blank" rel="tooltip" class="btn btn-warning btn-sm  col-lg-12" data-original-title="" title="Download your uploaded file" href=@Model.JDLink.ToString().Replace(" ","%20")>Uploaded JD</a>
+                                            }
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -244,7 +266,7 @@
                                                         <td>
                                                             <div class="form-control">
                                                                 <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -679,6 +701,28 @@
 </div>
 
 <script>
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDLink").value = '';
+
+        }
+        else if(val=='Link') {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("JDFile").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDFile").value = '';
+            document.getElementById("JDLink").value = '';
+        }
+
+    }
+
 
     function CheckTotalWeightage() {      
         //var ckeck = $("#irfForm").validate();
@@ -741,6 +785,7 @@
             url: "/IRF/GetInterviewers",
             data: { 'skills': skills },
             success: function (data) {
+                debugger;
 
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
@@ -1395,7 +1440,7 @@
 
     }
 
-    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive) {
        
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -1443,6 +1488,10 @@
             }
 
         }
+
+        if (tdFive != null && tdFive == 'TechDelete')
+            //call TechSkillChanged
+            TechSkillChanged();
 
 
     }

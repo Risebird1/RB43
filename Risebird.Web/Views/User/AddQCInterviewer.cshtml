@@ -95,13 +95,28 @@
                                             @Html.EditorFor(model => model.NoOfInterview, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
                                         </div>
                                     </div>
-
-                                    @*<div class="form-group">*@
-                                    @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
-                                    <div class="col-md-6">
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                    <div class="col-md-10">
+                                        Upload Resume
+                                        <input id="Resume" name="Resume" value="Upload" type="radio" checked="checked"  onclick="RadioChanged(this.value)">
+                                        Add a link
+                                        <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
                                     </div>
-                                    @*</div>*@                                    
+
+                                    <div style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div id= "uploadDiv">
+                                        @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                        <div class="col-md-6">
+                                            @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
@@ -181,6 +196,23 @@
             includeSelectAllOption: true
         });
     });
+</script>
+<script>
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
 </script>
 
 

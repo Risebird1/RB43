@@ -249,7 +249,7 @@
                                     <div class="col-md-6 col-sm-6 px-1">
                                         @*<div class="form-group">*@
                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept=".mp3, .wav" })
+                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav" })
                                         @{
                                             if (Model.AudioLink != null)
                                             {
@@ -258,20 +258,34 @@
                                         }
                                         @*</div>*@
                                     </div>
+                                    <div class="col-md-10">
+                                        Upload Video
+                                        <input id="Vid" name="Vid" value="Upload"checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                        Add a link
+                                        <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        @*<div class="form-group">*@
+                                        @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-6 px-1" id= "uploadDiv">
                                         @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn " ,@accept=".mp4"})
+                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+                                        
+
+                                        @*</div>*@
+                                    </div>
+                                    <div class="">
                                         @{
                                             if (Model.VideoLink != null)
                                             {
                                                 <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
                                             }
                                         }
-
-                                        @*</div>*@
                                     </div>
                                 </div>
 
@@ -1020,6 +1034,22 @@
 </script>
 
 <script>
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageVideoLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("VideoFile").value = '';
+
+        }
+
+    }
 
     function CountProctoring(value) {
 

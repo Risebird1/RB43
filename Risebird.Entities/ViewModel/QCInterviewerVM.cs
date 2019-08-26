@@ -28,7 +28,10 @@ namespace Risebird.Entities.ViewModel
 
         public int userId { get; set; }
         public string PrimarySkill { get; set; }
+        [Display(Name = "Resume Link")]
         public string ResumeLink { get; set; }
+        [Display(Name = "Resume Link")]
+        public string PageResumeLink { get; set; }
 
         [Required(ErrorMessage = "Please mention available slots")]
         [Display(Name = "Availeble Slots")]
