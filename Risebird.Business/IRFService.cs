@@ -235,7 +235,7 @@ namespace Risebird.Business
             try
             {
                 int role =0;
-                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderByDescending(x => x.dtCreatedOn).ToList();
+                var result= _irfRepository.GetIRFInterviewMeetings(id).OrderBy(x => x.interviewDate).ToList();
                 
                 if(email != string.Empty && profileName == "Client")
                 {

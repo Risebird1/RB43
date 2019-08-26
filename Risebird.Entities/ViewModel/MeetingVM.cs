@@ -41,7 +41,6 @@ namespace Risebird.Entities.ViewModel
         public string ClientHrContact { get; set; }
 
         [Display(Name = "Current Employer")]
-        [Required(ErrorMessage = "Please enter Current Employer.")]
         public string currentEmployerName { get; set; }
 
         [Display(Name = "Current Renumeration")]
