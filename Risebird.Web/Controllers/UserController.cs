@@ -100,6 +100,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.EmailId = user.EmailId.ToLower();
                         if (_userService.AddUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is added Successfully";
@@ -181,6 +182,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        user.EmailId = user.EmailId.ToLower();
                         if (_userService.UpdateUser(user))
                         {
                             TempData["SuccessErrorMessageUser"] = "User is updated Successfully";
@@ -314,6 +316,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
                         if (_userService.AddClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is added Successfully";
@@ -423,6 +426,7 @@ namespace Risebird.Web.Controllers
                 {
                     if (ModelState.IsValid)
                     {
+                        clientUserVM.EmailId = clientUserVM.EmailId.ToLower();
                         if (_userService.UpdateClientUser(clientUserVM))
                         {
                             TempData["SuccessErrorMessageClientUser"] = "Client User is updated Successfully";
@@ -516,63 +520,72 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (ModelState.IsValid)
+                    string uploadedFileURL = string.Empty;
+                    if (interviewer.File == null && (interviewer.ResumeLink == null || interviewer.ResumeLink == ""))
                     {
-                        if (interviewer.File == null)
-                        {
-                            ModelState.AddModelError(String.Empty, "Please upload a resume.");
-                            var model = new InterviewerVM();
-                            model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
-                            return View("AddInterviewer", model);
-                        }
-
-                      
-                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                        string uploadedFileURL = blob.Uri.ToString();
-
-                        List<Skill> skills = _skillService.GetSkills();
-
-                        if (uploadedFileURL == null)
-                        {
-                            ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
-                            var model = new InterviewerVM();
-                            model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
-                            return View("AddInterviewer", model);
-                        }
-
-                        else
-                        {
-                            interviewer.ResumeLink = uploadedFileURL;
-                            List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-                            interviewer.PrimarySkill = String.Join(",", selectedSkill);
-                            if (_userService.AddInterviewer(interviewer))
-                            {
-                                TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
-                                return RedirectToAction("Interviewers");
-                            }
-                            else
-                            {
-                                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
-                                return RedirectToAction("Interviewers");
-                            }
-                        }
-                    }
-                    else
-                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
-                        //ModelStateEntry i;
-                        //ModelState.TryGetValue("SelectedSkillIds", out i);
-                        //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
-                        //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
+                        return View("AddInterviewer", model);
+                    }
+
+                    if (interviewer.File != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                    }
+                    else
+                        uploadedFileURL = interviewer.ResumeLink;
+
+                    List<Skill> skills = _skillService.GetSkills();
+
+                    if (uploadedFileURL == null || uploadedFileURL == string.Empty)
+                    {
+                        ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
+                        var model = new InterviewerVM();
+                        model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
                         return View("AddInterviewer", model);
                     }
+
+                    else
+                    {
+                        interviewer.ResumeLink = uploadedFileURL;
+                        List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                        interviewer.PrimarySkill = String.Join(",", selectedSkill);
+                        interviewer.EmailId = interviewer.EmailId.ToLower();
+                        if (_userService.AddInterviewer(interviewer))
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+                            return RedirectToAction("Interviewers");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
+                            return RedirectToAction("Interviewers");
+                        }
+                    }
+
+
+                    //if (ModelState.IsValid)
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    var model = new InterviewerVM();
+                    //    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                    //    //ModelStateEntry i;
+                    //    //ModelState.TryGetValue("SelectedSkillIds", out i);
+                    //    //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
+                    //    //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
+
+                    //    return View("AddInterviewer", model);
+                    //}
                 }
                 else
                 {
@@ -625,64 +638,71 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    interviewer.ResumeLink = TempData["ResumeLink"].ToString();
                     string uploadedFileURL = null;
-                    if (ModelState.IsValid)
+                    
+                    if (interviewer.File != null)
                     {
-                        if (interviewer.File != null)
+
+                        await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+
+                        if (uploadedFileURL == null)
                         {
-                           
-                            await _azureStorageHelper.InsertBlob(interviewer.File.FileName, "resumes", interviewer.File);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewer.File.FileName);
-                             uploadedFileURL = blob.Uri.ToString();
-
-                            if (uploadedFileURL == null)
-                            {
-                                ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
-                                var model = new InterviewerVM();
-                                model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
-
-                                return View("InterviewerUpdate", model);
-                            }
-                            else
-                                interviewer.ResumeLink = uploadedFileURL;
-                        }
-
-                        if (String.IsNullOrEmpty(interviewer.PrimarySkill))
-                        {
-                            ModelState.AddModelError(String.Empty, "Please mention Skill");
+                            ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
                             var model = new InterviewerVM();
                             model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
                             return View("InterviewerUpdate", model);
                         }
-
-
-                        if (_userService.UpdateInterviewer(interviewer))
-                        {
-                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
-                            return RedirectToAction("Interviewers");
-                        }
                         else
-                        {
-                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
-                            return RedirectToAction("Interviewers");
-                        }
+                            interviewer.ResumeLink = uploadedFileURL;
+                    }
+                    else 
+                    {
+                        interviewer.ResumeLink = TempData["ResumeLink"].ToString();
                     }
 
-                    else
+
+                    if (String.IsNullOrEmpty(interviewer.PrimarySkill))
                     {
+                        ModelState.AddModelError(String.Empty, "Please mention Skill");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
-                        //ModelStateEntry i;
-                        //ModelState.TryGetValue("SelectedSkillIds", out i);
-                        //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
-                        //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
-
                         return View("InterviewerUpdate", model);
                     }
+
+                    interviewer.EmailId = interviewer.EmailId.ToLower();
+
+                    if (_userService.UpdateInterviewer(interviewer))
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is Updated Successfully";
+                        return RedirectToAction("Interviewers");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer update is Failed";
+                        return RedirectToAction("Interviewers");
+                    }
+                    //if (ModelState.IsValid)
+                    //{
+                        
+                    //}
+
+                    //else
+                    //{
+                    //    var model = new InterviewerVM();
+                    //    model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
+
+                    //    //ModelStateEntry i;
+                    //    //ModelState.TryGetValue("SelectedSkillIds", out i);
+                    //    //// = i.AttemptedValue.Split(",").Cast<Int64>().ToArray();
+                    //    //model.SelectedSkillIds = Array.ConvertAll(i.AttemptedValue.Split(","), s => int.Parse(s));
+
+                    //    return View("InterviewerUpdate", model);
+                    //}
                 }
                 else
                 {
@@ -774,7 +794,8 @@ namespace Risebird.Web.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (qcinterviewer.File == null)
+                    string uploadedFileURL = string.Empty;
+                    if (qcinterviewer.File == null && qcinterviewer.ResumeLink==null)
                     {
                         ModelState.AddModelError(String.Empty, "Please upload a resume.");
                         qcinterviewer.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
@@ -782,12 +803,19 @@ namespace Risebird.Web.Controllers
                         return View("AddQCInterviewer", qcinterviewer);
                     }
 
-                   
-                   await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
-                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                    var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
-                    string uploadedFileURL = blob.Uri.ToString();
+                    if(qcinterviewer.File != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(qcinterviewer.File.FileName, "resumes", qcinterviewer.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(qcinterviewer.File.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
 
+                    }
+                    else if(qcinterviewer.ResumeLink!=null)
+                    {
+                        uploadedFileURL = qcinterviewer.ResumeLink;
+                    }
+                    
                     List<Skill> skills = _skillService.GetSkills();
 
                     if (uploadedFileURL == null)
@@ -803,6 +831,7 @@ namespace Risebird.Web.Controllers
                         qcinterviewer.ResumeLink = uploadedFileURL;
                         List<String> selectedSkill = skills.Where(x => qcinterviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
                         qcinterviewer.PrimarySkill = String.Join(",", selectedSkill);
+                        qcinterviewer.EmailId = qcinterviewer.EmailId.ToLower();
                         if (_userService.AddQCInterviewer(qcinterviewer))
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "QC Interviewer is added Successfully";
@@ -891,6 +920,10 @@ namespace Risebird.Web.Controllers
                             else
                                 qcInterviewer.ResumeLink = uploadedFileURL;
                         }
+                        else if(qcInterviewer.PageResumeLink != null)
+                        {
+                            qcInterviewer.ResumeLink = qcInterviewer.PageResumeLink;
+                        }
 
                         if (String.IsNullOrEmpty(qcInterviewer.PrimarySkill))
                         {
@@ -901,6 +934,7 @@ namespace Risebird.Web.Controllers
                             return View("QCInterviewerUpdate", model);
                         }
 
+                        qcInterviewer.EmailId = qcInterviewer.EmailId.ToLower();
 
                         if (_userService.UpdateQCInterviewer(qcInterviewer))
                         {

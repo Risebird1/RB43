@@ -41,11 +41,12 @@ namespace Risebird.Entities.ViewModel
         public string ClientHrContact { get; set; }
 
         [Display(Name = "Current Employer")]
-        [Required(ErrorMessage = "Please enter Current Employer.")]
+       
         public string currentEmployerName { get; set; }
 
         [Display(Name = "Current Renumeration")]
         public double CurrentRenumeration { get; set; }
+        [Display(Name = "Resume Link")]
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]

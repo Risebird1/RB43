@@ -248,14 +248,22 @@
 
                                     </div>
                                     <div class="form-group">
+                                        Upload JD
+                                        <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
+                                        Provide JD Link
+                                        <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                    </div>
+                                    <div class="form-group" style="display:none" id= "linkDiv">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="JDLink">JD Link</label>*@
 
                                         @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
 
-                                        @*<input class="form-control text-box single-line" id="JDLink" name="JDLink" type="text">*@
+                                    </div>
+                                    <div class="" style="display:none" id="uploadDiv">
+                                        @Html.LabelFor(model => model.JDFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.TextBoxFor(model => model.JDFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
                                     </div>
                                 </div>
@@ -304,7 +312,7 @@
                                         </a>*@
 
                                                         <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
                                                     </td>
                                                 </tr>
@@ -735,6 +743,23 @@
 
 
 <script>
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("JDLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("JDFile").value = '';
+
+        }
+
+    }
+
+
 
     function CheckTotalWeightage() {
         
@@ -996,10 +1021,10 @@
     function AddRow() {
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Tech Skills.");
-            return;
-        }
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Tech Skills.");
+        //    return;
+        //}
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1237,10 +1262,10 @@
     function AddRowInterviewer() {
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Interviewers.");
-            return;
-        }
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1674,7 +1699,7 @@
 
     }
 
-    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+    function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive) {
         
         if ($(element).parents('tbody').find('tr').length === 1) {
 
@@ -1722,6 +1747,10 @@
             }
 
         }
+
+        if (tdFive != null && tdFive == 'TechDelete')
+            //call TechSkillChanged
+            TechSkillChanged();
 
 
     }

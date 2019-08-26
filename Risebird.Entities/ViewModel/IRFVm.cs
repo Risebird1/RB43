@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,6 +82,9 @@ namespace Risebird.Entities.ViewModel
         public SelectList SkillGeneralTypeList { get; set; }
 
         public SelectList CompanyTypeList { get; set; }
+
+        [Required]
+        public IFormFile JDFile { get; set; }
     }
 
     public class IRF

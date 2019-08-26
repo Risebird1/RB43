@@ -110,19 +110,38 @@
                                                 @Html.EditorFor(model => model.NoOfInterview, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
 
                                             </div>
+                                            <div class="form-group">
+                                                Upload File
+                                                <input id="Resume" name="Resume" value="Upload" type="radio" onclick="RadioChanged(this.value)">
+                                                Add a link
+                                                <input id="Resume" name="Resume" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                None
+                                                <input id="Resume" name="Resume" value="None" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                            </div>
+                                            <div class="form-group" style="display:none" id="linkDiv">
+                                                @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                                @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                                @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
 
-                                            @*<div class="form-group">*@
-                                            @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            </div>
 
-                                            @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                            @{
-                                                if (Model.ResumeLink != null)
-                                                {
-                                                    <a id="videoId" target="_blank" title="Video" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
+                                            <div class="" style="display:none" id="uploadDiv">
+                                                @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+                                            </div>
+                                            
+                                            <div class="">
+                                                @{
+                                                    if (Model.ResumeLink != null)
+                                                    {
+                                                        <a id="videoId" target="_blank" title="Resume" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
+                                                    }
                                                 }
-                                            }
+                                            </div>
+                                            
 
-                                            @*</div>*@
+                                            
                                         </div>
                                         <div class="card-footer ">
                                             <div class="row">
@@ -207,6 +226,30 @@
             includeSelectAllOption: true
         });
     });
+</script>
+<script>
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            //document.getElementById("ResumeLink").value = '';
+
+        }
+        else if (val == 'Link') {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("File").value = '';
+            //document.getElementById("ResumeLink").value = '';
+        }
+
+    }
+
 </script>
 
 

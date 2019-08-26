@@ -96,19 +96,38 @@
                                             @Html.EditorFor(model => model.NoOfInterview, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        Upload File
+                                        <input id="JD" name="JD" value="Upload" type="radio" checked="checked" onclick="RadioChanged(this.value)">
+                                        Add a link
+                                        <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                        @*None
+            <input id="JD" name="JD" value="None" type="radio" onclick="RadioChanged(this.value)">*@
+                                    </div>
 
-                                    @*<div class="form-group">*@
+                                    <div class="form-group" style="display:none" id="linkDiv">
+                                        @Html.LabelFor(model => model.PageResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
+                                        @Html.EditorFor(model => model.PageResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.PageResumeLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="" id="uploadDiv">
                                         @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
                                         <div class="col-md-6">
                                             @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control btn", @accept = ".doc, .docx, .pdf, .txt" })
-                                            @{
-                                                if (Model.ResumeLink != null)
-                                                {
-                                                    <a id="videoId" target="_blank" title="Video" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
-                                                }
+
+                                        </div>
+                                    </div>
+
+                                    
+                                    <div class="">
+                                        @{
+                                            if (Model.ResumeLink != null)
+                                            {
+                                                <a id="videoId" target="_blank" title="Video" href=@Model.ResumeLink.ToString().Replace(" ","%20")>Uploaded Resume</a>
                                             }
-                                        @*</div>*@
-                                    </div>                                    
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -195,5 +214,22 @@
         });
     });
 </script>
+<script>
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("PageResumeLink").value = '';
 
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
+
+</script>
 

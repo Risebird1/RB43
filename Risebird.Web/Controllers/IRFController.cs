@@ -112,7 +112,7 @@ namespace Risebird.Web.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddIRF(IRFVm irfDetails)
+        public async Task<IActionResult> AddIRF(IRFVm irfDetails)
         {
             try
             {
@@ -122,6 +122,21 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        string uploadedFileURL = string.Empty;
+                        if (irfDetails.JDFile == null && (irfDetails.JDLink == null))
+                        {
+                            TempData["SuccessErrorMessage"] = "Adding IRF has Failed. JDLink not found.";
+                            return RedirectToAction("Index");
+                        }
+                        if (irfDetails.JDFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(irfDetails.JDFile.FileName, "resumes", irfDetails.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(irfDetails.JDFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            irfDetails.JDLink = uploadedFileURL;
+                        }
+                        
                         if (_irfService.AddIRFDetails(irfDetails).Result)
                         {
                             TempData["SuccessErrorMessage"] = "IRF is added Successfully";
@@ -504,6 +519,7 @@ namespace Risebird.Web.Controllers
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    TempData["JDLink"] = model.JDLink;
 
 
                     return View(model);
@@ -523,7 +539,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult EditIRF(IRFVm model)
+        public async Task<IActionResult> EditIRF(IRFVm model)
         {
             try
             {
@@ -533,6 +549,27 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        if ((model.JDFile != null))
+                        {
+
+                            await _azureStorageHelper.InsertBlob(model.JDFile.FileName, "resumes", model.JDFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.JDFile.FileName);
+                            string uploadedFileURL = blob.Uri.ToString();
+                            if (uploadedFileURL == null)
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                return RedirectToAction("Index");
+
+                            }
+                        
+                            model.JDLink = uploadedFileURL;
+                        }
+                        else if (model.JDLink == null || model.JDLink=="")
+                        {
+                            model.JDLink = TempData["JDLink"] != null ? TempData["JDLink"].ToString() : null;
+                        }
+
                         if (_irfService.UpdateIRF(model))
                         {
                             TempData["SuccessErrorMessage"] = "IRF saved Successfully";
@@ -647,6 +684,13 @@ namespace Risebird.Web.Controllers
                                 model.AudioLink = uploadedaudioFileURL;
                             }
                         }
+                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                            GetStatusList(model);
+                            return View("AddReport", model);
+                        }
+
                         if (model.VideoFile != null)
                         {
                             // byte[] videofileData = new byte[model.VideoFile.Length];
@@ -665,6 +709,10 @@ namespace Risebird.Web.Controllers
                             {
                                 model.VideoLink = uploadedvideoFileURL;
                             }
+                        }
+                        else if(model.PageVideoLink !=null)
+                        {
+                            model.VideoLink = model.PageVideoLink;
                         }
                         if (_meetingService.AddInterviewReport(model).Result)
                         {

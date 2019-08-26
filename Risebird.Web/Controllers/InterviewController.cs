@@ -90,6 +90,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        string uploadedFileURL = string.Empty;
                         var confirmationStatuses = from ReceiveMeetingStatus s in Enum.GetValues(typeof(ReceiveMeetingStatus))
                                                    select new { ID = (int)s, Name = s.GetDescription() };
                         meeting.ConfirmationStatusList = new SelectList(confirmationStatuses, "ID", "Name");
@@ -100,19 +101,24 @@ namespace Risebird.Web.Controllers
 
                         if (ModelState.IsValid)
                         {
-                            if (meeting.File == null)
+                            if (meeting.File == null && (meeting.resumeLink == null))
                             {
                                 ModelState.AddModelError(String.Empty, "Please upload a resume.");
                                 return View("Add", meeting);
                             }
+                            if (meeting.File != null)
+                            {
+                                await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
+                                var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                                var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
+                                uploadedFileURL = blob.Uri.ToString();
 
-                            await _azureStorageHelper.InsertBlob(meeting.File.FileName, "resumes", meeting.File);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(meeting.File.FileName);
-                            string uploadedFileURL = blob.Uri.ToString();
+                            }
+                            else
+                                uploadedFileURL = meeting.resumeLink;
                             List<Skill> skills = _skillService.GetSkills();
 
-                            if (uploadedFileURL == null)
+                            if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                             {
                                 ModelState.AddModelError(String.Empty, "Resume Upload is failed.");
 
@@ -121,7 +127,7 @@ namespace Risebird.Web.Controllers
                             else
                             {
                                 meeting.resumeLink = uploadedFileURL;
-
+                                meeting.candidateEmail = meeting.candidateEmail.ToLower();
                                 if (_meetingService.AddMeeting(meeting))
                                 {
                                     TempData["SuccessErrorMessageInterview"] = "Meeting is added Successfully";
@@ -306,7 +312,6 @@ namespace Risebird.Web.Controllers
                         meetingUpdated.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         if (ModelState.IsValid)
                         {
-                            meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
                             //String uploadedFileURL = String.Empty;
                             if ((meetingUpdated.File != null))
                             {
@@ -326,7 +331,13 @@ namespace Risebird.Web.Controllers
 
                                 meetingUpdated.resumeLink = uploadedFileURL;
                             }
+                            else if(meetingUpdated.resumeLink == null || meetingUpdated.resumeLink =="")
+                            {
+                                meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
 
+                            }
+                            
+                            meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
                             if (_meetingService.UpdateMeeting(meetingUpdated))
                             {
                                 TempData["SuccessErrorMessageInterview"] = "Meeting has been updated Successfully";
@@ -690,7 +701,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        var result = _meetingService.AssignYourself(model.id, model.Interviewer);
+                        var result = _meetingService.AssignYourself(model.id, model.Interviewer.ToLower());
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
@@ -728,7 +739,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (_meetingService.UnassignYourself(id, email))
+                        if (_meetingService.UnassignYourself(id, email.ToLower()))
                         {
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
@@ -837,6 +848,12 @@ namespace Risebird.Web.Controllers
                                 model.AudioLink = uploadedaudioFileURL;
                             }
                         }
+                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink==null)
+                        {
+                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                            GetStatusList(model);
+                            return View("AddReport", model);
+                        }
 
                         if (model.VideoFile != null)
                         {
@@ -856,6 +873,10 @@ namespace Risebird.Web.Controllers
                             {
                                 model.VideoLink = uploadedvideoFileURL;
                             }
+                        }
+                        else if(model.PageVideoLink != null)
+                        {
+                            model.VideoLink = model.PageVideoLink;
                         }
 
                         if (_meetingService.AddInterviewReport(model).Result)
