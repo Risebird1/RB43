@@ -138,7 +138,7 @@ namespace Risebird.Business
         {
             try
             {
-                var openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                var openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return openMeeting;
             }
             catch (Exception ex)
@@ -152,7 +152,7 @@ namespace Risebird.Business
         {
             try
             {
-                var qcMeeting = _meetingRespository.GetAllQCInterviews(emailId).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                var qcMeeting = _meetingRespository.GetAllQCInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return qcMeeting;
             }
             catch (Exception ex)
@@ -180,7 +180,7 @@ namespace Risebird.Business
         {
             try
             {
-                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.dtCreatedOn).ToList();
+                var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)
