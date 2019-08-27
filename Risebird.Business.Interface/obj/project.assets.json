@@ -12309,11 +12309,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
       "projectName": "Risebird.Business.Interface",
-      "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
+      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Business.Interface\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -12332,8 +12332,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Source\\Repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

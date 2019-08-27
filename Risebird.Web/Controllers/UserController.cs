@@ -611,7 +611,6 @@ namespace Risebird.Web.Controllers
 
                     if (interviewerVM != null)
                     {
-                        //ViewBag.SelectedSkillIds = new int[] { 2, 45, 32 };
                         interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
                         TempData["ResumeLink"] = interviewerVM.ResumeLink;
                         return View("InterviewerUpdate", interviewerVM);
@@ -674,7 +673,10 @@ namespace Risebird.Web.Controllers
 
                         return View("InterviewerUpdate", model);
                     }
-
+                    List<Skill> skills = _skillService.GetSkills();
+                    List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                    interviewer.PrimarySkill = "";
+                    interviewer.PrimarySkill = String.Join(",", selectedSkill);
                     interviewer.EmailId = interviewer.EmailId.ToLower();
 
                     if (_userService.UpdateInterviewer(interviewer))
