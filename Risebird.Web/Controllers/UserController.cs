@@ -611,6 +611,7 @@ namespace Risebird.Web.Controllers
 
                     if (interviewerVM != null)
                     {
+                        //ViewBag.SelectedSkillIds = new int[] { 2, 45, 32 };
                         interviewerVM.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
                         TempData["ResumeLink"] = interviewerVM.ResumeLink;
                         return View("InterviewerUpdate", interviewerVM);

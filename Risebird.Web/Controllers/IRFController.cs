@@ -185,7 +185,7 @@ namespace Risebird.Web.Controllers
                 return new SelectList(interviewers, "UserId", "EmailId");
             }
             else
-                list.Add(new SelectListItem { Text = "No Interviewer", Value = "0" });
+                list.Add(new SelectListItem { Text = "No Interviewer", Value = "" });
             //clientUsers.ToList().Add(new Users { id = 0, FirstName = "No Client User" });
             return new SelectList(list, "Value", "Text");
         }
