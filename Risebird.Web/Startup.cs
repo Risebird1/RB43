@@ -145,6 +145,7 @@ namespace Risebird.Web
             services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();
             services.AddScoped<ISelectabilityMatrixService, SelectabilityMatrixService>();
             services.AddScoped<IIRFService, IRFService>();
+            services.AddScoped<ITwilioHelper, TwilioHelper>();
         }
     }
      //Global level antiforgery token security to stop malicious scripts
