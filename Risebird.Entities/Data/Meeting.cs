@@ -34,7 +34,7 @@ namespace Risebird.Entities.Data
         public string IRFID { get; set; }
         public string PreferredLocation { get; set; }
         public string ExpectedPerHourRate { get; set; }
-        public string staffingAgenecy { get; set; }
+        public string staffingAgency { get; set; }
         public string joiningTime { get; set; }
         public int irfIntId { get; set; }
         public string JDLink { get; set; }

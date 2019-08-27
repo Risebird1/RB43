@@ -277,14 +277,15 @@
                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
                                        
-                                   </div>
-                                   <div class="">
-                                       @{
-                                           if (Model.VideoLink != null)
-                                           {
-                                               <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                  
+                                       <div class="">
+                                           @{
+                                               if (Model.VideoLink != null)
+                                               {
+                                                   <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                               }
                                            }
-                                       }
+                                       </div>
                                    </div>
                                </div>
 
