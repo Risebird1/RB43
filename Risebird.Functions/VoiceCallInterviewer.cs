@@ -17,9 +17,9 @@ namespace Risebird.Functions
     public static class VoiceCallInterviewer
     {
         [FunctionName("VoiceCallInterviewer")]
-        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
-            log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.Info($"Voice call Timer trigger function executed at: {DateTime.Now}");
             try
             {
                 var phoneNumbers = new List<string>();
@@ -35,9 +35,9 @@ namespace Risebird.Functions
                 
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
-                    var twilioAuthToken = ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
-                    var twilioAccountSID = ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
-                    var twilioVoiceCallNumber = ConfigurationManager.AppSettings["TwilioSettings:CallerNumber"];
+                    var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                    var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                    var twilioVoiceCallNumber = "+17274782239";
 
 
                     foreach (var phoneNumber in phoneNumbers)

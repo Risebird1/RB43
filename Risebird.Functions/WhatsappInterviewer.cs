@@ -15,12 +15,12 @@ namespace Risebird.Functions
     public static class WhatsappInterviewer
     {
         [FunctionName("WhatsappInterviewer")]
-        public static void Run([TimerTrigger("0 */15 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
-                var msg = "Hi! Greetings from RiseBird. This is a gentle reminder for your interview meeting scheduled within the next 30 minutes.";
+                var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your video based interview meeting scheduled in the next 30 minutes.";
                 var phoneNumbers = new List<string>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
@@ -34,9 +34,9 @@ namespace Risebird.Functions
 
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
-                    var twilioAuthToken = ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
-                    var twilioAccountSID = ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
-                    var twilioWhatsappNumber = ConfigurationManager.AppSettings["TwilioSettings:WhatsappSENDER"];
+                    var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                    var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                    var twilioWhatsappNumber = "+14155238886";
                     var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
                     //send an sms to all the interviewers with the message
 
