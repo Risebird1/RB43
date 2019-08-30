@@ -95,3 +95,4 @@ C:\Users\Admin\source\repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp
 C:\Users\Admin\source\repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
 C:\Users\Admin\source\repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 C:\Users\Admin\source\repos\Risebird2\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+C:\FIles\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache

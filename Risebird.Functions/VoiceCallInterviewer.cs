@@ -33,7 +33,7 @@ namespace Risebird.Functions
                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
                 }
                 var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";//ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
-                var twilioAccountSID = "APb82708865faae9acaea7590423e9c965";//ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
+                var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";//ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
                 var twilioVoiceCallNumber = "+17274782239"; //ConfigurationManager.AppSettings["TwilioSettings:CallerNumber"];
                 //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
 
