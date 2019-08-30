@@ -32,44 +32,25 @@ namespace Risebird.Functions
                 {
                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
                 }
-                var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";//ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
-                var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";//ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
-                var twilioVoiceCallNumber = "+17274782239"; //ConfigurationManager.AppSettings["TwilioSettings:CallerNumber"];
-                //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                
+                if (phoneNumbers != null && phoneNumbers.Count() > 0)
+                {
+                    var twilioAuthToken = ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
+                    var twilioAccountSID = ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
+                    var twilioVoiceCallNumber = ConfigurationManager.AppSettings["TwilioSettings:CallerNumber"];
 
-                TwilioClient.Init(twilioAccountSID, twilioAuthToken);
-                var to = new PhoneNumber("+919284487005");
-                var from = new PhoneNumber(twilioVoiceCallNumber);
-                var call = CallResource.Create(
-                    to: to,
-                    from: from,
-                    url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
-                //if (phoneNumbers != null && phoneNumbers.Count() > 0)
-                //{
-                //    var twilioAuthToken = ConfigurationManager.AppSettings["TwilioSettings:AUTH_TOKEN"];
-                //    var twilioAccountSID = ConfigurationManager.AppSettings["TwilioSettings:ACCOUNT_SID"];
-                //    var twilioVoiceCallNumber = ConfigurationManager.AppSettings["TwilioSettings:CallerNumber"];
-                //    //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
 
-                //    TwilioClient.Init(twilioAccountSID, twilioAuthToken);
-                //    var to = new PhoneNumber("+917798700565");
-                //    var from = new PhoneNumber(twilioVoiceCallNumber);
-                //    var call = CallResource.CreateAsync(
-                //        to: to,
-                //        from: from,
-                //        url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
-
-                //    //foreach (var phoneNumber in phoneNumbers)
-                //    //{
-                //    //    TwilioClient.Init(twilioAccountSID, twilioAuthToken);
-                //    //    var to = new PhoneNumber(phoneNumber);
-                //    //    var from = new PhoneNumber(twilioVoiceCallNumber);
-                //    //    var call = CallResource.CreateAsync(
-                //    //        to: to,
-                //    //        from: from,
-                //    //        url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
-                //    //}
-                //}
+                    foreach (var phoneNumber in phoneNumbers)
+                    {
+                        TwilioClient.Init(twilioAccountSID, twilioAuthToken);
+                        var to = new PhoneNumber(phoneNumber);
+                        var from = new PhoneNumber(twilioVoiceCallNumber);
+                        var call = CallResource.CreateAsync(
+                            to: to,
+                            from: from,
+                            url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
+                    }
+                }
 
             }
             catch (Exception ex)
