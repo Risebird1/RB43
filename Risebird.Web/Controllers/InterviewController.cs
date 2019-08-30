@@ -793,6 +793,11 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                if (profileName != null && (profileName == "Interviewer" ||
+                                            profileName == "Quality Controller"))
+                {
+                    model.IsInterviewer = true;
+                }
 
                 if (model.QuestionsCollection == null)
                 {
