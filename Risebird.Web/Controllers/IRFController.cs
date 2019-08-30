@@ -334,6 +334,7 @@ namespace Risebird.Web.Controllers
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+                        meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -398,6 +399,114 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        public IActionResult GetFilteredSelectedMeetings(string filterValue, string id, string irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+
+                        if (filterValue == "today")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+
+                        }
+                        else if (filterValue == "tomorrow")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        else if (filterValue == "seven")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+
+
+
+
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+                        //ViewBag.IsSelected = true;
+                        foreach (var m in meetings)
+                        {
+                            if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            selectedMeeting.Add(m);
+                        }
+                        return PartialView("GetFilteredSelectedMeetings", selectedMeeting);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
 
 
         [Authorize]
@@ -415,6 +524,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+                        meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -456,6 +566,107 @@ namespace Risebird.Web.Controllers
 
                         }
                         return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        public IActionResult GetFilteredInterviewMeetings(string filterValue, string id, string irfId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+
+                        if (filterValue == "today")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+
+                        }
+                        else if (filterValue == "tomorrow")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        else if (filterValue == "seven")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        ViewBag.IRF = irfId;
+                        ViewBag.IRFintId = id;
+                        
+                        foreach (var m in meetings)
+                        {
+                            if (m.InterviewStatus.HasValue)
+                            {
+                                m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                            }
+                            if (m.L2InterviewStatus.HasValue)
+                            {
+                                m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                            }
+                            if (m.JoiningStatus.HasValue)
+                            {
+                                m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                            }
+                            if (m.PreparationStatus.HasValue)
+                            {
+                                m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                            }
+                            if (m.OfferStatus.HasValue)
+                            {
+                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                            }
+                            if (m.MeetingStatus.HasValue)
+                            {
+                                m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                            }
+                            if (m.QCStatus.HasValue)
+                            {
+                                m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+
+                        }
+
+                        return PartialView("GetFilteredInterviewMeetings", meetings);
                     }
                     else
                     {

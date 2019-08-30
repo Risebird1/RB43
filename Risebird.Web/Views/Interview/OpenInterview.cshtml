@@ -75,65 +75,79 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Slot</th>
-                                            <th>Duration</th>
-                                            <th>Candidate Name</th>
-                                            <th>Resume</th>
-                                            <th>JD Link</th>
-                                            <th>Risebird HR</th>
-                                            <th class="disabled-sorting text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Slot</th>
-                                            <th>Duration</th>
-                                            <th>Candidate Name</th>
-                                            <th>Resume</th>
-                                            <th>JD Link</th>
-                                            <th>Risebird HR</th>
-                                            <th class="disabled-sorting text-right">Actions</th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                        @foreach (var item in Model)
-                                        {
-                                            <tr id=@item.id>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.interviewSlot </td>
-                                                <td> @item.interviewDuration </td>
-                                                <td> @item.candidateName</td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.JDLink != null && item.JDLink != "")
-                                                {
-                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No JD</td>
-                                                }
+                            <div class="toolbar">
 
-                                                <td> @item.risebirdHR</td>
-                                                <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                </td>
+                                <div class="text-left">
+                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Today's Interviews" onclick="FilterInterviews('today')" data-original-title="Tooltip on top"> Today's </span></button>
+                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Tomorrow's Interviews" onclick="FilterInterviews('tomorrow')" data-original-title="Tooltip on top"> Tomorrow's </span></button>
+                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('seven')" data-original-title="Tooltip on top"> Next Seven Days</span></button>
+                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('all')" data-original-title="Tooltip on top"> All </span></button>
+                                </div>
+
+                            </div>
+
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <div id="tableID">
+                                    <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Slot</th>
+                                                <th>Duration</th>
+                                                <th>Candidate Name</th>
+                                                <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Risebird HR</th>
+                                                <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
-                                        }
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Slot</th>
+                                                <th>Duration</th>
+                                                <th>Candidate Name</th>
+                                                <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Risebird HR</th>
+                                                <th class="disabled-sorting text-right">Actions</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr id=@item.id>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.interviewSlot </td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.candidateName</td>
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                    {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No JD</td>
+                                                    }
+
+                                                    <td> @item.risebirdHR</td>
+                                                    <td class="text-right">
+                                                        <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateEmail})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
                             </div>
 
                         </div>
@@ -276,33 +290,59 @@
     };
     //// script for loader ends here
 </script>
+<script>
+    function FilterInterviews(filterValue) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetFilteredOpenInterviews",
+            data: { 'filterValue': filterValue },
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#OpeninterviewList').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#OpeninterviewList').DataTable();
 
 
 
-@*@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
-{
-    <script type="text/javascript">
-        window.onload = function ()
-        {
-            sweetAlert({
-                title: "Risebird Notification",
-                text:'@ViewBag.Message',
-                type: "success"
-            });
-        };
-    </script>
-}
-@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
-{
-    <script type="text/javascript">
-        window.onload = function ()
-        {
-            sweetAlert({
-                title: "Risebird Notification",
-                text: '@ViewBag.Message',
-                type: "error"
-            });
-        };
-    </script>
-}*@
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+
 <!-- PAGE CONTENT WRAPPER -->

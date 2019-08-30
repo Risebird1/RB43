@@ -17,11 +17,13 @@ namespace Risebird.Business
     {
         private IIRFRepository _irfRepository;
         private IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ITwilioHelper _twilioHelper;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _twilioHelper = twilioHelper;
         }
 
         #region IRF Functions
@@ -43,6 +45,9 @@ namespace Risebird.Business
         {
             try
             {
+
+                //var call = _twilioHelper.MakePhoneCall("+919284487005");
+
                 var hrList = new List<Users>();
                 var users = _irfRepository.GetUsers();
                 foreach (var item in users)

@@ -16,6 +16,7 @@ using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Hepler;
 using System;
+using Newtonsoft.Json;
 
 namespace Risebird.Web
 {
