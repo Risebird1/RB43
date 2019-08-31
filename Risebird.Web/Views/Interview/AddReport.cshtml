@@ -260,22 +260,22 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6 px-1">
                                         Upload Video
-                                        <input id="Vid" name="Vid" value="Upload"checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                        <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
                                         Add a link
                                         <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                   
-                                    <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
-                                        @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                    </div>
+                                        <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
+                                            @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        <div class="col-md-6 col-sm-6 px-1" id= "uploadDiv">
+                                            @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                        </div>
+
+                                        <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
                                             @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
                                             @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
-                                        
+
 
                                             <div class="">
                                                 @{
@@ -287,7 +287,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
 
                                 <div class="row">
@@ -926,22 +926,27 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
-                                            @if (!Model.IsClientUser)
+                                            @if (Model.IsInterviewer)
                                             {
 
                                                 @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                                if (Model.IsEdited)
-                                                {
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
-                                                }
-                                                else
-                                                {
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                                                }
-
-
-
                                             }
+                                            else
+                                            {
+                                                @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            @if (Model.IsEdited)
+                                            {
+                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                            }
+
+
+
+
                                         </div>
                                     </div>
                                 </div>
