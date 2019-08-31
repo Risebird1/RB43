@@ -17,17 +17,17 @@ namespace Risebird.Functions
     public static class VoiceCallInterviewer
     {
         [FunctionName("VoiceCallInterviewer")]
-        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
-            log.Info($"Voice call Timer trigger function executed at: {DateTime.Now}");
+            log.Info($"Voice call Timer trigger function executed at: {DateTime.Now.AddHours(5).AddMinutes(30)}");
             try
             {
                 var phoneNumbers = new List<string>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(30));
-                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(60));
+                dynamicParameters.Add("@timeL", DateTime.Now.AddHours(6));
+                dynamicParameters.Add("@timeH", DateTime.Now.AddHours(6).AddMinutes(30));
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
