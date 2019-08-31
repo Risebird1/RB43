@@ -92,7 +92,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @class = "form-control", @multiple = "multiple" })
+                                                @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @class = "form-control", @multiple = "multiple", @type = "checkbox" })
                                                 @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
 
                                             </div>

@@ -58,6 +58,17 @@ namespace Risebird.Web.Controllers
                         modelList = modelList.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
+
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Seven", Name = "Seven" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "Today");
+
+                        ViewData["list"] = list;
                         return View(modelList);
                     }
                     else
@@ -89,26 +100,27 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var modelList = _meetingService.GetMeetingList();
-                        if(filterValue=="today")
+                        if (filterValue == "Today")
                         {
-                            modelList = modelList.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
+             
                             if (modelList.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
-
                         }
-                        else if(filterValue=="tomorrow")
+                        else if (filterValue == "Tomorrow")
                         {
-                            modelList = modelList.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
-                            if(modelList.Count()==0)
+                           modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                            //modelList.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            if (modelList.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "seven")
+                        else if (filterValue == "Seven")
                         {
-                            modelList = modelList.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate>= DateTime.Now.Date).ToList();
+                            modelList = modelList.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (modelList.Count() == 0)
                             {
                                 return new EmptyResult();
@@ -246,7 +258,7 @@ namespace Risebird.Web.Controllers
                         model.InterviewSlotList = new SelectList(interviewslotList, "ID", "Name");
                         model.IRFList = _meetingService.GetIRFList();
                         var clients = _meetingService.GetClientsByRoles(model.IRFList.First().Text);
-                        if((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x=> x.ClientRoleId==1)).Count()==0)
+                        if ((clients.Where(x => x.ClientRoleId == 1) == null) || (clients.Where(x => x.ClientRoleId == 1)).Count() == 0)
                         {
                             model.ClientHrContactList = new SelectList(list, "Value", "Text");
                         }
@@ -390,12 +402,12 @@ namespace Risebird.Web.Controllers
 
                                 meetingUpdated.resumeLink = uploadedFileURL;
                             }
-                            else if(meetingUpdated.resumeLink == null || meetingUpdated.resumeLink =="")
+                            else if (meetingUpdated.resumeLink == null || meetingUpdated.resumeLink == "")
                             {
                                 meetingUpdated.resumeLink = TempData["ResumeLink"] != null ? TempData["ResumeLink"].ToString() : null;
 
                             }
-                            
+
                             meetingUpdated.candidateEmail = meetingUpdated.candidateEmail.ToLower();
                             if (_meetingService.UpdateMeeting(meetingUpdated))
                             {
@@ -516,7 +528,7 @@ namespace Risebird.Web.Controllers
 
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
-                        
+
                         return PartialView("GetFilteredOpenInterviews", meetings);
                     }
                     else
@@ -620,7 +632,7 @@ namespace Risebird.Web.Controllers
 
 
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-                        
+
                         return PartialView("GetFilteredMyInterviews", myInterview);
                     }
                     else
@@ -1033,7 +1045,7 @@ namespace Risebird.Web.Controllers
                                 model.AudioLink = uploadedaudioFileURL;
                             }
                         }
-                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink==null)
+                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
                             ModelState.AddModelError(String.Empty, "Video file/link not found.");
                             GetStatusList(model);
@@ -1059,7 +1071,7 @@ namespace Risebird.Web.Controllers
                                 model.VideoLink = uploadedvideoFileURL;
                             }
                         }
-                        else if(model.PageVideoLink != null)
+                        else if (model.PageVideoLink != null)
                         {
                             model.VideoLink = model.PageVideoLink;
                         }
@@ -1248,7 +1260,7 @@ namespace Risebird.Web.Controllers
                 list.Add(new SelectListItem { Text = "No Clients", Value = "" });
                 return new SelectList(list, "Value", "Text");
             }
-                
+
 
         }
     }
