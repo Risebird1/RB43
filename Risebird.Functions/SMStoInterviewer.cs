@@ -34,20 +34,25 @@ namespace Risebird.Functions
                 {
                      phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();                    
                 }
-
-                if(phoneNumbers!=null && phoneNumbers.Count()>0)
+                //var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                //var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                //var twilioSMSNumber = "+12055768041";
+                //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                //MessageResource.CreateAsync(to: new PhoneNumber("+919284487005"), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     //send an sms to all the interviewers with the message
                     var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
                     var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
                     var twilioSMSNumber = "+12055768041";
                     var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                    //MessageResource.CreateAsync(to: new PhoneNumber("+919284487005"), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
                     foreach (var phoneNumber in phoneNumbers)
                     {
                         MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
                     }
                 }
-                
+
             }
             catch (Exception)
             {

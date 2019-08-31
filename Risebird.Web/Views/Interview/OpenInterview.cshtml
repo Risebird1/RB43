@@ -77,12 +77,25 @@
                         <div class="dataloading">
                             <div class="toolbar">
 
-                                <div class="text-left">
-                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Today's Interviews" onclick="FilterInterviews('today')" data-original-title="Tooltip on top"> Today's </span></button>
-                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Tomorrow's Interviews" onclick="FilterInterviews('tomorrow')" data-original-title="Tooltip on top"> Tomorrow's </span></button>
-                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('seven')" data-original-title="Tooltip on top"> Next Seven Days</span></button>
-                                    <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('all')" data-original-title="Tooltip on top"> All </span></button>
+                                <div class="row">
+
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                        </div>
+                                    </div>
+                                    @*<div class="col-sm-9">
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
+
+
+                                    </div>*@
                                 </div>
+                                @*<div class="text-left">
+            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Today's Interviews" onclick="FilterInterviews('today')" data-original-title="Tooltip on top"> Today's </span></button>
+            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Tomorrow's Interviews" onclick="FilterInterviews('tomorrow')" data-original-title="Tooltip on top"> Tomorrow's </span></button>
+            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('seven')" data-original-title="Tooltip on top"> Next Seven Days</span></button>
+            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('all')" data-original-title="Tooltip on top"> All </span></button>
+        </div>*@
 
                             </div>
 
@@ -248,6 +261,8 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+        FilterInterviews("Today");// on page load default dropdownlist value set
+
         $('#OpeninterviewList').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [

@@ -55,7 +55,7 @@ namespace Risebird.Web.Controllers
                         }
 
                         var modelList = _meetingService.GetMeetingList();
-                        modelList = modelList.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
 
@@ -118,7 +118,7 @@ namespace Risebird.Web.Controllers
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "Seven")
+                        else if (filterValue == "Next Seven Days")
                         {
                             modelList = modelList.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (modelList.Count() == 0)
@@ -461,6 +461,16 @@ namespace Risebird.Web.Controllers
                         meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "Today");
+
+                        ViewData["list"] = list;
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -499,26 +509,26 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var meetings = _meetingService.GetAllOpenInterviews(emailid);
 
-                        if (filterValue == "today")
+                        if (filterValue == "Today")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
 
                         }
-                        else if (filterValue == "tomorrow")
+                        else if (filterValue == "Tomorrow")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "seven")
+                        else if (filterValue == "Next Seven Days")
                         {
-                            meetings = meetings.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
@@ -563,8 +573,21 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                        myInterview = myInterview.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "Today");
+
+                        ViewData["list"] = list;
+
+
                         if (TempData["SuccessErrorMessage"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
@@ -604,26 +627,26 @@ namespace Risebird.Web.Controllers
                         emailid = emailid.Replace("\"", "");
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
 
-                        if (filterValue == "today")
+                        if (filterValue == "Today")
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                             if (myInterview.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
 
                         }
-                        else if (filterValue == "tomorrow")
+                        else if (filterValue == "Tomorrow")
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
                             if (myInterview.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "seven")
+                        else if (filterValue == "Next Seven Days")
                         {
-                            myInterview = myInterview.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            myInterview = myInterview.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (myInterview.Count() == 0)
                             {
                                 return new EmptyResult();

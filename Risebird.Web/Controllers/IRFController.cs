@@ -334,7 +334,7 @@ namespace Risebird.Web.Controllers
                     {
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
-                        meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -380,6 +380,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "Today");
+
+                        ViewData["list"] = list;
+
                         return View(selectedMeeting);
                     }
                     else
@@ -414,26 +425,26 @@ namespace Risebird.Web.Controllers
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
 
-                        if (filterValue == "today")
+                        if (filterValue == "Today")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
 
                         }
-                        else if (filterValue == "tomorrow")
+                        else if (filterValue == "Tomorrow")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "seven")
+                        else if (filterValue == "Next Seven Days")
                         {
-                            meetings = meetings.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
@@ -524,7 +535,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
-                        meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -565,6 +576,17 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "Today");
+
+                        ViewData["list"] = list;
+
                         return View(meetings);
                     }
                     else
@@ -599,26 +621,26 @@ namespace Risebird.Web.Controllers
                     {
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
 
-                        if (filterValue == "today")
+                        if (filterValue == "Today")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
 
                         }
-                        else if (filterValue == "tomorrow")
+                        else if (filterValue == "Tomorrow")
                         {
-                            meetings = meetings.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
                             }
                         }
-                        else if (filterValue == "seven")
+                        else if (filterValue == "Next Seven Days")
                         {
-                            meetings = meetings.Where(x => x.interviewDate <= DateTime.Now.AddDays(7).Date && x.interviewDate >= DateTime.Now.Date).ToList();
+                            meetings = meetings.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();

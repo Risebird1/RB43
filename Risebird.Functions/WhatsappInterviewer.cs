@@ -31,6 +31,11 @@ namespace Risebird.Functions
                 {
                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
                 }
+                //var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
+                //var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
+                //var twilioWhatsappNumber = "+14155238886";
+                //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
+                //var response= MessageResource.CreateAsync(to: new PhoneNumber("whatsapp:+918888571923" ), from: new PhoneNumber("whatsapp:" + twilioWhatsappNumber), body: msg, client: _twilioClient);
 
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
