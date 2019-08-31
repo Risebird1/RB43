@@ -29,16 +29,12 @@ namespace Risebird.Functions
                 var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(30));
-                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(45));
+                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(60));
                 using (SqlConnection con = new SqlConnection(str))
                 {
                      phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();                    
                 }
-                //var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
-                //var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
-                //var twilioSMSNumber = "+12055768041";
-                //var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-                //MessageResource.CreateAsync(to: new PhoneNumber("+919284487005"), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+              
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     //send an sms to all the interviewers with the message
@@ -56,7 +52,7 @@ namespace Risebird.Functions
             }
             catch (Exception)
             {
-                log.Error($"Failed to send mail. Please check all filled and try again.");
+                log.Error($"Failed to send sms. Please check all filled and try again.");
             }
 
             

@@ -27,7 +27,7 @@ namespace Risebird.Functions
                 var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddMinutes(30));
-                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(45));
+                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(60));
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();
@@ -55,7 +55,7 @@ namespace Risebird.Functions
             }
             catch (Exception ex)
             {
-                log.Error($"Failed to send mail. Please check all filled and try again.");
+                log.Error($"Failed to make call. Please check all filled and try again.");
             }
         }
     }
