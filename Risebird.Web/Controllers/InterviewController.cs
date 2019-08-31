@@ -63,7 +63,7 @@ namespace Risebird.Web.Controllers
 {
     new { ID = "Today", Name = "Today"},
     new { ID = "Tomorrow", Name = "Tomorrow"  },
-    new { ID = "Seven", Name = "Seven" },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
 "ID", "Name", "Today");
@@ -989,6 +989,11 @@ namespace Risebird.Web.Controllers
                     {
                         return RedirectToAction("MyInterview");
                     }
+                }
+                if (profileName != null && (profileName == "Interviewer" ||
+                                            profileName == "Quality Controller"))
+                {
+                    model.IsInterviewer = true;
                 }
 
                 if (model.QuestionsCollection == null)
