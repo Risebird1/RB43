@@ -31,7 +31,7 @@ namespace Risebird.Functions
                 var query = "select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddHours(6));
-                dynamicParameters.Add("@timeH", DateTime.Now.AddHours(6).AddMinutes(30));
+                dynamicParameters.Add("@timeH", DateTime.Now.AddHours(6).AddMinutes(05));
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     mails = con.Query<string>(query, dynamicParameters).ToList();
