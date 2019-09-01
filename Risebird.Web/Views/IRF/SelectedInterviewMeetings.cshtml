@@ -73,10 +73,7 @@
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <div class="dataloading">
-                            <div class="text-right">
-                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                            </div>
+                        <div class="dataloading">                           
                             <div class="toolbar">
                                 <div class="row">
 
@@ -85,7 +82,9 @@
                                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                         </div>
                                     </div>
-
+                                    <div class="col-auto">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                    </div>
                                 </div>                               
 
                             </div>

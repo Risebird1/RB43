@@ -208,13 +208,13 @@
                                         </div><!--end of multiple location-->
                                     </div>
                                     <div class="col-md-6 col-sm-6">
+                                        @Html.HiddenFor(x=> Model.VideoLink)
                                         @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                         {
                                             if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                             {
                                                 <video width="320" height="240" controls>
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">                                                 
                                                   
                                                     Your browser does not support the video tag.
                                                 </video>

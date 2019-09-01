@@ -25,7 +25,7 @@ namespace Risebird.Functions
 
             try
             {
-                var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your video based interview meeting scheduled in the next 30 minutes.";
+                var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your upcoming video based interview meeting scheduled today. Kindly be available on time.";
                 var mails = new List<string>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var query = "select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1";
