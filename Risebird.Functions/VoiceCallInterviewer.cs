@@ -17,7 +17,7 @@ namespace Risebird.Functions
     public static class VoiceCallInterviewer
     {
         [FunctionName("VoiceCallInterviewer")]
-        public static void Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 */30 * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"Voice call Timer trigger function executed at: {DateTime.Now.AddHours(5).AddMinutes(30)}");
             try
