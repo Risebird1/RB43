@@ -436,7 +436,7 @@ namespace Risebird.Business
                 await _meetingRespository.AddInterviewReport(reportModel);
                 if(reportModel.InterviewStatus.HasValue)
                 {
-                   // if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
+                    if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
                     {
                         var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
                         var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
