@@ -85,7 +85,7 @@
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
             </button>
-         
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -104,31 +104,21 @@
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-                            
+
                             <div class="toolbar">
+
                                 <div class="row">
-                                    
-                                    <div class="col-sm-3">
+                                    <div class="col-md-3 ml-md-auto">
                                         <div class="form-group">
                                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                         </div>
                                     </div>
-                                    <div class="col-sm-9">
+                                    <div class="col-auto">
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
-
-
                                     </div>
+
+
                                 </div>
-                               
-
-
-                                @*<div class="text-left">
-                <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Today's Interviews" onclick="FilterInterviews('today')" data-original-title="Tooltip on top"> Today's </span></button>
-                <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Tomorrow's Interviews" onclick="FilterInterviews('tomorrow')" data-original-title="Tooltip on top"> Tomorrow's </span></button>
-                <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('seven')" data-original-title="Tooltip on top"> Next Seven Days</span></button>
-                <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('all')" data-original-title="Tooltip on top"> All </span></button>
-
-        </div>*@
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -185,47 +175,47 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.id>
-                                                <td title=@item.IRFID> @item.IRFID </td>
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.interviewDuration </td>
-                                                <td> @item.candidateName</td>
-                                                <td> @item.candidateEmail</td>
-                                                <td>@item.MobileNumber</td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.JDLink != null && item.JDLink != "")
-                                                {
-                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No JD</td>
-                                                }
+                                                <tr id=@item.id>
+                                                    <td title=@item.IRFID> @item.IRFID </td>
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.candidateName</td>
+                                                    <td> @item.candidateEmail</td>
+                                                    <td>@item.MobileNumber</td>
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                    {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No JD</td>
+                                                    }
 
-                                                <td> @item.confirmationStatus</td>
-                                                <td>@item.staffingAgency</td>
-                                                <td class="wordwrap"> @item.zoomLink</td>
-                                                <td> @item.risebirdHR</td>
-                                                <td> @item.interviewer</td>
-                                                <td> @item.joiningTime</td>
-                                                <td> @item.PreferredLocation</td>
-                                                <td> @item.ExpectedPerHourRate</td>
-                                                @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
-                                                <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td class="wordwrap"> @item.zoomLink</td>
+                                                    <td> @item.risebirdHR</td>
+                                                    <td> @item.interviewer</td>
+                                                    <td> @item.joiningTime</td>
+                                                    <td> @item.PreferredLocation</td>
+                                                    <td> @item.ExpectedPerHourRate</td>
+                                                    @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+                                                    <td class="text-right">
+                                                        <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -235,44 +225,44 @@
                         </div>
 
 
+                    </div>
+                    <!-- end content-->
                 </div>
-                <!-- end content-->
+                <!--  end card  -->
             </div>
-            <!--  end card  -->
+            <!-- end col-md-12 -->
         </div>
-        <!-- end col-md-12 -->
+        <!-- end row -->
     </div>
-    <!-- end row -->
-</div>
-<footer class="footer">
-    <div class=" container-fluid ">
-        <nav>
-            <ul>
-                <li>
-                    <a href="#">
-                        Risebird
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        About Us
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        Blog
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="copyright" id="copyright">
-            &copy;
-            <script>
-                document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-            </script> Risebird All Rights Reserved.
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
@@ -378,9 +368,9 @@
     //// script for loader ends here
 </script>
 <script>
-    
+
     function FilterInterviews(filterValue) {
-      
+
         $.ajax({
             type: "GET",
             url: "/Interview/GetFilteredInterviews",
