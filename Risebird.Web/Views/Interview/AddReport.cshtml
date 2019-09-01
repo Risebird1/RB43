@@ -51,6 +51,7 @@
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
 <div class="main-panel" id="main-panel">
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
@@ -73,6 +74,7 @@
     <div class="panel-header panel-header-sm">
     </div>
     <div class="content">
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
@@ -206,12 +208,23 @@
                                         </div><!--end of multiple location-->
                                     </div>
                                     <div class="col-md-6 col-sm-6">
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                            {
+                                                <video width="320" height="240" controls>
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                  
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            }
+                                            else
+                                            {
+                                                <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                        <video width="320" height="240" controls="controls">
-                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-
+                                            }
+                                        }
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">

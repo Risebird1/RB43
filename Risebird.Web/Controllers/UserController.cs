@@ -673,7 +673,10 @@ namespace Risebird.Web.Controllers
 
                         return View("InterviewerUpdate", model);
                     }
-
+                    List<Skill> skills = _skillService.GetSkills();
+                    List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
+                    interviewer.PrimarySkill = "";
+                    interviewer.PrimarySkill = String.Join(",", selectedSkill);
                     interviewer.EmailId = interviewer.EmailId.ToLower();
 
                     if (_userService.UpdateInterviewer(interviewer))

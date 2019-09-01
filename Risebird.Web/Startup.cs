@@ -16,6 +16,7 @@ using Risebird.Repository;
 using Risebird.Repository.Interface;
 using Risebird.Web.Hepler;
 using System;
+using Newtonsoft.Json;
 
 namespace Risebird.Web
 {
@@ -145,6 +146,7 @@ namespace Risebird.Web
             services.AddScoped<ISelectabilityMatrixRepository, SelectabilityMatrixRepository>();
             services.AddScoped<ISelectabilityMatrixService, SelectabilityMatrixService>();
             services.AddScoped<IIRFService, IRFService>();
+            services.AddScoped<ITwilioHelper, TwilioHelper>();
         }
     }
      //Global level antiforgery token security to stop malicious scripts

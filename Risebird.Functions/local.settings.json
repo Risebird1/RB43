@@ -7,5 +7,13 @@
   },
   "ConnectionStrings": {
     "sqldb_connection": "Server=tcp:risebirdportal.database.windows.net,1433;Initial Catalog=productDB;Persist Security Info=False;User ID=talent;Password=rise_123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  },
+  "TwilioSettings": {
+    "SmsSENDER": "+12055768041",
+    "WhatsappSENDER": "+14155238886",
+    "CallerNumber": "+17274782239",
+    "ACCOUNT_SID": "ACcad9f6682d4a76df9af7cde78dd0867e",
+    "AUTH_TOKEN": "3f15940e73243adb8e75f9689adaa0e2",
+    "TwiML_Application_SID": "APb82708865faae9acaea7590423e9c965"
   }
 }

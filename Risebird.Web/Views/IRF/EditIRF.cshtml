@@ -592,6 +592,7 @@
 
                                             </tbody>
                                         </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
                                     </div>
                                 </div><!--end of col-md-12-->
                             </div>
@@ -644,6 +645,7 @@
                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:red; margin-left:415px"></label>
+                            <label class="text-danger" id="noInterviewerDown" style="color:red; margin-left:415px"></label>
 
                             <div class="card-footer ">
                                 <div class="row">
@@ -760,9 +762,40 @@
         }
 
         if (inCorrectCount == 0) {
+            // check interviewers list InterviewerCollection_  InterviewerId
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+            for (i = 0; i < drpdowns.length; i++) {
+
+                var interviewId = $("#" + drpdowns[i].id).val();
+                if (interviewId == '') {
+                    //noInterviewer
+                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+
+                    return false;
+                }
+            }
+            document.getElementById("noInterviewer").innerHTML = "";
+            document.getElementById("noInterviewerDown").innerHTML = "";
+
+
             return true;
         }
         else {
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+            for (i = 0; i < drpdowns.length; i++) {
+
+                var interviewId = $("#" + drpdowns[i].id).val();
+                if (interviewId == '') {
+                    //noInterviewer
+                    document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
+                    document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
+                    break;
+
+                }
+                document.getElementById("noInterviewer").innerHTML = "";
+                document.getElementById("noInterviewerDown").innerHTML = "";
+            }
             
             return false;
         }
@@ -785,7 +818,7 @@
             url: "/IRF/GetInterviewers",
             data: { 'skills': skills },
             success: function (data) {
-                debugger;
+               
 
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {

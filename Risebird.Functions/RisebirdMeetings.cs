@@ -267,7 +267,53 @@ namespace Risebird.Functions
                         smtpClient.Credentials = credentials;
 
                         smtpClient.Send(mailMessage);
-                        log.Info("Interview mail sent to interviewer.");
+                        log.Info("Interview schedule mail sent to interviewer.");
+                    }
+                }
+                catch (Exception)
+                {
+                    log.Error($"Failed to send mail. Please check all filled and try again.");
+                }
+            }
+            else if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "2")
+            {
+                try
+                {
+                    var mailMessage = new MailMessage();
+                    mailMessage.From = new MailAddress("hire@risebird.io", "Risebird Notification");
+                    using (SqlConnection conn = new SqlConnection(str))
+                    {
+                        conn.Open();
+                        SqlCommand cmd = new SqlCommand(
+                            "usp_ListOfCancelledInterviewInterviwer", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
+                        cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
+                        var reader = cmd.ExecuteReader();
+                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        while (reader.Read())
+                        {
+                            mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
+                        }
+                        mailMessage.Subject = "Interview has been Cancelled on date: " + interviewDate;
+
+                        StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                        msgBody.AppendLine(
+                            "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                        msgBody.Append("\n");                        
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Thank You, Team Risebird");
+
+                        mailMessage.Body = msgBody.ToString();
+                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                        smtpClient.Credentials = credentials;
+
+                        smtpClient.Send(mailMessage);
+                        log.Info("Interview cancelled mail sent to interviewer.");
                     }
                 }
                 catch (Exception)

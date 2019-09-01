@@ -84,7 +84,15 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                                @Html.EditorFor(model => model.PrimarySkill, new { htmlAttributes = new { @class = "form-control", @type = "text", @readonly="readonly" } })
+                                                @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.DropDownListFor(m => m.SelectedSkillIds, new SelectList(Model.PrimarySkills, "Value", "Text", Model.SelectedSkillIds), new { @class = "form-control", @multiple = "multiple", @type = "checkbox" })
                                                 @Html.ValidationMessageFor(model => model.SelectedSkillIds, "", new { @class = "text-danger" })
 
                                             </div>
@@ -117,7 +125,7 @@
 
                                                 @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                             </div>
-                                            
+
                                             <div class="">
                                                 @{
                                                     if (Model.ResumeLink != null)
@@ -126,9 +134,9 @@
                                                     }
                                                 }
                                             </div>
-                                            
 
-                                            
+
+
                                         </div>
                                         <div class="card-footer ">
                                             <div class="row">
@@ -212,6 +220,7 @@
         j('.listbox').multiselect({
             includeSelectAllOption: true
         });
+         
     });
 </script>
 <script>
@@ -236,7 +245,21 @@
         }
 
     }
-
+    
 </script>
+@*<script>
+
+    $(document).ready(function () {
+      
+         var SelectedSkillIds = '@ViewBag.SelectedSkillIds';
+        $("#SelectedSkillIds").val(SelectedSkillIds);
+    });
+
+    //$(document).ready(function () {
+        
+       
+
+    //});
+</script>*@
 
 
