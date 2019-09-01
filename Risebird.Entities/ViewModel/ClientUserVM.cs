@@ -22,9 +22,8 @@ namespace Risebird.Entities.ViewModel
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         public string EmailId { get; set; }
-        [Display(Name = "Mobile Number")]
-        [RegularExpression(@"^(\d{10})$", ErrorMessage = "Please enter a 10 digit mobile number")]
-        public long MobileNumber { get; set; }
+        [Display(Name = "Mobile Number")]      
+        public string MobileNumber { get; set; }
         public int idProfile { get; set; }
         public string ClientName { get; set; }
         public string Role { get; set; }

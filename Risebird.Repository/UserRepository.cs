@@ -483,11 +483,8 @@ namespace Risebird.Repository
                 parameters.Add("@id", entity.id);
 
             parameters.Add("@selectedSkills", entity.PrimarySkill);
-            parameters.Add("@resumeLink", entity.ResumeLink);
-            parameters.Add("@successRate", entity.SuccessRate);
-            parameters.Add("@slots", entity.Slots);
-            parameters.Add("@noOfInterview", entity.NoOfInterview);
-
+            parameters.Add("@resumeLink", entity.ResumeLink);           
+            parameters.Add("@slots", entity.Slots);   
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
