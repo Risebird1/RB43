@@ -67,6 +67,7 @@
             <th>Client HR</th>
             <th>Interview Date</th>
             <th>Interview Duration</th>
+            <th>Candidate Name</th>
             <th>Candidate Email</th>
             <th>Candidate Contact</th>
             <th>Resume Detail</th>
@@ -89,6 +90,7 @@
             <th>Client HR</th>
             <th>Interview Date</th>
             <th>Interview Duration</th>
+            <th>Candidate Name</th>
             <th>Candidate Email</th>
             <th>Candidate Contact</th>
             <th>Resume Detail</th>
@@ -108,46 +110,47 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id=@item.id>
-                <td title=@item.IRFID> @item.IRFID </td>
-                <td> @item.ClientHrContact </td>
-                <td> @item.interviewDate </td>
-                <td> @item.interviewDuration </td>
-                <td> @item.candidateEmail</td>
-                <td>@item.MobileNumber</td>
-                @if (item.resumeLink != null && item.resumeLink != "")
-                {
-                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                }
-                else
-                {
-                    <td>No Resume</td>
-                }
-                @if (item.JDLink != null && item.JDLink != "")
-                {
-                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                }
-                else
-                {
-                    <td>No JD</td>
-                }
+        <tr id=@item.id>
+            <td title=@item.IRFID> @item.IRFID </td>
+            <td> @item.ClientHrContact </td>
+            <td> @item.interviewDate </td>
+            <td> @item.interviewDuration </td>
+            <td> @item.candidateName</td>
+            <td> @item.candidateEmail</td>
+            <td>@item.MobileNumber</td>
+            @if (item.resumeLink != null && item.resumeLink != "")
+            {
+                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+            }
+            else
+            {
+                <td>No Resume</td>
+            }
+            @if (item.JDLink != null && item.JDLink != "")
+            {
+                <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+            }
+            else
+            {
+                <td>No JD</td>
+            }
 
-                <td> @item.confirmationStatus</td>
-                <td>@item.staffingAgency</td>
-                <td class="wordwrap"> @item.zoomLink</td>
-                <td> @item.risebirdHR</td>
-                <td> @item.interviewer</td>
-                <td> @item.joiningTime</td>
-                <td> @item.PreferredLocation</td>
-                <td> @item.ExpectedPerHourRate</td>
-                @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
-                <td class="text-right">
-                    <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                    <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                    <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+            <td> @item.confirmationStatus</td>
+            <td>@item.staffingAgency</td>
+            <td class="wordwrap"> @item.zoomLink</td>
+            <td> @item.risebirdHR</td>
+            <td> @item.interviewer</td>
+            <td> @item.joiningTime</td>
+            <td> @item.PreferredLocation</td>
+            <td> @item.ExpectedPerHourRate</td>
+            @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+            <td class="text-right">
+                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
-                </td>
-            </tr>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
