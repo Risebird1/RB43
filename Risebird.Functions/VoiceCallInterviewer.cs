@@ -24,7 +24,7 @@ namespace Risebird.Functions
             {
                 var phoneNumbers = new List<string>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
+                var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1) a on a.interviewer=UserList.EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@timeL", DateTime.Now.AddHours(6));
                 dynamicParameters.Add("@timeH", DateTime.Now.AddHours(6).AddMinutes(30));
@@ -42,13 +42,16 @@ namespace Risebird.Functions
 
                     foreach (var phoneNumber in phoneNumbers)
                     {
-                        TwilioClient.Init(twilioAccountSID, twilioAuthToken);
-                        var to = new PhoneNumber(phoneNumber);
-                        var from = new PhoneNumber(twilioVoiceCallNumber);
-                        var call = CallResource.CreateAsync(
-                            to: to,
-                            from: from,
-                            url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
+                        if (!string.IsNullOrEmpty(phoneNumber))
+                        {
+                            TwilioClient.Init(twilioAccountSID, twilioAuthToken);
+                            var to = new PhoneNumber(phoneNumber);
+                            var from = new PhoneNumber(twilioVoiceCallNumber);
+                            var call = CallResource.CreateAsync(
+                                to: to,
+                                from: from,
+                                url: new Uri("https://beige-vulture-6005.twil.io/assets/phoneCallFile.xml"));
+                        }
                     }
                 }
 

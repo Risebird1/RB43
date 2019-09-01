@@ -23,7 +23,7 @@ namespace Risebird.Functions
         //        var msg = "Dear Interviewer! Greetings from RiseBird. This is a gentle reminder for your video based interview meeting scheduled in the next 30 minutes.";
         //        var phoneNumbers = new List<string>();
         //        var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-        //        var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL) a on a.interviewer=UserList.EmailId";
+        //        var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1) a on a.interviewer=UserList.EmailId";
         //        var dynamicParameters = new DynamicParameters();
         //        dynamicParameters.Add("@timeL",  DateTime.Now.AddHours(6));
         //        dynamicParameters.Add("@timeH",DateTime.Now.AddHours(6).AddMinutes(30));
@@ -47,6 +47,7 @@ namespace Risebird.Functions
 
         //            foreach (var phoneNumber in phoneNumbers)
         //            {
+        //               if(!string.IsNullOrEmpty(phoneNumber))
         //                MessageResource.CreateAsync(to: new PhoneNumber("whatsapp:" + phoneNumber), from: new PhoneNumber("whatsapp:" + twilioWhatsappNumber), body: msg, client: _twilioClient);
         //            }
         //        }
