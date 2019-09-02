@@ -108,7 +108,7 @@ namespace Risebird.Functions
                                 }
 
                                 interviewDate = Convert.ToDateTime(interviewDatestr);
-                                interviewDate = interviewDate.AddHours(5).AddMinutes(30);
+                                
                                 zoomLink = ((JProperty)mainFamilies1).Value["location"].ToString();
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.invitee")

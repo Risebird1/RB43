@@ -82,6 +82,7 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Expected Per Hour Rate</th>
+            <th>Current Employer</th>
             @*<th>Interview Device Details</th>*@
             <th class="disabled-sorting text-right">Actions</th>
         </tr>
@@ -107,6 +108,7 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Expected Per Hour Rate</th>
+            <th>Current Employer</th>
             @*<th>Interview Device Details</th>*@
             <th class="disabled-sorting text-right">Actions</th>
         </tr>
@@ -149,6 +151,7 @@
             <td> @item.joiningTime</td>
             <td> @item.preferredLocation</td>
             <td> @item.expectedPerHourRate</td>
+            <td> @item.currentEmployerName</td>
             @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
             <td class="text-right">
                 <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>

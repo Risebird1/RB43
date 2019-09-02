@@ -11,6 +11,7 @@ using System.Net;
 using Twilio.Clients;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using System.Threading.Tasks;
 
 namespace Risebird.Functions
 {
@@ -28,8 +29,8 @@ namespace Risebird.Functions
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 var query = "select UserList.MobileNumber from UserList inner join (select InterviewMeetings.interviewer from InterviewMeetings where interviewDate<=@timeH and interviewDate>=@timeL and confirmationStatus=1) a on a.interviewer=UserList.EmailId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@timeL", DateTime.Now.AddHours(6));
-                dynamicParameters.Add("@timeH", DateTime.Now.AddHours(6).AddMinutes(05));
+                dynamicParameters.Add("@timeL", DateTime.Now);
+                dynamicParameters.Add("@timeH", DateTime.Now.AddMinutes(35));
                 using (SqlConnection con = new SqlConnection(str))
                 {
                      phoneNumbers = con.Query<string>(query, dynamicParameters).ToList();                    
@@ -42,12 +43,23 @@ namespace Risebird.Functions
                     var twilioAccountSID = "ACcad9f6682d4a76df9af7cde78dd0867e";
                     var twilioSMSNumber = "+12055768041";
                     var _twilioClient = new TwilioRestClient(twilioAccountSID, twilioAuthToken);
-                    //MessageResource.CreateAsync(to: new PhoneNumber("+919284487005"), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
-                    foreach (var phoneNumber in phoneNumbers)
+                    Parallel.ForEach(phoneNumbers, phoneNumber =>
                     {
-                        if(!string.IsNullOrEmpty(phoneNumber))
-                        MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                        if (!string.IsNullOrEmpty(phoneNumber))
+                        {
+                            if (!string.IsNullOrEmpty(phoneNumber))
+                                MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                            log.Info($"SMS Timer trigger function executed for: {phoneNumber}");
+                        }
+
                     }
+                    );
+                    //MessageResource.CreateAsync(to: new PhoneNumber("+919284487005"), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                    //foreach (var phoneNumber in phoneNumbers)
+                    //{
+                    //    if(!string.IsNullOrEmpty(phoneNumber))
+                    //    MessageResource.CreateAsync(to: new PhoneNumber(phoneNumber), from: new PhoneNumber(twilioSMSNumber), body: msg, client: _twilioClient);
+                    //}
                 }
 
             }
