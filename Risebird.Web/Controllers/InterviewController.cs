@@ -1092,12 +1092,12 @@ namespace Risebird.Web.Controllers
                                 model.AudioLink = uploadedaudioFileURL;
                             }
                         }
-                        if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
-                        {
-                           // ModelState.AddModelError(String.Empty, "Video file/link not found.");
-                            GetStatusList(model);
-                            return View("AddReport", model);
-                        }
+                        //if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
+                        //{
+                        //   // ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                        //    GetStatusList(model);
+                        //    return View("AddReport", model);
+                        //}
 
                         if (model.VideoFile != null)
                         {
