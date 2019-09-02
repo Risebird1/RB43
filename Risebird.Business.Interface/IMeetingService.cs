@@ -8,7 +8,7 @@ namespace Risebird.Business.Interface
 {
     public interface IMeetingService
     {
-        List<Meeting> GetMeetingList();
+        List<MeetingVM> GetMeetingList();
         bool AddMeeting(MeetingVM meeting);
         bool UpdateMeeting(MeetingVM meetingToUpdate);
 

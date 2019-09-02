@@ -56,13 +56,14 @@ namespace Risebird.Web.Controllers
 
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue?((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription():string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue?((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription():string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
 
                         var list = new SelectList(new[]
 {
     new { ID = "Today", Name = "Today"},
     new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Yesterday", Name = "Yesterday"},
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
@@ -118,6 +119,15 @@ namespace Risebird.Web.Controllers
                                 return new EmptyResult();
                             }
                         }
+                        else if (filterValue == "Yesterday")
+                        {
+                            modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
+                            //modelList.Where(x => x.interviewDate == DateTime.Now.AddDays(1).Date).ToList();
+                            if (modelList.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
                         else if (filterValue == "Next Seven Days")
                         {
                             modelList = modelList.Where(x => x.interviewDate.Date <= DateTime.Now.AddDays(7).Date && x.interviewDate.Date >= DateTime.Now.Date).ToList();
@@ -126,8 +136,8 @@ namespace Risebird.Web.Controllers
                                 return new EmptyResult();
                             }
                         }
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                       // modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         return PartialView("GetFilteredInterviews", modelList);
                     }
                     else
@@ -580,6 +590,7 @@ namespace Risebird.Web.Controllers
 {
     new { ID = "Today", Name = "Today"},
     new { ID = "Tomorrow", Name = "Tomorrow"  },
+      new { ID = "Yesterday", Name = "Yesterday"},
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
@@ -639,6 +650,14 @@ namespace Risebird.Web.Controllers
                         else if (filterValue == "Tomorrow")
                         {
                             myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                            if (myInterview.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        else if (filterValue == "Yesterday")
+                        {
+                            myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
                             if (myInterview.Count() == 0)
                             {
                                 return new EmptyResult();
@@ -1075,7 +1094,7 @@ namespace Risebird.Web.Controllers
                         }
                         if (model.VideoFile == null && model.PageVideoLink == null && model.VideoLink == null)
                         {
-                            ModelState.AddModelError(String.Empty, "Video file/link not found.");
+                           // ModelState.AddModelError(String.Empty, "Video file/link not found.");
                             GetStatusList(model);
                             return View("AddReport", model);
                         }
