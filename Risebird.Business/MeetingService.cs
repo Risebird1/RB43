@@ -30,7 +30,7 @@ namespace Risebird.Business
             _irfRepository = irfRepository;
         }
 
-        public List<Meeting> GetMeetingList()
+        public List<MeetingVM> GetMeetingList()
         {
             try
             {

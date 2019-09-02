@@ -384,6 +384,7 @@ namespace Risebird.Web.Controllers
 {
     new { ID = "Today", Name = "Today"},
     new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Yesterday", Name = "Yesterday"  },
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
@@ -437,6 +438,14 @@ namespace Risebird.Web.Controllers
                         else if (filterValue == "Tomorrow")
                         {
                             meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        else if (filterValue == "Yesterday")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();
@@ -580,6 +589,7 @@ namespace Risebird.Web.Controllers
 {
     new { ID = "Today", Name = "Today"},
     new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Yesterday", Name = "Yesterday"  },
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
@@ -633,6 +643,14 @@ namespace Risebird.Web.Controllers
                         else if (filterValue == "Tomorrow")
                         {
                             meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(1).Date).ToList();
+                            if (meetings.Count() == 0)
+                            {
+                                return new EmptyResult();
+                            }
+                        }
+                        else if (filterValue == "Yesterday")
+                        {
+                            meetings = meetings.Where(x => x.interviewDate.Date == DateTime.Now.AddDays(-1).Date).ToList();
                             if (meetings.Count() == 0)
                             {
                                 return new EmptyResult();

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 
 <style>
 
@@ -73,6 +73,8 @@
             <th>Resume Detail</th>
             <th>JD Link</th>
             <th>Confirmation Status</th>
+            <th>Meeting Status</th>
+            <th>Interview Status</th>
             <th>Staffing Agenecy</th>
             <th>Zoom Link</th>
             <th>Risebird HR</th>
@@ -96,6 +98,8 @@
             <th>Resume Detail</th>
             <th>JD Link</th>
             <th>Confirmation Status</th>
+            <th>Meeting Status</th>
+            <th>Interview Status</th>
             <th>Staffing Agency</th>
             <th>Zoom Link</th>
             <th>Risebird HR</th>
@@ -110,8 +114,8 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr id=@item.id>
-            <td title=@item.IRFID> @item.IRFID </td>
+        <tr id=@item.imid>
+            <td title=@item.IRFId> @item.IRFId </td>
             <td> @item.ClientHrContact </td>
             <td> @item.interviewDate </td>
             <td> @item.interviewDuration </td>
@@ -136,18 +140,20 @@
             }
 
             <td> @item.confirmationStatus</td>
+            <td> @item.MeetingStatusStatusDesc</td>
+            <td> @item.intervieweStatusStatDesc</td>
             <td>@item.staffingAgency</td>
             <td class="wordwrap"> @item.zoomLink</td>
             <td> @item.risebirdHR</td>
             <td> @item.interviewer</td>
             <td> @item.joiningTime</td>
-            <td> @item.PreferredLocation</td>
-            <td> @item.ExpectedPerHourRate</td>
+               <td> @item.preferredLocation</td>
+                                                <td> @item.expectedPerHourRate</td>
             @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
             <td class="text-right">
-                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.id})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.id})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
             </td>
         </tr>

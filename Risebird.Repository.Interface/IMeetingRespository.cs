@@ -7,7 +7,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IMeetingRespository
     {
-        Task<IEnumerable<Meeting>> GetAllInterviewMeetings();
+        Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings();
         Task<bool> AddMeeting(MeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
         Task<bool> UpdateMeeting(MeetingVM meeting);
