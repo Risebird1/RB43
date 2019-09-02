@@ -703,6 +703,11 @@
 </div>
 
 <script>
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";

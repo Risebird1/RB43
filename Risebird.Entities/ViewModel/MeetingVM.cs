@@ -15,7 +15,8 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "IRF ID")]
         [Required(ErrorMessage = "Please enter existing IRF Name.")]
         public string IRFId { get; set; }
-       
+
+        public int irfIntId { get; set; }
         [Display(Name = "Interview Date")]
         [Required(ErrorMessage = "Please enter Interview Date.")]
         public DateTime interviewDate { get; set; }
@@ -113,6 +114,8 @@ namespace Risebird.Entities.ViewModel
         public SelectList IRFList { get; set; }
         public SelectList ClientHrContactList { get; set; }
         public SelectList StaffingAgencyList { get; set; }
+        public string JDLink { get; set; }
+       
 
     }
 }

@@ -202,7 +202,11 @@
 </div>
 
 <script>
-
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
     function AddRowComments() {
         
         var table = document.getElementById("SkillTable");
