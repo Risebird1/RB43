@@ -142,7 +142,13 @@
 </div>
 
 
-
+<script>
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
+</script>
 @*<style>
         .fa-spinner {
             font-size: 18px;
