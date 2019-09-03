@@ -39,6 +39,7 @@ namespace Risebird.Entities.ViewModel
         public int NoOfInterview { get; set; }
         [Display(Name ="Success Rate")]
         public double SuccessRate { get; set; }
+        [Display(Name = "Approved")]
         public bool IsApproved { get; set; }
 
         [Display(Name = "Upload Resume")]

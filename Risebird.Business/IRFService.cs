@@ -110,7 +110,7 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetInterviewerSkills();
+                var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
                 var skillList = skills.Split(",");
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();

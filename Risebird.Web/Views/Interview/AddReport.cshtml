@@ -944,21 +944,29 @@
 
                                                 @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                             }
+                                            else if (ViewBag.IsClient)
+                                            {
+                                                //@Html.ActionLink("Back to List", "ClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
+                                            else if (ViewBag.IsClientSelected)
+                                            {
+                                               // @Html.ActionLink("Back to List", "ClientSelectedMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            }
                                             else
                                             {
                                                 @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                             }
-                                            @if (Model.IsEdited)
+                                            @if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
                                             {
-                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                if (Model.IsEdited)
+                                                {
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                                }
                                             }
-                                            else
-                                            {
-                                                <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                                            }
-
-
-
 
                                         </div>
                                     </div>
