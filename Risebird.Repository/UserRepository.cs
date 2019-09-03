@@ -489,6 +489,7 @@ namespace Risebird.Repository
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
             parameters.Add("@userMobileNumber", entity.MobileNumber);
+            parameters.Add("@isApproved", entity.IsApproved);
 
             return parameters;
         }
