@@ -200,8 +200,13 @@
 </div>
 
 <script>
-
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
     function AddRowComments() {
+      
         var table = document.getElementById("SkillTable");
        
 
@@ -209,7 +214,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#SkillTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+        $tr.find("textarea,select,hidden").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -225,7 +230,7 @@
 
         // reset fields in the new row
         $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
+        $tr.find("textarea[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
 
         $tr.find("a").val("");
@@ -240,8 +245,8 @@
         $form.unbind();
         $form.data("validator", null);
 
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
+        //// Check document for changes
+        //$.validator.unobtrusive.parse(document);
 
     }
 

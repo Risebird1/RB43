@@ -73,27 +73,19 @@
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
-                        <div class="dataloading">
-                            <div class="text-right">
-                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                            </div>
+                        <div class="dataloading">                           
                             <div class="toolbar">
                                 <div class="row">
 
-                                    <div class="col-sm-3">
+                                    <div class="col-md-3 ml-md-auto">
                                         <div class="form-group">
                                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                         </div>
                                     </div>
-
-                                </div>
-
-                                @*<div class="text-left">
-            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Today's Interviews" onclick="FilterInterviews('today')" data-original-title="Tooltip on top"> Today's </span></button>
-            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Tomorrow's Interviews" onclick="FilterInterviews('tomorrow')" data-original-title="Tooltip on top"> Tomorrow's </span></button>
-            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('seven')" data-original-title="Tooltip on top"> Next Seven Days</span></button>
-            <button type="button" style="background-color:cadetblue" class="btn btn-primary"><span data-toggle="tooltip" data-placement="top" title="Next Seven Days Interviews" onclick="FilterInterviews('all')" data-original-title="Tooltip on top"> All </span></button>
-        </div>*@
+                                    <div class="col-auto">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                    </div>
+                                </div>                               
 
                             </div>
 
@@ -112,6 +104,7 @@
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
+                                                <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
                                                 <th>Report Link</th>
@@ -129,6 +122,7 @@
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
+                                                <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
                                                 <th>Report Link</th>
@@ -139,36 +133,37 @@
 
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc </td>
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                <td> @item.intervieweStatusStatDesc </td>
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -223,7 +218,7 @@
 
 <script>
     $(document).ready(function () {
-        FilterInterviews("Today");// on page load default dropdownlist value set
+        FilterInterviews("All");// on page load default dropdownlist value set
         $('#meeting').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [

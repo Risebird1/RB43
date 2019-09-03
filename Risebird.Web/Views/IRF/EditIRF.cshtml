@@ -703,6 +703,11 @@
 </div>
 
 <script>
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -818,7 +823,7 @@
             url: "/IRF/GetInterviewers",
             data: { 'skills': skills },
             success: function (data) {
-                debugger;
+               
 
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {

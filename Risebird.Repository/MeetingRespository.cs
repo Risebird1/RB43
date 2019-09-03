@@ -29,16 +29,16 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
 
-        public async Task<IEnumerable<Meeting>> GetAllInterviewMeetings()
+        public async Task<IEnumerable<MeetingVM>> GetAllInterviewMeetings()
         {
             try
-            {
+            {               
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<Meeting>(
-                        con, "select im.*, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId", null, commandType: Text);
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIAllInterviewMeetings", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
                 }
-                //select *, IRF.id as irfIntId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId
             }
             catch (SqlException ex)
             {

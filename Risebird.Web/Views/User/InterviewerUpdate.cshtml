@@ -104,20 +104,7 @@
                                                 @Html.ValidationMessageFor(model => model.Slots, "", new { @class = "text-danger" })
 
                                             </div>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.SuccessRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.SuccessRate, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-
-                                            </div>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.NoOfInterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.NoOfInterview, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-
-                                            </div>
+                                           
                                             <div class="form-group">
                                                 Upload File
                                                 <input id="Resume" name="Resume" value="Upload" type="radio" onclick="RadioChanged(this.value)">
@@ -263,7 +250,7 @@
 @*<script>
 
     $(document).ready(function () {
-        debugger;
+      
          var SelectedSkillIds = '@ViewBag.SelectedSkillIds';
         $("#SelectedSkillIds").val(SelectedSkillIds);
     });
