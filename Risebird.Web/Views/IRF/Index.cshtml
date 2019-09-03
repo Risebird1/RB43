@@ -5,6 +5,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
     .multiple_row > h2 {
         font-size: 18px;
         background-color: #5f95b1;
@@ -54,6 +66,7 @@
     .list-group {
         margin-bottom: 150px;
     }
+
 </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -120,7 +133,8 @@
                                         <div class="col-12">
                                             <div class="group inner list-group-item-text">
                                                 <span>Client Name:</span> <p>@item.ClientCompName</p>
-                                                <span>Location:</span> <p>@item.JobCountry</p>
+                                                <span>JD Title:</span> <p class="spanclass desc"> @item.JDTiltle</p>
+                                               
                                                 <span>No of Openings:</span> <p>@item.NoOfPosition</p>
                                                 <span>No of Interviews:</span> <p>@item.NoOfIntterview</p>
                                             </div>
