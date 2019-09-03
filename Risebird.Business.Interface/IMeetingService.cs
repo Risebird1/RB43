@@ -27,5 +27,6 @@ namespace Risebird.Business.Interface
         IEnumerable<SkillComment> GetTechSkillComments(int IRFid);
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
+        List<MeetingVM> GetClientMeetingList(string emailId);
     }
 }

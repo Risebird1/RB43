@@ -516,6 +516,46 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<ClientUser> GetClientDetails(string emailId)
+        {
+            try
+            {                
+                var query = "select * from ClientUser where UserId in (select id from UserList where EmailId = @EmailId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ClientUser>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<MeetingVM>> GetClientInterviewMeetings()
+        {
+            try
+            {
+                var query = "select InterviewMeetings.*, InterviewMeetings.id as imid, IRF.ClientId, IRF.id as irfIntId  from InterviewMeetings inner join IRF on InterviewMeetings.IRFId = IRF.IRFId";
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MeetingVM>(query);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
             try
