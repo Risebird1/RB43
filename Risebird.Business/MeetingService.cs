@@ -433,7 +433,7 @@ namespace Risebird.Business
         {
             try
             {
-                await _meetingRespository.AddInterviewReport(reportModel);
+                var result =await _meetingRespository.AddInterviewReport(reportModel);
                 if(reportModel.InterviewStatus.HasValue)
                 {
                     if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
@@ -445,10 +445,10 @@ namespace Risebird.Business
                         var candidateName = reportModel.CandidateName;
                         var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
                         _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, IRFID, candidateName, intervieweStatusStatDesc);
-                    }                    
+                    }
                 }
-                
-                return true;
+
+                return result;
             }
 
             catch (Exception e)
