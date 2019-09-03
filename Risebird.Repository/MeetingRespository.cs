@@ -541,7 +541,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select InterviewMeetings.*, InterviewMeetings.id as imid, IRF.ClientId, IRF.id as irfIntId  from InterviewMeetings inner join IRF on InterviewMeetings.IRFId = IRF.IRFId";
+                var query = "select im.*, im.id as imid, IRF.ClientId, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -552,7 +552,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

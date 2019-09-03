@@ -388,7 +388,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
-"ID", "Name", "Today");
+"ID", "Name", "All");
 
                         ViewData["list"] = list;
 
@@ -593,7 +593,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
-"ID", "Name", "Today");
+"ID", "Name", "All");
 
                         ViewData["list"] = list;
 

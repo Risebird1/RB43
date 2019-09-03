@@ -478,7 +478,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
-"ID", "Name", "Today");
+"ID", "Name", "All");
 
                         ViewData["list"] = list;
                         if (TempData["SuccessErrorMessage"] != null)
@@ -717,68 +717,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> ClientInterview()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-
-                    var meetings = _meetingService.GetAllClientInterviews(emailid);
-
-                    foreach (var m in meetings)
-                    {
-                        if (m.InterviewStatus.HasValue)
-                        {
-                            m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                        }
-                        if (m.L2InterviewStatus.HasValue)
-                        {
-                            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                        }
-                        if (m.ClientInterviewStatus.HasValue)
-                        {
-                            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                        }
-                        if (m.JoiningStatus.HasValue)
-                        {
-                            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                        }
-                        if (m.PreparationStatus.HasValue)
-                        {
-                            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                        }
-                        if (m.OfferStatus.HasValue)
-                        {
-                            m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
-                        }
-                        if (m.MeetingStatus.HasValue)
-                        {
-                            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                        }
-                        if (m.QCStatus.HasValue)
-                        {
-                            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                        }
-                    }
-                    return View(meetings);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
-
+   
         [Authorize]
         [HttpGet]
         public IActionResult ClientMeetings()
