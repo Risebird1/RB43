@@ -133,10 +133,10 @@
                                         <div class="col-12">
                                             <div class="group inner list-group-item-text">
                                                 <span>Client Name:</span> <p>@item.ClientCompName</p>
-                                                <span>JD Title:</span> <p class="spanclass desc"> @item.JDTiltle</p>
+                                                <span>Primary Skill:</span> <p class="spanclass desc">@item.JDTiltle.Split("|")[0]</p>
                                                
-                                                <span>No of Openings:</span> <p>@item.NoOfPosition</p>
-                                                <span>No of Interviews:</span> <p>@item.NoOfIntterview</p>
+                                                <span>Total Interviews:</span> <p>@item.TotalMeetings</p>
+                                                <span>Selected Interviews:</span> <p>@item.SelectedMeetings</p>
                                             </div>
                                         </div>
 

@@ -97,7 +97,7 @@
 
                                         </div>
                                     </div>
-                                   <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
@@ -146,7 +146,7 @@
 
                                         </div>
                                     </div>
-                                   
+
 
                                 </div>
 
@@ -202,15 +202,52 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
+                                            <h2>Interview Video</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+                                        @Html.HiddenFor(x => Model.VideoLink)
+                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                        {
+                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                            {
+                                                <video width="320" height="240" style="width:100%" controls>
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            }
+                                            else
+                                            {
+                                                <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                            }
+                                        }
+
+                                        @*<div class="col-md-6 col-sm-6">
+
+        </div>*@
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
                                     <div class="col-md-6 col-sm-6">
 
                                         @*<video width="320" height="240" controls="controls">
-                                            <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>*@
+                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>*@
 
                                         @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                         {
@@ -243,7 +280,7 @@
                                     </div>
                                 </div>
 
-                               <div class="row">
+                                <div class="row">
                                     <div class="col-md-6 col-sm-6 px-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
@@ -262,50 +299,50 @@
                                     </div>
                                 </div>
 
-                               <div class="row">
-                                   <div class="col-md-6 col-sm-6 px-1">
-                                       @*<div class="form-group">*@
-                                       @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                       @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav" })
-                                       @{
-                                           if (Model.AudioLink != null)
-                                           {
-                                               <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
-                                           }
-                                       }
-                                       @*</div>*@
-                                   </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 px-1">
+                                        @*<div class="form-group">*@
+                                        @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav" })
+                                        @{
+                                            if (Model.AudioLink != null)
+                                            {
+                                                <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
+                                            }
+                                        }
+                                        @*</div>*@
+                                    </div>
 
-                                   @*<div class="col-md-10">
-                                       Upload Video
-                                       <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                       Add a link
-                                       <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                   </div>
+                                    @*<div class="col-md-10">
+                Upload Video
+                <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                Add a link
+                <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+            </div>
 
-                                   <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
-                                       @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
+                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                       @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                       @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                   </div>*@
+                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+            </div>*@
 
 
-                                   <div class="col-md-6 col-sm-6 px-1"  id= "uploadDiv">
-                                       @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                       @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
-                                       
-                                  
-                                       <div class="">
-                                           @{
-                                               if (Model.VideoLink != null)
-                                               {
-                                                   <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                               }
-                                           }
-                                       </div>
-                                   </div>
-                               </div>
+                                    <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
+                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+
+
+                                        <div class="">
+                                            @{
+                                                if (Model.VideoLink != null)
+                                                {
+                                                    <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -871,7 +908,7 @@
                                                             <label class="form-control" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
                                                         </td>
                                                         <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0" , @onchange="CountProctoring(this.value)"})
+                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @onchange = "CountProctoring(this.value)" })
                                                         </td>
 
                                                     </tr>
@@ -942,7 +979,7 @@
                                                     @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                                 }
-                                               
+
                                             }
                                         </div>
                                     </div>
