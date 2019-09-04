@@ -102,7 +102,7 @@ namespace Risebird.Repository
                 {
                     SqlCommand cmd = new SqlCommand();
                     interviewers =  SqlMapper.Query<Interviewer>(
-                        con, "select * from Interviewer", null, commandType: Text);
+                        con, "select * from Interviewer where IsApproved=1", null, commandType: Text);
                     var idList = new List<int>();
                     foreach(var item in interviewers)
                     {

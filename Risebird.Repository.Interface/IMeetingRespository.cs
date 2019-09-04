@@ -42,6 +42,9 @@ namespace Risebird.Repository.Interface
         bool GetIRFbyId(int irfId);
         IEnumerable<IRF> GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
+        IEnumerable<ClientUser> GetClientDetails(string emailId);
+
+        Task<IEnumerable<MeetingVM>> GetClientInterviewMeetings();
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }

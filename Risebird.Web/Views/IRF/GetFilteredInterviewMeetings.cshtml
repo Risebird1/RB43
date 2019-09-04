@@ -36,6 +36,7 @@
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Report Link</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
@@ -47,13 +48,13 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
-            <th>Report Link</th>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Report Link</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
@@ -65,7 +66,6 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
-            <th>Report Link</th>
         </tr>
     </tfoot>
     <tbody>
@@ -74,6 +74,7 @@
         <tr id=@item.imid>
             <td> @item.interviewDate </td>
             <td> @item.candidateName </td>
+            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
             @if (item.resumeLink != null && item.resumeLink != "")
             {
                 <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -100,7 +101,6 @@
             <td> @item.joiningTime </td>
             <td> @item.preferredLocation </td>
             <td>@item.staffingAgency</td>
-            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
         </tr>
         }
     </tbody>

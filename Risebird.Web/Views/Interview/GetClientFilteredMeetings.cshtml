@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+
+<style>
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+</style>
+
+<table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Interview Date</th>
+            <th>Candidate Name</th>
+            <th>Report Link</th>
+            <th>Resume</th>
+            <th>Candidate Contact</th>
+            <th>Client HR</th>
+            <th>Confirmation Status</th>
+            <th>Meeting Status</th>
+            <th>Selection Status</th>
+            <th>Current Employer</th>
+            <th>Expected Per Hour Rate</th>
+            <th>Expected Joining Time</th>
+            <th>Preferred Location</th>
+            <th>Staffing Agency</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Interview Date</th>
+            <th>Candidate Name</th>
+            <th>Report Link</th>
+            <th>Resume</th>
+            <th>Candidate Contact</th>
+            <th>Client HR</th>
+            <th>Confirmation Status</th>
+            <th>Meeting Status</th>
+            <th>Selection Status</th>
+            <th>Current Employer</th>
+            <th>Expected Per Hour Rate</th>
+            <th>Expected Joining Time</th>
+            <th>Preferred Location</th>
+            <th>Staffing Agency</th>
+        </tr>
+    </tfoot>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr id=@item.imid>
+            <td> @item.interviewDate </td>
+            <td> @item.candidateName </td>
+            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+            @if (item.resumeLink != null && item.resumeLink != "")
+            {
+                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+            }
+            else
+            {
+                <td>No Resume</td>
+            }
+            @if (item.MobileNumber != null)
+            {
+                <td>@item.MobileNumber</td>
+
+            }
+            else
+            {
+                <td>No Contact</td>
+            }
+            <td> @item.ClientHrContact </td>
+            <td> @item.confirmationStatus</td>
+            <td> @item.MeetingStatusStatusDesc </td>
+            <td> @item.intervieweStatusStatDesc </td>
+            <td> @item.currentEmployerName </td>
+            <td> @item.expectedPerHourRate </td>
+            <td> @item.joiningTime </td>
+            <td> @item.preferredLocation </td>
+            <td>@item.staffingAgency</td>
+        </tr>
+        }
+    </tbody>
+</table>

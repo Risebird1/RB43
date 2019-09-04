@@ -665,18 +665,40 @@ namespace Risebird.Web.Controllers
                     }
 
 
-                    if (String.IsNullOrEmpty(interviewer.PrimarySkill))
+                    if (string.IsNullOrEmpty(interviewer.PrimarySkill))
                     {
-                        ModelState.AddModelError(String.Empty, "Please mention Skill");
+                        ModelState.AddModelError(string.Empty, "Please mention Skill");
                         var model = new InterviewerVM();
                         model.PrimarySkills = new SelectList(_skillService.GetSkills(), "id", "Name");
 
                         return View("InterviewerUpdate", model);
                     }
                     List<Skill> skills = _skillService.GetSkills();
-                    List<String> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id)).Select(x => x.Name).ToList();
-                    interviewer.PrimarySkill = "";
-                    interviewer.PrimarySkill = String.Join(",", selectedSkill);
+                    if (interviewer.SelectedSkillIds != null)
+                    {
+                        List<string> selectedSkill = skills.Where(x => interviewer.SelectedSkillIds.Contains(x.id))
+                            .Select(x => x.Name).ToList();
+                        if (selectedSkill != null)
+                        {
+                            foreach (var skill in selectedSkill)
+                            {
+                                if (!interviewer.PrimarySkill.Contains(skill))
+                                {
+                                    if (string.IsNullOrEmpty(interviewer.PrimarySkill))
+                                    {
+                                        interviewer.PrimarySkill = string.Empty;
+                                    }
+                                    else
+                                    {
+                                        interviewer.PrimarySkill += ",";
+                                    }
+
+                                    interviewer.PrimarySkill += skill;
+                                }
+                            }
+                        }
+                    }
+
                     interviewer.EmailId = interviewer.EmailId.ToLower();
 
                     if (_userService.UpdateInterviewer(interviewer))

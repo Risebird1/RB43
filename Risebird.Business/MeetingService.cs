@@ -44,6 +44,35 @@ namespace Risebird.Business
             }
         }
 
+        public List<MeetingVM> GetClientMeetingList(string emailId)
+        {
+            try
+            {
+                var meetings = _meetingRespository.GetClientInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
+                //Get client user details
+                var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
+                if(clientDetails.RoleId ==1)
+                {
+                    meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
+                }
+                
+                else if(clientDetails.RoleId == 4)
+                {
+                    meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
+                }
+                else if (clientDetails.RoleId == 2 || clientDetails.RoleId==6)
+                {
+                    meetings = meetings.Where(x => x.ClientId == clientDetails.ClientId).ToList();
+                }                
+                return meetings;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public bool AddMeeting(MeetingVM meeting)
         {
             try
@@ -433,7 +462,7 @@ namespace Risebird.Business
         {
             try
             {
-                await _meetingRespository.AddInterviewReport(reportModel);
+                var result =await _meetingRespository.AddInterviewReport(reportModel);
                 if(reportModel.InterviewStatus.HasValue)
                 {
                     if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
@@ -445,10 +474,10 @@ namespace Risebird.Business
                         var candidateName = reportModel.CandidateName;
                         var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
                         _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, IRFID, candidateName, intervieweStatusStatDesc);
-                    }                    
+                    }
                 }
-                
-                return true;
+
+                return result;
             }
 
             catch (Exception e)

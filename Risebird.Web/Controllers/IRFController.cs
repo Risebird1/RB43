@@ -46,6 +46,24 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                    foreach (var irf in irfList)
+                    {
+                        var meetings= _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                        var selectedMeeting = new List<MeetingVM>();
+                        irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
+                        if(meetings !=null)
+                        {
+                            selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
+                        }
+                        //foreach (var m in meetings)
+                        //{
+                        //    if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
+                        //    {
+                        //        selectedMeeting.Add(m);
+                        //    }
+                        //}
+                        irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
+                    }
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         ViewBag.IsClientUser = true;
@@ -388,7 +406,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
-"ID", "Name", "Today");
+"ID", "Name", "All");
 
                         ViewData["list"] = list;
 
@@ -593,7 +611,7 @@ namespace Risebird.Web.Controllers
     new { ID = "Next Seven Days", Name = "Next Seven Days" },
     new { ID = "All", Name = "All"},
 },
-"ID", "Name", "Today");
+"ID", "Name", "All");
 
                         ViewData["list"] = list;
 
