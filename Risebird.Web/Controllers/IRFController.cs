@@ -884,6 +884,13 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                string userMenus = HttpContext.Session.GetString("userMenus");
+
+                if (userMenus == null)
+                {
+                    return RedirectToAction("Index", "Home", new { url = "AddReport/IRF/" + interviewId + "/" + irfId });
+                }
+
                 string prof = HttpContext.Session.GetString("profileName");
 
                 if (prof != null)
@@ -911,7 +918,7 @@ namespace Risebird.Web.Controllers
                 
                 GetStatusList(model, irfId);
                 
-                return View(model);
+                return PartialView("AddReportPartial",model);
 
             }
             catch (Exception ex)

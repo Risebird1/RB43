@@ -14,7 +14,7 @@ using System.Reflection;
 using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper;
-
+using Newtonsoft.Json;
 
 namespace Risebird.Web.Controllers
 {
@@ -1358,7 +1358,14 @@ namespace Risebird.Web.Controllers
         public IActionResult AddReport(int interviewId, int irfId, bool isClient=false, bool isClientSelected= false)
         {
             try
-            {
+            {                
+                string userMenus = HttpContext.Session.GetString("userMenus");
+
+                if (userMenus == null)
+                {
+                    return RedirectToAction("Index", "Home", new { url = "AddReport/Interview/" + interviewId + "/" + irfId + "/" + isClient + "/" + isClientSelected });
+                }
+                
                 string profileName = HttpContext.Session.GetString("profileName");
                 if (profileName != null)
                 {
@@ -1395,8 +1402,14 @@ namespace Risebird.Web.Controllers
                 ViewBag.IsClient = isClient;
                 ViewBag.IsClientSelected = isClientSelected;
                 GetStatusList(model, irfId);
-
-                return View(model);
+                if(isClient || isClientSelected)
+                {
+                    return PartialView("ClientPartialReport", model);
+                }
+                else
+                {
+                    return View(model);
+                }
 
             }
             catch (Exception ex)
