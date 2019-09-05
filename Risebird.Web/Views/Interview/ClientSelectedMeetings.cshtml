@@ -33,6 +33,28 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+    table {
+        white-space: nowrap !important;
+    }
+
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -150,14 +172,14 @@
                                                 {
                                                     <td>No Contact</td>
                                                 }
-                                                <td> @item.ClientHrContact </td>
+                                                <td class="wordwrap"> @item.ClientHrContact </td>
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                 <td> @item.intervieweStatusStatDesc </td>
                                                 <td> @item.currentEmployerName </td>
                                                 <td> @item.expectedPerHourRate </td>
                                                 <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
+                                                <td class="wordwrap"> @item.preferredLocation </td>
                                                 <td>@item.staffingAgency</td>
                                             </tr>
                                             }

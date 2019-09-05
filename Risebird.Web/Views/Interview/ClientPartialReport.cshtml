@@ -4,6 +4,13 @@
 
 
 <style>
+
+
+
+    .main-panel {
+        width: 100% !important;
+    }
+
     .canvasjs-chart-credit {
         display: none;
     }
@@ -41,6 +48,21 @@
         line-height: 0;
     }
 </style>
+<meta charset="utf-8" />
+<link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
+<link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!--     Fonts and icons     -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<!-- CSS Files -->
+<link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
+<script src="~/Newassets/js/core/jquery.min.js"></script>
+<script src="~/Newassets/js/core/popper.min.js"></script>
+<script src="~/Newassets/js/core/bootstrap.min.js"></script>
+<script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<script src="~/Newassets/js/plugins/moment.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
@@ -74,7 +96,7 @@
                 <div class="card">
                     <div class="card-body">
                         <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
-                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -240,33 +262,30 @@
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    @*<div class="col-md-6 col-sm-6">
 
-                                        @*<video width="320" height="240" controls="controls">
-                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>*@
 
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
-                                                <video width="320" height="240" controls>
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                    <video width="320" height="240" controls>
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                                    Your browser does not support the video tag.
-                                                </video>
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                }
                                             }
-                                            else
-                                            {
-                                                <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                            }
-                                        }
-
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
+                                        </div>*@
+                                    <div class="col-md-6 offset-md-3">
                                         <div class="card">
                                             <div class="card-body">
                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
@@ -282,7 +301,7 @@
                                     <div class="col-md-6 col-sm-6 px-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
 
                                             @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
                                             @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
@@ -1026,9 +1045,10 @@
 
 
 
-@*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
 <script>
+   
+
+    
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1624,6 +1644,8 @@
     });
 
     function AddRowController() {
+
+        
 
         var table = document.getElementById("ControllerTable");
         var rowCount = table.rows.length;
