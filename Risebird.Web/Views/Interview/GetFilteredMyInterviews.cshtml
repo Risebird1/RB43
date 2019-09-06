@@ -14,6 +14,20 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
 
     /*CSS FOR Loader*/
     .loader {

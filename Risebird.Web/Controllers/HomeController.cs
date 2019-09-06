@@ -21,7 +21,7 @@ namespace Risebird.Web.Controllers
             _userService = userService;
             AzureAdB2COptions = azureAdB2COptions.Value;
         }
-        public IActionResult Index()
+        public IActionResult Index(string url = null)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -42,7 +42,24 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("SignOut", "Session");
                     }
                     var menuslink = menuAccess.sUrl.Split('/');
-                    return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
+                    if(url!=null)
+                    {
+                        var urlArray = url.Split("/");
+                        if(urlArray.Length>4)
+                        {
+                            return RedirectToAction(urlArray[0], urlArray[1], new { interviewId = urlArray[2], irfId = urlArray[3], isClient = urlArray[4], isClientSelected = urlArray[5] });
+
+                        }
+                        else
+                        {
+                            return RedirectToAction(urlArray[0], urlArray[1], new { interviewId = urlArray[2], irfId = urlArray[3] });
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction(menuslink.Last(), menuslink.GetValue(1).ToString());
+                    }
                 }
                 else
                 {

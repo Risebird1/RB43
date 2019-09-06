@@ -108,5 +108,10 @@ namespace Risebird.Entities.ViewModel
         public int JobLevel { get; set; }
         public bool IsClientUser { get; set; }
         public bool IsDeleted { get; set; }
+
+        public int TotalMeetings { get; set; }
+        public int SelectedMeetings { get; set; }
+        public int ScheduleMeetings { get; set; }
+
     }
 }
