@@ -1,7 +1,16 @@
-﻿@model Risebird.Entities.ViewModel.InterviewReport
+﻿
+
+@model Risebird.Entities.ViewModel.InterviewReport
 
 
 <style>
+
+
+
+    .main-panel {
+        width: 100% !important;
+    }
+
     .canvasjs-chart-credit {
         display: none;
     }
@@ -39,6 +48,21 @@
         line-height: 0;
     }
 </style>
+<meta charset="utf-8" />
+<link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
+<link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!--     Fonts and icons     -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<!-- CSS Files -->
+<link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
+<script src="~/Newassets/js/core/jquery.min.js"></script>
+<script src="~/Newassets/js/core/popper.min.js"></script>
+<script src="~/Newassets/js/core/bootstrap.min.js"></script>
+<script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<script src="~/Newassets/js/plugins/moment.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
@@ -50,12 +74,12 @@
         <div class="container-fluid">
             <div class="navbar-wrapper">
                 @*<div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
-                </div>*@
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>*@
                 <a class="navbar-brand">
                     Interview Report
                 </a>
@@ -72,7 +96,7 @@
                 <div class="card">
                     <div class="card-body">
                         <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
-                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -165,7 +189,9 @@
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @*@Html.TextBoxFor(m => m.MeetingStatus, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                            <input class="form-control webkitEnabled" id="MeetingStatus" name="MeetingStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ?  Model.MeetingStatusList.Where(x => x.Value == Model.MeetingStatus.ToString()).FirstOrDefault().Text : Model.MeetingStatusList.FirstOrDefault().Text)">
+
+                                            @*@Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })*@
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -177,8 +203,9 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @*@Html.TextBoxFor(m => m.Rating, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
+                                            <input class="form-control webkitEnabled" id="Rating" name="Rating" readonly="readonly" type="text" value="@Model.Level.Where(x => x.Value == Model.Rating.ToString()).FirstOrDefault().Text">
 
-                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control" })
+                                            @*@Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control" })*@
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                         </div>
@@ -187,8 +214,10 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            <input class="form-control webkitEnabled" id="InterviewStatus" name="InterviewStatus" readonly="readonly" type="text" value="@Model.InterviewStatusList.Where(x => x.Value == Model.InterviewStatus.ToString()).FirstOrDefault().Text">
 
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+
+                                            @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })*@
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -238,33 +267,30 @@
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    @*<div class="col-md-6 col-sm-6">
 
-                                        @*<video width="320" height="240" controls="controls">
-                                                <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                Your browser does not support the video tag.
-                                            </video>*@
 
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
-                                                <video width="320" height="240" controls>
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                    <video width="320" height="240" controls>
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
-                                                    Your browser does not support the video tag.
-                                                </video>
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                }
                                             }
-                                            else
-                                            {
-                                                <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
 
-                                            }
-                                        }
-
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
+                                        </div>*@
+                                    <div class="col-md-6 offset-md-3">
                                         <div class="card">
                                             <div class="card-body">
                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
@@ -280,7 +306,7 @@
                                     <div class="col-md-6 col-sm-6 px-1">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
 
                                             @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
                                             @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
@@ -365,7 +391,10 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.FirstOrDefault().Text">
+
+
+                                                                @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })*@
 
                                                             </td>
                                                             <td>
@@ -373,7 +402,9 @@
 
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">
+
+                                                                @*@Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })*@
 
                                                             </td>
 
@@ -396,7 +427,10 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    <input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">
+
+
+                                                                    @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })*@
 
 
                                                                 </td>
@@ -405,15 +439,16 @@
                                                                     @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
+                                                                    <input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @*@Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })*@
 
 
                                                                 </td>
 
                                                                 <td>
 
-                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
 
                                                                 </td>
 
@@ -473,7 +508,8 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    <input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+                                                                    @*@Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
 
                                                                 </td>
                                                                 <td>
@@ -551,7 +587,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    <input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+
+
+                                                                    @*@Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
 
                                                                 </td>
                                                                 <td>
@@ -626,7 +665,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    <input class="form-control" id="@("JoinabilityReportCollection_"+i+"__ActualLevelId")" name="JoinabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.JoinabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+
+
+                                                                    @*@Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
 
                                                                 </td>
                                                                 <td>
@@ -701,7 +743,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    <input class="form-control" id="@("SelectabilityReportCollection_"+i+"__ActualLevelId")" name="SelectabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SelectabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+
+
+                                                                    @*@Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
 
                                                                 </td>
                                                                 <td>
@@ -790,7 +835,7 @@
                                                             <label class="form-control" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
                                                         </td>
                                                         <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly="readonly" })
+                                                            @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
                                                     </tr>
@@ -952,26 +997,26 @@
                                 @Html.HiddenFor(m => m.InterviewId)
                                 @Html.HiddenFor(m => m.IsEdited)
                                 @*<div class="card-footer ">
-                                    <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
+                                        <div class="row">
+                                            <label class="col-md-2"></label>
+                                            <div class="col-md-9">
 
-                                            @{
-                                                if (ViewBag.IsSelected)
-                                                {
-                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                @{
+                                                    if (ViewBag.IsSelected)
+                                                    {
+                                                        @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                                                    }
 
                                                 }
-                                                else
-                                                {
-                                                    @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                                                }
-
-                                            }
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>*@
+                                    </div>*@
 
 
 
@@ -994,24 +1039,24 @@
     <footer class="footer">
         <div class=" container-fluid ">
             @*<nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>*@
+                    <ul>
+                        <li>
+                            <a href="#">
+                                Risebird
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                About Us
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Blog
+                            </a>
+                        </li>
+                    </ul>
+                </nav>*@
             <div class="copyright" id="copyright">
                 &copy;
                 <script>
@@ -1024,9 +1069,10 @@
 
 
 
-@*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
 <script>
+
+
+
 
     function RadioChanged(val) {
         if (val == 'Upload') {
@@ -1234,6 +1280,8 @@
     }
 
     $(document).ready(function () {
+
+        //document.getElementById("MeetingStatus").disabled = true;
 
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
@@ -1622,6 +1670,8 @@
     });
 
     function AddRowController() {
+
+
 
         var table = document.getElementById("ControllerTable");
         var rowCount = table.rows.length;

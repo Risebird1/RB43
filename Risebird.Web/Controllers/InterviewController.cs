@@ -1404,6 +1404,7 @@ namespace Risebird.Web.Controllers
                 GetStatusList(model, irfId);
                 if(isClient || isClientSelected)
                 {
+                    var xyz = model.MeetingStatusList.Where(x => x.Value == model.MeetingStatus.ToString()).FirstOrDefault().Text;
                     return PartialView("ClientPartialReport", model);
                 }
                 else
