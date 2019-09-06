@@ -189,9 +189,9 @@
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @*@Html.TextBoxFor(m => m.MeetingStatus, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
 
-                                            <input class="form-control webkitEnabled" id="MeetingStatus" name="MeetingStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ?  Model.MeetingStatusList.Where(x => x.Value == Model.MeetingStatus.ToString()).FirstOrDefault().Text : Model.MeetingStatusList.FirstOrDefault().Text)">
+                                            @*<input class="form-control webkitEnabled" id="MeetingStatus" name="MeetingStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ?  Model.MeetingStatusList.Where(x => x.Value == Model.MeetingStatus.ToString()).FirstOrDefault().Text : Model.MeetingStatusList.FirstOrDefault().Text)">*@
 
-                                            @*@Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })*@
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled="disabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -203,9 +203,9 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @*@Html.TextBoxFor(m => m.Rating, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
-                                            <input class="form-control webkitEnabled" id="Rating" name="Rating" readonly="readonly" type="text" value="@Model.Level.Where(x => x.Value == Model.Rating.ToString()).FirstOrDefault().Text">
+                                            @*<input class="form-control webkitEnabled" id="Rating" name="Rating" readonly="readonly" type="text" value="@Model.Level.Where(x => x.Value == Model.Rating.ToString()).FirstOrDefault().Text">*@
 
-                                            @*@Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control" })*@
+                                            @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
 
                                         </div>
@@ -214,10 +214,10 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            <input class="form-control webkitEnabled" id="InterviewStatus" name="InterviewStatus" readonly="readonly" type="text" value="@Model.InterviewStatusList.Where(x => x.Value == Model.InterviewStatus.ToString()).FirstOrDefault().Text">
+                                            @*<input class="form-control webkitEnabled" id="InterviewStatus" name="InterviewStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ? Model.InterviewStatusList.Where(x => x.Value == Model.InterviewStatus.ToString()).FirstOrDefault().Text : Model.InterviewStatusList.FirstOrDefault().Text)">*@
 
 
-                                            @*@Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })*@
+                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -391,10 +391,10 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.FirstOrDefault().Text">
+                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.FirstOrDefault().Text">*@
 
 
-                                                                @*@Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })*@
+                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
 
                                                             </td>
                                                             <td>
@@ -402,9 +402,9 @@
 
                                                             </td>
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">
+                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">*@
 
-                                                                @*@Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })*@
+                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
 
                                                             </td>
 
@@ -427,10 +427,10 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    <input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">
+                                                                    @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
 
 
-                                                                    @*@Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })*@
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
 
 
                                                                 </td>
@@ -439,9 +439,9 @@
                                                                     @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                 </td>
                                                                 <td>
-                                                                    <input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">
+                                                                    @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
 
-                                                                    @*@Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })*@
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
 
 
                                                                 </td>
@@ -508,8 +508,8 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
-                                                                    @*@Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
+                                                                    @*<input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
+                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -587,10 +587,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+                                                                    @*<input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
 
 
-                                                                    @*@Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
+                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -665,10 +665,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input class="form-control" id="@("JoinabilityReportCollection_"+i+"__ActualLevelId")" name="JoinabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.JoinabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+                                                                    @*<input class="form-control" id="@("JoinabilityReportCollection_"+i+"__ActualLevelId")" name="JoinabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.JoinabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
 
 
-                                                                    @*@Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
+                                                                    @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>
@@ -743,10 +743,10 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    <input class="form-control" id="@("SelectabilityReportCollection_"+i+"__ActualLevelId")" name="SelectabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SelectabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">
+                                                                    @*<input class="form-control" id="@("SelectabilityReportCollection_"+i+"__ActualLevelId")" name="SelectabilityReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SelectabilityReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
 
 
-                                                                    @*@Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })*@
+                                                                    @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
 
                                                                 </td>
                                                                 <td>

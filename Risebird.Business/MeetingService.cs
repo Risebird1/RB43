@@ -329,7 +329,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport.Count() > 0 && interviewReport.FirstOrDefault().Rating > 0)
+                if (interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     return EditInterviewReport(interviewReport.FirstOrDefault());
@@ -440,10 +440,40 @@ namespace Risebird.Business
 
         private InterviewReport EditInterviewReport(InterviewReport model)
         {
+            var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
+            //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
+
+            if (techReportCollection.Count()==0)
+            {
+                var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
+                var techSkillList = new List<TechSkillReport>();
+                var levelTech = _meetingRespository.GetLevelTech();
+                var skills = _meetingRespository.GetSkills();
+
+                //assign values to model
+                foreach (var item in techSkillsDetails)
+                {
+                    TechSkillReport obj = new TechSkillReport();
+                    obj.InterviewId = model.InterviewId;
+                    obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
+                    obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+                    obj.WeightageRequired = item.Weightage;
+
+                    techSkillList.Add(obj);
+                }
+                model.TechSkillReportCollection = (IList<TechSkillReport>)techSkillList;
+            }
+            else
+            {
+                model.TechSkillReportCollection = techReportCollection;
+            }
+
             model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
             model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
-            model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
+            //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));
             model.Proctoring = _meetingRespository.GetProctoringReport(model.InterviewId);
             model.IsEdited = true;
