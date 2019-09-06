@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
-    ViewData["Title"] = "All Interviews";
+    ViewData["Title"] = "Selected Candidate Priority View";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -18,6 +18,31 @@
         border-radius: 5px;
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
+    }
+   
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+   
+
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
     }
     /*CSS FOR Loader*/
     .loader {
@@ -47,7 +72,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor">Selected Priority Interviews</a>
+                <a class="navbar-brand breadcrumscolor">Selected Candidate Priority View</a>
                 @*<a class="navbar-brand">Client Interview Meetings</a>*@
             </div>
 
@@ -62,7 +87,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">
-                            Selected Priority Interviews
+                            Selected Candidate Priority View
                         </h4>
                     </div>
                     <div class="card-body">
@@ -94,24 +119,21 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
-                                                <th>Interview Status</th>
-                                                <th>Meeting Status</th>
-
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
-                                                <th>Interview Status</th>
-                                                <th>Meeting Status</th>
-
+                                               
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -120,6 +142,7 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 @if (item.VideoLink != null && item.VideoLink != "")
                                                 {
@@ -130,9 +153,6 @@
                                                     <td>No Video</td>
                                                 }
                                                 <td> @item.InterviewerComment </td>
-                                                <td> @item.InterviewStatusDescription </td>
-                                                <td> @item.MeetingStatusDescription </td>
-
                                             </tr>
                                             }
                                         </tbody>

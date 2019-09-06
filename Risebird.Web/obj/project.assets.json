@@ -119,47 +119,6 @@
           "lib/netstandard1.6/Microsoft.AI.DependencyCollector.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc/3.0.20105.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Razor": "1.0.20105.408",
-          "Microsoft.AspNet.WebPages": "1.0.20105.408"
-        },
-        "compile": {
-          "lib/net40/System.Web.Mvc.dll": {}
-        },
-        "runtime": {
-          "lib/net40/System.Web.Mvc.dll": {}
-        }
-      },
-      "Microsoft.AspNet.Razor/1.0.20105.408": {
-        "type": "package",
-        "compile": {
-          "lib/net40/System.Web.Razor.dll": {}
-        },
-        "runtime": {
-          "lib/net40/System.Web.Razor.dll": {}
-        }
-      },
-      "Microsoft.AspNet.WebPages/1.0.20105.408": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Razor": "1.0.20105.408",
-          "Microsoft.Web.Infrastructure": "1.0.0"
-        },
-        "compile": {
-          "lib/net40/System.Web.Helpers.dll": {},
-          "lib/net40/System.Web.WebPages.Deployment.dll": {},
-          "lib/net40/System.Web.WebPages.Razor.dll": {},
-          "lib/net40/System.Web.WebPages.dll": {}
-        },
-        "runtime": {
-          "lib/net40/System.Web.Helpers.dll": {},
-          "lib/net40/System.Web.WebPages.Deployment.dll": {},
-          "lib/net40/System.Web.WebPages.Razor.dll": {},
-          "lib/net40/System.Web.WebPages.dll": {}
-        }
-      },
       "Microsoft.AspNetCore/2.0.3": {
         "type": "package",
         "dependencies": {
@@ -2518,32 +2477,20 @@
           "lib/netstandard1.3/Microsoft.IdentityModel.Clients.ActiveDirectory.dll": {}
         }
       },
-      "Microsoft.IdentityModel.JsonWebTokens/5.3.0": {
+      "Microsoft.IdentityModel.Logging/5.2.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "5.3.0",
-          "Newtonsoft.Json": "10.0.1"
-        },
-        "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll": {}
-        }
-      },
-      "Microsoft.IdentityModel.Logging/5.3.0": {
-        "type": "package",
-        "dependencies": {
+          "NETStandard.Library": "1.6.1",
           "System.Diagnostics.Tracing": "4.3.0",
           "System.Globalization": "4.3.0",
           "System.IO": "4.3.0",
           "System.IO.FileSystem": "4.3.0"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll": {}
+          "lib/netstandard1.4/Microsoft.IdentityModel.Logging.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll": {}
+          "lib/netstandard1.4/Microsoft.IdentityModel.Logging.dll": {}
         }
       },
       "Microsoft.IdentityModel.Protocols/5.2.0": {
@@ -2579,14 +2526,14 @@
           "lib/netstandard1.4/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {}
         }
       },
-      "Microsoft.IdentityModel.Tokens/5.3.0": {
+      "Microsoft.IdentityModel.Tokens/5.2.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.Logging": "5.3.0",
+          "Microsoft.IdentityModel.Logging": "5.2.0",
+          "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "10.0.1",
           "System.Collections": "4.3.0",
           "System.Diagnostics.Tools": "4.3.0",
-          "System.Reflection": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Runtime.Extensions": "4.3.0",
           "System.Runtime.InteropServices": "4.3.0",
@@ -2599,10 +2546,10 @@
           "System.Threading": "4.3.0"
         },
         "compile": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll": {}
+          "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll": {}
+          "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.dll": {}
         }
       },
       "Microsoft.Net.Http.Headers/2.1.1": {
@@ -2951,15 +2898,6 @@
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll": {}
-        }
-      },
-      "Microsoft.Web.Infrastructure/1.0.0": {
-        "type": "package",
-        "compile": {
-          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
-        },
-        "runtime": {
-          "lib/net40/Microsoft.Web.Infrastructure.dll": {}
         }
       },
       "Microsoft.Win32.Primitives/4.3.0": {
@@ -3909,18 +3847,18 @@
           }
         }
       },
-      "System.IdentityModel.Tokens.Jwt/5.3.0": {
+      "System.IdentityModel.Tokens.Jwt/5.2.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.JsonWebTokens": "5.3.0",
-          "Microsoft.IdentityModel.Tokens": "5.3.0",
+          "Microsoft.IdentityModel.Tokens": "5.2.0",
+          "NETStandard.Library": "1.6.1",
           "Newtonsoft.Json": "10.0.1"
         },
         "compile": {
-          "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll": {}
+          "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll": {}
+          "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.dll": {}
         }
       },
       "System.Interactive.Async/3.1.1": {
@@ -5267,48 +5205,6 @@
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
       },
-      "Twilio/5.31.4": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.IdentityModel.Tokens": "5.3.0",
-          "Newtonsoft.Json": "11.0.2",
-          "System.Collections.Specialized": "4.3.0",
-          "System.IdentityModel.Tokens.Jwt": "5.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Twilio.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Twilio.dll": {}
-        }
-      },
-      "Twilio.AspNet.Common/5.20.1": {
-        "type": "package",
-        "dependencies": {
-          "NETStandard.Library": "1.6.1"
-        },
-        "compile": {
-          "lib/netstandard1.0/Twilio.AspNet.Common.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/Twilio.AspNet.Common.dll": {}
-        }
-      },
-      "Twilio.AspNet.Mvc/5.20.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Mvc": "3.0.20105.1",
-          "Newtonsoft.Json": "10.0.1",
-          "Twilio": "5.20.1",
-          "Twilio.AspNet.Common": "5.20.1"
-        },
-        "compile": {
-          "lib/net451/Twilio.AspNet.Mvc.dll": {}
-        },
-        "runtime": {
-          "lib/net451/Twilio.AspNet.Mvc.dll": {}
-        }
-      },
       "WindowsAzure.Storage/9.3.3": {
         "type": "package",
         "dependencies": {
@@ -5356,8 +5252,7 @@
         "dependencies": {
           "Microsoft.Extensions.Configuration": "2.2.0",
           "Risebird.CommonHelper.Interface": "1.0.0",
-          "Sendgrid": "9.11.0",
-          "Twilio": "5.31.4"
+          "Sendgrid": "9.11.0"
         },
         "compile": {
           "bin/placeholder/Risebird.CommonHelper.dll": {}
@@ -5539,45 +5434,6 @@
         "lib/netstandard1.6/Microsoft.AI.DependencyCollector.xml",
         "microsoft.applicationinsights.dependencycollector.2.4.1.nupkg.sha512",
         "microsoft.applicationinsights.dependencycollector.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.Mvc/3.0.20105.1": {
-      "sha512": "CjEb1ExBqe3DceDCg4EhdimdoDTMuBOmA490lRKgl3EN8L4G8+lBRHDF7Ho8QkFsY7C5Y4pTfqhD7Zl8VPOtWQ==",
-      "type": "package",
-      "path": "microsoft.aspnet.mvc/3.0.20105.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/System.Web.Mvc.dll",
-        "microsoft.aspnet.mvc.3.0.20105.1.nupkg.sha512",
-        "microsoft.aspnet.mvc.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.Razor/1.0.20105.408": {
-      "sha512": "vRmwL/G31Xc9DusVQUJXmDpTYEVB7xUoIjKqCyuOHrCyG9kzM66MadNjdPLzplSsDoWqiae35US8XiiI3e6SBw==",
-      "type": "package",
-      "path": "microsoft.aspnet.razor/1.0.20105.408",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/System.Web.Razor.dll",
-        "microsoft.aspnet.razor.1.0.20105.408.nupkg.sha512",
-        "microsoft.aspnet.razor.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.WebPages/1.0.20105.408": {
-      "sha512": "da1//kx0b6GXJG6V8vGl7PmvhPJE/aNs2mK0QJ9bojgy059BDdYhmAwpTT1ucDgbImbFDdmNGi/XJj2SU0QJeA==",
-      "type": "package",
-      "path": "microsoft.aspnet.webpages/1.0.20105.408",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/System.Web.Helpers.dll",
-        "lib/net40/System.Web.WebPages.Deployment.dll",
-        "lib/net40/System.Web.WebPages.Razor.dll",
-        "lib/net40/System.Web.WebPages.dll",
-        "microsoft.aspnet.webpages.1.0.20105.408.nupkg.sha512",
-        "microsoft.aspnet.webpages.nuspec"
       ]
     },
     "Microsoft.AspNetCore/2.0.3": {
@@ -8035,55 +7891,19 @@
         "src/src/ADAL.PCL/Utilities/OAuthConstants.cs"
       ]
     },
-    "Microsoft.IdentityModel.JsonWebTokens/5.3.0": {
-      "sha512": "5LW5VYvGZLvrbEGxyaE6dSQhT1B5frnpwX/c4/PWrNXeuJ6GkYmiOPf2u5Iwk1qQXPTvDedwEfnBg+i/0cFAyA==",
+    "Microsoft.IdentityModel.Logging/5.2.0": {
+      "sha512": "OgiaeDGsuTpXrx77a4gyN6Flp4y7jro4La92UtVEEVxnRb+TnRxawVYY3Z5EVme5fSwvE31vo2iNAwI/jBKjPg==",
       "type": "package",
-      "path": "microsoft.identitymodel.jsonwebtokens/5.3.0",
+      "path": "microsoft.identitymodel.logging/5.2.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/Microsoft.IdentityModel.JsonWebTokens.dll",
-        "lib/net45/Microsoft.IdentityModel.JsonWebTokens.pdb",
-        "lib/net45/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "lib/net451/Microsoft.IdentityModel.JsonWebTokens.dll",
-        "lib/net451/Microsoft.IdentityModel.JsonWebTokens.pdb",
-        "lib/net451/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "lib/net461/Microsoft.IdentityModel.JsonWebTokens.dll",
-        "lib/net461/Microsoft.IdentityModel.JsonWebTokens.pdb",
-        "lib/net461/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "lib/netstandard1.4/Microsoft.IdentityModel.JsonWebTokens.dll",
-        "lib/netstandard1.4/Microsoft.IdentityModel.JsonWebTokens.pdb",
-        "lib/netstandard1.4/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.dll",
-        "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.pdb",
-        "lib/netstandard2.0/Microsoft.IdentityModel.JsonWebTokens.xml",
-        "microsoft.identitymodel.jsonwebtokens.5.3.0.nupkg.sha512",
-        "microsoft.identitymodel.jsonwebtokens.nuspec"
-      ]
-    },
-    "Microsoft.IdentityModel.Logging/5.3.0": {
-      "sha512": "o+bBauEMOi6ZI0MlJEC69Sw9UPwKLFmN+lD942g9UCx5pfiLFvJBKp8OPmxtGFL02ZxzXCIUyhyKn85izBDsnQ==",
-      "type": "package",
-      "path": "microsoft.identitymodel.logging/5.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "lib/net45/Microsoft.IdentityModel.Logging.dll",
-        "lib/net45/Microsoft.IdentityModel.Logging.pdb",
         "lib/net45/Microsoft.IdentityModel.Logging.xml",
         "lib/net451/Microsoft.IdentityModel.Logging.dll",
-        "lib/net451/Microsoft.IdentityModel.Logging.pdb",
         "lib/net451/Microsoft.IdentityModel.Logging.xml",
-        "lib/net461/Microsoft.IdentityModel.Logging.dll",
-        "lib/net461/Microsoft.IdentityModel.Logging.pdb",
-        "lib/net461/Microsoft.IdentityModel.Logging.xml",
         "lib/netstandard1.4/Microsoft.IdentityModel.Logging.dll",
-        "lib/netstandard1.4/Microsoft.IdentityModel.Logging.pdb",
         "lib/netstandard1.4/Microsoft.IdentityModel.Logging.xml",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Logging.dll",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Logging.pdb",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Logging.xml",
-        "microsoft.identitymodel.logging.5.3.0.nupkg.sha512",
+        "microsoft.identitymodel.logging.5.2.0.nupkg.sha512",
         "microsoft.identitymodel.logging.nuspec"
       ]
     },
@@ -8119,29 +7939,19 @@
         "microsoft.identitymodel.protocols.openidconnect.nuspec"
       ]
     },
-    "Microsoft.IdentityModel.Tokens/5.3.0": {
-      "sha512": "/piauST4FL0qzVI6oqLWxqhFReg12KwVGy0jRlnVOpGMeOVSKdtNVtHsN/hARc25hOOPEp9WKMce5ILzyMx/tQ==",
+    "Microsoft.IdentityModel.Tokens/5.2.0": {
+      "sha512": "Uz1Dk5Gw/jgIHEzac9cXhq7pH0Hf5P73vf23hR6QJn0IamLbPG4qoHnGyPMn9qQXc+jDb/j3fWOhvWGrteJXtA==",
       "type": "package",
-      "path": "microsoft.identitymodel.tokens/5.3.0",
+      "path": "microsoft.identitymodel.tokens/5.2.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "lib/net45/Microsoft.IdentityModel.Tokens.dll",
-        "lib/net45/Microsoft.IdentityModel.Tokens.pdb",
         "lib/net45/Microsoft.IdentityModel.Tokens.xml",
         "lib/net451/Microsoft.IdentityModel.Tokens.dll",
-        "lib/net451/Microsoft.IdentityModel.Tokens.pdb",
         "lib/net451/Microsoft.IdentityModel.Tokens.xml",
-        "lib/net461/Microsoft.IdentityModel.Tokens.dll",
-        "lib/net461/Microsoft.IdentityModel.Tokens.pdb",
-        "lib/net461/Microsoft.IdentityModel.Tokens.xml",
         "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.dll",
-        "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.pdb",
         "lib/netstandard1.4/Microsoft.IdentityModel.Tokens.xml",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.dll",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.pdb",
-        "lib/netstandard2.0/Microsoft.IdentityModel.Tokens.xml",
-        "microsoft.identitymodel.tokens.5.3.0.nupkg.sha512",
+        "microsoft.identitymodel.tokens.5.2.0.nupkg.sha512",
         "microsoft.identitymodel.tokens.nuspec"
       ]
     },
@@ -8706,18 +8516,6 @@
         "lib/netstandard2.0/Microsoft.VisualStudio.Web.CodeGenerators.Mvc.xml",
         "microsoft.visualstudio.web.codegenerators.mvc.2.0.4.nupkg.sha512",
         "microsoft.visualstudio.web.codegenerators.mvc.nuspec"
-      ]
-    },
-    "Microsoft.Web.Infrastructure/1.0.0": {
-      "sha512": "FNmvLn5m2LTU/Rs2KWVo0SIIh9Ek+U0ojex7xeDaSHw/zgEP77A8vY5cVWgUtBGS8MJfDGNn8rpXJWEIQaPwTg==",
-      "type": "package",
-      "path": "microsoft.web.infrastructure/1.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/Microsoft.Web.Infrastructure.dll",
-        "microsoft.web.infrastructure.1.0.0.nupkg.sha512",
-        "microsoft.web.infrastructure.nuspec"
       ]
     },
     "Microsoft.Win32.Primitives/4.3.0": {
@@ -10795,29 +10593,19 @@
         "system.globalization.extensions.nuspec"
       ]
     },
-    "System.IdentityModel.Tokens.Jwt/5.3.0": {
-      "sha512": "EdcMk+36u9gQtbwTiPQ7ckIfiADBwOmCZ6rGD2rfkaozIdW1t7vbXk/FPVAu2r9KgCQZ5245Z+P0YMM/0Q0G2g==",
+    "System.IdentityModel.Tokens.Jwt/5.2.0": {
+      "sha512": "E8tNMfMWPvlSF5fvmMIVZZHlGuIZzE5uktuR+GN2gFdngh0k6xoZquxfjKC02d0NqfsshNQVTCdSKXD5e9/lpA==",
       "type": "package",
-      "path": "system.identitymodel.tokens.jwt/5.3.0",
+      "path": "system.identitymodel.tokens.jwt/5.2.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "lib/net45/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/net45/System.IdentityModel.Tokens.Jwt.pdb",
         "lib/net45/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net451/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/net451/System.IdentityModel.Tokens.Jwt.pdb",
         "lib/net451/System.IdentityModel.Tokens.Jwt.xml",
-        "lib/net461/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/net461/System.IdentityModel.Tokens.Jwt.pdb",
-        "lib/net461/System.IdentityModel.Tokens.Jwt.xml",
         "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.pdb",
         "lib/netstandard1.4/System.IdentityModel.Tokens.Jwt.xml",
-        "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.pdb",
-        "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.xml",
-        "system.identitymodel.tokens.jwt.5.3.0.nupkg.sha512",
+        "system.identitymodel.tokens.jwt.5.2.0.nupkg.sha512",
         "system.identitymodel.tokens.jwt.nuspec"
       ]
     },
@@ -14470,50 +14258,6 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
-    "Twilio/5.31.4": {
-      "sha512": "DERegb1vgu6AzjmAbMFed6AFmFi8i1bDhRrbhLqjpUMNqUFWZKGunGOMJQm9yeB+EHPdlHEMYsjO9Kdz3AyfXA==",
-      "type": "package",
-      "path": "twilio/5.31.4",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net35/Twilio.dll",
-        "lib/net35/Twilio.xml",
-        "lib/net451/Twilio.dll",
-        "lib/net451/Twilio.xml",
-        "lib/netstandard1.4/Twilio.dll",
-        "lib/netstandard1.4/Twilio.xml",
-        "lib/netstandard2.0/Twilio.dll",
-        "lib/netstandard2.0/Twilio.xml",
-        "twilio.5.31.4.nupkg.sha512",
-        "twilio.nuspec"
-      ]
-    },
-    "Twilio.AspNet.Common/5.20.1": {
-      "sha512": "Bexs6ktjjteOZWFWOSp6JHynA9WW2SeOZxjzQTBGBwlNrKvp+d0neRSpbbPGwakHd7BMCWA/SiKR6GC/Hc4eHA==",
-      "type": "package",
-      "path": "twilio.aspnet.common/5.20.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/Twilio.AspNet.Common.dll",
-        "lib/netstandard1.0/Twilio.AspNet.Common.dll",
-        "twilio.aspnet.common.5.20.1.nupkg.sha512",
-        "twilio.aspnet.common.nuspec"
-      ]
-    },
-    "Twilio.AspNet.Mvc/5.20.1": {
-      "sha512": "csVSBqLywb+y6SSY5JOEkvKPreRaFlCcnAQ499HxQ7PCvfOUQ680aGnSp1ezJV5Rnh6FxGfuinog3/LmVviEbA==",
-      "type": "package",
-      "path": "twilio.aspnet.mvc/5.20.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net451/Twilio.AspNet.Mvc.dll",
-        "twilio.aspnet.mvc.5.20.1.nupkg.sha512",
-        "twilio.aspnet.mvc.nuspec"
-      ]
-    },
     "WindowsAzure.Storage/9.3.3": {
       "sha512": "VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
       "type": "package",
@@ -14597,29 +14341,27 @@
       "Risebird.CommonHelper.Interface >= 1.0.0",
       "Risebird.Entities >= 1.0.0",
       "Risebird.Repository >= 1.0.0",
-      "Risebird.Repository.Interface >= 1.0.0",
-      "Twilio >= 5.31.4",
-      "Twilio.AspNet.Mvc >= 5.20.1"
+      "Risebird.Repository.Interface >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {},
+    "C:\\Users\\ankit\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Web\\Risebird.Web.csproj",
+      "projectUniqueName": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
       "projectName": "Risebird.Web",
-      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Web\\Risebird.Web.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Web\\obj\\",
+      "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
+      "packagesPath": "C:\\Users\\ankit\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ankit\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -14632,26 +14374,26 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Business\\Risebird.Business.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             },
-            "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository\\Risebird.Repository.csproj": {
-              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.Repository\\Risebird.Repository.csproj"
+            "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj": {
+              "projectPath": "C:\\Users\\ankit\\source\\repos\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj"
             }
           }
         }
@@ -14725,14 +14467,6 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[2.0.4, )"
-          },
-          "Twilio": {
-            "target": "Package",
-            "version": "[5.31.4, )"
-          },
-          "Twilio.AspNet.Mvc": {
-            "target": "Package",
-            "version": "[5.20.1, )"
           }
         },
         "imports": [
@@ -14744,36 +14478,6 @@
     }
   },
   "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNet.Mvc 3.0.20105.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.AspNet.Mvc",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNet.Razor 1.0.20105.408' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.AspNet.Razor",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Microsoft.AspNet.WebPages 1.0.20105.408' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.AspNet.WebPages",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
     {
       "code": "NU1701",
       "level": "Warning",
@@ -14818,28 +14522,8 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Web.Infrastructure 1.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Microsoft.Web.Infrastructure",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
       "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "System.Spatial",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v2.0"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Package 'Twilio.AspNet.Mvc 5.20.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
-      "libraryId": "Twilio.AspNet.Mvc",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
       ]

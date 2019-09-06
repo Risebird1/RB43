@@ -120,7 +120,7 @@ namespace Risebird.Entities.ViewModel
         public string JDLink { get; set; }
 
         public int ClientId { get; set; }
-
+        public string JDTiltle { get; set; }
 
     }
 }

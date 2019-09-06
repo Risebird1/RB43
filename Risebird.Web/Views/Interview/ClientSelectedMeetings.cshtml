@@ -19,6 +19,7 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -116,13 +117,11 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
@@ -134,13 +133,11 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
@@ -154,6 +151,7 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
@@ -173,9 +171,6 @@
                                                     <td>No Contact</td>
                                                 }
                                                 <td class="wordwrap"> @item.ClientHrContact </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                <td> @item.intervieweStatusStatDesc </td>
                                                 <td> @item.currentEmployerName </td>
                                                 <td> @item.expectedPerHourRate </td>
                                                 <td> @item.joiningTime </td>
