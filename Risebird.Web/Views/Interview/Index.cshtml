@@ -130,6 +130,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Interviewer</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -156,6 +157,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Interviewer</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -184,8 +186,8 @@
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName</td>
                                                 <td> @item.candidateEmail</td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> @item.interviewer</td>
-
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc</td>
                                                 <td> @item.intervieweStatusStatDesc</td>

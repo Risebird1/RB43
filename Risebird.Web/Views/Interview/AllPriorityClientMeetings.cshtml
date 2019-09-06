@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
-    ViewData["Title"] = "All Interviews";
+    ViewData["Title"] = "All Interview Priority View";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -47,6 +47,10 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+   
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -61,7 +65,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor">All Interviews</a>
+                <a class="navbar-brand breadcrumscolor">All Interview Priority View</a>
                 @*<a class="navbar-brand">Client Interview Meetings</a>*@
             </div>
 
@@ -76,7 +80,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">
-                            All Interviews
+                            All Interview Priority View
                         </h4>
                     </div>
                     <div class="card-body">
@@ -108,6 +112,10 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
@@ -117,6 +125,10 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Meeting Status</th>
+                                                <th>Interview Status</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
@@ -128,6 +140,9 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                <td> @item.intervieweStatusStatDesc</td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 @if (item.VideoLink != null && item.VideoLink != "")
                                                 {

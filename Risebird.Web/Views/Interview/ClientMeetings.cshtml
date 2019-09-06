@@ -47,6 +47,12 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+    table {
+        white-space: nowrap !important;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -108,6 +114,7 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
@@ -126,6 +133,7 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
@@ -146,6 +154,7 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {

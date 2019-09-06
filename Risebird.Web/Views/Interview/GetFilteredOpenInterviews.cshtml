@@ -23,7 +23,12 @@
         vertical-align: top !important;
         white-space: nowrap !important;
     }
-
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+    table {
+        white-space: nowrap !important;
+    }
     td:hover.wordwrap {
         text-overflow: clip !important;
         white-space: normal !important;
