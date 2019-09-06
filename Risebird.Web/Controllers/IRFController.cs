@@ -54,14 +54,9 @@ namespace Risebird.Web.Controllers
                         if(meetings !=null)
                         {
                             selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
+                            irf.ScheduleMeetings = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
                         }
-                        //foreach (var m in meetings)
-                        //{
-                        //    if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
-                        //    {
-                        //        selectedMeeting.Add(m);
-                        //    }
-                        //}
+                      
                         irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
                     }
                     if (profileName != null && profileName.Contains("Client"))
@@ -1253,7 +1248,7 @@ namespace Risebird.Web.Controllers
                             var obj = new ClientChartData();
                             obj.Name = item;
                             obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact == item  || x.staffingAgency == item)).Count();
-                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); ;
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); 
                             obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
                             obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
                             chartData.Add(obj);

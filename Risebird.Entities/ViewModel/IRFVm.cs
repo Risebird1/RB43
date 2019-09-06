@@ -111,6 +111,7 @@ namespace Risebird.Entities.ViewModel
 
         public int TotalMeetings { get; set; }
         public int SelectedMeetings { get; set; }
+        public int ScheduleMeetings { get; set; }
 
     }
 }
