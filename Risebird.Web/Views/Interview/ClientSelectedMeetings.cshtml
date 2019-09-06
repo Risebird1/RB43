@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
-    ViewData["Title"] = "Interview Meetings";
+    ViewData["Title"] = "Selected Candidate Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -19,6 +19,7 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -32,6 +33,28 @@
         z-index: 999;
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
+    }
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+    table {
+        white-space: nowrap !important;
+    }
+
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
     }
 </style>
 
@@ -47,7 +70,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor">Client Selected Meetings</a>
+                <a class="navbar-brand breadcrumscolor">Selected Candidate Interviews</a>
                 @*<a class="navbar-brand">Client Interview Meetings</a>*@
             </div>
 
@@ -62,7 +85,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">
-                            Client Selected Meetings @*list for <b>@ViewBag.IRF</b>*@
+                            Selected Candidate Interviews @*list for <b>@ViewBag.IRF</b>*@
                         </h4>
                     </div>
                     <div class="card-body">
@@ -94,72 +117,66 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
+                                                <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
-                                                <th>Report Link</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Primary Skill</th>
+                                                <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
-                                                <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
-                                                <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
-                                                <th>Report Link</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc </td>
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.joiningTime </td>
-                                                    <td> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td class="wordwrap"> @item.ClientHrContact </td>
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td class="wordwrap"> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

@@ -541,7 +541,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select im.*, im.id as imid, IRF.ClientId, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
+                var query = "select im.*, im.id as imid, IRF.ClientId,IRF.JDTiltle, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

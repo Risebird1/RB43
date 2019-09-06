@@ -15,6 +15,20 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -29,6 +43,12 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+    table {
+        white-space: nowrap !important;
+    }
 </style>
 
 <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -36,6 +56,8 @@
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Primary Skill</th>
+            <th>Report Link</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
@@ -47,13 +69,14 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
-            <th>Report Link</th>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Primary Skill</th>
+            <th>Report Link</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
@@ -65,43 +88,43 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
-            <th>Report Link</th>
         </tr>
     </tfoot>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id=@item.imid>
-                <td> @item.interviewDate </td>
-                <td> @item.candidateName </td>
-                @if (item.resumeLink != null && item.resumeLink != "")
-                {
-                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                }
-                else
-                {
-                    <td>No Resume</td>
-                }
-                @if (item.MobileNumber != null)
-                {
-                    <td>@item.MobileNumber</td>
+        <tr id=@item.imid>
+            <td> @item.interviewDate </td>
+            <td> @item.candidateName </td>
+            <td> @item.JDTiltle.Split("|")[0] </td>
+            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+            @if (item.resumeLink != null && item.resumeLink != "")
+            {
+                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+            }
+            else
+            {
+                <td>No Resume</td>
+            }
+            @if (item.MobileNumber != null)
+            {
+                <td>@item.MobileNumber</td>
 
-                }
-                else
-                {
-                    <td>No Contact</td>
-                }
-                <td> @item.ClientHrContact </td>
-                <td> @item.confirmationStatus</td>
-                <td> @item.MeetingStatusStatusDesc </td>
-                <td> @item.intervieweStatusStatDesc </td>
-                <td> @item.currentEmployerName </td>
-                <td> @item.expectedPerHourRate </td>
-                <td> @item.joiningTime </td>
-                <td> @item.preferredLocation </td>
-                <td>@item.staffingAgency</td>
-                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-            </tr>
+            }
+            else
+            {
+                <td>No Contact</td>
+            }
+            <td> @item.ClientHrContact </td>
+            <td> @item.confirmationStatus</td>
+            <td> @item.MeetingStatusStatusDesc </td>
+            <td> @item.intervieweStatusStatDesc </td>
+            <td> @item.currentEmployerName </td>
+            <td> @item.expectedPerHourRate </td>
+            <td> @item.joiningTime </td>
+            <td> @item.preferredLocation </td>
+            <td>@item.staffingAgency</td>
+        </tr>
         }
     </tbody>
 </table>

@@ -22,23 +22,22 @@
     }
 
     table {
-        white-space: nowrap;
+        white-space: nowrap !important;
     }
 
     td.wordwrap {
-        display: inline-block;
-        max-width: 250px;
-        min-width: 250px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
         vertical-align: top !important;
-        white-space: nowrap;
+        white-space: nowrap !important;
     }
 
     td:hover.wordwrap {
-        text-overflow: clip;
-        white-space: normal;
-        word-break: break-all;
+        text-overflow: clip !important;
+        white-space: normal !important;
     }
 
     /*CSS FOR Loader*/
@@ -131,6 +130,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Interviewer</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -157,6 +157,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
+                                                <th>Primary Skill</th>
                                                 <th>Interviewer</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -185,8 +186,8 @@
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName</td>
                                                 <td> @item.candidateEmail</td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> @item.interviewer</td>
-
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc</td>
                                                 <td> @item.intervieweStatusStatDesc</td>
