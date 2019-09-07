@@ -59,7 +59,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string IRFId,string candidateName, string interviewStatus)
+        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle,string candidateName,string reportLink, string interviewStatus)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { meetingDate, candidateName, IRFId , interviewStatus };
+                object[] parameters = new object[] { meetingDate, candidateName, jdTitle, interviewStatus, reportLink };
                 mailMessage.Subject = candidateName+" Interview Completion Alert";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);

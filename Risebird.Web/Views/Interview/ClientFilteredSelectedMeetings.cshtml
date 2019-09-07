@@ -59,11 +59,13 @@
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Client HR</th>
+            <th>End Client Name</th>
             <th>Primary Skill</th>
             <th>Report Link</th>
+            <th>Video</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
-            <th>Client HR</th>
             <th>Current Employer</th>
             <th>Expected Per Hour Rate</th>
             <th>Expected Joining Time</th>
@@ -75,17 +77,18 @@
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Client HR</th>
+            <th>End Client Name</th>
             <th>Primary Skill</th>
             <th>Report Link</th>
+            <th>Video</th>
             <th>Resume</th>
             <th>Candidate Contact</th>
-            <th>Client HR</th>
             <th>Current Employer</th>
             <th>Expected Per Hour Rate</th>
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
-            <th>Report Link</th>
         </tr>
     </tfoot>
     <tbody>
@@ -94,8 +97,18 @@
         <tr id=@item.imid>
             <td> @item.interviewDate </td>
             <td> @item.candidateName </td>
+            <td> @item.ClientHrContact </td>
+            <td> @item.ClientName </td>
             <td> @item.JDTiltle.Split("|")[0] </td>
             <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+            @if (item.VideoLink != null && item.VideoLink != "")
+            {
+                <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+            }
+            else
+            {
+                <td>No Video</td>
+            }
             @if (item.resumeLink != null && item.resumeLink != "")
             {
                 <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -104,6 +117,7 @@
             {
                 <td>No Resume</td>
             }
+
             @if (item.MobileNumber != null)
             {
                 <td>@item.MobileNumber</td>
@@ -113,7 +127,6 @@
             {
                 <td>No Contact</td>
             }
-            <td> @item.ClientHrContact </td>
             <td> @item.currentEmployerName </td>
             <td> @item.expectedPerHourRate </td>
             <td> @item.joiningTime </td>

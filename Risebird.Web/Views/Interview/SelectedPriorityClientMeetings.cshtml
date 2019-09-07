@@ -119,6 +119,8 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Client HR</th>
+                                                <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
@@ -129,11 +131,13 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Client HR</th>
+                                                <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
-                                               
+
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -142,6 +146,8 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
                                                 <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 @if (item.VideoLink != null && item.VideoLink != "")

@@ -1674,35 +1674,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    AssignYourselfVM assinAssignYourselfVm = new AssignYourselfVM();
-                    assinAssignYourselfVm.id = id;
-                    assinAssignYourselfVm.InterviewDate = InterviewDate;
-                    assinAssignYourselfVm.CandidateEmail = CandidateEmail;
-                    return View(assinAssignYourselfVm);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return null;
-            }
-        }
+        //[Authorize]
+        //[HttpGet]
+        //public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            AssignYourselfVM assinAssignYourselfVm = new AssignYourselfVM();
+        //            assinAssignYourselfVm.id = id;
+        //            assinAssignYourselfVm.InterviewDate = InterviewDate;
+        //            assinAssignYourselfVm.CandidateEmail = CandidateEmail;
+        //            return View(assinAssignYourselfVm);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return null;
+        //    }
+        //}
 
         [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AssignYourself(AssignYourselfVM model)
+        //[HttpPost]
+        public async Task<IActionResult> AssignYourself(int id, string InterviewDate, string CandidateEmail)
         {
             try
             {
@@ -1710,10 +1710,12 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        var result = _meetingService.AssignYourself(model.id, model.Interviewer.ToLower());
+                        var result = _meetingService.AssignYourself(id, emailid.ToLower());
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
