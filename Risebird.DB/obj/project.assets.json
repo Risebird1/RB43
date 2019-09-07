@@ -676,23 +676,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {},
+    "C:\\Users\\Prem\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\Risebird.DB.csproj",
+      "projectUniqueName": "E:\\Prem\\Projects\\RisebirdPortal\\Risebird.DB\\Risebird.DB.csproj",
       "projectName": "Risebird.DB",
-      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\Risebird.DB.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\obj\\",
+      "projectPath": "E:\\Prem\\Projects\\RisebirdPortal\\Risebird.DB\\Risebird.DB.csproj",
+      "packagesPath": "C:\\Users\\Prem\\.nuget\\packages\\",
+      "outputPath": "E:\\Prem\\Projects\\RisebirdPortal\\Risebird.DB\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Prem\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

@@ -117,11 +117,12 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Client HR</th>
+                                                <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
-                                                <th>Candidate Contact</th>
-                                                <th>Client HR</th>
+                                                <th>Candidate Contact</th>                                              
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
@@ -133,11 +134,12 @@
                                             <tr>
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
+                                                <th>Client HR</th>
+                                                <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
-                                                <th>Client HR</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
                                                 <th>Expected Joining Time</th>
@@ -151,6 +153,8 @@
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
                                                 <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
@@ -169,8 +173,7 @@
                                                 else
                                                 {
                                                     <td>No Contact</td>
-                                                }
-                                                <td class="wordwrap"> @item.ClientHrContact </td>
+                                                }                                             
                                                 <td> @item.currentEmployerName </td>
                                                 <td> @item.expectedPerHourRate </td>
                                                 <td> @item.joiningTime </td>
@@ -247,23 +250,32 @@
     });
 </script>
 
-@*<script type="text/javascript">
-
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
         $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
+        $("#meeting").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
+
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
+    //// script for loader ends here
+</script>
 
 <script type="text/javascript">
     //// script for loader starts here

@@ -53,50 +53,43 @@
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Client HR</th>
+            <th>End Client Name</th>
             <th>Primary Skill</th>
             <th>Confirmation Status</th>
             <th>Meeting Status</th>
             <th>Interview Status</th>
             <th>Report Link</th>
-            <th>Video</th>
-            <th>Interviewer Comment</th>
         </tr>
     </thead>
     <tfoot>
         <tr>
             <th>Interview Date</th>
             <th>Candidate Name</th>
+            <th>Client HR</th>
+            <th>End Client Name</th>
             <th>Primary Skill</th>
             <th>Confirmation Status</th>
             <th>Meeting Status</th>
             <th>Interview Status</th>
-            <th>Report Link</th>
-            <th>Video</th>
-            <th>Interviewer Comment</th>
+            <th>Report Link</th>  
         </tr>
     </tfoot>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id=@item.imid>
-                <td> @item.interviewDate </td>
-                <td> @item.candidateName </td>
-                <td> @item.JDTiltle.Split("|")[0] </td>
-                <td> @item.confirmationStatus</td>
-                <td> @item.MeetingStatusStatusDesc</td>
-                <td> @item.intervieweStatusStatDesc</td>
-                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                @if (item.VideoLink != null && item.VideoLink != "")
-                {
-                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                }
-                else
-                {
-                    <td>No Video</td>
-                }
-                <td> @item.InterviewerComment </td>
-
-            </tr>
+        <tr id=@item.imid>
+            <td> @item.interviewDate </td>
+            <td> @item.candidateName </td>
+            <td> @item.ClientHrContact </td>
+            <td> @item.ClientName </td>
+            <td> @item.JDTiltle.Split("|")[0] </td>
+            <td> @item.confirmationStatus</td>
+            <td> @item.MeetingStatusStatusDesc</td>
+            <td> @item.intervieweStatusStatDesc</td>
+            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+        </tr>
         }
     </tbody>
 </table>
+
