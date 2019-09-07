@@ -503,7 +503,12 @@ namespace Risebird.Business
                         var interviewDate = reportModel.interviewDate;
                         var candidateName = reportModel.CandidateName;
                         var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
-                        _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, IRFID, candidateName, intervieweStatusStatDesc);
+                        if(!reportModel.IsEdited)
+                        {
+                            var reportLink = "https://portal.risebird.io/IRF/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId;
+                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, IRFID, candidateName, reportLink, intervieweStatusStatDesc);
+
+                        }
                     }
                 }
 
