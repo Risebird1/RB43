@@ -17,20 +17,27 @@
         background-color: darkgray;
     }
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
+        max-width: 200px !important;
     }
 
     
     td.wordwrap {
         display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
+        max-width: 200px !important;
+        min-width: 200px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         vertical-align: top !important;
         white-space: nowrap !important;
     }
+    .no-sort::after {
+        display: none !important;
+    }
 
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
     td:hover.wordwrap {
         text-overflow: clip !important;
         white-space: normal !important;
@@ -58,9 +65,10 @@
             <th>Client HR</th>
             <th>End Client Name</th>
             <th>Primary Skill</th>
-            <th>Report Link</th>
             <th>Video</th>
             <th>Interviewer Comment</th>
+            <th class="no-sort"></th>
+            <th>Report Link</th>
         </tr>
     </thead>
     <tfoot>
@@ -70,9 +78,10 @@
             <th>Client HR</th>
             <th>End Client Name</th>
             <th>Primary Skill</th>
-            <th>Report Link</th>
             <th>Video</th>
             <th>Interviewer Comment</th>
+            <th class="no-sort"></th>
+            <th>Report Link</th>
         </tr>
     </tfoot>
     <tbody>
@@ -84,7 +93,6 @@
             <td> @item.ClientHrContact </td>
             <td> @item.ClientName </td>
             <td> @item.JDTiltle.Split("|")[0] </td>
-            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
             @if (item.VideoLink != null && item.VideoLink != "")
             {
                 <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
@@ -93,8 +101,11 @@
             {
                 <td>No Video</td>
             }
-            <td> @item.InterviewerComment </td>
-
+            <td>
+                <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
+            </td>
+            <td>  </td>
+            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
         </tr>
         }
     </tbody>

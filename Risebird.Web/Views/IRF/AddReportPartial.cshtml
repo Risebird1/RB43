@@ -191,7 +191,7 @@
 
                                             @*<input class="form-control webkitEnabled" id="MeetingStatus" name="MeetingStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ?  Model.MeetingStatusList.Where(x => x.Value == Model.MeetingStatus.ToString()).FirstOrDefault().Text : Model.MeetingStatusList.FirstOrDefault().Text)">*@
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled="disabled" })
+                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
@@ -255,7 +255,7 @@
 
                                         @*<div class="col-md-6 col-sm-6">
 
-                                            </div>*@
+                </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -267,30 +267,7 @@
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
-                                    @*<div class="col-md-6 col-sm-6">
-
-
-
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                {
-                                                    <video width="320" height="240" controls>
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                }
-                                                else
-                                                {
-                                                    <iframe width="420" height="345" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                                }
-                                            }
-
-                                        </div>*@
-                                    <div class="col-md-6 offset-md-3">
+                                    <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
@@ -300,26 +277,29 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                            </div>
+                                            <div class="form-group">
+                                                <span>
 
-                                            @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                </span>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                        </div>
-                                    </div>
                                 </div>
+
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 px-1">
@@ -336,18 +316,18 @@
                                     </div>
 
                                     @*<div class="col-md-10">
-                                            Upload Video
-                                            <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                            Add a link
-                                            <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                        </div>
+                Upload Video
+                <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                Add a link
+                <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+            </div>
 
-                                        <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
-                                            @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+            <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
+                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                        </div>*@
+                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+            </div>*@
 
 
                                     <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
@@ -997,26 +977,26 @@
                                 @Html.HiddenFor(m => m.InterviewId)
                                 @Html.HiddenFor(m => m.IsEdited)
                                 @*<div class="card-footer ">
-                                        <div class="row">
-                                            <label class="col-md-2"></label>
-                                            <div class="col-md-9">
+            <div class="row">
+                <label class="col-md-2"></label>
+                <div class="col-md-9">
 
-                                                @{
-                                                    if (ViewBag.IsSelected)
-                                                    {
-                                                        @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                    @{
+                        if (ViewBag.IsSelected)
+                        {
+                            @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                                    }
-                                                    else
-                                                    {
-                                                        @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                                    }
+                        }
 
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>*@
+                    }
+                </div>
+            </div>
+        </div>*@
 
 
 
