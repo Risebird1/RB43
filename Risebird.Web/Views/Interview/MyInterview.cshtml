@@ -113,29 +113,29 @@
                                     <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
+                                                <th>Candidate Name</th>
+                                                <th>Zoom ID</th>
                                                 <th>Date</th>
                                                 <th>Slot</th>
                                                 <th>Duration</th>
-                                                <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
                                             <tr>
+                                                <th>Candidate Name</th>
+                                                <th>Zoom ID</th>
                                                 <th>Date</th>
                                                 <th>Slot</th>
                                                 <th>Duration</th>
-                                                <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                             </tr>
                                         </tfoot>
@@ -145,10 +145,11 @@
                                             @foreach (var item in Model)
                                             {
                                             <tr id=@item.id>
+                                                <td> @item.candidateName</td>
+                                                <td> @item.risebirdHR</td>
                                                 <td> @item.interviewDate </td>
                                                 <td> @item.interviewSlot </td>
                                                 <td> @item.interviewDuration </td>
-                                                <td> @item.candidateName</td>
                                                 <td> @item.candidateEmail</td>
                                                 @if (item.MobileNumber != null)
                                                 {
@@ -176,7 +177,7 @@
                                                     <td>No JD</td>
                                                 }
 
-                                                <td> @item.risebirdHR</td>
+
                                                 <td class="text-right">
                                                     <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                                     <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
