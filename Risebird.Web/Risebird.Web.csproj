@@ -28,6 +28,8 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="2.6.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" />
+    <PackageReference Include="OfficeOpenXml.Core.ExcelPackage" Version="1.0.0" />
+    <PackageReference Include="OfficeOpenXml.Extends" Version="1.0.6" />
     <PackageReference Include="Twilio" Version="5.31.4" />
     <PackageReference Include="Twilio.AspNet.Mvc" Version="5.20.1" />
   </ItemGroup>

@@ -15,6 +15,7 @@ using Risebird.Repository.Interface;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper;
 using Newtonsoft.Json;
+using OfficeOpenXml;
 
 namespace Risebird.Web.Controllers
 {
@@ -1406,6 +1407,7 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
+                        ViewBag.Model = selectedMeeting;
 
                         return View(selectedMeeting);
                     }
@@ -2104,6 +2106,136 @@ namespace Risebird.Web.Controllers
         {
             return _meetingService.PostApproval(imid, value, comment);
             
+        }
+
+        /// <summary>
+        /// Export selected candidates data to excel
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public FileContentResult ExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                foreach (var meeting in meetings)
+                {
+                    if (meeting.InterviewStatus != null)
+                    {
+                        meeting.InterviewStatusDescription = ((InterviewStatus)meeting.InterviewStatus).GetDescription();
+                    }
+                    if (meeting.MeetingStatus != null)
+                    {
+                        meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
+                    }
+                }
+                //ViewBag.IsSelected = true;
+                foreach (var m in meetings)
+                {
+                    if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
+                    {
+                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    if (m.L2InterviewStatus.HasValue)
+                    {
+                        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                    }
+                    if (m.L2InterviewStatus.HasValue)
+                    {
+                        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                    }
+                    if (m.JoiningStatus.HasValue)
+                    {
+                        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                    }
+                    if (m.PreparationStatus.HasValue)
+                    {
+                        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                    }
+                    if (m.OfferStatus.HasValue)
+                    {
+                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                    }
+                    if (m.MeetingStatus.HasValue)
+                    {
+                        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                    }
+                    if (m.QCStatus.HasValue)
+                    {
+                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                    }
+                    selectedMeeting.Add(m);
+                }
+                //vMUtilizations.CloudTypeList = GetListOfCloud();
+                ExcelPackage Ep = new ExcelPackage();
+                ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("VM Utilization Report");
+                Sheet.Cells["A1:N1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:N1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:N1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 8;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Interview Date";
+                Sheet.Cells[1, 2].Value = "Candidate name";
+                Sheet.Cells[1, 3].Value = "Client HR";
+                Sheet.Cells[1, 4].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Primary Skill";
+                Sheet.Cells[1, 6].Value = "Video ";
+                Sheet.Cells[1, 7].Value = "Interviewer Comment";
+                Sheet.Cells[1, 8].Value = "Report Link";
+                
+                int i = 2;
+                //string LastAction = null; ;
+                string fileName = "Risebird" + DateTime.Now.ToString("dd.MM.yyyy")+"InterviewStatusReport" + ".xlsx";
+                if (selectedMeeting.Count() > 0)
+                {
+                    foreach (var item in selectedMeeting)
+                    {
+                        //if (!string.IsNullOrEmpty(item.LastAction))
+                        //{
+                        //    LastAction = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(item.LastAction.ToLower());
+                        //}
+                        Sheet.Cells[i, 1].Value = item.interviewDate;
+                        Sheet.Cells[i, 2].Value = item.candidateName;
+                        Sheet.Cells[i, 3].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 4].Value = item.ClientName;
+                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
+                        Sheet.Cells[i, 6].Value = item.VideoLink;
+                        Sheet.Cells[i, 7].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 8].Value = "https://portal.risebird.io/IRF/AddReport?interviewId="+item.imid+"&irfId="+item.irfIntId;//item.reportLink;                       
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            return null;
         }
     }
 
