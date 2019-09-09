@@ -2182,7 +2182,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:N1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 8;
+                int startColumn = 1; int endColumn = 11;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -2233,10 +2233,192 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         Sheet.Cells[i, 11].Value = "Report Link";
                         Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+
+            }
+
+        }
+
+        /// <summary>
+        /// Export selected candidates data to excel
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public FileContentResult AllExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("All Candidate Report");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_All_Candidate_Status_Report" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+
+                var selectedMeeting = new List<MeetingVM>();
+                var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+
+                meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                foreach (var meeting in meetings)
+                {
+                    if (meeting.InterviewStatus != null)
+                    {
+                        meeting.InterviewStatusDescription = ((InterviewStatus)meeting.InterviewStatus).GetDescription();
+                    }
+                    if (meeting.MeetingStatus != null)
+                    {
+                        meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
+                    }
+                }
+                foreach (var m in meetings)
+                {
+                    if (m.InterviewStatus.HasValue)
+                    {
+                        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                    }
+                    if (m.L2InterviewStatus.HasValue)
+                    {
+                        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                    }
+                    if (m.L2InterviewStatus.HasValue)
+                    {
+                        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                    }
+                    if (m.JoiningStatus.HasValue)
+                    {
+                        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                    }
+                    if (m.PreparationStatus.HasValue)
+                    {
+                        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                    }
+                    if (m.OfferStatus.HasValue)
+                    {
+                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                    }
+                    if (m.MeetingStatus.HasValue)
+                    {
+                        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                    }
+                    if (m.QCStatus.HasValue)
+                    {
+                        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                    }
+
+                }
+
+
+                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:S1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 18;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Interview Date";
+                Sheet.Cells[1, 2].Value = "Candidate name";
+                Sheet.Cells[1, 3].Value = "Client HR";
+                Sheet.Cells[1, 4].Value = "End Client Name";
+                Sheet.Cells[1, 5].Value = "Primary Skill";
+                Sheet.Cells[1, 6].Value = "Confirmation Status";
+                Sheet.Cells[1, 7].Value = "Meeting Status";
+                Sheet.Cells[1, 8].Value = "Interview Status";
+                Sheet.Cells[1, 9].Value = "Video Link";
+                Sheet.Cells[1, 10].Value = "Interviewer Comment";
+                Sheet.Cells[1, 11].Value = "Report Link";
+                Sheet.Cells[1, 12].Value = "Resume";
+                Sheet.Cells[1, 13].Value = "Candidate Contact";
+                Sheet.Cells[1, 14].Value = "Current Employer";
+                Sheet.Cells[1, 15].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1, 16].Value = "Expected Joining Time";
+                Sheet.Cells[1, 17].Value = "Preferred Location";
+                Sheet.Cells[1, 18].Value = "Staffing Agency";
+
+                int i = 2;
+                //string LastAction = null; ;
+                meetings = meetings.OrderBy(x => x.interviewDate).ToList();
+                if (meetings.Count() > 0)
+                {
+                    foreach (var item in meetings)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.candidateName;
+                        Sheet.Cells[i, 3].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 4].Value = item.ClientName;
+                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
+                        Sheet.Cells[i, 6].Value = item.confirmationStatus;
+                        Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
+                        Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 9].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 9].Value = "Video Link";
+                                Sheet.Cells[i, 9].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 9].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception e)
+                            {
+                                Sheet.Cells[i, 9].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 9].Value = "No Video";
+                        }
+                        Sheet.Cells[i, 10].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 11].Value = "Report Link";
+                        Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                        Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        if (!string.IsNullOrEmpty(item.resumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 12].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 12].Value = "Resume Link";
+                                Sheet.Cells[i, 12].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception e)
+                            {
+                                Sheet.Cells[i, 12].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 12].Value = "No Resume";
+                        }
+                        Sheet.Cells[i, 13].Value = item.MobileNumber;
+                        Sheet.Cells[i, 14].Value = item.currentEmployerName;
+                        Sheet.Cells[i, 15].Value = item.expectedPerHourRate;
+                        Sheet.Cells[i, 16].Value = item.joiningTime;
+                        Sheet.Cells[i, 17].Value = item.preferredLocation;
+                        Sheet.Cells[i, 18].Value = item.staffingAgency;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -2383,7 +2565,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 6].Value = "No Video";
                         }
                         Sheet.Cells[i, 7].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         Sheet.Cells[i, 8].Value = "Report Link";
                         Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
