@@ -2099,6 +2099,12 @@ namespace Risebird.Web.Controllers
 
 
         }
+
+        public bool PostApproval(string imid, string value, string comment)
+        {
+            return _meetingService.PostApproval(imid, value, comment);
+            
+        }
     }
 
 }

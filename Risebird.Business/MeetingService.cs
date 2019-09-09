@@ -149,6 +149,13 @@ namespace Risebird.Business
             }
         }
 
+
+        public bool PostApproval(string imid, string value, string comment)
+        {
+            var val = Convert.ToBoolean(value);
+            var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val ? 1 : 0, comment);
+            return result;
+        }
         public bool UpdateMeeting(MeetingVM meetingToUpdate)
         {
             try
@@ -507,7 +514,7 @@ namespace Risebird.Business
                         if(!reportModel.IsEdited)
                         {
                             var reportLink = "https://portal.risebird.io/IRF/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId;
-                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc);
+                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
                         }
                     }

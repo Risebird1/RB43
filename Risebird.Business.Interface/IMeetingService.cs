@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         SelectList GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
         List<MeetingVM> GetClientMeetingList(string emailId);
+        bool PostApproval(string imid, string value, string comment);
     }
 }
