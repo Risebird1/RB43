@@ -2198,7 +2198,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 6].Value = "Video ";
                 Sheet.Cells[1, 7].Value = "Interviewer Comment";
                 Sheet.Cells[1, 8].Value = "Report Link";
-                
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
                 string fileName = "Risebird" + DateTime.Now.ToString("dd.MM.yyyy")+"InterviewStatusReport" + ".xlsx";
@@ -2215,9 +2215,11 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 3].Value = item.ClientHrContact;
                         Sheet.Cells[i, 4].Value = item.ClientName;
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
+                        
                         Sheet.Cells[i, 6].Value = item.VideoLink;
                         Sheet.Cells[i, 7].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 8].Value = "https://portal.risebird.io/IRF/AddReport?interviewId="+item.imid+"&irfId="+item.irfIntId;//item.reportLink;                       
+                        var link = new ExcelHyperLink("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId);
+                        Sheet.Cells[i, 8].Value = link;//"https://portal.risebird.io/IRF/AddReport?interviewId="+item.imid+"&irfId="+item.irfIntId;//item.reportLink;                       
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
