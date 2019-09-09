@@ -115,6 +115,10 @@
                                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                         </div>
                                     </div>
+                                    <div>
+                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview")'"></i>
+
+                                    </div>
 
                                 </div>
 
