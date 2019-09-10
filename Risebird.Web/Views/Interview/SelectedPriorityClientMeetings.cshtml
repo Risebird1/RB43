@@ -246,8 +246,8 @@
                                                     <td>  </td>
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                     <td class="text-right">
-                                                        <span title="Approve" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                        <span title="Final selection status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
                                                     </td>
 
                                                 </tr>
@@ -268,33 +268,27 @@
             <!-- end col-md-12 -->
         </div>
         <div id="myModal" class="modal">
-
             <!-- Modal content -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Accept/Reject Interview</h2>
+                    <h4>Approved For Next Round</h4>
                     <span class="close">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        @*@Html.LabelFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-top:18px" })*@
+                    <div class="form-group">                      
                         <label>Approved</label>
                         <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">
                     </div>
                     <div id="approvalComments">
-                        @*@Html.LabelFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-top:18px" })*@
-                        <label>Comments</label>
+                        <label>Approval Comments</label>
                         <input type="text" name="appComments" id="appComments" style="margin-left:6px"><br>
-                        @*@Html.EditorFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().ApprovalComments, new { @style = "margin-left:-693px" })*@
-
                     </div>
                     <div class="">
                         <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
                     </div>
-
                 </div>
                 <div class="modal-footer">
-                    @*<h3>Modal Footer</h3>*@
+                  
                 </div>
             </div>
 
@@ -305,21 +299,17 @@
             <!-- Modal content -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Select/Reject Interview</h2>
+                    <h4>Final Selection Status</h4>
                     <span class="close">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        @*@Html.LabelFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().IsApproved, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-top:18px" })*@
+                    <div class="form-group">                       
                         <label>Selected</label>
                         <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">
                     </div>
                     <div id="selectionComments">
-                        @*@Html.LabelFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "margin-top:18px" })*@
                         <label>Final Comments</label>
                         <input type="text" name="selecComments" id="selecComments" style="margin-left:6px"><br>
-                        @*@Html.EditorFor(Model => Model.Where(x => x.imid == item.imid).FirstOrDefault().ApprovalComments, new { @style = "margin-left:-693px" })*@
-
                     </div>
                     <div class="">
                         <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
@@ -610,23 +600,7 @@
     }
 
 </script>
-@*<script type="text/javascript">
 
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
 
 <script type="text/javascript">
     //// script for loader starts here
