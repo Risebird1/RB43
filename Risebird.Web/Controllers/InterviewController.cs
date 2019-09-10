@@ -2261,7 +2261,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         Sheet.Cells[i, 11].Value = "Report Link";
                         Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
@@ -2356,9 +2356,9 @@ namespace Risebird.Web.Controllers
                 }
 
 
-                Sheet.Cells["A1:N1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:N1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:N1"].Style.WrapText = true;
+                Sheet.Cells["A1:S1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:S1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:S1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
                 int startColumn = 1; int endColumn = 18;
@@ -2419,7 +2419,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         Sheet.Cells[i, 11].Value = "Report Link";
                         Sheet.Cells[i, 11].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
@@ -2593,7 +2593,7 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 6].Value = "No Video";
                         }
                         Sheet.Cells[i, 7].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/IRF/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                        Sheet.Cells[i, 8].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
                         Sheet.Cells[i, 8].Value = "Report Link";
                         Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
