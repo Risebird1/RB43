@@ -1340,6 +1340,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
+
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
@@ -1407,8 +1408,11 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
-                        ViewBag.Model = selectedMeeting;
-
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
                         return View(selectedMeeting);
                     }
                     else
@@ -2102,10 +2106,34 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public bool PostApproval(string imid, string value, string comment)
+        public bool ChangeApproval(string imid, string value, string comment)
         {
-            return _meetingService.PostApproval(imid, value, comment);
+            var result = _meetingService.PostApproval(imid, value, comment);
+            if(result)
+            {
+               TempData["SuccessErrorMessage"] = "Saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessage"] = "Failed";
+
+            return result;
             
+        }
+
+        public bool ChangeSelection(string imid, string value, string comment)
+        {
+            var result = _meetingService.PostSelectionStatus(imid, value, comment);
+            if (result)
+            {
+                TempData["SuccessErrorMessage"] = "Saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessage"] = "Failed";
+
+            return result;
+
         }
 
         /// <summary>

@@ -31,5 +31,49 @@ CREATE TABLE [dbo].[InterviewMeetings](
 )		
 
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsApproved')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    ADD [IsApproved] BIT NOT NULL DEFAULT 1
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsSelected')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    ADD [IsSelected] BIT NOT NULL DEFAULT 1
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ApprovalComments')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    ADD [ApprovalComments] VARCHAR(max) NOT NULL DEFAULT 'Approved'
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'FinalComments')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    ADD [FinalComments] VARCHAR(max) NOT NULL DEFAULT 'Approved'
+END
+
+
+
+END
 GO
 

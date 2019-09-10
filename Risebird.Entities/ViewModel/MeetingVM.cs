@@ -126,5 +126,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsApproved { get; set; }
         public string ApprovalComments { get; set; }
 
+        public bool IsSelected { get; set; }
+        public string FinalComments { get; set; }
+
     }
 }
