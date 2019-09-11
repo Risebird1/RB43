@@ -450,6 +450,10 @@ namespace Risebird.Business
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
                     model.IsEdited = false;
+                    model.IsApproved = interviewDetails.IsApproved;
+                    model.IsSelected = interviewDetails.IsSelected;
+                    model.FinalComments = interviewDetails.FinalComments;
+                    model.ApprovalComments = interviewDetails.ApprovalComments;
                     return model;
                 }
             }
@@ -506,6 +510,10 @@ namespace Risebird.Business
             model.resumeLink = interviewMeetingsDetails.resumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
+            //model.IsApproved = interviewMeetingsDetails.IsApproved;
+            //model.IsSelected = interviewMeetingsDetails.IsSelected;
+            //model.FinalComments = interviewMeetingsDetails.FinalComments;
+            //model.ApprovalComments = interviewMeetingsDetails.ApprovalComments;
             // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
 
             return model;

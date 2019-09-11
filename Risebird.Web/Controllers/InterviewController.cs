@@ -1408,10 +1408,10 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
-                        if (TempData["SuccessErrorMessage"] != null)
+                        if (TempData["SuccessErrorMessageInterview"] != null)
                         {
-                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                            TempData.Remove("SuccessErrorMessage");
+                            ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
+                            TempData.Remove("SuccessErrorMessageInterview");
                         }
                         return View(selectedMeeting);
                     }
@@ -2126,11 +2126,11 @@ namespace Risebird.Web.Controllers
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
             if (result)
             {
-                TempData["SuccessErrorMessage"] = "Saved Successfully";
+                TempData["SuccessErrorMessageInterview"] = "Saved Successfully";
 
             }
             else
-                TempData["SuccessErrorMessage"] = "Failed";
+                TempData["SuccessErrorMessageInterview"] = "Failed";
 
             return result;
 

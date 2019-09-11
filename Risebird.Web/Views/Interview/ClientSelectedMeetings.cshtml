@@ -34,6 +34,7 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
@@ -57,6 +58,73 @@
         white-space: normal !important;
     }
 </style>
+<style>
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 40%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        /*-webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s*/
+    }
+
+    /* The Close Button */
+    .close {
+        color: #fefefe !important;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 2px 16px;
+    }
+
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .modal-content .modal-header {
+        font-size: 10px;
+    }
+</style>
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -129,6 +197,8 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Action</th>
+
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -147,49 +217,56 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Action</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.ClientName </td>
-                                                <td> @item.JDTiltle.Split("|")[0] </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
-                                                @if (item.VideoLink != null && item.VideoLink != "")
-                                                {
-                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Video</td>
-                                                }
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td class="wordwrap"> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                            </tr>
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName </td>
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.ClientName </td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
+                                                    @if (item.VideoLink != null && item.VideoLink != "")
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td class="wordwrap"> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td class="text-right">
+                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                    </td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -206,7 +283,61 @@
             </div>
             <!-- end col-md-12 -->
         </div>
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Approved For Next Round</h5>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Approved</label>
+                        <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">
+                    </div>
+                    <div id="approvalComments" class="form-group">
+                        <label>Approval Comments</label>
+                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
+                    </div>
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                    </div>
+                </div>
+                <div class="modal-footer">
 
+                </div>
+            </div>
+
+        </div>
+
+        <div id="mySelectionModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Final Selection Status</h5>
+                    <span class="close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Selected</label>
+                        <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">
+                    </div>
+                    <div id="selectionComments" class="form-group">
+                        <label>Final Comments</label>
+                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
+                    </div>
+                    <div class="">
+                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<h3>Modal Footer</h3>*@
+                </div>
+            </div>
+
+        </div>
         <!-- end row -->
     </div>
     <footer class="footer">
@@ -258,6 +389,189 @@
         });
         var table = $('#meeting').DataTable();
     });
+</script>
+
+<script>
+    var imid = "";
+    var span = document.getElementsByClassName("close")[0];
+    var comm = '';
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    //window.onclick = function (event) {
+    //    var modal = document.getElementById("myModal");
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
+</script>
+
+<script>
+    function ModalButtonClick(item) {
+        imid = item.imid;
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn_" + item.imid);
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        document.getElementById("IsApproved").checked = item.IsApproved;
+        document.getElementById("appComments").value = item.ApprovalComments;
+        if (item.ApprovalComments != 'Approved') {
+            comm = item.ApprovalComments;
+        }
+        else {
+            comm = '';
+        }
+        if (item.IsApproved) {
+            //var commentId = 'approvalComments';
+            document.getElementById('approvalComments').style.display = "none";
+        }
+        else {
+            document.getElementById('approvalComments').style.display = "block";
+
+        }
+        //var commentId = 'approvalComments';
+
+    }
+
+    function ApprovalChanged() {
+        var commentId = 'approvalComments';
+        document.getElementById("appComments").value = comm;
+
+        //var checkElem = document.getElementById("checkBoxDiv_" + imid);
+
+        var isChecked = document.getElementById("IsApproved").checked;
+
+        if (isChecked == false) {
+
+            document.getElementById(commentId).style.display = "block";
+        }
+        else {
+            document.getElementById(commentId).style.display = "none";
+        }
+    }
+
+    function SavePopUp() {
+        var comment = document.getElementById("appComments").value;
+        var isApproved = document.getElementById("IsApproved").checked;
+        var id = imid;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/ChangeApproval",
+            data: { 'imid': id, 'value': isApproved, 'comment': comment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
+
+<script>
+    var imidSelect = "";
+    var spanSelect = document.getElementsByClassName("close")[1];
+    var commSelect = '';
+    // When the user clicks on <span> (x), close the modal
+    spanSelect.onclick = function () {
+        var modal = document.getElementById("mySelectionModal");
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    //window.onclick = function (event) {
+    //    var modal = document.getElementById("myModal");
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
+</script>
+
+<script>
+    function ModalSelectionButtonClick(item) {
+
+        imidSelect = item.imid;
+
+        // Get the modal
+        var modal = document.getElementById("mySelectionModal");
+
+        // Get the button that opens the modal
+        //var btn = document.getElementById("myBtn_" + item.imid);
+
+        //// Get the <span> element that closes the modal
+        //var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        document.getElementById("IsSelected").checked = item.IsSelected;
+        document.getElementById("selecComments").value = item.FinalComments;
+        if (item.FinalComments != 'Selected') {
+            commSelect = item.FinalComments;
+        }
+        else {
+            commSelect = '';
+        }
+        if (item.IsSelected) {
+            //var commentId = 'selectionComments';
+            document.getElementById('selectionComments').style.display = "none";
+        }
+        else {
+            //var commentId = 'selectionComments';
+            document.getElementById('selectionComments').style.display = "block";
+        }
+
+
+    }
+
+    function SelectionChanged() {
+        var commentId = 'selectionComments';
+        document.getElementById("selecComments").value = commSelect;
+
+        //var checkElem = document.getElementById("checkBoxDiv_" + imid);
+
+        var isChecked = document.getElementById("IsSelected").checked;
+
+        if (isChecked == false) {
+
+            document.getElementById(commentId).style.display = "block";
+        }
+        else {
+            document.getElementById(commentId).style.display = "none";
+        }
+    }
+
+    function SaveSelecPopUp() {
+        var comment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("IsSelected").checked;
+        var id = imidSelect;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/ChangeSelection",
+            data: { 'imid': id, 'value': isSelected, 'comment': comment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
 </script>
 
 <script type="text/javascript">
@@ -319,7 +633,7 @@
         $.ajax({
             type: "GET",
             url: "/Interview/ClientFilteredSelectedMeetings",
-            data: { 'filterValue': filterValue},
+            data: { 'filterValue': filterValue },
             success: function (data) {
                 if (data == '' && filterValue == 'Next Seven Days') {
                     $('#tableID').html('');

@@ -404,6 +404,7 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
+                        ViewBag.ProfileName = profileName.ToLower();
 
                         return View(selectedMeeting);
                     }
@@ -909,7 +910,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
-
+                ViewBag.ProfileName = prof.ToLower();
                 
                 GetStatusList(model, irfId);
                 
