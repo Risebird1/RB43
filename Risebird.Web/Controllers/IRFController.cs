@@ -522,6 +522,8 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
+                        ViewBag.ProfileName = profileName.ToLower();
+
                         return PartialView("GetFilteredSelectedMeetings", selectedMeeting);
                     }
                     else

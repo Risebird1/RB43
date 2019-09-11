@@ -204,6 +204,8 @@
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
                                                 <th>Report Link</th>
+                                                <th>Approval Comments</th>
+                                                <th>Final Selection Status</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -219,6 +221,8 @@
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
                                                 <th>Report Link</th>
+                                                <th>Final Selection Status</th>
+                                                <th>Approval Comments</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -227,32 +231,39 @@
                                             @foreach (var item in Model)
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
 
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    <td>
-                                                        <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
-                                                    </td>
-                                                    <td>  </td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                    <td class="text-right">
-                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
-                                                    </td>
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                <td>
+                                                    <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
+                                                </td>
 
-                                                </tr>
+                                                <td>  </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                <td>
+                                                    @item.ApprovalComments
+                                                </td>
+                                                <td>
+                                                    @item.FinalComments
+                                                </td>
+                                                <td class="text-right">
+                                                    <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                    <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                </td>
+
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

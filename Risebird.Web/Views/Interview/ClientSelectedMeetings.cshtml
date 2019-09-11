@@ -197,6 +197,8 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Comments</th>
+                                                <th>Final Selection Status</th>
                                                 <th>Action</th>
 
                                             </tr>
@@ -217,6 +219,8 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Comments</th>
+                                                <th>Final Selection Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </tfoot>
@@ -225,48 +229,54 @@
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.joiningTime </td>
-                                                    <td class="wordwrap"> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td class="text-right">
-                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
-                                                    </td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td class="wordwrap"> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                                <td>
+                                                    @item.ApprovalComments
+                                                </td>
+                                                <td>
+                                                    @item.FinalComments
+                                                </td>
+                                                <td class="text-right">
+                                                    <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                    <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

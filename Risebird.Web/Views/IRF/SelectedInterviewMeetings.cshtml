@@ -192,6 +192,8 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Comments</th>
+                                                <th>Final Selection Status</th>
                                                 @if (ViewBag.ProfileName == "client")
                                                 {
                                                     <th>Action</th>
@@ -215,6 +217,8 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Comments</th>
+                                                <th>Final Selection Status</th>
                                                 @if (ViewBag.ProfileName == "client")
                                                 {
                                                     <th>Action</th>
@@ -228,45 +232,51 @@
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
 
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc </td>
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.joiningTime </td>
-                                                    <td> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                    @if (ViewBag.ProfileName == "client")
-                                                    {
-                                                        <td class="text-right">
-                                                            <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                            <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
-                                                        </td>
-                                                    }
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                <td> @item.intervieweStatusStatDesc </td>
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                                <td>
+                                                    @item.ApprovalComments
+                                                </td>
+                                                <td>
+                                                    @item.FinalComments
+                                                </td>
+                                                @if (ViewBag.ProfileName == "client")
+                                                {
+                                                    <td class="text-right">
+                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                    </td>
+                                                }
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
