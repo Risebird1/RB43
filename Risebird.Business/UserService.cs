@@ -341,5 +341,18 @@ namespace Risebird.Business
 
 
         #endregion
+
+        public IEnumerable<string> GetAllHrsEmailld()
+        {
+            try
+            {
+                return _userRepository.GetAllHrsEmailld();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
     }
 }
