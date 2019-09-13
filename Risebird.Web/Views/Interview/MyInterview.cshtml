@@ -318,12 +318,12 @@
         //var IdIRF = dataID;
         swal.fire({
             title: 'Are you sure?',
-            text: "The Interview will be unassigned!",
+            text: "The Interview will be unassigned! Note: Update Risebird HR, before unassigning interview.",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, unassign me!',
+            confirmButtonText: 'Yes, Unassign Me!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
@@ -358,7 +358,7 @@
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'Your were not unassigned :)',
+                    'Your were not unassigned.',
                     'error'
                 )
             }
