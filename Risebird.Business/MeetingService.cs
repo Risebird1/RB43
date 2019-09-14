@@ -154,24 +154,24 @@ namespace Risebird.Business
 
         public bool PostApproval(string imid, string value, string comment)
         {
-            var val = Convert.ToBoolean(value);
-            if(val==false && string.IsNullOrEmpty(comment))
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
             {
-                comment = "Rejected";
+                var val = Convert.ToInt32(value);
+                var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val, comment);
+                return result;
             }
-            var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val ? 1 : 0, val? "Approved":comment);
-            return result;
+            return false;
         }
 
         public bool PostSelectionStatus(string imid, string value, string comment)
-        {
-            var val = Convert.ToBoolean(value);
-            if (val == false && string.IsNullOrEmpty(comment))
+        {           
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
             {
-                comment = "Rejected";
+                var val = Convert.ToInt32(value);
+                var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val, comment);
+                return result;
             }
-            var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val ? 1 : 0, val ? "Selected" : comment);
-            return result;
+            return false;
         }
 
         public bool UpdateMeeting(MeetingVM meetingToUpdate)
@@ -565,7 +565,7 @@ namespace Risebird.Business
                         var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
                         if(!reportModel.IsEdited)
                         {
-                            var reportLink = "https://portal.risebird.io/IRF/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId;
+                            var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
                             _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
                         }

@@ -13,7 +13,14 @@
     #style-2::-webkit-scrollbar {
         width: 6px;
     }
+    .no-sort::after {
+        display: none !important;
+    }
 
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
     #style-2::-webkit-scrollbar-thumb {
         border-radius: 5px;
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
@@ -26,6 +33,9 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+    table {
         white-space: nowrap !important;
     }
 
@@ -70,8 +80,12 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
+            <th>Approval Status</th>
             <th>Approval Comments</th>
+            <th class="no-sort"></th>
             <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
             @if (ViewBag.ProfileName == "client")
             {
                 <th>Action</th>
@@ -94,8 +108,12 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
+            <th>Approval Status</th>
             <th>Approval Comments</th>
+            <th class="no-sort"></th>
             <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
             @if (ViewBag.ProfileName == "client")
             {
                 <th>Action</th>
@@ -140,11 +158,20 @@
             <td> @item.preferredLocation </td>
             <td>@item.staffingAgency</td>
             <td>
-                @item.ApprovalComments
+                @item.NextLevelApprovalStat
             </td>
             <td>
-                @item.FinalComments
+                <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
             </td>
+            <td></td>
+
+            <td>
+                @item.FinalSelectionStat
+            </td>
+            <td>
+                <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
+            </td>
+            <td></td>
             @if (ViewBag.ProfileName == "client")
             {
                 <td class="text-right">

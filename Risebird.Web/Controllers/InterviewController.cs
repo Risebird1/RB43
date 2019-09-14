@@ -57,8 +57,19 @@ namespace Risebird.Web.Controllers
 
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue?((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription():string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue?((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription():string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue?((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription():string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue?((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription():string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x;  }).ToList();
+                        foreach (var m in modelList)
+                        {
+                            
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }                          
+                        }
 
                         var list = new SelectList(new[]
 {
@@ -102,6 +113,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR")
                     {
                         var modelList = _meetingService.GetMeetingList();
+
                         if (filterValue == "Today")
                         {
                             modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
@@ -139,6 +151,18 @@ namespace Risebird.Web.Controllers
                         }
                        // modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        foreach (var m in modelList)
+                        {
+
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
+                        }
                         return PartialView("GetFilteredInterviews", modelList);
                     }
                     else
@@ -976,6 +1000,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
                         var list = new SelectList(new[]
@@ -1102,6 +1134,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
 
@@ -1180,7 +1220,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
-
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                         }
                         var list = new SelectList(new[]
 {
@@ -1354,6 +1401,7 @@ namespace Risebird.Web.Controllers
                             {
                                 meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
                             }
+
                         }
                         //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
@@ -1394,6 +1442,14 @@ namespace Risebird.Web.Controllers
                             if (m.QCStatus.HasValue)
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if(m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                             selectedMeeting.Add(m);
                         }
@@ -1534,6 +1590,14 @@ namespace Risebird.Web.Controllers
                             if (m.QCStatus.HasValue)
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                             selectedMeeting.Add(m);
                         }
@@ -2121,6 +2185,32 @@ namespace Risebird.Web.Controllers
             
         }
 
+        [HttpGet]
+        public ActionResult getApprovalStatusList()
+        {
+            var approvalStatuses = from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((approvalStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getSelectionStatusList()
+        {
+            var selectionStatuses = from FinalSelectionStatus s in Enum.GetValues(typeof(FinalSelectionStatus))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
         public bool ChangeSelection(string imid, string value, string comment)
         {
             var result = _meetingService.PostSelectionStatus(imid, value, comment);
@@ -2540,15 +2630,24 @@ namespace Risebird.Web.Controllers
                     {
                         m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                     }
+                    if (m.IsApproved.HasValue)
+                    {
+                        m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                    }
+                    if (m.IsApproved.HasValue)
+                    {
+                        m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                    }
+
                     selectedMeeting.Add(m);
                 }
                 
-                Sheet.Cells["A1:N1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:N1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:N1"].Style.WrapText = true;
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 8;
+                int startColumn = 1; int endColumn = 14;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 30;
@@ -2558,9 +2657,13 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 3].Value = "Client HR";
                 Sheet.Cells[1, 4].Value = "End Client Name";
                 Sheet.Cells[1, 5].Value = "Primary Skill";
-                Sheet.Cells[1, 6].Value = "Video ";
+                Sheet.Cells[1, 6].Value = "Video";
                 Sheet.Cells[1, 7].Value = "Interviewer Comment";
                 Sheet.Cells[1, 8].Value = "Report Link";
+                Sheet.Cells[1, 9].Value = "Approval Status";
+                Sheet.Cells[1, 10].Value = "Approval Comments ";
+                Sheet.Cells[1, 11].Value = "Final Selection Status";
+                Sheet.Cells[1, 12].Value = "Final Selection Comments";
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
                 //string LastAction = null; ;
@@ -2597,6 +2700,10 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 8].Value = "Report Link";
                         Sheet.Cells[i, 8].Style.Font.UnderLine = true;
                         Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        Sheet.Cells[i, 9].Value = item.NextLevelApprovalStat;
+                        Sheet.Cells[i, 10].Value = item.ApprovalComments;
+                        Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
+                        Sheet.Cells[i, 12].Value = item.FinalComments;
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);

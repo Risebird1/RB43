@@ -92,6 +92,9 @@
         font-size: 28px;
         font-weight: bold;
     }
+    table {
+        white-space: nowrap !important;
+    }
 
         .close:hover,
         .close:focus {
@@ -105,7 +108,14 @@
         background-color: #14406e;
         color: white;
     }
+    .no-sort::after {
+        display: none !important;
+    }
 
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
     .modal-body {
         padding: 2px 16px;
     }
@@ -192,8 +202,12 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
                                                 <th>Approval Comments</th>
+                                                <th class="no-sort"></th>
                                                 <th>Final Selection Status</th>
+                                                <th>Final Selection Comments</th>
+                                                <th class="no-sort"></th>
                                                 @if (ViewBag.ProfileName == "client")
                                                 {
                                                     <th>Action</th>
@@ -217,8 +231,12 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
                                                 <th>Approval Comments</th>
+                                                <th class="no-sort"></th>
                                                 <th>Final Selection Status</th>
+                                                <th>Final Selection Comments</th>
+                                                <th class="no-sort"></th>
                                                 @if (ViewBag.ProfileName == "client")
                                                 {
                                                     <th>Action</th>
@@ -264,11 +282,20 @@
                                                 <td> @item.preferredLocation </td>
                                                 <td>@item.staffingAgency</td>
                                                 <td>
-                                                    @item.ApprovalComments
+                                                    @item.NextLevelApprovalStat
                                                 </td>
                                                 <td>
-                                                    @item.FinalComments
+                                                    <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
                                                 </td>
+                                                <td></td>
+
+                                                <td>
+                                                    @item.FinalSelectionStat
+                                                </td>
+                                                <td>
+                                                    <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
+                                                </td>
+                                                <td></td>
                                                 @if (ViewBag.ProfileName == "client")
                                                 {
                                                     <td class="text-right">
@@ -303,8 +330,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Approved</label>
-                        <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">
+                        @*<label>Approved</label>
+                        <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                     </div>
                     <div id="approvalComments" class="form-group">
                         <label>Approval Comments</label>
@@ -331,8 +360,10 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Selected</label>
-                        <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">
+                        @*<label>Selected</label>
+                        <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">*@
+                        <label for="selectionDropdown"><b>Final Selection</b></label>
+                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
                     </div>
                     <div id="selectionComments" class="form-group">
                         <label>Final Comments</label>
@@ -438,22 +469,37 @@
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
-        document.getElementById("IsApproved").checked = item.IsApproved;
+        //document.getElementById("IsApproved").checked = item.IsApproved;
         document.getElementById("appComments").value = item.ApprovalComments;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getApprovalStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#approveDropdown").html(s);
+                $("#approveDropdown").val(item.IsApproved);
+            }
+        }); 
+
         if (item.ApprovalComments != 'Approved') {
             comm = item.ApprovalComments;
         }
         else {
             comm = '';
         }
-        if (item.IsApproved) {
-            //var commentId = 'approvalComments';
-            document.getElementById('approvalComments').style.display = "none";
-        }
-        else {
-            document.getElementById('approvalComments').style.display = "block";
+        //if (item.IsApproved) {
+        //    //var commentId = 'approvalComments';
+        //    document.getElementById('approvalComments').style.display = "none";
+        //}
+        //else {
+        //    document.getElementById('approvalComments').style.display = "block";
 
-        }
+        //}
         //var commentId = 'approvalComments';
 
     }
@@ -477,7 +523,7 @@
 
     function SavePopUp() {
         var comment = document.getElementById("appComments").value;
-        var isApproved = document.getElementById("IsApproved").checked;
+        var isApproved = document.getElementById("approveDropdown").value;
         var id = imid;
 
         $.ajax({
@@ -530,22 +576,37 @@
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
-        document.getElementById("IsSelected").checked = item.IsSelected;
+        //document.getElementById("IsSelected").checked = item.IsSelected;
         document.getElementById("selecComments").value = item.FinalComments;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#selectionDropdown").html(s);
+                $("#selectionDropdown").val(item.IsSelected);
+            }
+        });
+
         if (item.FinalComments != 'Selected') {
             commSelect = item.FinalComments;
         }
         else {
             commSelect = '';
         }
-        if (item.IsSelected) {
-            //var commentId = 'selectionComments';
-            document.getElementById('selectionComments').style.display = "none";
-        }
-        else {
-            //var commentId = 'selectionComments';
-            document.getElementById('selectionComments').style.display = "block";
-        }
+        //if (item.IsSelected) {
+        //    //var commentId = 'selectionComments';
+        //    document.getElementById('selectionComments').style.display = "none";
+        //}
+        //else {
+        //    //var commentId = 'selectionComments';
+        //    document.getElementById('selectionComments').style.display = "block";
+        //}
 
 
     }
@@ -569,7 +630,7 @@
 
     function SaveSelecPopUp() {
         var comment = document.getElementById("selecComments").value;
-        var isSelected = document.getElementById("IsSelected").checked;
+        var isSelected = document.getElementById("selectionDropdown").value;
         var id = imidSelect;
 
         $.ajax({
