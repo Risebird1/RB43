@@ -523,6 +523,24 @@ namespace Risebird.Business
         {
             try
             {
+                //double total = 0;
+                //foreach (var item in reportModel.TechSkillReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.SkillGeneralReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.JoinabilityReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.SelectabilityReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //reportModel.OverallScore = (total / 4);
                 var result =await _meetingRespository.AddInterviewReport(reportModel);
                 if(reportModel.InterviewStatus.HasValue)
                 {
