@@ -31,6 +31,7 @@ namespace Risebird.Repository.Interface
 
         Task<QCInterviewerVM> GetQCInterviewer(int id);
         Task<bool> UpdateQCInterviewer(QCInterviewerVM qcInterviewer);
+        IEnumerable<string> GetAllHrsEmailld();
 
         Task<bool> DeleteQCInterviewer(int id);
     }

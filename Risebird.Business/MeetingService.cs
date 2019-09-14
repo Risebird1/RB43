@@ -20,14 +20,16 @@ namespace Risebird.Business
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
         private IIRFRepository _irfRepository;
+        private IUserService _userService;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfFService;
             _notificationHelper = notificationHelper;
             _irfRepository = irfRepository;
+            _userService = userService;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -271,13 +273,21 @@ namespace Risebird.Business
                 if (meeting != null && meeting.Result != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
+                   
                     var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
                     if (interviwers != null)
                     {
                         interviwers.Remove(email);
                         _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
-                        return true;
+                       
                     }
+                    var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                    if (hrs != null)
+                    {
+                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), email);
+
+                    }
+                    return true;
                 }
                 return false;
             }
