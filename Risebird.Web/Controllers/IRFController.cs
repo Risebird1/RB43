@@ -391,6 +391,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
                         var list = new SelectList(new[]

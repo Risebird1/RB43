@@ -154,23 +154,25 @@ namespace Risebird.Business
 
         public bool PostApproval(string imid, string value, string comment)
         {
-            var val = Convert.ToBoolean(value);
-            if(val==false && string.IsNullOrEmpty(comment))
-            {
-                comment = "Rejected";
-            }
-            var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val ? 1 : 0, val? "Approved":comment);
+            var val = Convert.ToInt32(value);// Convert.ToBoolean(value);
+            //if(val==false && string.IsNullOrEmpty(comment))
+            //{
+            //    comment = "Rejected";
+            //}
+            //var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val ? 1 : 0, val? "Approved":comment);
+            var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val, comment);
             return result;
         }
 
         public bool PostSelectionStatus(string imid, string value, string comment)
         {
-            var val = Convert.ToBoolean(value);
-            if (val == false && string.IsNullOrEmpty(comment))
-            {
-                comment = "Rejected";
-            }
-            var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val ? 1 : 0, val ? "Selected" : comment);
+            var val = Convert.ToInt32(value);
+            //if (val == false && string.IsNullOrEmpty(comment))
+            //{
+            //    comment = "Rejected";
+            //}
+            //var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val ? 1 : 0, val ? "Selected" : comment);
+            var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val , comment);
             return result;
         }
 

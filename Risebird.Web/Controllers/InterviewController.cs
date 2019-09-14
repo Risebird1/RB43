@@ -976,6 +976,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
                         var list = new SelectList(new[]
@@ -1354,6 +1362,7 @@ namespace Risebird.Web.Controllers
                             {
                                 meeting.MeetingStatusDescription = ((MeetingStatus)meeting.MeetingStatus).GetDescription();
                             }
+
                         }
                         //ViewBag.IsSelected = true;
                         foreach (var m in meetings)
@@ -1394,6 +1403,14 @@ namespace Risebird.Web.Controllers
                             if (m.QCStatus.HasValue)
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if(m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                             selectedMeeting.Add(m);
                         }
@@ -2119,6 +2136,32 @@ namespace Risebird.Web.Controllers
 
             return result;
             
+        }
+
+        [HttpGet]
+        public ActionResult getApprovalStatusList()
+        {
+            var approvalStatuses = from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((approvalStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getSelectionStatusList()
+        {
+            var selectionStatuses = from FinalSelectionStatus s in Enum.GetValues(typeof(FinalSelectionStatus))
+                                select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
         }
 
         public bool ChangeSelection(string imid, string value, string comment)
