@@ -20,14 +20,16 @@ namespace Risebird.Business
         private readonly IIRFService _irfService;
         private readonly INotificationHelper _notificationHelper;
         private IIRFRepository _irfRepository;
+        private IUserService _userService;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfFService;
             _notificationHelper = notificationHelper;
             _irfRepository = irfRepository;
+            _userService = userService;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -149,6 +151,29 @@ namespace Risebird.Business
             }
         }
 
+
+        public bool PostApproval(string imid, string value, string comment)
+        {
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
+            {
+                var val = Convert.ToInt32(value);
+                var result = _meetingRespository.PostApproval(Convert.ToInt32(imid), val, comment);
+                return result;
+            }
+            return false;
+        }
+
+        public bool PostSelectionStatus(string imid, string value, string comment)
+        {           
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
+            {
+                var val = Convert.ToInt32(value);
+                var result = _meetingRespository.PostSelectionStatus(Convert.ToInt32(imid), val, comment);
+                return result;
+            }
+            return false;
+        }
+
         public bool UpdateMeeting(MeetingVM meetingToUpdate)
         {
             try
@@ -248,13 +273,21 @@ namespace Risebird.Business
                 if (meeting != null && meeting.Result != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
+                   
                     var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
                     if (interviwers != null)
                     {
                         interviwers.Remove(email);
                         _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
-                        return true;
+                       
                     }
+                    var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                    if (hrs != null)
+                    {
+                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), email);
+
+                    }
+                    return true;
                 }
                 return false;
             }
@@ -427,6 +460,10 @@ namespace Risebird.Business
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
                     model.PreferredLocation = interviewDetails.preferredLocation;
                     model.IsEdited = false;
+                    model.IsApproved = interviewDetails.IsApproved;
+                    model.IsSelected = interviewDetails.IsSelected;
+                    model.FinalComments = interviewDetails.FinalComments;
+                    model.ApprovalComments = interviewDetails.ApprovalComments;
                     return model;
                 }
             }
@@ -483,6 +520,10 @@ namespace Risebird.Business
             model.resumeLink = interviewMeetingsDetails.resumeLink;
             model.currentEmployerName = model.currentEmployerName;
             model.expectedPerHourRate = interviewMeetingsDetails.expectedPerHourRate;
+            //model.IsApproved = interviewMeetingsDetails.IsApproved;
+            //model.IsSelected = interviewMeetingsDetails.IsSelected;
+            //model.FinalComments = interviewMeetingsDetails.FinalComments;
+            //model.ApprovalComments = interviewMeetingsDetails.ApprovalComments;
             // model.MeetingStatus = Enum.GetName(typeof(MeetingStatus), model.MeetingStatusList);
 
             return model;
@@ -492,6 +533,24 @@ namespace Risebird.Business
         {
             try
             {
+                //double total = 0;
+                //foreach (var item in reportModel.TechSkillReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.SkillGeneralReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.JoinabilityReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //foreach (var item in reportModel.SelectabilityReportCollection)
+                //{
+                //    total = total + item.WeightageActual;
+                //}
+                //reportModel.OverallScore = (total / 4);
                 var result =await _meetingRespository.AddInterviewReport(reportModel);
                 if(reportModel.InterviewStatus.HasValue)
                 {
@@ -506,8 +565,8 @@ namespace Risebird.Business
                         var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
                         if(!reportModel.IsEdited)
                         {
-                            var reportLink = "https://portal.risebird.io/IRF/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId;
-                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc);
+                            var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
+                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
                         }
                     }

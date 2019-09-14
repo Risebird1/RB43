@@ -106,6 +106,10 @@ namespace Risebird.Entities.ViewModel
         public int ProctoringCount { get; set; }
 
         public bool IsInterviewer { get; set; }
+        public int? IsApproved { get; set; }
+        public string ApprovalComments { get; set; }
 
+        public int? IsSelected { get; set; }
+        public string FinalComments { get; set; }
     }
 }

@@ -391,6 +391,14 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
                         var list = new SelectList(new[]
@@ -404,6 +412,7 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
+                        ViewBag.ProfileName = profileName.ToLower();
 
                         return View(selectedMeeting);
                     }
@@ -519,8 +528,18 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                            }
                             selectedMeeting.Add(m);
                         }
+                        ViewBag.ProfileName = profileName.ToLower();
+
                         return PartialView("GetFilteredSelectedMeetings", selectedMeeting);
                     }
                     else
@@ -909,7 +928,7 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.QuestionsDiscussedCount = model.QuestionsCollection?.Count();
                 }
-
+                ViewBag.ProfileName = prof.ToLower();
                 
                 GetStatusList(model, irfId);
                 

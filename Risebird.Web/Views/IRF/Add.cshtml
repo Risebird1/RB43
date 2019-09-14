@@ -743,7 +743,17 @@
     </footer>
 </div>
 
+<script>
+    $(document).ready(function () {
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i <= inputs.length; i++) {
+            inputs[i].addEventListener("input", function () {
+                document.getElementById("btnUpload").disabled = false;
+            });
+        }
+    });
 
+</script>
 
 <script>
     $('form').submit(function () {
@@ -1047,6 +1057,8 @@
     }
 
     function AddRow() {
+        document.getElementById("btnUpload").disabled = false;
+
         var table = document.getElementById("SkillTable");
         var rowCount = table.rows.length;
         //if (rowCount == 6) {
@@ -1091,9 +1103,12 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+       // document.getElementById("btnUpload").disabled = false;
 
     }
     function AddSkillGeneralRow() {
+        document.getElementById("btnUpload").disabled = false;
+
         var table = document.getElementById("SkillGeneralTable");
         var rowCount = table.rows.length;
         if (rowCount == 6) {
@@ -1137,10 +1152,13 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
 
     }
 
     function AddJoinabilityRow() {
+        document.getElementById("btnUpload").disabled = false;
+
         var table = document.getElementById("JoinabilityTable");
         var rowCount = table.rows.length;
         if (rowCount == 6) {
@@ -1190,6 +1208,8 @@
     }
 
     function AddSelectabilityRow() {
+        document.getElementById("btnUpload").disabled = false;
+
         var table = document.getElementById("SelectabilityTable");
         var rowCount = table.rows.length;
         if (rowCount == 6) {
@@ -1235,6 +1255,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
 
     }
 
@@ -1246,6 +1267,7 @@
         //    alert("Cannot add more than 5 Clients.");
         //    return;
         //}
+        document.getElementById("btnUpload").disabled = false;
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1284,10 +1306,13 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
 
     }
 
     function AddRowInterviewer() {
+        document.getElementById("btnUpload").disabled = false;
+
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
         //if (rowCount == 6) {
@@ -1332,10 +1357,12 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
 
     }
 
     function AddRowQualityController() {
+        document.getElementById("btnUpload").disabled = false;
 
         var $ttc = $("#QualityControllerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1374,6 +1401,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
 
     }
     function InterviewerChanged(val, id) {
@@ -1544,6 +1572,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
+        document.getElementById("btnUpload").disabled = false;
 
     }
     //$(document).on('click', '.delete-row', function (event) {
@@ -1695,6 +1724,7 @@
         }
 
         else {
+            document.getElementById("btnUpload").disabled = false;
 
             //var currentvalue = $(this).attr('value');
             var closestRow = $(element).closest('tr');
@@ -1736,6 +1766,7 @@
         }
 
         else {
+            document.getElementById("btnUpload").disabled = false;
 
             //var currentvalue = $(this).attr('value');
             var closestRow = $(element).closest('tr');

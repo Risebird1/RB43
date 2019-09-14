@@ -970,6 +970,56 @@ namespace Risebird.Repository
             return null;
         }
 
+        public bool PostApproval(int imid,int value,string comment)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsApproved", value);
+                dynamicParameters.Add("@ApprovalComments", comment);
+                dynamicParameters.Add("@id", imid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            
+        }
+
+        public bool PostSelectionStatus(int imid, int value, string comment)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set IsSelected=@IsSelected, FinalComments=@FinalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsSelected", value);
+                dynamicParameters.Add("@FinalComments", comment);
+                dynamicParameters.Add("@id", imid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
 
         private DynamicParameters SetStoredProcedureParameterForComments(InterviewComments entity)
         {

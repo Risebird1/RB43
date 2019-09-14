@@ -122,6 +122,14 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         public string JDTiltle { get; set; }
         public string ClientName { get; set; }
+        [Display(Name = "Approved")]
+        public int? IsApproved { get; set; }
+        public string NextLevelApprovalStat { get; set; }
+        public string ApprovalComments { get; set; }
+
+        public int? IsSelected { get; set; }
+        public string FinalSelectionStat { get; set; }
+        public string FinalComments { get; set; }
 
     }
 }

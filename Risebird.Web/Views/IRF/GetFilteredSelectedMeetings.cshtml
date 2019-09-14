@@ -13,7 +13,14 @@
     #style-2::-webkit-scrollbar {
         width: 6px;
     }
+    .no-sort::after {
+        display: none !important;
+    }
 
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
     #style-2::-webkit-scrollbar-thumb {
         border-radius: 5px;
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
@@ -26,6 +33,9 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+    table {
         white-space: nowrap !important;
     }
 
@@ -70,6 +80,16 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
+            <th>Approval Status</th>
+            <th>Approval Comments</th>
+            <th class="no-sort"></th>
+            <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
+            @if (ViewBag.ProfileName == "client")
+            {
+                <th>Action</th>
+            }
         </tr>
     </thead>
     <tfoot>
@@ -88,6 +108,16 @@
             <th>Expected Joining Time</th>
             <th>Preferred Location</th>
             <th>Staffing Agency</th>
+            <th>Approval Status</th>
+            <th>Approval Comments</th>
+            <th class="no-sort"></th>
+            <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
+            @if (ViewBag.ProfileName == "client")
+            {
+                <th>Action</th>
+            }
         </tr>
     </tfoot>
     <tbody>
@@ -95,6 +125,8 @@
 
         @foreach (var item in Model)
         {
+            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
         <tr id=@item.imid>
             <td> @item.interviewDate </td>
             <td> @item.candidateName </td>
@@ -125,6 +157,28 @@
             <td> @item.joiningTime </td>
             <td> @item.preferredLocation </td>
             <td>@item.staffingAgency</td>
+            <td>
+                @item.NextLevelApprovalStat
+            </td>
+            <td>
+                <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
+            </td>
+            <td></td>
+
+            <td>
+                @item.FinalSelectionStat
+            </td>
+            <td>
+                <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
+            </td>
+            <td></td>
+            @if (ViewBag.ProfileName == "client")
+            {
+                <td class="text-right">
+                    <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                    <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                </td>
+            }
         </tr>
         }
     </tbody>

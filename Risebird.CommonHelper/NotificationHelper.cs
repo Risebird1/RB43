@@ -59,7 +59,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle,string candidateName,string reportLink, string interviewStatus)
+        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle,string candidateName,string reportLink, string interviewStatus,string videoLink, string interviewerComments)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { meetingDate, candidateName, jdTitle, interviewStatus, reportLink };
+                object[] parameters = new object[] { meetingDate, candidateName, jdTitle, interviewStatus, reportLink,videoLink, interviewerComments };
                 mailMessage.Subject = candidateName+" Interview Completion Alert";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -112,6 +112,43 @@ namespace Risebird.CommonHelper
                
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+        public string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string interviewer)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var mails in hrs)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+               
+                mailMessage.Subject = "HR Alert!!! "+interviewer+" Interviewer has unassigned interview date on "+ meetingDate;
+                StringBuilder msgBody = new StringBuilder("Dear HR,");
+                msgBody.Append("\n");               
+                msgBody.AppendLine(
+                    "Kindly login over risebird portal and click on Interview menu and assign interviewer for unassigned interview.");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Note: Discuss interviewer if he/she has not informed HR before unassigning interview.");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                mailMessage.Body = msgBody.ToString();
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
                 System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
                 smtpClient.Credentials = credentials;

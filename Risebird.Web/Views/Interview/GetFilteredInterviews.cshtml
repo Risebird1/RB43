@@ -84,6 +84,12 @@
             <th>Preferred Location</th>
             <th>Expected Per Hour Rate</th>
             <th>Current Employer</th>
+            <th>Approval Status</th>
+            <th>Approval Comments</th>
+            <th class="no-sort"></th>
+            <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
             @*<th>Interview Device Details</th>*@
             <th class="disabled-sorting text-right">Actions</th>
         </tr>
@@ -112,6 +118,12 @@
             <th>Preferred Location</th>
             <th>Expected Per Hour Rate</th>
             <th>Current Employer</th>
+            <th>Approval Status</th>
+            <th>Approval Comments</th>
+            <th class="no-sort"></th>
+            <th>Final Selection Status</th>
+            <th>Final Selection Comments</th>
+            <th class="no-sort"></th>
             @*<th>Interview Device Details</th>*@
             <th class="disabled-sorting text-right">Actions</th>
         </tr>
@@ -156,6 +168,20 @@
             <td> @item.preferredLocation</td>
             <td> @item.expectedPerHourRate</td>
             <td> @item.currentEmployerName</td>
+            <td>
+                @item.NextLevelApprovalStat
+            </td>
+            <td>
+                <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
+            </td>
+            <td></td>
+            <td>
+                @item.FinalSelectionStat
+            </td>
+            <td>
+                <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
+            </td>
+            <td></td>
             @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
             <td class="text-right">
                 <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>

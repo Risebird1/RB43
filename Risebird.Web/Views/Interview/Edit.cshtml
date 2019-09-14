@@ -146,7 +146,7 @@
                                         @Html.EditorFor(model => model.resumeLink, new { htmlAttributes = new { @class = "form-control" } })
                                         @Html.ValidationMessageFor(model => model.resumeLink, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="" style="display:none" id= "uploadDiv">
+                                    <div class="" style="display:none" id="uploadDiv">
                                         @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
@@ -262,16 +262,26 @@
         left: 4px;
     }
 </style>
-
 <script>
-    // after submit  disable button to avoid repeat entry
+    $(document).ready(function () {
+        var inputs = document.getElementsByTagName("input");
+        for (i = 0; i <= inputs.length; i++) {
+            inputs[i].addEventListener("input", function () {
+                document.getElementById("btnUpload").disabled = false;
+            });
+        }
+    });
+    
+</script>
+<script>
+     //after submit  disable button to avoid repeat entry
     $('form').submit(function () {
         if ($(this).valid()) {
             $(':submit', this).attr('disabled', 'disabled');
         }
     });
 
- 
+
 
     function RadioChanged(val) {
         if (val == 'Upload') {
