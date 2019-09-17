@@ -17,7 +17,7 @@ namespace Risebird.Entities.Enum
         Decision_Pending = 4,
         [Description("No Show")]
         No_Show = 5,
-        [Description("Candidate Bakedout")]
+        [Description("Candidate Backedout")]
         Candidate_Backedout = 6,
         [Description("Dropped")]
         Dropped = 7
