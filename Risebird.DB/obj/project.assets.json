@@ -682,11 +682,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\Risebird.DB.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.DB\\Risebird.DB.csproj",
       "projectName": "Risebird.DB",
-      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\Risebird.DB.csproj",
+      "projectPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.DB\\Risebird.DB.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird2\\Risebird.DB\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.DB\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
