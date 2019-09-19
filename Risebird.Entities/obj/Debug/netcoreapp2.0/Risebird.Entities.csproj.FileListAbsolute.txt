@@ -75,3 +75,4 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache

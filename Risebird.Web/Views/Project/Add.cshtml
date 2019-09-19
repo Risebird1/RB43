@@ -1,0 +1,478 @@
+﻿@model Risebird.Entities.ViewModel.Project
+@{
+    ViewData["Title"] = "Add Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+
+    table {
+        white-space: nowrap !important;
+    }
+
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+    /*table.dataTable > thead > tr > th {
+        max-width: 200px !important;
+    }*/
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+</style>
+
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Add Project</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Add Project</h4>
+                    </div>
+
+                    <div class="card-body">
+
+                        @using (Html.BeginForm("Add", "Project", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                        {
+                            @*<div class="loader text-center">
+                                    <img src="~/Newassets/img/lazyload.gif" />
+                                </div>*@
+
+
+                            <div class="row">
+
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.ProjectOwnerId, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.ProjectOwnerId, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.EndClient, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.EndClient, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.EndClient, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-4 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
+                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)",@style="margin-left:11px" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tableID">
+                                <table class="table table-bordered mbn" id="IRFList">
+                                    <thead>
+                                        <tr>
+                                            @*<th>IRF Id</th>*@
+                                            <th class="text-center">IRF Name</th>
+                                            <th class="text-center">Primary Skills</th>
+                                            <th class="text-center">Client</th>
+                                            <th class="text-center">Add</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
+                                        {
+                                            <tr>
+                                                @*<td>
+                            @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
+
+                        </td>*@
+                                                <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                                                <td class="text-center">@Model.ProjectIRFMappings[i].PrimarySkills</td>
+                                                <td class="text-center">@Model.ProjectIRFMappings[i].Client</td>
+                                                <td class="text-right">
+                                                    @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "form-control" @*, @style = "margin-left:25%"*@})
+
+                                                </td>
+                                                @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+
+
+
+                            <div class="row">
+                                <label class="col-md-2"></label>
+                                <div class="col-md-9">
+                                    @Html.ActionLink("Back to List", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                </div>
+                            </div>
+
+                        }
+
+
+
+                    </div>
+
+                    <div class="card-footer ">
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Project/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Project/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+<script>
+    function ClientChanged(clientId) {
+
+        $.ajax({
+            type: "GET",
+            url: "/Project/GetFilteredIRF",
+            data: { 'clientId': clientId },
+            success: function (data) {
+                debugger;
+                //if (data=null || data == '') {
+                //    //$('#tableID').html('');
+                //    //$('#tableID').html('No data for this Client.');
+                //    //$('#tableID').css("margin-left", "452px");
+                //}
+                //else {
+                //    //$('#tableID').css("margin-left", "");
+                    
+                //}
+                $('#tableID').html('');
+                $('#tableID').html(data);
+                //var drpdwnId = $("#ClientCollection_0__ClientUserId");
+                ////drpdwnId.options.length = 0;
+                //$("#ClientCollection_0__ClientUserId option").remove();
+
+                //if (data.length > 0) {
+                //    $(data).each(function () {
+                //        var option = $("<option />");
+
+                //        //Set Text part.
+                //        option.html(this.text);
+
+                //        //Set Value part.
+                //        option.val(this.value);
+
+                //        //Add the Option element to DropDownList.
+                //        drpdwnId.append(option);
+                //    });
+                //}
+
+
+            }
+        });
+
+    }
+
+</script>
+@*<script>
+        $(document).ready(function () {
+            //FilterInterviews("Today");// on page load default dropdownlist value set
+
+            $('#meeting').DataTable({
+                "pagingType": "full_numbers",
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                responsive: false,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records",
+                }
+
+            });
+            var table = $('#meeting').DataTable();
+        });
+    </script>*@
+
+@*<script type="text/javascript">
+        //// script for loader starts here
+        $(".dataloading").hide();
+        $("#meeting").hide();
+        var loader;
+        function ShowProgress() {
+            $(".dataloading").hide();
+            $("#meeting").hide();
+            loader = document.getElementsByClassName("loader")[0];
+            loader.style.display = "block";
+            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+            loader.style.top = top + "px";
+            loader.style.left = left + "px";
+        };
+        ShowProgress();
+
+        window.onload = function () {
+            setTimeout(function () {
+                loader.style.display = "none";
+                $(".dataloading").show();
+                $("#meeting").show();
+            }, 2000);
+        };
+        //// script for loader ends here
+    </script>*@
+@*<script>
+
+        function FilterInterviews(filterValue) {
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/GetFilteredInterviews",
+                data: { 'filterValue': filterValue },
+                success: function (data) {
+
+                    if (data == '' && filterValue == 'seven') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for the next seven days.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '' && filterValue == 'all') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    if (data == '') {
+                        $('#tableID').html('');
+                        $('#tableID').html('No interviews for ' + filterValue + '.');
+                        $('#tableID').css("margin-left", "452px");
+                        return;
+                    }
+                    $('#tableID').css("margin-left", "");
+                    $('#tableID').html('');
+                    $('#tableID').html(data);
+
+                    $('#meeting').DataTable({
+                        "pagingType": "full_numbers",
+                        "lengthMenu": [
+                            [10, 25, 50, -1],
+                            [10, 25, 50, "All"]
+                        ],
+                        responsive: false,
+                        language: {
+                            search: "_INPUT_",
+                            searchPlaceholder: "Search records",
+                        }
+
+                    });
+                    var table = $('#meeting').DataTable();
+
+
+
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        }
+    </script>*@
