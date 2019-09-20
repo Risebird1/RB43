@@ -1,0 +1,357 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.Project>
+
+@{
+    ViewData["Title"] = "Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
+
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+    .list-group-item-text {
+        padding-top: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+    }
+
+        .list-group-item-text span {
+            float: left;
+            font-weight: 700;
+            padding-right: 5px;
+        }
+
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
+
+    .list-group {
+        margin-bottom: 150px;
+    }
+</style>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Projects
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Projects</h4>
+                    </div>
+                    @if (ViewBag.IsClientUser == false)
+                    {
+                        <div class="toolbar">
+                            <!--        Here you can write extra buttons/actions for the toolbar              -->
+                            <div class="text-right">
+                                <button type="button" style="margin-right: 14px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Project" onclick="location.href='@Url.Action("Add", "Project")'" data-original-title="Tooltip on top"> Add Project</span></button>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            @if (Model != null && Model.Count() != 0)
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body ">
+
+                                <div class="statistics statistics-horizontal">
+                                    <div class="info info-horizontal">
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <h3 class="info-title" style="font-size:smaller;"> @item.Name</h3>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row" style="font-size:smaller;">
+
+                                            <div class="col-12">
+                                                <div class="group inner list-group-item-text">
+                                                    @*<span>Client Name:</span> <p>@item.ClientCompName</p>*@
+                                                    @*<span>Primary Skill:</span> <p>@item.JDTiltle.Split("|")[0]</p>*@
+
+                                                    <span>Total IRFs:</span> <p>@item.TotalIRF</p>
+                                                    <span>Total Interviews:</span> <p> 0 </p>
+                                                    <span>Selected Interviews:</span> <p> 0 </p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer ">
+                                <div class="stats text-center">
+                                    @if (!@item.IsClientUser)
+                                    {
+                                        <button type="button" onclick="javascript:EditProject('@item.id');" rel="tooltip" class="btn btn-primary btn-icon btn-sm " data-original-title="" title="Edit">
+                                            <i class="now-ui-icons fa fa-edit"></i>
+                                        </button>
+                                        @*<button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
+                                        <i class="now-ui-icons fa fa-comments"></i>
+                                    </button>*@
+                                    }
+
+                                    @*<button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
+                                    <i class="now-ui-icons fa fa-meetup"></i>
+                                </button>*@
+                                    @*<button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
+                                    <i class="now-ui-icons fa fa-check"></i>
+                                </button>*@
+
+                                    @*<button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                    <i class="now-ui-icons fa fa-industry"></i>
+                                </button>*@
+                                    @if (!@item.IsClientUser)
+                                    {
+                                        <button type="button" onclick="javascript:DeleteProject('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Archive">
+                                            <i class="now-ui-icons fa fa-archive"></i>
+                                        </button>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Project/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Project/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+
+<script type="text/javascript">
+    function DeleteProject(dataID) {
+
+        var IdProject = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "It will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    var Id = dataID;
+                    $.ajax({
+                        url: '/Project/DeleteProject?id=' + Id,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The project has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Project/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your file has been not deleted :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+
+    function AddComments(id) {
+
+        var url = '/IRF/SampleQuestions?id=' + id;
+        window.location.href = url;
+    };
+    function SelectedInterviewMeetings(id, IRFid) {
+
+        var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function GetInterviewMeetings(id, IRFid) {
+
+        var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function EditProject(id) {
+
+        var url = '/Project/Edit?id=' + id;
+        window.location.href = url;
+    };
+    function stats(id, IRFid) {
+
+        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+</script>

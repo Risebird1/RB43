@@ -1,0 +1,101 @@
+﻿@model Risebird.Entities.ViewModel.Project
+
+<style>
+
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+
+    table {
+        white-space: nowrap !important;
+    }
+
+    td.wordwrap {
+        display: inline-block !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+    /*table.dataTable > thead > tr > th {
+        max-width: 200px !important;
+    }*/
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+</style>
+
+<table class="table table-bordered mbn" id="IRFList">
+    <thead>
+        <tr>
+            @*<th>IRF Id</th>*@
+            <th class="text-center">IRF Name</th>
+            <th class="text-center">Primary Skills</th>
+            <th class="text-center">Client</th>
+            <th class="text-center">Add</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
+        {
+            <tr>
+                @*<td>
+                        @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
+
+                    </td>*@
+                <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                <td class="text-center">@Model.ProjectIRFMappings[i].PrimarySkills</td>
+                <td class="text-center">@Model.ProjectIRFMappings[i].Client</td>
+                <td class="text-right">
+                    @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "form-control" @*, @style = "margin-left:25%"*@})
+
+                </td>
+                @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
+
+            </tr>
+        }
+
+    </tbody>
+</table>
