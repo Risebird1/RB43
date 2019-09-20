@@ -65,7 +65,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }                          
@@ -158,7 +158,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -1004,7 +1004,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -1138,7 +1138,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -1224,7 +1224,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -1447,7 +1447,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -1595,7 +1595,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsSelected.HasValue)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -2634,7 +2634,7 @@ namespace Risebird.Web.Controllers
                     {
                         m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                     }
-                    if (m.IsApproved.HasValue)
+                    if (m.IsSelected.HasValue)
                     {
                         m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                     }
