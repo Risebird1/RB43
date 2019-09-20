@@ -245,10 +245,10 @@ namespace Risebird.Web.Controllers
                         {
                             irfList = irfList.Where(x => x.ClientId == Convert.ToInt32(clientId)).ToList();
                         }
-                        if(irfList.Count()==0)
-                        {
-                            return new EmptyResult();
-                        }
+                        //if(irfList.Count()==0)
+                        //{
+                        //    return new EmptyResult();
+                        //}
 
                         var objList = new List<ProjectIRFMapping>();
                         foreach (var item in irfList)
@@ -265,7 +265,10 @@ namespace Risebird.Web.Controllers
                             objList.Add(obj);
                         }
                         projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
-
+                        if(projectModel.ProjectIRFMappings.Count()==0)
+                        {
+                            return new EmptyResult();
+                        }
 
                         return PartialView("GetFilteredIRF", projectModel);
                     }
@@ -355,7 +358,10 @@ namespace Risebird.Web.Controllers
                             objList.Add(obj);
                         }
                         projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
-
+                        if (projectModel.ProjectIRFMappings.Count() == 0)
+                        {
+                            return new EmptyResult();
+                        }
 
                         return PartialView("GetFilteredIRF", projectModel);
                     }

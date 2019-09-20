@@ -332,18 +332,15 @@
             url: "/Project/GetEditFilteredIRF",
             data: { 'clientId': clientId, 'projectId': projectId },
             success: function (data) {
-                debugger;
-                //if (data=null || data == '') {
-                //    //$('#tableID').html('');
-                //    //$('#tableID').html('No data for this Client.');
-                //    //$('#tableID').css("margin-left", "452px");
-                //}
-                //else {
-                //    //$('#tableID').css("margin-left", "");
-
-                //}
+                if (data == null || data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No data for this Client.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
                 $('#tableID').html('');
                 $('#tableID').html(data);
+                $('#tableID').css("margin-left", "");
                 
 
 

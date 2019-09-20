@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,8 +17,8 @@ namespace Risebird.Business.Interface
         List<Meeting> GetAllOpenInterviews(string emailID);
         List<Meeting> GetAllQCInterviews(string emailID);
         List<MeetingVM> GetAllClientInterviews(string emailID);
-        
-        string AssignYourself(int meetingid, string interviewerMail);
+
+        string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
         bool UnassignYourself(int meetingid, string email);
         List<Meeting> GetAllAssignedInterviews(string emailID);
         bool UpdateComments(InterviewComments comments);
