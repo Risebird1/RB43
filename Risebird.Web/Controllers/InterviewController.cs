@@ -487,6 +487,42 @@ namespace Risebird.Web.Controllers
                         if (meetings.Count == 0 && filter.StartDate != null && filter.EndDate != null)
                         {
                             meetings = _meetingService.GetClientMeetingList(emailid);
+                            foreach (var m in meetings)
+                            {
+                                if (m.InterviewStatus.HasValue)
+                                {
+                                    m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                                }
+                                if (m.L2InterviewStatus.HasValue)
+                                {
+                                    m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                                }
+                                if (m.L2InterviewStatus.HasValue)
+                                {
+                                    m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                                }
+                                if (m.JoiningStatus.HasValue)
+                                {
+                                    m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                                }
+                                if (m.PreparationStatus.HasValue)
+                                {
+                                    m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                                }
+                                if (m.OfferStatus.HasValue)
+                                {
+                                    m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                }
+                                if (m.MeetingStatus.HasValue)
+                                {
+                                    m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                                }
+                                if (m.QCStatus.HasValue)
+                                {
+                                    m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
+
+                            }
                             meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                         }
 
