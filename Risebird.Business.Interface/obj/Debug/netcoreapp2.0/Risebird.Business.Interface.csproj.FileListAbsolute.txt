@@ -106,3 +106,15 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netc
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.deps.json
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csprojAssemblyReference.cache
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CoreCompileInputs.cache
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfoInputs.cache
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfo.cs
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
