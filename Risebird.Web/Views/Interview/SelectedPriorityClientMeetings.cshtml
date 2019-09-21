@@ -180,7 +180,7 @@
 
                                     <div class="col-md-3 ml-md-auto">
                                         <div class="form-group">
-                                            <button type="button" style="float: right;margin-right: 60px;" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                            <button type="button" style="float: right;margin-right: 0px;margin-top:0px;" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
 
                                             @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
                                         </div>
@@ -388,7 +388,7 @@
                                                         <td>No Video</td>
                                                     }
                                                     <td>
-                                                        <textarea style="height: 100px; width:140%;">@item.InterviewerComment</textarea>
+                                                        <textarea style="height: 100px; width:110%;">@item.InterviewerComment</textarea>
                                                     </td>
 
                                                     <td></td>
@@ -397,7 +397,7 @@
                                                         @item.NextLevelApprovalStat
                                                     </td>
                                                     <td>
-                                                        <textarea style="height: 100px; width:140%;">@item.ApprovalComments</textarea>
+                                                        <textarea style="height: 100px; width:110%;">@item.ApprovalComments</textarea>
                                                     </td>
                                                     <td></td>
 
@@ -405,7 +405,7 @@
                                                         @item.FinalSelectionStat
                                                     </td>
                                                     <td>
-                                                        <textarea style="height: 100px; width:140%;">@item.FinalComments</textarea>
+                                                        <textarea style="height: 100px; width:110%;">@item.FinalComments</textarea>
                                                     </td>
                                                     <td></td>
                                                     <td class="text-right">
@@ -539,6 +539,7 @@
         color: black !important;
         border: 1px solid #ccc !important;
     }
+    </style>
 
 @if (ViewBag.Message != null)
 {
