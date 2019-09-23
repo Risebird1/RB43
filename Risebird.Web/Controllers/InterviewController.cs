@@ -2658,6 +2658,21 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        {
+            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment);
+            if (result)
+            {
+                TempData["SuccessErrorMessage"] = "Saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessage"] = "Failed";
+
+            return result;
+
+        }
+
         [HttpGet]
         public ActionResult getApprovalStatusList()
         {
@@ -2675,6 +2690,31 @@ namespace Risebird.Web.Controllers
         public ActionResult getSelectionStatusList()
         {
             var selectionStatuses = from FinalSelectionStatus s in Enum.GetValues(typeof(FinalSelectionStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getOfferStatusList()
+        {
+            var selectionStatuses = from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getJoiningStatusList()
+        {
+            var selectionStatuses = from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
             return Json((selectionStatuses.Select(x => new

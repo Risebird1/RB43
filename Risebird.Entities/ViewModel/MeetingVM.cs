@@ -100,8 +100,12 @@ namespace Risebird.Entities.ViewModel
         public string L2InterviewStatDesc { get; set; }
         public string ClientInterviewStatDesc { get; set; }
         public int? JoiningStatus { get; set; }
+        public string JoiningComments { get; set; }
+
         public int? PreparationStatus { get; set; }
         public int? OfferStatus { get; set; }
+        public string OfferComments { get; set; }
+
         public int? MeetingStatus { get; set; }
         public string MeetingStatusDescription { get; set; }
         public int? QCStatus { get; set; }

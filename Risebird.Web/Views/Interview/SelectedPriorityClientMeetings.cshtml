@@ -409,8 +409,8 @@
                                                     </td>
                                                     <td></td>
                                                     <td class="text-right">
-                                                        <span title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                        <span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>
+                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        @*<span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>*@
                                                     </td>
 
                                                 </tr>
@@ -434,19 +434,49 @@
             <!-- Modal content -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5>Approved For Next Round</h5>
-                    <span class="close">&times;</span>
+                    <h5>Client Feedback</h5>
+                    <span class="close" id="feedbackPopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         @*<label>Approved</label>
-                            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
                         <label for="approveDropdown"><b>Approved For Next Round</b></label>
                         <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                     </div>
                     <div id="approvalComments" class="form-group">
                         <label>Approval Comments</label>
                         <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
+                    </div>
+
+                    <div class="form-group">
+                        
+                        <label for="selectionDropdown"><b>Final Selection</b></label>
+                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                    </div>
+                    <div id="selectionComments" class="form-group">
+                        <label>Final Comments</label>
+                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="offerDropdown"><b>Offer Status</b></label>
+                        <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                    </div>
+                    <div id="offerComments" class="form-group">
+                        <label>Offer Comments</label>
+                        <input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="joiningDropdown"><b>Joining Status</b></label>
+                        <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                    </div>
+                    <div id="joiningComments" class="form-group">
+                        <label>Joining Comments</label>
+                        <input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>
                     </div>
                     <div class="">
                         <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
@@ -459,36 +489,7 @@
 
         </div>
 
-        <div id="mySelectionModal" class="modal">
-
-            <!-- Modal content -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5>Final Selection Status</h5>
-                    <span class="close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        @*<label>Selected</label>
-                            <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">*@
-                        <label for="selectionDropdown"><b>Final Selection</b></label>
-                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                    </div>
-                    <div id="selectionComments" class="form-group">
-                        <label>Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
-                    </div>
-                    <div class="">
-                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    @*<h3>Modal Footer</h3>*@
-                </div>
-            </div>
-
-        </div>
+        
         <!-- end row -->
     </div>
     <footer class="footer">
@@ -642,7 +643,7 @@
 </script>
 <script>
     var imid = "";
-    var span = document.getElementsByClassName("close")[0];
+    var span = document.getElementById("feedbackPopUp");
     var comm = '';
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -669,13 +670,20 @@
         var btn = document.getElementById("myBtn_" + item.imid);
 
         // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
+        //var span = document.getElementById("feedbackPopUp");
 
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
         //document.getElementById("IsApproved").checked = item.IsApproved;
         document.getElementById("appComments").value = item.ApprovalComments;
+
+        document.getElementById("selecComments").value = item.FinalComments;
+
+        document.getElementById("joinComments").value = item.JoiningComments;
+
+        document.getElementById("offComments").value = item.OfferComments;
+
 
         $.ajax({
             type: "GET",
@@ -687,18 +695,85 @@
                     s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
                 }
                 $("#approveDropdown").html(s);
-                $("#approveDropdown").val(item.IsApproved);
+                if (item.IsApproved != null) {
+                    $("#approveDropdown").val(item.IsApproved);
+                }
+                else {
+                    $("#approveDropdown").val("-1");
+
+                }
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#selectionDropdown").html(s);
+                if (item.IsSelected != null) {
+                    $("#selectionDropdown").val(item.IsSelected);
+                }
+                else {
+                    $("#selectionDropdown").val("-1");
+                }
+
+               
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getOfferStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#offerDropdown").html(s);
+                if (item.OfferStatus != null) {
+                    $("#offerDropdown").val(item.OfferStatus);
+                }
+                else {
+                    $("#offerDropdown").val("-1");
+                }
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getJoiningStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#joiningDropdown").html(s);
+                if (item.JoiningStatus != null) {
+                    $("#joiningDropdown").val(item.JoiningStatus);
+                }
+                else {
+                    $("#joiningDropdown").val("-1");
+                }
+
             }
         });
 
 
 
-        if (item.ApprovalComments != 'Approved') {
-            comm = item.ApprovalComments;
-        }
-        else {
-            comm = '';
-        }
+        //if (item.ApprovalComments != 'Approved') {
+        //    comm = item.ApprovalComments;
+        //}
+        //else {
+        //    comm = '';
+        //}
         //if (item.IsApproved) {
         //    //var commentId = 'approvalComments';
         //    document.getElementById('approvalComments').style.display = "none";
@@ -729,14 +804,24 @@
     }
 
     function SavePopUp() {
-        var comment = document.getElementById("appComments").value;
+        debugger;
+        var approvalComment = document.getElementById("appComments").value;
         var isApproved = document.getElementById("approveDropdown").value;
+
+        var selectionComment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("selectionDropdown").value;
+
+        var joiningComment = document.getElementById("joinComments").value;
+        var joiningStatus = document.getElementById("joiningDropdown").value;
+
+        var offerComment = document.getElementById("offComments").value;
+        var offerStatus = document.getElementById("offerDropdown").value;
         var id = imid;
 
         $.ajax({
             type: "GET",
-            url: "/Interview/ChangeApproval",
-            data: { 'imid': id, 'value': isApproved, 'comment': comment },
+            url: "/Interview/SaveClientFeedback",
+            data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment},
             success: function (data) {
 
                 location.reload(true);
@@ -746,7 +831,7 @@
     }
 
 </script>
-<script>
+@*<script>
     var imidSelect = "";
     var spanSelect = document.getElementsByClassName("close")[1];
     var commSelect = '';
@@ -763,8 +848,8 @@
     //        modal.style.display = "none";
     //    }
     //}
-</script>
-<script>
+</script>*@
+@*<script>
     function ModalSelectionButtonClick(item) {
         imidSelect = item.imid;
 
@@ -849,7 +934,7 @@
         });
     }
 
-</script>
+</script>*@
 <script type="text/javascript">
     //// script for loader starts here
     $(".dataloading").hide();

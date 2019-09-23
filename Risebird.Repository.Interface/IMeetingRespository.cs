@@ -47,6 +47,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MeetingVM>> GetClientInterviewMeetings();
         bool PostApproval(int imid, int value, string comment);
         bool PostSelectionStatus(int imid, int value, string comment);
+        bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
     }
 }
