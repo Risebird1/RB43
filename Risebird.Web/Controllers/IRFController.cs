@@ -1380,5 +1380,97 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetCandidateList(string id, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        ViewBag.IRFName = irfName;
+                        ViewBag.IRFId = id;
+                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id));                       
+                        return View(candidateList);
+
+                        //return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult AddCandidate(string irfId, string irfName)
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+
+                var model = new Candidate();
+                model.IRFId = Convert.ToInt32(irfId);
+                model.IRFName = irfName;
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddCandidate(Candidate model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    //profileName = profileName.Replace("\"", "");
+                    if (_irfService.AddCandidate(model).Result)
+                    {
+                        TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
+                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName});
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
+                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding Project has failed";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

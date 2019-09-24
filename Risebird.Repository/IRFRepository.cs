@@ -1144,5 +1144,62 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public IEnumerable<Candidate> GetIRFCandidates(int id)
+        {
+            try
+            {
+                var query = "Select * from Candidate where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddCandidate(Candidate obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+
+                    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                    var affectedRows = con.Execute(sqlInsertReport, new
+                    {
+                        IRFId = obj.IRFId,
+                        Name = obj.Name,
+                        EmailId = obj.EmailId,
+                        ResumeLink = obj.ResumeLink
+
+                    });
+                   
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }

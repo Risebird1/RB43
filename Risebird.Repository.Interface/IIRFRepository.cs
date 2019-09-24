@@ -44,6 +44,7 @@ namespace Risebird.Repository.Interface
         string GetClientUserRole(int userId);
         string GetIRFNameBasedOnId(int irfID);
         string GetIRFJDTitleBasedOnId(int irfID);
-
+        IEnumerable<Candidate> GetIRFCandidates(int id);
+        Task<bool> AddCandidate(Candidate obj);
     }
 }

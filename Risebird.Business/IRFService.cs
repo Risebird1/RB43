@@ -454,5 +454,33 @@ namespace Risebird.Business
             }
             
         }
+        public IEnumerable<Candidate> GetIRFCandidates(int id)
+        {
+            try
+            {
+                return _irfRepository.GetIRFCandidates(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
+        public async Task<bool> AddCandidate(Candidate obj)
+        {
+            try
+            {
+                return _irfRepository.AddCandidate(obj).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
     }
 }
