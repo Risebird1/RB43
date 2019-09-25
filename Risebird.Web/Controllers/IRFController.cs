@@ -1425,13 +1425,24 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult AddCandidate(string irfId, string irfName)
         {
-            if (HttpContext.Session.GetString("email") != null)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var model = new Candidate();
+                    model.IRFId = Convert.ToInt32(irfId);
+                    model.IRFName = irfName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
 
-                var model = new Candidate();
-                model.IRFId = Convert.ToInt32(irfId);
-                model.IRFName = irfName;
-                return View(model);
+                }
             }
             else
             {
@@ -1447,18 +1458,28 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    //profileName = profileName.Replace("\"", "");
-                    if (_irfService.AddCandidate(model).Result)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
-                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName});
+                        if (_irfService.AddCandidate(model).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        return RedirectToAction("SignOut", "Session");
                     }
+
 
                 }
                 else
@@ -1550,16 +1571,28 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        TempData["SuccessErrorMessage"] = "Candidate deleted Successfully";
-                        return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "Candidate deleted Successfully";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Candidate delete Failed";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessage"] = "Candidate delete Failed";
-                        return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        return RedirectToAction("SignOut", "Session");
                     }
+
                 }
                 else
                 {
@@ -1573,6 +1606,35 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCandidate(int id, string irfName, string irfId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var model = _irfService.GetCandidate(id, Convert.ToInt32(irfId));
+                    model.IRFName = irfName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
         }
     }
 }

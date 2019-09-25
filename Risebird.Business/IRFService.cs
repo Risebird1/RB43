@@ -508,6 +508,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public Candidate GetCandidate(int id, int irfId)
+        {
+            try
+            {
+                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.id == id).FirstOrDefault();                
+                return candidate;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
 
     }

@@ -36,5 +36,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddCandidate(Candidate obj);
         Task<bool> AddMultipleCandidates(List<Candidate> candidateList);
         Task<bool> DeleteCandidate(int id);
+        Candidate GetCandidate(int id, int irfId);
     }
 }
