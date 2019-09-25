@@ -72,6 +72,72 @@
 </style>
 
 
+<style>
+    /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 40%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        /*-webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s*/
+    }
+
+    /* The Close Button */
+    .close {
+        color: #fefefe !important;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .modal-header {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .modal-body {
+        padding: 2px 16px;
+    }
+
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .modal-content .modal-header {
+        font-size: 10px;
+    }
+</style>
 
 
 
@@ -118,13 +184,13 @@
 
                                 <div class="row">
                                     @*<div class="col-md-3 ml-md-auto">
-            <div class="form-group">
-                @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
-            </div>
-        </div>*@
+                                            <div class="form-group">
+                                                @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                            </div>
+                                        </div>*@
                                     <div class="col-auto pull-right" style="margin-left:925px">
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="location.href='@Url.Action("ImportCandidates", "IRF")'" data-original-title="Tooltip on top"> Add Candidates</span></button>
-                                    
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Add Candidates</span></button>
+
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("AddCandidate", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Add Candidate</span></button>
                                     </div>
 
@@ -138,7 +204,7 @@
                                     <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
-                                                
+
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Resume</th>
@@ -158,7 +224,7 @@
                                             @foreach (var item in Model)
                                             {
                                                 <tr id=@item.id>
-                                                    
+
                                                     <td> @item.Name</td>
                                                     <td> @item.EmailId</td>
                                                     @if (item.ResumeLink != null && item.ResumeLink != "")
@@ -169,12 +235,12 @@
                                                     {
                                                         <td>No Resume</td>
                                                     }
-                                                    
-                                                    
+
+
                                                     <td class="text-right">
                                                         <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { id = item.id, emailId= item.EmailId})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
                                                         <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("DeleteCandidate", "IRF", new { id = item.id})'" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+                                                        <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
 
                                                     </td>
                                                 </tr>
@@ -193,6 +259,40 @@
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
+        </div>
+
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Import Candidates</h5>
+                    <span class="close" id="importPopUp">&times;</span>
+                </div>
+                <div class="modal-body">
+
+                    @using (Html.BeginForm("ImportCandidates", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        <div class="form-group">
+
+                            <label for="UploadedFile"><b>Click here to choose file</b></label>
+                            <input type="file" accept=".xls, .xlsx" name="UploadedFile" />
+                        </div>
+                        <div class="">
+                            <input type="submit" class="btn btn-fill btn-primary" id="btnImport" value="Import">
+                        </div>
+                        <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
+                        <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
+
+                        @*@Html.HiddenFor(Model => Model.FirstOrDefault().IRFId)*@
+                    }
+
+
+                </div>
+                <div class="modal-footer">
+
+                </div>
+            </div>
+
         </div>
         <!-- end row -->
     </div>
@@ -382,5 +482,84 @@
                 alert(err.responseText);
             }
         });
+    }
+</script>
+
+<script>
+    var span = document.getElementById("importPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+</script>
+<script>
+    function ModalButtonClick() {
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+    
+    }
+    
+</script>
+<script>
+    function DeleteCandidate(id) {
+
+        //var IdIRF = dataID;
+        var irfName = '@ViewBag.IRFName';
+        var irfId = '@ViewBag.IRFId';
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The candidate will be permanently deleted!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    //var IdIRF = dataID;
+                    $.ajax({
+                        url: '/IRF/DeleteCandidate?id=' + id + '&irfId=' + irfId + '&IRFName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error deleting!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Deleted!',
+                    type: 'success',
+                    html: '<p>The candidate has been deleted.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    location.reload(true);
+                    //window.location = "/IRF/GetCandidateList?id=" + irfId + '&irfName=' + irfName;
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your file has been not deleted :)',
+                    'error'
+                )
+            }
+        })
     }
 </script>

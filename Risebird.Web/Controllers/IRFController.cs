@@ -14,6 +14,7 @@ using Risebird.Repository.Interface;
 using Risebird.CommonHelper;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using OfficeOpenXml;
 
 namespace Risebird.Web.Controllers
 {
@@ -1468,9 +1469,110 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Adding Project has failed";
+                TempData["SuccessErrorMessage"] = "Adding candidate failed";
                 return RedirectToAction("Index");
             }
+        }
+
+        public ActionResult ImportCandidates(IFormCollection formCollection, string irfId, string IRFName)
+        {
+
+            try
+            {
+                if (Request != null)
+                {
+                    var file = formCollection.Files[0];
+                    var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+                    if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                    {
+
+                        string fileName = file.FileName;
+                        string fileContentType = file.ContentType;
+                        byte[] fileBytes = new byte[file.Length];
+                        var data = file.OpenReadStream();
+                        //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
+                        var candidateList = new List<Candidate>();
+                        using (var package = new ExcelPackage(file.OpenReadStream()))
+                        {
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfCol = workSheet.Dimension.End.Column;
+                            var noOfRow = workSheet.Dimension.End.Row;
+                            for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                            {
+                                var candidate = new Candidate();
+                                candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
+                                candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
+                                candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
+                                candidate.IRFId = IRFId;
+                                candidateList.Add(candidate);
+                            }
+
+                        }
+
+                        if (_irfService.AddMultipleCandidates(candidateList).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidates added Successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        }
+
+                    }
+
+                    else
+                    {
+                        TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                        return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Importing candidates failed!";
+                return RedirectToAction("Index");
+            }
+            //return View("Index");
+            return null;
+        }
+
+        [Authorize]
+        public IActionResult DeleteCandidate(string id, string irfId, string IRFName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
+                    {
+                        TempData["SuccessErrorMessage"] = "Candidate deleted Successfully";
+                        return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessage"] = "Candidate delete Failed";
+                        return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Candidate delete Failed";
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

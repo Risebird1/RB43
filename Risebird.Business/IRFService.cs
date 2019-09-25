@@ -234,6 +234,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> DeleteCandidate(int id)
+        {
+            try
+            {
+                return _irfRepository.DeleteCandidate(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
         public List<MeetingVM> GetIRFInterviewMeetings(int id,string profileName, string email)
         {
@@ -481,6 +495,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AddMultipleCandidates(List<Candidate> candidateList)
+        {
+            try
+            {
+                return _irfRepository.AddMultipleCandidates(candidateList).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
     }
 }

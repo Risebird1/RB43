@@ -1201,5 +1201,76 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> AddMultipleCandidates(List<Candidate> candidateList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    if(candidateList !=null && candidateList.Count()>0)
+                    {
+                        foreach (var item in candidateList)
+                        {
+                            string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                            var affectedRows = con.Execute(sqlInsertReport, new
+                            {
+                                IRFId = item.IRFId,
+                                Name = item.Name,
+                                EmailId = item.EmailId,
+                                ResumeLink = item.ResumeLink
+
+                            });
+                        }
+                    }
+                    
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCandidate(int id)
+        {
+            try
+            {
+
+                var query = "Delete from Candidate where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);                  
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
     }
 }
