@@ -39,6 +39,7 @@ namespace Risebird.Entities.Data
         public int irfIntId { get; set; }
         public string JDLink { get; set; }
         public string MobileNumber { get; set; }
+        public string ApprovalComments { get; set; }
 
 
     }

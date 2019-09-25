@@ -20,10 +20,6 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[ExpectedPerHourRate][varchar](200) null,
 	[staffingAgenecy][varchar](200) null,
 	[joiningTime][varchar](200) null,
-	[IsApproved] [bit] NOT NULL,
-	[ApprovalComments] [varchar](max) NOT NULL,
-	[IsSelected] [bit] NOT NULL,
-	[FinalComments] [varchar](max) NOT NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
@@ -37,43 +33,43 @@ CREATE TABLE [dbo].[InterviewMeetings](
 END
 ELSE
 BEGIN
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'IsApproved')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    ADD [IsApproved] BIT NOT NULL DEFAULT 1
+    DROP COLUMN  IsApproved
 END
 
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'IsSelected')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    ADD [IsSelected] BIT NOT NULL DEFAULT 1
+    DROP COLUMN IsSelected
 END
 
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'ApprovalComments')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    ADD [ApprovalComments] VARCHAR(max) NOT NULL DEFAULT 'Approved'
+    DROP COLUMN ApprovalComments
 END
-IF NOT EXISTS(
+IF EXISTS(
     SELECT *
     FROM sys.columns
     WHERE Name IN (N'FinalComments')
       AND Object_ID = Object_ID(N'InterviewMeetings'))
 BEGIN
     ALTER TABLE InterviewMeetings
-    ADD [FinalComments] VARCHAR(max) NOT NULL DEFAULT 'Approved'
+    DROP COLUMN FinalComments
 END
 
 

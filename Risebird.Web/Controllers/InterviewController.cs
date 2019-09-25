@@ -2754,6 +2754,21 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        {
+            var result = _meetingService.SaveClientFeedback(imid, isApproved, approvalComment, isSelected, selectionComment, joiningStatus, joiningComment, offerStatus, offerComment);
+            if (result)
+            {
+                TempData["SuccessErrorMessage"] = "Saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessage"] = "Failed";
+
+            return result;
+
+        }
+
         [HttpGet]
         public ActionResult getApprovalStatusList()
         {
@@ -2771,6 +2786,31 @@ namespace Risebird.Web.Controllers
         public ActionResult getSelectionStatusList()
         {
             var selectionStatuses = from FinalSelectionStatus s in Enum.GetValues(typeof(FinalSelectionStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getOfferStatusList()
+        {
+            var selectionStatuses = from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            return Json((selectionStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+
+        [HttpGet]
+        public ActionResult getJoiningStatusList()
+        {
+            var selectionStatuses = from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
             return Json((selectionStatuses.Select(x => new
@@ -3273,6 +3313,120 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 10].Value = item.ApprovalComments;
                         Sheet.Cells[i, 11].Value = item.FinalSelectionStat;
                         Sheet.Cells[i, 12].Value = item.FinalComments;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
+
+        [HttpGet]
+        public FileContentResult MyInterviewsExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("My Interviews");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_My_Interviews" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+
+                var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                //myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
+                myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 10;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 35;
+                }
+                Sheet.Cells[1, 1].Value = "Interview Date";
+                Sheet.Cells[1, 2].Value = "Slot";
+                Sheet.Cells[1, 3].Value = "Duration";
+                Sheet.Cells[1, 4].Value = "Candidate Name";
+                Sheet.Cells[1, 5].Value = "Candidate Email";
+                Sheet.Cells[1, 6].Value = "Candidate Contact";
+                Sheet.Cells[1, 7].Value = "Resume";
+                Sheet.Cells[1, 8].Value = "JD Link";
+                Sheet.Cells[1, 9].Value = "Zoom ID";
+                Sheet.Cells[1, 10].Value = "Approval Comments";
+
+
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (myInterview.Count() > 0)
+                {
+                    foreach (var item in myInterview)
+                    {
+                        Sheet.Cells[i, 1].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
+                        Sheet.Cells[i, 2].Value = item.interviewSlot;
+                        Sheet.Cells[i, 3].Value = item.interviewDuration;
+                        Sheet.Cells[i, 4].Value = item.candidateName;
+                        Sheet.Cells[i, 5].Value = item.candidateEmail;
+                        Sheet.Cells[i, 6].Value = item.MobileNumber;
+
+                        if (!string.IsNullOrEmpty(item.resumeLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 7].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 7].Value = "Resume";
+                                Sheet.Cells[i, 7].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 7].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception e)
+                            {
+                                Sheet.Cells[i, 7].Value = "No Resume";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 7].Value = "No Resume";
+                        }
+                        if (!string.IsNullOrEmpty(item.JDLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 8].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                Sheet.Cells[i, 8].Value = "JD Link";
+                                Sheet.Cells[i, 8].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 8].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception e)
+                            {
+                                Sheet.Cells[i, 8].Value = "No Link";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 8].Value = "No Link";
+                        }
+                        Sheet.Cells[i, 9].Value = item.risebirdHR;
+                        Sheet.Cells[i, 10].Value = item.ApprovalComments !=null ? item.ApprovalComments : "Comments not submitted.";
+
+
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
