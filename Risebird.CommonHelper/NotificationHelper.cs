@@ -189,5 +189,35 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+
+        public string SendCandidateInvite( string irfName, string primarySkill, string calendlyLink, string emailId)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                mailMessage.Bcc.Add(new MailAddress(emailId.ToLower(), null));
+
+                object[] parameters = new object[] { irfName, calendlyLink, primarySkill};
+                mailMessage.Subject ="Interview invitation.";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
     }
 }

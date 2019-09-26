@@ -48,5 +48,8 @@ namespace Risebird.Repository.Interface
         Task<bool> AddCandidate(Candidate obj);
         Task<bool> AddMultipleCandidates(List<Candidate> candidateList);
         Task<bool> DeleteCandidate(int id);
+        bool UpdateCandidate(Candidate obj);
+        IRF GetIRFbyId(int id);
+        bool UpdateIRFInvites(int id, int totalInvites);
     }
 }

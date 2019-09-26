@@ -1557,7 +1557,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Importing candidates failed!";
+                TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
                 return RedirectToAction("Index");
             }
             //return View("Index");
@@ -1579,12 +1579,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Candidate deleted Successfully";
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate deleted Successfully";
                             return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Candidate delete Failed";
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
                             return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                     }
@@ -1602,7 +1602,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Candidate delete Failed";
+                TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
                 return RedirectToAction("Index");
             }
 
@@ -1635,6 +1635,104 @@ namespace Risebird.Web.Controllers
             {
                 return RedirectToAction("SignOut", "Session");
             }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCandidate(Candidate model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (_irfService.UpdateCandidate(model))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult ShowCalendly(string irfName, string calendlyLink)
+        {
+            ViewBag.IRFName = irfName;
+            ViewBag.CalendlyLink = calendlyLink;
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult SendInvite(string irfId, string IRFName, string emailId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (_irfService.SendInvite(Convert.ToInt32(irfId),emailId))
+                        {
+                            //TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+
+                        //return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

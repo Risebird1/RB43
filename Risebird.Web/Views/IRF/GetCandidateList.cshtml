@@ -238,7 +238,7 @@
 
 
                                                     <td class="text-right">
-                                                        <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { id = item.id, emailId= item.EmailId})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
                                                         <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
                                                         <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
 

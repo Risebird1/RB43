@@ -16,14 +16,16 @@ namespace Risebird.Business
     public class IRFService :IIRFService
     {
         private IIRFRepository _irfRepository;
+        private readonly INotificationHelper _notificationHelper;
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly ITwilioHelper _twilioHelper;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper)
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _twilioHelper = twilioHelper;
+            _notificationHelper = notificationHelper;
         }
 
         #region IRF Functions
@@ -339,6 +341,8 @@ namespace Risebird.Business
                 model.CompanyType = IRF.CompanyType;
                 model.EndDate = IRF.EndDate;
                 model.JobLevel = IRF.JobLevel;
+                model.CalendlyLink = IRF.CalendlyLink;
+                model.TotalInvites = IRF.TotalInvites;
 
                 var skillCount = transTechSkills.Count();
                 return model;
@@ -523,6 +527,42 @@ namespace Risebird.Business
             }
         }
 
+        public bool UpdateCandidate(Candidate obj)
+        {
+            try
+            {
+                return _irfRepository.UpdateCandidate(obj);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool SendInvite(int irfId, string email)
+        {
+            try
+            {
+                //update irf Invite count here
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                var inviteCount = irf.TotalInvites;
+                var calendlyLink = irf.CalendlyLink;
+                if (email != null && calendlyLink!=null)
+                {
+                    _notificationHelper.SendCandidateInvite(irf.IRFId,irf.JDTiltle.Split("|")[0],calendlyLink,email);
+                    _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
     }
 }

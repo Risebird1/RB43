@@ -114,8 +114,8 @@
                         @using (Html.BeginForm("EditCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                         {
                             @*<div class="loader text-center">
-                                    <img src="~/Newassets/img/lazyload.gif" />
-                                </div>*@
+                <img src="~/Newassets/img/lazyload.gif" />
+            </div>*@
 
 
                             <div class="row">
@@ -169,7 +169,7 @@
                             </div>
                             @Html.HiddenFor(x => x.IRFId)
                             @Html.HiddenFor(x => x.IRFName)
-
+                            @Html.HiddenFor(x => x.id)
                             <div class="row">
                                 <label class="col-md-2"></label>
                                 <div class="col-md-9">
