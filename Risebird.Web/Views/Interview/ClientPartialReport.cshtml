@@ -1103,12 +1103,14 @@
             <div class="modal-content" style="width:50%">
                 <div class="modal-header">
                     <h5>Approved For Next Round</h5>
-                    <span class="close">&times;</span>
+                    <span class="close" id="approvePopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Approved</label>
-                        <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">
+                        @*<label>Approved</label>
+            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                     </div>
                     <div id="approvalComments" class="form-group">
                         <label>Approval Comments</label>
@@ -1131,12 +1133,13 @@
             <div class="modal-content" style="width:50%">
                 <div class="modal-header">
                     <h5>Final Selection Status</h5>
-                    <span class="close">&times;</span>
+                    <span class="close" id="selectPopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Selected</label>
-                        <input type="checkbox" name="IsSelected" id="IsSelected" onclick="SelectionChanged()" style="margin-left:17px">
+
+                        <label for="selectionDropdown"><b>Final Selection</b></label>
+                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
                     </div>
                     <div id="selectionComments" class="form-group">
                         <label>Final Comments</label>
@@ -1189,21 +1192,14 @@
 
 <script>
     var imid = "";
-    var span = document.getElementsByClassName("close")[0];
-    var comm = '';
+    var span = document.getElementById("approvePopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         var modal = document.getElementById("myModal");
         modal.style.display = "none";
     }
 
-    // When the user clicks anywhere outside of the modal, close it
-    //window.onclick = function (event) {
-    //    var modal = document.getElementById("myModal");
-    //    if (event.target == modal) {
-    //        modal.style.display = "none";
-    //    }
-    //}
+    
 </script>
 
 <script>
@@ -1212,62 +1208,45 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-
-        //// Get the button that opens the modal
-        //var btn = document.getElementById("myBtn_" + item.InterviewId);
-
-        //// Get the <span> element that closes the modal
-        //var span = document.getElementsByClassName("close")[0];
-
+        
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
-        document.getElementById("IsApproved").checked = item.IsApproved;
         document.getElementById("appComments").value = item.ApprovalComments;
-        if (item.ApprovalComments != 'Approved') {
-            comm = item.ApprovalComments;
-        }
-        else {
-            comm = '';
-        }
-        if (item.IsApproved) {
-            //var commentId = 'approvalComments';
-            document.getElementById('approvalComments').style.display = "none";
-        }
-        else {
-            document.getElementById('approvalComments').style.display = "block";
 
-        }
-        //var commentId = 'approvalComments';
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getApprovalStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#approveDropdown").html(s);
+                if (item.IsApproved != null) {
+                    $("#approveDropdown").val(item.IsApproved);
+                }
+                else {
+                    $("#approveDropdown").val("-1");
 
-    }
+                }
+            }
+        });
 
-    function ApprovalChanged() {
-        var commentId = 'approvalComments';
-        document.getElementById("appComments").value = comm;
+        
 
-        //var checkElem = document.getElementById("checkBoxDiv_" + imid);
-
-        var isChecked = document.getElementById("IsApproved").checked;
-
-        if (isChecked == false) {
-
-            document.getElementById(commentId).style.display = "block";
-        }
-        else {
-            document.getElementById(commentId).style.display = "none";
-        }
     }
 
     function SavePopUp() {
-        var comment = document.getElementById("appComments").value;
-        var isApproved = document.getElementById("IsApproved").checked;
+        var approvalComment = document.getElementById("appComments").value;
+        var isApproved = document.getElementById("approveDropdown").value;
         var id = imid;
 
         $.ajax({
             type: "GET",
             url: "/Interview/ChangeApproval",
-            data: { 'imid': id, 'value': isApproved, 'comment': comment },
+            data: { 'imid': id, 'value': isApproved, 'comment': approvalComment },
             success: function (data) {
 
                 location.reload(true);
@@ -1280,7 +1259,7 @@
 
 <script>
     var imidSelect = "";
-    var spanSelect = document.getElementsByClassName("close")[1];
+    var spanSelect = document.getElementById("selectPopUp");
     var commSelect = '';
     // When the user clicks on <span> (x), close the modal
     spanSelect.onclick = function () {
@@ -1314,52 +1293,42 @@
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
-        document.getElementById("IsSelected").checked = item.IsSelected;
         document.getElementById("selecComments").value = item.FinalComments;
-        if (item.FinalComments != 'Selected') {
-            commSelect = item.FinalComments;
-        }
-        else {
-            commSelect = '';
-        }
-        if (item.IsSelected) {
-            //var commentId = 'selectionComments';
-            document.getElementById('selectionComments').style.display = "none";
-        }
-        else {
-            //var commentId = 'selectionComments';
-            document.getElementById('selectionComments').style.display = "block";
-        }
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#selectionDropdown").html(s);
+                if (item.IsSelected != null) {
+                    $("#selectionDropdown").val(item.IsSelected);
+                }
+                else {
+                    $("#selectionDropdown").val("-1");
+                }
 
 
-    }
+            }
+        });
+        
 
-    function SelectionChanged() {
-        var commentId = 'selectionComments';
-        document.getElementById("selecComments").value = commSelect;
 
-        //var checkElem = document.getElementById("checkBoxDiv_" + imid);
-
-        var isChecked = document.getElementById("IsSelected").checked;
-
-        if (isChecked == false) {
-
-            document.getElementById(commentId).style.display = "block";
-        }
-        else {
-            document.getElementById(commentId).style.display = "none";
-        }
     }
 
     function SaveSelecPopUp() {
-        var comment = document.getElementById("selecComments").value;
-        var isSelected = document.getElementById("IsSelected").checked;
+        var selectionComment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("selectionDropdown").value;
         var id = imidSelect;
 
         $.ajax({
             type: "GET",
             url: "/Interview/ChangeSelection",
-            data: { 'imid': id, 'value': isSelected, 'comment': comment },
+            data: { 'imid': id, 'value': isSelected, 'comment': selectionComment },
             success: function (data) {
 
                 location.reload(true);

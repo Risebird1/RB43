@@ -1734,5 +1734,43 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        [HttpGet]
+        public FileContentResult DownloadTemplate()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Import Template");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Import_Template" + ".xlsx";
+            try
+            {
+                
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 3;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 35;
+                }
+                Sheet.Cells[1, 1].Value = "Name";
+                Sheet.Cells[1, 2].Value = "EmailId";
+                Sheet.Cells[1, 3].Value = "Resume Link";
+                
+                
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Download failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
     }
 }

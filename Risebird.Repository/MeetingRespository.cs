@@ -974,11 +974,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update InterviewComments set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where InterviewId=@InterviewId";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsApproved", value);
                 dynamicParameters.Add("@ApprovalComments", comment);
-                dynamicParameters.Add("@id", imid);
+                dynamicParameters.Add("@InterviewId", imid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1039,11 +1039,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update InterviewMeetings set IsSelected=@IsSelected, FinalComments=@FinalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update InterviewComments set IsSelected=@IsSelected, FinalComments=@FinalComments where InterviewId=@InterviewId";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsSelected", value);
                 dynamicParameters.Add("@FinalComments", comment);
-                dynamicParameters.Add("@id", imid);
+                dynamicParameters.Add("@InterviewId", imid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

@@ -451,52 +451,86 @@
         </div>
         <div id="myModal" class="modal">
             <!-- Modal content -->
-            <div class="modal-content">
+            <div class="modal-content" style="width:60%">
                 <div class="modal-header">
                     <h5>Client Feedback</h5>
                     <span class="close" id="feedbackPopUp">&times;</span>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        @*<label>Approved</label>
-                    <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
-                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
-                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                    </div>
-                    <div id="approvalComments" class="form-group">
-                        <label>Approval Comments</label>
-                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+                                <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="approvalComments" class="form-group">
+                                <label>Approval Comments</label>
+                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
+
+                                @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+                                <label for="selectionDropdown"><b>Final Selection</b></label>
+                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="selectionComments" class="form-group">
+                                <label>Final Comments</label>
 
-                        <label for="selectionDropdown"><b>Final Selection</b></label>
-                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                    </div>
-                    <div id="selectionComments" class="form-group">
-                        <label>Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
-                    </div>
+                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
 
-                    <div class="form-group">
-
-                        <label for="offerDropdown"><b>Offer Status</b></label>
-                        <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
-                    </div>
-                    <div id="offerComments" class="form-group">
-                        <label>Offer Comments</label>
-                        <input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>
+                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
 
-                        <label for="joiningDropdown"><b>Joining Status</b></label>
-                        <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                <label for="offerDropdown"><b>Offer Status</b></label>
+                                <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="offerComments" class="form-group">
+                                <label>Offer Comments</label>
+                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
+
+                                @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
                     </div>
-                    <div id="joiningComments" class="form-group">
-                        <label>Joining Comments</label>
-                        <input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+
+                                <label for="joiningDropdown"><b>Joining Status</b></label>
+                                <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="joiningComments" class="form-group">
+                                <label>Joining Comments</label>
+                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
+
+                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
                     </div>
+
                     <div class="">
                         <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
                     </div>
