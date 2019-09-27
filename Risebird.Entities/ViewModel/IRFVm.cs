@@ -85,6 +85,10 @@ namespace Risebird.Entities.ViewModel
 
         [Required]
         public IFormFile JDFile { get; set; }
+
+        [DisplayName("Calendly Link")]
+        public string CalendlyLink { get; set; }
+        public int TotalInvites { get; set; }
     }
 
     public class IRF
@@ -112,6 +116,8 @@ namespace Risebird.Entities.ViewModel
         public int TotalMeetings { get; set; }
         public int SelectedMeetings { get; set; }
         public int ScheduleMeetings { get; set; }
+        public string CalendlyLink { get; set; }
+        public int TotalInvites { get; set; }
 
     }
 }

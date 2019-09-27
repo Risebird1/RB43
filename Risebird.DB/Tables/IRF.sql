@@ -12,7 +12,9 @@ CREATE TABLE [dbo].[IRF](
 			[JDLink][VARCHAR](MAX) NULL,
 			[NoOfPosition] [int] NULL,	
 			[NoOfIntterview][int] NULL,
-			[RisebirdHr] [int] NOT NULL,	
+			[RisebirdHr] [int] NOT NULL,
+			[TotalInvites][int] NOT NULL DEFAULT 0,
+			[CalendlyLink][VARCHAR](500) NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -22,5 +24,31 @@ CREATE TABLE [dbo].[IRF](
 )					
 
 END
+
+ELSE
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalInvites')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add TotalInvites INT NOT NULL DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CalendlyLink')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CalendlyLink VARCHAR(500)
+END
+
+END
+
 
 GO

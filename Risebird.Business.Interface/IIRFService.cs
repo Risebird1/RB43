@@ -34,5 +34,10 @@ namespace Risebird.Business.Interface
         IEnumerable<Interviewer> GetInterviewers(string skills);
         IEnumerable<Candidate> GetIRFCandidates(int id);
         Task<bool> AddCandidate(Candidate obj);
+        Task<bool> AddMultipleCandidates(List<Candidate> candidateList);
+        Task<bool> DeleteCandidate(int id);
+        Candidate GetCandidate(int id, int irfId);
+        bool UpdateCandidate(Candidate obj);
+        bool SendInvite(int irfId, string email);
     }
 }

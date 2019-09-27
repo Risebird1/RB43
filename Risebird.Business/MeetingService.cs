@@ -380,7 +380,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (interviewReport!=null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     return EditInterviewReport(interviewReport.FirstOrDefault());

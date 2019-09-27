@@ -19,7 +19,7 @@ AS
 Begin
 
 
-select ip.*, ic.*, IRF.JobLevel,IRF.IRFId as IRFName, im.resumeLink, im.interviewDate,im.currentEmployerName,im.ApprovalComments,im.IsApproved,im.FinalComments, im.IsSelected  from InterviewReport ip
+select ip.*, ic.*, IRF.JobLevel,IRF.IRFId as IRFName, im.resumeLink, im.interviewDate,im.currentEmployerName from InterviewReport ip
 inner join IRF on ip.IRFId = IRF.id 
 inner join [InterviewComments] ic on ic.InterviewId = ip.InterviewId
 inner join [InterviewMeetings] im on im.id = ip.InterviewId

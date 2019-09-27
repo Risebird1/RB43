@@ -14,6 +14,7 @@ using Risebird.Repository.Interface;
 using Risebird.CommonHelper;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using OfficeOpenXml;
 
 namespace Risebird.Web.Controllers
 {
@@ -1424,13 +1425,24 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public IActionResult AddCandidate(string irfId, string irfName)
         {
-            if (HttpContext.Session.GetString("email") != null)
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var model = new Candidate();
+                    model.IRFId = Convert.ToInt32(irfId);
+                    model.IRFName = irfName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
 
-                var model = new Candidate();
-                model.IRFId = Convert.ToInt32(irfId);
-                model.IRFName = irfName;
-                return View(model);
+                }
             }
             else
             {
@@ -1446,17 +1458,215 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    //profileName = profileName.Replace("\"", "");
-                    if (_irfService.AddCandidate(model).Result)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
-                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName});
+                        if (_irfService.AddCandidate(model).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
                     }
                     else
                     {
-                        TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding candidate failed";
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult ImportCandidates(IFormCollection formCollection, string irfId, string IRFName)
+        {
+
+            try
+            {
+                if (Request != null)
+                {
+                    var file = formCollection.Files[0];
+                    var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+                    if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                    {
+
+                        string fileName = file.FileName;
+                        string fileContentType = file.ContentType;
+                        byte[] fileBytes = new byte[file.Length];
+                        var data = file.OpenReadStream();
+                        //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
+                        var candidateList = new List<Candidate>();
+                        using (var package = new ExcelPackage(file.OpenReadStream()))
+                        {
+                            var currentSheet = package.Workbook.Worksheets;
+                            var workSheet = currentSheet.First();
+                            var noOfCol = workSheet.Dimension.End.Column;
+                            var noOfRow = workSheet.Dimension.End.Row;
+                            for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                            {
+                                var candidate = new Candidate();
+                                candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
+                                candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
+                                candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
+                                candidate.IRFId = IRFId;
+                                candidateList.Add(candidate);
+                            }
+
+                        }
+
+                        if (_irfService.AddMultipleCandidates(candidateList).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidates added Successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        }
+
+                    }
+
+                    else
+                    {
+                        TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                        return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                    }
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                return RedirectToAction("Index");
+            }
+            //return View("Index");
+            return null;
+        }
+
+        [Authorize]
+        public IActionResult DeleteCandidate(string id, string irfId, string IRFName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate deleted Successfully";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult EditCandidate(int id, string irfName, string irfId)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var model = _irfService.GetCandidate(id, Convert.ToInt32(irfId));
+                    model.IRFName = irfName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+
+                }
+
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditCandidate(Candidate model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (_irfService.UpdateCandidate(model))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
                     }
 
                 }
@@ -1468,9 +1678,61 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Adding Project has failed";
+                TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
                 return RedirectToAction("Index");
             }
+        }
+
+        public IActionResult ShowCalendly(string irfName, string calendlyLink)
+        {
+            ViewBag.IRFName = irfName;
+            ViewBag.CalendlyLink = calendlyLink;
+            return View();
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult SendInvite(string irfId, string IRFName, string emailId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        if (_irfService.SendInvite(Convert.ToInt32(irfId),emailId))
+                        {
+                            //TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+
+                        //return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

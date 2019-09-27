@@ -39,17 +39,20 @@ SELECT [InterviewMeetings].id as imid
 	 ,joiningTime
 	 ,currentEmployerName
 	 ,MobileNumber
-	 ,IsApproved
-	 ,IsSelected
-	 ,ApprovalComments
-	 ,FinalComments
+	 ,InterviewComments.ApprovalComments
+	 ,InterviewComments.FinalComments
+	 ,InterviewComments.IsApproved
+	 ,InterviewComments.IsSelected
 
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
+left join InterviewComments on InterviewMeetings.id=InterviewComments.InterviewId
 WHERE
       [InterviewMeetings].id = @interviewId
 End
+
+
 
 
 GO
