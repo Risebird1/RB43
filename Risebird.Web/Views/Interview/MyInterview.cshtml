@@ -126,10 +126,14 @@
                                         </div>
                                     </div>
                                     @*<div class="col-sm-9">
-                                            <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
+            <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
 
 
-                                        </div>*@
+        </div>*@
+                                    <div>
+                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
+
+                                    </div>
                                 </div>
 
 

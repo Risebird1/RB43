@@ -163,6 +163,17 @@ namespace Risebird.Business
             return false;
         }
 
+        public bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment)
+        {
+            if (!string.IsNullOrEmpty(isApproved) && !string.IsNullOrEmpty(isSelected) && !string.IsNullOrEmpty(offerStatus) && !string.IsNullOrEmpty(joiningStatus) && !string.IsNullOrEmpty(imid))
+            {
+                //var val = Convert.ToInt32(value);
+                var result = _meetingRespository.SaveClientFeedback(Convert.ToInt32(imid), Convert.ToInt32(isApproved), approvalComment, Convert.ToInt32(isSelected),selectionComment , Convert.ToInt32(joiningStatus),joiningComment , Convert.ToInt32(offerStatus), offerComment);
+                return result;
+            }
+            return false;
+        }
+
         public bool PostSelectionStatus(string imid, string value, string comment)
         {           
             if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
@@ -245,10 +256,11 @@ namespace Risebird.Business
         }
 
         /// <summary>
-        /// Assing Yourself
+        /// Assign Yourself
         /// </summary>
         /// <param name="meetingid"></param>
         /// <param name="interviewerMail"></param>
+        /// <param name="interviewDate"></param>
         /// <returns></returns>
         public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
@@ -368,7 +380,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (interviewReport!=null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     return EditInterviewReport(interviewReport.FirstOrDefault());

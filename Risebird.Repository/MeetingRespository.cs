@@ -541,7 +541,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
+                var query = "select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,ic.ApprovalComments,ic.FinalComments from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -974,11 +974,11 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update InterviewComments set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where InterviewId=@InterviewId";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsApproved", value);
                 dynamicParameters.Add("@ApprovalComments", comment);
-                dynamicParameters.Add("@id", imid);
+                dynamicParameters.Add("@InterviewId", imid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -995,15 +995,55 @@ namespace Risebird.Repository
             
         }
 
+        public bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment)
+        {
+            try
+            {
+                //var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsApproved", isApproved);
+                dynamicParameters.Add("@ApprovalComments", approvalComment);
+
+                dynamicParameters.Add("@IsSelected", isSelected);
+                dynamicParameters.Add("@FinalComments", selectionComment);
+
+                dynamicParameters.Add("@JoiningStatus", joiningStatus);
+                dynamicParameters.Add("@JoiningComments", joiningComment);
+
+                dynamicParameters.Add("@OfferStatus", offerStatus);
+                dynamicParameters.Add("@OfferComments", offerComment);
+
+                dynamicParameters.Add("@id", imid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result =  SqlMapper.Query<int>(con, "usp_AddUpdateClientFeedback", dynamicParameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public bool PostSelectionStatus(int imid, int value, string comment)
         {
             try
             {
-                var query = "update InterviewMeetings set IsSelected=@IsSelected, FinalComments=@FinalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update InterviewComments set IsSelected=@IsSelected, FinalComments=@FinalComments where InterviewId=@InterviewId";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsSelected", value);
                 dynamicParameters.Add("@FinalComments", comment);
-                dynamicParameters.Add("@id", imid);
+                dynamicParameters.Add("@InterviewId", imid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

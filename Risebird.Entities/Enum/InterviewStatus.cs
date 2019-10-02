@@ -56,8 +56,37 @@ namespace Risebird.Entities.Enum
         [Description("Offer Declined")]
         OfferDenied = 3,
         [Description("Not offered")]
-        Notoffered = 4
-
+        Notoffered = 4,
+        [Description("Waste- Filled by Internal Resource Pool")]
+        WasteFilledbyInternalResourcePool = 5,
+        [Description("Waste- Filled by Referral ")]
+        WasteFilledbyReferral = 6,
+        [Description("Waste- Decision maker Indecisive ")]
+        WasteDecisionmakerIndecisive = 7,
+        [Description("Waste- Requirement Dropped")]
+        WasteRequirementDropped = 8,
+        [Description("Waste- Requirement Shrank")]
+        WasteRequirementShrank = 9,
+        [Description("Waste- Requirement Scope Changed ")]
+        WasteRequirementScopeChanged = 10,
+        [Description("Waste- Requirement Onhold")]
+        WasteRequirementOnhold = 11,
+        [Description("Waste- Next step not available")]
+        WasteNextstepnotavailable = 12,
+        [Description("Waste- Filled by competitor")]
+        WasteFilledbycompetitor = 13,
+        [Description("Waste- Candidate No-show")]
+        WasteCandidateNoshow = 14,
+        [Description("Waste- Candidate Indecisive")]
+        WasteCandidateIndecisive = 15,
+        [Description("Waste- Candidate Attitude Misfit")]
+        WasteCandidateAttitudeMisfit = 16,
+        [Description("Waste- Candidate Not-Interested")]
+        WasteCandidateNotInterested = 17,
+        [Description("Waste- Candidate Better offer")]
+        WasteCandidateBetteroffer = 18,
+        [Description("Waste- Candidate Not reachable")]
+        WasteCandidateNotreachable = 19
     }
 
     public enum JoiningStatus
@@ -65,8 +94,38 @@ namespace Risebird.Entities.Enum
         [Description("Joined")]
         Joining = 1,
         [Description("Not Joined")]
-        NotJoining = 2
-        
+        NotJoining = 2,
+        [Description("Waste- Filled by Internal Resource Pool")]
+        WasteFilledbyInternalResourcePool = 5,
+        [Description("Waste- Filled by Referral ")]
+        WasteFilledbyReferral = 6,
+        [Description("Waste- Decision maker Indecisive ")]
+        WasteDecisionmakerIndecisive = 7,
+        [Description("Waste- Requirement Dropped")]
+        WasteRequirementDropped = 8,
+        [Description("Waste- Requirement Shrank")]
+        WasteRequirementShrank = 9,
+        [Description("Waste- Requirement Scope Changed ")]
+        WasteRequirementScopeChanged = 10,
+        [Description("Waste- Requirement Onhold")]
+        WasteRequirementOnhold = 11,
+        [Description("Waste- Next step not available")]
+        WasteNextstepnotavailable = 12,
+        [Description("Waste- Filled by competitor")]
+        WasteFilledbycompetitor = 13,
+        [Description("Waste- Candidate No-show")]
+        WasteCandidateNoshow = 14,
+        [Description("Waste- Candidate Indecisive")]
+        WasteCandidateIndecisive = 15,
+        [Description("Waste- Candidate Attitude Misfit")]
+        WasteCandidateAttitudeMisfit = 16,
+        [Description("Waste- Candidate Not-Interested")]
+        WasteCandidateNotInterested = 17,
+        [Description("Waste- Candidate Better offer")]
+        WasteCandidateBetteroffer = 18,
+        [Description("Waste- Candidate Not reachable")]
+        WasteCandidateNotreachable = 19
+
     }
     public enum FinalInterviewMeetingStatus
     {

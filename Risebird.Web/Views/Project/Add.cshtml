@@ -335,38 +335,15 @@
             url: "/Project/GetFilteredIRF",
             data: { 'clientId': clientId },
             success: function (data) {
-                debugger;
-                //if (data=null || data == '') {
-                //    //$('#tableID').html('');
-                //    //$('#tableID').html('No data for this Client.');
-                //    //$('#tableID').css("margin-left", "452px");
-                //}
-                //else {
-                //    //$('#tableID').css("margin-left", "");
-                    
-                //}
+                if (data == null || data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No data for this Client.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
                 $('#tableID').html('');
                 $('#tableID').html(data);
-                //var drpdwnId = $("#ClientCollection_0__ClientUserId");
-                ////drpdwnId.options.length = 0;
-                //$("#ClientCollection_0__ClientUserId option").remove();
-
-                //if (data.length > 0) {
-                //    $(data).each(function () {
-                //        var option = $("<option />");
-
-                //        //Set Text part.
-                //        option.html(this.text);
-
-                //        //Set Value part.
-                //        option.val(this.value);
-
-                //        //Add the Option element to DropDownList.
-                //        drpdwnId.append(option);
-                //    });
-                //}
-
-
+                $('#tableID').css("margin-left", "");
             }
         });
 

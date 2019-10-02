@@ -138,8 +138,10 @@
                                                     @*<span>Primary Skill:</span> <p>@item.JDTiltle.Split("|")[0]</p>*@
 
                                                     <span>Total IRFs:</span> <p>@item.TotalIRF</p>
-                                                    <span>Total Interviews:</span> <p> 0 </p>
-                                                    <span>Selected Interviews:</span> <p> 0 </p>
+                                                    <span>Client:</span> <p> @item.Client </p>
+                                                    <span>End Client:</span> <p> @item.EndClient</p>
+                                                    <span>Location:</span> <p> @item.Location</p>
+
                                                 </div>
                                             </div>
 
@@ -281,12 +283,12 @@
         var IdProject = dataID;
         swal.fire({
             title: 'Are you sure?',
-            text: "It will be permanently deleted!",
+            text: "It will be Archived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: 'Yes, archive it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     var Id = dataID;
@@ -298,7 +300,7 @@
                         },
                         error: function () {
                             //reject("error message")
-                            swal.fire("Error deleting!", "Please try again", "error");
+                            swal.fire("Error archiving!", "Please try again", "error");
                         }
                     })
                 })
@@ -307,9 +309,9 @@
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
                 swal.fire({
-                    title: 'Deleted!',
+                    title: 'Archived!',
                     type: 'success',
-                    html: '<p>The project has been deleted.</p>',
+                    html: '<p>The project has been Archived.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
@@ -321,7 +323,7 @@
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'Your file has been not deleted :)',
+                    'Your file has not been archived :)',
                     'error'
                 )
             }

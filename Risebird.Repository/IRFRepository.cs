@@ -389,6 +389,52 @@ namespace Risebird.Repository
             }
            
         }
+        public IRF GetIRFbyId(int id)
+        {
+            try
+            {
+                var query = "Select * from IRF where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+        public bool UpdateIRFInvites(int id, int totalInvites)
+        {
+            try
+            {
+                var query = "Update IRF set TotalInvites=@TotalInvites where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@TotalInvites", totalInvites);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRF>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+
         public IEnumerable<Users> GetUsers()
         {
             try
@@ -981,7 +1027,9 @@ namespace Risebird.Repository
             parameters.Add("@NoOfIntterview", entity.NoOfIntterview);
             parameters.Add("@RisebirdHr", entity.RisebirdHr);
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
-            parameters.Add("@JobLevel", entity.JobLevel);       
+            parameters.Add("@JobLevel", entity.JobLevel);
+            parameters.Add("@CalendlyLink", entity.CalendlyLink);
+
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;
@@ -1144,5 +1192,160 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public IEnumerable<Candidate> GetIRFCandidates(int id)
+        {
+            try
+            {
+                var query = "Select * from Candidate where IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddCandidate(Candidate obj)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+
+                    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                    var affectedRows = con.Execute(sqlInsertReport, new
+                    {
+                        IRFId = obj.IRFId,
+                        Name = obj.Name,
+                        EmailId = obj.EmailId,
+                        ResumeLink = obj.ResumeLink
+
+                    });
+                   
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> AddMultipleCandidates(List<Candidate> candidateList)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+                    if(candidateList !=null && candidateList.Count()>0)
+                    {
+                        foreach (var item in candidateList)
+                        {
+                            string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                            var affectedRows = con.Execute(sqlInsertReport, new
+                            {
+                                IRFId = item.IRFId,
+                                Name = item.Name,
+                                EmailId = item.EmailId,
+                                ResumeLink = item.ResumeLink
+
+                            });
+                        }
+                    }
+                    
+
+                    return true;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteCandidate(int id)
+        {
+            try
+            {
+
+                var query = "Delete from Candidate where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);                  
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool UpdateCandidate(Candidate obj)
+        {
+            try
+            {
+                var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Name", obj.Name);
+                dynamicParameters.Add("@EmailId", obj.EmailId);
+                dynamicParameters.Add("@ResumeLink", obj.ResumeLink);
+                dynamicParameters.Add("@id", obj.id);
+
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
+
     }
 }
