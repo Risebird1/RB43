@@ -1,7 +1,35 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "All Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
+    string[] RFID = new string[] { };
+    string[] ClientHR = new string[] { };
+    string[] ConfirmationStatus = new string[] { };
+    string[] MeetingStatus = new string[] { };
+    string[] InterviewStatus = new string[] { };
+    string[] Interviewer = new string[] { };
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("ClientMeetingsfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClientMeetingsfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
+    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
+    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
+    InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
+    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
 }
 
 <style>
@@ -121,7 +149,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form action="@Url.Action("ClientMeetings","Interview")" method="post">
+                                        <form action="@Url.Action("ClientMeetings","Interview")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -146,7 +174,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
-                                                       
+
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
                                                             <div class="col-md-6 col-sm-6">
@@ -269,7 +297,7 @@
                                                                     <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" onclick="window.location.href='@Url.Action("ClientMeetings","Interview")'">Reset Filter</button>
+                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -452,55 +480,61 @@
 </style>
 <script>
     $(document).ready(function () {
-         $("#PrimarySkill").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-             
-         $("#RFID").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-              
-         $("#ClientHR").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-              
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+        $("#PrimarySkill").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#ClientHR").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
         $("#ConfirmationStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-            
-         $("#MeetingStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-               
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+        $("#MeetingStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
         $("#InterviewStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-               
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
         $("#Interviewer").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-               
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
         //FilterInterviews("All");// on page load default dropdownlist value set
         $('#meeting').DataTable({
             "pagingType": "full_numbers",
@@ -517,6 +551,47 @@
         });
         var table = $('#meeting').DataTable();
     });
+
+    function ResetFilter() {
+           
+             $.ajax({
+            type: "POST",
+            url: "/Interview/ClientMeetings",
+                 success: function (data) {
+                    window.location.href = "/Interview/ResetClientMeetingsFilter";
+                 }
+                });
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+            var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
+            var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
+            var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
+            var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#PrimarySkill").val(primarySkillsArr);
+            $("#RFID").val(rFID);
+            $("#ClientHR").val(clientHR);
+            $("#ConfirmationStatus").val(confirmationStatus);
+            $("#MeetingStatus").val(meetingStatus);
+            $("#InterviewStatus").val(interviewStatus);
+            $("#Interviewer").val(interviewer);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/Interview/ClientMeetings",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }
+
 </script>
 
 @*<script type="text/javascript">
@@ -569,7 +644,7 @@
         $.ajax({
             type: "GET",
             url: "/Interview/GetClientFilteredMeetings",
-            data: { 'filterValue': filterValue},
+            data: { 'filterValue': filterValue },
             success: function (data) {
                 if (data == '' && filterValue == 'Next Seven Days') {
                     $('#tableID').html('');
