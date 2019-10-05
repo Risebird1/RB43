@@ -154,7 +154,7 @@
                                 <div class="stats text-center">
                                     @if (!@item.IsClientUser)
                                     {
-                                        <button type="button" onclick="javascript:EditProject('@item.id');" rel="tooltip" class="btn btn-primary btn-icon btn-sm " data-original-title="" title="Edit">
+                                        <button type="button" onclick="javascript:EditProject('@item.id');"  class="btn btn-primary btn-icon btn-sm " title="Edit">
                                             <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
                                         @*<button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
@@ -174,7 +174,7 @@
                                 </button>*@
                                     @if (!@item.IsClientUser)
                                     {
-                                        <button type="button" onclick="javascript:DeleteProject('@item.id');" rel="tooltip" class="btn btn-danger btn-icon btn-sm " data-original-title="" title="Archive">
+                                        <button type="button" onclick="javascript:DeleteProject('@item.id');"  class="btn btn-danger btn-icon btn-sm " title="Archive">
                                             <i class="now-ui-icons fa fa-archive"></i>
                                         </button>
                                     }

@@ -3781,7 +3781,8 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 7].Value = "Resume";
                 Sheet.Cells[1, 8].Value = "JD Link";
                 Sheet.Cells[1, 9].Value = "Zoom ID";
-                Sheet.Cells[1, 10].Value = "Approval Comments";
+                Sheet.Cells[1, 10].Value = "Video Link";
+                Sheet.Cells[1, 11].Value = "Approval Comments";
 
 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
@@ -3836,7 +3837,25 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 8].Value = "No Link";
                         }
                         Sheet.Cells[i, 9].Value = item.risebirdHR;
-                        Sheet.Cells[i, 10].Value = item.ApprovalComments !=null ? item.ApprovalComments : "Comments not submitted.";
+                        if (!string.IsNullOrEmpty(item.videoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 10].Hyperlink = new Uri(item.videoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 10].Value = "Video Link";
+                                Sheet.Cells[i, 10].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception)
+                            {
+                                Sheet.Cells[i, 6].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 6].Value = "No Video";
+                        }
+                        Sheet.Cells[i, 11].Value = item.ApprovalComments !=null ? item.ApprovalComments : "Comments not submitted.";
 
 
                         i++;
