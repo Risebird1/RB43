@@ -46,6 +46,20 @@ namespace Risebird.Business
             }
         }
 
+        public List<MeetingVM> MultipleCandidateInvites()
+        {
+            try
+            {
+
+                return _meetingRespository.MultipleCandidateInvites().Result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public List<MeetingVM> GetClientMeetingList(string emailId)
         {
             try

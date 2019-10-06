@@ -10,3 +10,15 @@ C:\FIles\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.Comm
 C:\FIles\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\FIles\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\FIles\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.deps.json
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\bin\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.pdb
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+E:\Prem\Projects\RisebirdPortal\Risebird.CommonHelper.Interface\obj\Release\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

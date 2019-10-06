@@ -134,6 +134,7 @@ namespace Risebird.Entities.ViewModel
         public int? IsSelected { get; set; }
         public string FinalSelectionStat { get; set; }
         public string FinalComments { get; set; }
+        public int InviteCount { get; set; }
 
     }
 }

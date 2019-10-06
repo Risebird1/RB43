@@ -11,7 +11,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddMeeting(MeetingVM meeting);
         Task<MeetingVM> GetInterviewMeetingById(int id);
         Task<bool> UpdateMeeting(MeetingVM meeting);
-
+        Task<IEnumerable<MeetingVM>> MultipleCandidateInvites();
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
         Task<IEnumerable<MeetingVM>> GetAllClientInterviews(string emailId);

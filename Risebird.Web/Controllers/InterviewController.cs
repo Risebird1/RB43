@@ -120,6 +120,131 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        public async Task<IActionResult> MultipleCandidateInvites()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {                       
+
+                        var modelList = _meetingService.MultipleCandidateInvites();
+
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
+        /// <summary>
+        /// Export selected candidates data to excel
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public FileContentResult MultipleCandidateInvitesExporttoExcel()
+        {
+            string userEmailId = string.Empty;
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Multliple Candidate Invite Report");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_Multiple_Candidate_Invite_Report" + ".xlsx";
+            try
+            {
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+
+                var selectedMeeting = new List<MeetingVM>();
+                var modelList = _meetingService.MultipleCandidateInvites();
+
+                modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                //Sheet.Column(1).Width = 30;
+                //Sheet.Column(2).Width = 30;
+                int startColumn = 1; int endColumn = 14;
+                for (int a = startColumn; a <= endColumn; a++)
+                {
+                    Sheet.Column(a).Width = 30;
+                }
+                Sheet.Cells[1, 1].Value = "Invite Count";
+                Sheet.Cells[1, 2].Value = "Interview Date";
+                Sheet.Cells[1, 3].Value = "Candidate Name";
+                Sheet.Cells[1, 4].Value = "Candidate Email";
+                Sheet.Cells[1, 5].Value = "Primary Skill";
+                Sheet.Cells[1, 6].Value = "Interviewer";
+                Sheet.Cells[1, 7].Value = "Confirmation Status";
+                Sheet.Cells[1, 8].Value = "Meeting Status";
+                Sheet.Cells[1, 9].Value = "Interview Status";
+                Sheet.Cells[1, 10].Value = "IRF ID";
+                Sheet.Cells[1, 11].Value = "Risebird HR";
+                Sheet.Cells[1, 12].Value = "Candidate Contact";
+                Sheet.Cells[1, 13].Value = "Client HR";
+                Sheet.Cells[1, 14].Value = "Staffing Agenecy";
+                //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
+                int i = 2;
+                //string LastAction = null; ;
+
+                if (modelList.Count() > 0)
+                {
+                    foreach (var item in modelList)
+                    {
+                        Sheet.Cells[i, 1].Value = item.InviteCount;
+                        Sheet.Cells[i, 2].Value = item.interviewDate.ToString("dd/MM/yyyy HH:mm");
+                        Sheet.Cells[i, 3].Value = item.candidateName;
+                        Sheet.Cells[i, 4].Value = item.candidateEmail;         
+                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];                        
+                        Sheet.Cells[i, 6].Value = item.interviewer;
+                        Sheet.Cells[i, 7].Value = item.confirmationStatus;
+                        Sheet.Cells[i, 8].Value = item.MeetingStatusStatusDesc;
+                        Sheet.Cells[i, 9].Value = item.intervieweStatusStatDesc;
+                        Sheet.Cells[i, 10].Value = item.IRFId;
+                        Sheet.Cells[i, 11].Value = item.risebirdHR;
+                        Sheet.Cells[i, 12].Value = item.MobileNumber;
+                        Sheet.Cells[i, 13].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 14].Value = item.staffingAgency;
+                        i++;
+                    }
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "No data available in table !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+
+            }
+            catch (Exception)
+            {
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
         [HttpPost]
         public IActionResult SelectedPriorityClientMeetings(SelectedPriorityViewFilter filter)
         {
