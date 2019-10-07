@@ -154,27 +154,32 @@
                                 <div class="stats text-center">
                                     @if (!@item.IsClientUser)
                                     {
-                                        <button type="button" onclick="javascript:EditProject('@item.id');"  class="btn btn-primary btn-icon btn-sm " title="Edit">
+                                        <button type="button" onclick="javascript:EditProject('@item.id');" class="btn btn-primary btn-icon btn-sm " title="Edit">
                                             <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
                                         @*<button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
-                                        <i class="now-ui-icons fa fa-comments"></i>
-                                    </button>*@
+                <i class="now-ui-icons fa fa-comments"></i>
+            </button>*@
                                     }
-
+                                    <button type="button" onclick="location.href='@Url.Action("GetProjectInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Meetings">
+                                        <i class="now-ui-icons fa fa-meetup"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("GetSelectedInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Selected Meeting">
+                                        <i class="now-ui-icons fa fa-check"></i>
+                                    </button>
                                     @*<button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
-                                    <i class="now-ui-icons fa fa-meetup"></i>
-                                </button>*@
+            <i class="now-ui-icons fa fa-meetup"></i>GetSelectedInterviewMeetings
+        </button>*@
                                     @*<button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
-                                    <i class="now-ui-icons fa fa-check"></i>
-                                </button>*@
+            <i class="now-ui-icons fa fa-check"></i>
+        </button>*@
 
                                     @*<button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
-                                    <i class="now-ui-icons fa fa-industry"></i>
-                                </button>*@
+            <i class="now-ui-icons fa fa-industry"></i>
+        </button>*@
                                     @if (!@item.IsClientUser)
                                     {
-                                        <button type="button" onclick="javascript:DeleteProject('@item.id');"  class="btn btn-danger btn-icon btn-sm " title="Archive">
+                                        <button type="button" onclick="javascript:DeleteProject('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
                                             <i class="now-ui-icons fa fa-archive"></i>
                                         </button>
                                     }

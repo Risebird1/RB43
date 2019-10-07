@@ -166,7 +166,7 @@
                                 <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"  class="btn btn-info btn-icon btn-sm"  title="Selected Candidates">
                                     <i class="now-ui-icons fa fa-check"></i>
                                 </button>
-                                <button type="button"onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'"  class="btn btn-info btn-icon btn-sm"  title="Schedule Meeting">
+                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'"  class="btn btn-info btn-icon btn-sm"  title="Schedule Meeting">
                                     <i class="now-ui-icons  fa fa-calendar"></i>
                                 </button>
                                 <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
