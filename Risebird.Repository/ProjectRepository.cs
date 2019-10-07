@@ -51,7 +51,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select ProjectIRFMapping.*,IRF.IRFId as IRFName, IRF.ClientId from ProjectIRFMapping inner join IRF on ProjectIRFMapping.IRFId=IRF.id where ProjectIRFMapping.ProjectId = @ProjectId and ProjectIRFMapping.IsAdded=1";
+                var query = "select ProjectIRFMapping.*, Project.[Name] as ProjectName ,IRF.IRFId as IRFName, IRF.ClientId, IRF.id as IRFId from ProjectIRFMapping inner join IRF on ProjectIRFMapping.IRFId = IRF.id left join Project on ProjectIRFMapping.ProjectId = Project.id where ProjectIRFMapping.ProjectId = @ProjectId and ProjectIRFMapping.IsAdded = 1";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ProjectId", projectId);
                 using (SqlConnection con = new SqlConnection(connectionString))
