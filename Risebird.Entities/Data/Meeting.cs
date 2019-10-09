@@ -40,7 +40,8 @@ namespace Risebird.Entities.Data
         public string JDLink { get; set; }
         public string MobileNumber { get; set; }
         public string ApprovalComments { get; set; }
-
+        public int JobLevel { get; set; }
+        public string JobLevelDesc { get; set; }
 
     }
 }
