@@ -19,13 +19,15 @@ namespace Risebird.Business
         private readonly INotificationHelper _notificationHelper;
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly ITwilioHelper _twilioHelper;
+        private readonly IClientService _clientService;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper)
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _twilioHelper = twilioHelper;
             _notificationHelper = notificationHelper;
+            _clientService = clientService;
         }
 
         #region IRF Functions
@@ -552,7 +554,10 @@ namespace Risebird.Business
                 var calendlyLink = irf.CalendlyLink;
                 if (email != null && calendlyLink!=null)
                 {
-                    _notificationHelper.SendCandidateInvite(irf.IRFId,irf.JDTiltle.Split("|")[0],calendlyLink,email);
+                    var jdLink = irf.JDLink;
+                    var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
+                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x=>x.ClientRoleId==1 || x.ClientRoleId == 4);
+                    _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(),irf.JDTiltle.Split("|")[0],calendlyLink,email);
                     _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
                     return true;
                 }
