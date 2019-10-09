@@ -28,6 +28,12 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string CompanyType { get; set; }
 
+        [DisplayName("Total Budget")]
+        public int TotalBudget { get; set; }
+
+        [DisplayName("Budget Consumed")]
+        public string BudgetConsumed { get; set; }
+
         [DisplayName("Job Level")]
         public int? JobLevel { get; set; }
         public int ClientId { get; set; }
@@ -63,7 +69,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public int RisebirdHr { get; set; }
 
-        [DisplayName("Per Interview Rate(Rs.)")]
+        [DisplayName("Per Interview Rate")]
         [Required]
         public double PerMintuteRate { get; set; }
         public SelectList JobLevelList { get; set; }
@@ -114,6 +120,8 @@ namespace Risebird.Entities.ViewModel
         public bool IsDeleted { get; set; }
 
         public int TotalMeetings { get; set; }
+        public int TotalBudget { get; set; }
+        public string BudgetConsumed { get; set; }
         public int SelectedMeetings { get; set; }
         public int ScheduleMeetings { get; set; }
         public string CalendlyLink { get; set; }

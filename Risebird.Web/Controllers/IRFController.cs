@@ -59,6 +59,18 @@ namespace Risebird.Web.Controllers
                         }
                       
                         irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
+                        var confirmedMeetings = meetings.Where(x => x.confirmationStatus == "1").Count();
+                        var consumedBudget = (irf.PerMintuteRate * confirmedMeetings);
+                        if(irf.TotalBudget!=0)
+                        {
+                            consumedBudget = (consumedBudget / irf.TotalBudget) * (100);
+                            irf.BudgetConsumed = consumedBudget.ToString() + "%";
+                        }
+                        else
+                        {
+                            irf.BudgetConsumed = "Not Defined";
+                        }
+                        //irf.BudgetConsumed = consumedBudget + "%";
                     }
                     if (profileName != null && profileName.Contains("Client"))
                     {

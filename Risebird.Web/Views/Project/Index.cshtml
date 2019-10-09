@@ -174,9 +174,9 @@
             <i class="now-ui-icons fa fa-check"></i>
         </button>*@
 
-                                    @*<button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
-            <i class="now-ui-icons fa fa-industry"></i>
-        </button>*@
+                                    <button type="button" onclick="javascript:stats('@item.id','@item.Name');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                        <i class="now-ui-icons fa fa-industry"></i>
+                                    </button>
                                     @if (!@item.IsClientUser)
                                     {
                                         <button type="button" onclick="javascript:DeleteProject('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
@@ -356,9 +356,9 @@
         var url = '/Project/Edit?id=' + id;
         window.location.href = url;
     };
-    function stats(id, IRFid) {
+    function stats(id, name) {
 
-        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+        var url = '/Project/Stats?id=' + id + '&name=' + name;
         window.location.href = url;
     };
 </script>

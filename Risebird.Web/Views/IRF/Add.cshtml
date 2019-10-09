@@ -238,6 +238,17 @@
 
                                     </div>
                                     <div class="form-group">
+                                        @Html.LabelFor(model => model.TotalBudget, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="PerMintuteRate">Per Mintute Rate(Rs.)</label>*@
+
+                                        @Html.EditorFor(model => model.TotalBudget, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+                                        @Html.ValidationMessageFor(model => model.TotalBudget, "", new { @class = "text-danger" })
+
+                                        @*<input class="form-control text-box single-line" id="PerMintuteRate" name="PerMintuteRate" type="number" step="0.01" value="">*@
+
+                                    </div>
+                                    <div class="form-group">
                                         @Html.LabelFor(model => model.RisebirdHr, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird HR</label>*@
