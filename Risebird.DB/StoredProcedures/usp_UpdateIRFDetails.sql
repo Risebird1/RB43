@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @JobLevel int,
 @PerMintuteRate real,
 @CalendlyLink varchar(500),
+@TotalBudget int,
 @idIrf int output
 
 AS
@@ -51,6 +52,7 @@ set
 		   ,[JobLevel]=@JobLevel
            ,[PerMintuteRate]=@PerMintuteRate
 		   ,[CalendlyLink] =@CalendlyLink
+		   ,[TotalBudget]=@TotalBudget
 Where id =@id
 
 delete from TransClientUser where IRFId=@id
@@ -70,6 +72,7 @@ delete from TransSelectability where IRFId=@id
 
 
 End
+
 
 
 GO

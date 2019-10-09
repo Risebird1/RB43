@@ -251,7 +251,7 @@ namespace Risebird.Repository
             {
                 if (emailid != string.Empty && profileName == "Client")
                 {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid";
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IsDeleted", 0);
                     dynamicParameters.Add("@emailid", emailid);
@@ -263,7 +263,7 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IsDeleted", 0);
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -456,7 +456,8 @@ namespace Risebird.Repository
         {
             try
             {
-                
+                irfDetails.CreatedOn = DateTime.UtcNow;
+
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
                 //parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -465,7 +466,7 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
 
                     var irfList =  SqlMapper.QueryAsync<IRFVm>(
-                        con, "select * from IRF", null, commandType: Text).Result.AsList();
+                        con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                     
                     foreach (var item in irfDetails.Joinability)
@@ -1030,6 +1031,7 @@ namespace Risebird.Repository
             parameters.Add("@JobLevel", entity.JobLevel);
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
             parameters.Add("@TotalBudget", entity.TotalBudget);
+            parameters.Add("@CreatedOn", entity.CreatedOn);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

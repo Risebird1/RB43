@@ -15,6 +15,8 @@ CREATE TABLE [dbo].[IRF](
 			[RisebirdHr] [int] NOT NULL,
 			[TotalInvites][int] NOT NULL DEFAULT 0,
 			[CalendlyLink][VARCHAR](500) NULL,
+			[TotalBudget] [int] NULL,
+			[CreatedOn][DATETIME] NULL
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -48,6 +50,24 @@ BEGIN
     Add CalendlyLink VARCHAR(500)
 END
 
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalBudget')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add TotalBudget int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedOn')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CreatedOn int
+END
 END
 
 

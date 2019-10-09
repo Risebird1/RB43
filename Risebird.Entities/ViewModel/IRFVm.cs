@@ -72,6 +72,9 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Per Interview Rate")]
         [Required]
         public double PerMintuteRate { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
         public SelectList JobLevelList { get; set; }
         public IList<TransSkill> SkillCollection { get; set; }
         public IList<TransSkillGeneral> SkillGeneral { get; set; }
@@ -126,6 +129,6 @@ namespace Risebird.Entities.ViewModel
         public int ScheduleMeetings { get; set; }
         public string CalendlyLink { get; set; }
         public int TotalInvites { get; set; }
-
+        
     }
 }

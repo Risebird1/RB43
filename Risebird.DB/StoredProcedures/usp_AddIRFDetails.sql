@@ -11,12 +11,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
-
-
-
 CREATE PROCEDURE [dbo].[usp_AddIRFDetails]
 
 @IRFId nvarchar(200),
@@ -34,6 +28,8 @@ CREATE PROCEDURE [dbo].[usp_AddIRFDetails]
 @PerMintuteRate real,
 @JobLevel int,
 @CalendlyLink varchar(500),
+@TotalBudget int,
+@CreatedOn datetime,
 @idIrf int output
 
 AS
@@ -55,7 +51,8 @@ INSERT INTO [dbo].[IRF]
            ,[PerMintuteRate]  
 		   ,[JobLevel]
 		   ,[CalendlyLink]
-
+		   ,[TotalBudget]
+		   ,[CreatedOn]
 		   )
        VALUES
            (@IRFId,
@@ -72,10 +69,14 @@ INSERT INTO [dbo].[IRF]
 @RisebirdHr,
 @PerMintuteRate,
 @JobLevel,
-@CalendlyLink)
+@CalendlyLink,
+@TotalBudget,
+@CreatedOn)
 
 
 End
+
+
 
 
 GO
