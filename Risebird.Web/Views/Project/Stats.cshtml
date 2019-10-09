@@ -1,0 +1,349 @@
+﻿
+@{
+    ViewData["Title"] = "Project stats";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Project Interview Stats
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interview Stats For <b>@ViewBag.ProjectName</b></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-right">
+                            @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 ml-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Meetings Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5 mr-auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Interview Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="myChartselected"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">HR Staffing Meeting Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">HR Staffing Interview Status</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+<script type="text/javascript">
+    $.ajax({
+        url: '/Project/NewChart?id=' + '@ViewBag.ProjectId',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+
+            var aData = chData;
+            var aLabels = aData[0];
+            var aDatasets1 = aData[1];
+            var dataT = {
+                labels: aLabels,
+                datasets: [{
+                    label: "Meeting Status",
+                    data: aDatasets1,
+                    fill: false,
+                    //backgroundColor: [ "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+
+                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    borderColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)", "rgb(255, 99, 132)", "rgb(63, 191, 63)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
+                    borderWidth: 1
+                }]
+            };
+            var ctx = $("#myChart").get(0).getContext("2d");
+            var myNewChart = new Chart(ctx, {
+                type: 'bar',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true },
+                    //title: { display: true, text: 'CHART.JS DEMO CHART' },
+                    legend: { position: 'bottom' },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
+                    },
+                }
+            });
+        }
+    });
+
+    $.ajax({
+        url: '/Project/NewChartSelected?id=' + '@ViewBag.ProjectId',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+
+            var aData = chData;
+            var aLabels = aData[0];
+            var aDatasets1 = aData[1];
+            var dataT = {
+                labels: aLabels,
+                datasets: [{
+                    label: "Interview Status",
+                    data: aDatasets1,
+                    fill: false,
+                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    borderColor: ["rgb(54, 162, 235)", "rgb(63, 191, 63)", "rgb(255, 99, 132)", "rgb(255, 205, 86)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
+                    borderWidth: 1
+                }]
+            };
+            var ctx = $("#myChartselected").get(0).getContext("2d");
+            var myNewChart = new Chart(ctx, {
+                type: 'bar',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true },
+                    //title: { display: true, text: 'CHART.JS DEMO CHART' },
+                    legend: { position: 'bottom' },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 50, beginAtZero: true } }]
+                    },
+                }
+            });
+        }
+    });
+
+    $.ajax({
+        url: '/Project/NewChartClientMeetingData?id=' + '@ViewBag.ProjectId',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+
+
+            var xAxisData = [];
+            var yData1 = [];
+            var yData2 = [];
+            var yData3 = [];
+            var yData4 = [];
+
+            for (i = 0; i < chData.length; i++) {
+                xAxisData.push(chData[i].name);
+                yData1.push(chData[i].noShowCount);
+                yData2.push(chData[i].scheduledCount);
+                yData3.push(chData[i].droppedCount);
+                yData4.push(chData[i].completedCount);
+
+            }
+
+            var yDataSets = [{
+                label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            }, {
+                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+            }, {
+                    label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            }, {
+                    label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+            }
+            ]
+            var chart = new Chart(clientIndiv, {
+                type: 'bar',
+                data: {
+                    labels: xAxisData,//['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
+                    // create 12 datasets, since we have 12 items
+                    // data[0] = labels[0] (data for first bar - 'Standing costs') | data[1] = labels[1] (data for second bar - 'Running costs')
+                    // put 0, if there is no data for the particular bar
+                    datasets: yDataSets
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right',
+                        // place legend on the right side of chart
+                    },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: true}, stacked:true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                    },
+                }
+            });
+
+
+        }
+    });
+
+    $.ajax({
+        url: '/Project/NewChartClientFeedbackData?id=' + '@ViewBag.ProjectId',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+
+
+            var xAxisData = [];
+            var yData1 = [];
+            var yData2 = [];
+            var yData3 = [];
+            var yData4 = [];
+
+            for (i = 0; i < chData.length; i++) {
+                xAxisData.push(chData[i].name);
+                yData1.push(chData[i].proxyCount);
+                yData2.push(chData[i].selectedCount);
+                yData3.push(chData[i].rejectedCount);
+                yData4.push(chData[i].borderLineCount);
+
+            }
+
+            var yDataSets = [{
+                label: 'Proxy', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            }, {
+                    label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+            }, {
+                    label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+            }, {
+                    label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+            }
+            ]
+            var chart = new Chart(clientIndivFeedback, {
+                type: 'bar',
+                data: {
+                    labels: xAxisData,//['Hr Stats', 'Staffing Stats'], // responsible for how many bars are gonna show on the chart
+                    // create 12 datasets, since we have 12 items
+                    // data[0] = labels[0] (data for first bar - 'Standing costs') | data[1] = labels[1] (data for second bar - 'Running costs')
+                    // put 0, if there is no data for the particular bar
+                    datasets: yDataSets
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        labels: {
+                            usePointStyle: true
+                        },
+                        position: 'right' // place legend on the right side of chart
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: { display: false }, display: true, ticks: { autoSkip: true}, stacked: true, scaleLabel: { display: false, labelString: '' }}],
+                        yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                    },
+                }
+            });
+
+
+        }
+    });
+
+
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
+        //demo.initChartPageCharts();
+
+    });
+</script>

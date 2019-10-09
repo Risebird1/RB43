@@ -345,6 +345,7 @@ namespace Risebird.Business
                 model.JobLevel = IRF.JobLevel;
                 model.CalendlyLink = IRF.CalendlyLink;
                 model.TotalInvites = IRF.TotalInvites;
+                model.TotalBudget = IRF.TotalBudget;
 
                 var skillCount = transTechSkills.Count();
                 return model;
