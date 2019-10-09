@@ -190,17 +190,20 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCandidateInvite( string irfName, string primarySkill, string calendlyLink, string emailId)
+        public string SendCandidateInvite( string ClientName,string jdLink, List<TransClientUser> clientUsers,string primarySkill, string calendlyLink, string emailId)
         {
             try
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
-                mailMessage.Bcc.Add(new MailAddress(emailId.ToLower(), null));
-
-                object[] parameters = new object[] { irfName, calendlyLink, primarySkill};
-                mailMessage.Subject ="Interview invitation.";
+                mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
+               
+                foreach (var clientUser in clientUsers)
+                {
+                    mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
+                }
+                object[] parameters = new object[] { ClientName, primarySkill, jdLink,calendlyLink };
+                mailMessage.Subject = ClientName +" Video Interview "+ primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
