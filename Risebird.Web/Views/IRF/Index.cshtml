@@ -152,31 +152,34 @@
                             <div class="stats text-center">
                                 @if (!@item.IsClientUser)
                                 {
-                                    <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm" >
+                                    <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
                                         <i class="now-ui-icons fa fa-edit"></i>
                                     </button>
-                                    <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm"  title="Questions">
+                                    <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
                                         <i class="now-ui-icons fa fa-comments"></i>
                                     </button>
                                 }
-                                <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');"  class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
                                 </button>
-                                <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');"  class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
-                                <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"  class="btn btn-info btn-icon btn-sm"  title="Selected Candidates">
+                                <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
                                     <i class="now-ui-icons fa fa-check"></i>
                                 </button>
-                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'"  class="btn btn-info btn-icon btn-sm"  title="Schedule Meeting">
+                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                     <i class="now-ui-icons  fa fa-calendar"></i>
+                                </button>
+                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
                                 </button>
                                 <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                     <i class="now-ui-icons fa fa-industry"></i>
                                 </button>
                                 @if (!@item.IsClientUser)
                                 {
-                                    <button type="button" onclick="javascript:DeleteIRF('@item.id');"  class="btn btn-danger btn-icon btn-sm"  title="Archive">
+                                    <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
                                         <i class="now-ui-icons fa fa-archive"></i>
                                     </button>
                                 }

@@ -1784,5 +1784,143 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult InterviewPlanner(int irfId, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var planner = new InterviewPlanner();
+                        planner.IRFId = irfId;
+                        planner.IRFName = irfName;
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid);
+                        if(meetings != null)
+                        {
+                            planner.Overall = (meetings != null ? meetings.Count() : 0);
+                            planner.RisebirdSelectionTotal = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).Count();//new List<MeetingVM>();
+                            planner.TotalInvites = _irfRepository.GetAllIRF(emailid, profileName).Where(x => x.id == irfId).FirstOrDefault().TotalInvites;
+                            planner.ConfirmationTotal = meetings.Where(x => x.confirmationStatus != null && x.confirmationStatus == "1").Count();
+                            planner.CompletionTotal = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus == 4).Count();
+                            planner.ApprovalTotal = meetings.Where(x => x.IsApproved.HasValue && x.IsApproved == 1).Count();
+                            planner.FinalSelectionTotal = meetings.Where(x => x.IsSelected.HasValue && x.IsSelected == 1).Count();
+                            planner.OfferAcceptanceTotal = meetings.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 2).Count();
+                            planner.JoiningTotal = meetings.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1).Count();
+
+                            if(planner.Overall!=0)
+                            {
+                                planner.InvitePercentage = ((planner.TotalInvites *100)/ planner.Overall);
+                            }
+                            if(planner.TotalInvites!=0)
+                            {
+                                planner.ConfirmationPercentage = ((planner.ConfirmationTotal *100)/ planner.TotalInvites);
+
+                            }
+
+                            if (planner.ConfirmationTotal != 0)
+                            {
+                                planner.CompletionPercentage = ((planner.CompletionTotal * 100)/ planner.ConfirmationTotal) ;
+
+                            }
+                            if (planner.CompletionTotal != 0)
+                            {
+                                planner.RisebirdSelectionPercentage = ((planner.RisebirdSelectionTotal * 100) / planner.CompletionTotal);
+
+                            }
+                            if (planner.RisebirdSelectionTotal != 0)
+                            {
+                                planner.ApprovalPercentage = ((planner.ApprovalTotal *100) / planner.RisebirdSelectionTotal) ;
+
+                            }
+                            if (planner.ApprovalTotal != 0)
+                            {
+                                planner.FinalSelectionPercentage = ((planner.FinalSelectionTotal *100)/ planner.ApprovalTotal);
+
+                            }
+                            if (planner.FinalSelectionTotal != 0)
+                            {
+                                planner.OfferAcceptancePercentage = ((planner.OfferAcceptanceTotal * 100) / planner.FinalSelectionTotal) ;
+
+                            }
+                            if (planner.OfferAcceptanceTotal!= 0)
+                            {
+                                planner.JoiningPercentage = ((planner.JoiningTotal * 100 )/ planner.OfferAcceptanceTotal) ;
+
+                            }
+                            if (planner.Overall != 0)
+                            {
+                                planner.OverallPercentage = ((planner.JoiningTotal * 100) / planner.Overall) ;
+
+                            }
+                        }
+
+
+                        //ViewBag.IRFintId = id;
+                        //ViewBag.IsSelected = false;
+                        //foreach (var m in meetings)
+                        //{
+                        //    if (m.InterviewStatus.HasValue)
+                        //    {
+                        //        m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
+                        //    }
+                        //    if (m.L2InterviewStatus.HasValue)
+                        //    {
+                        //        m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
+                        //    }
+                        //    if (m.L2InterviewStatus.HasValue)
+                        //    {
+                        //        m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
+                        //    }
+                        //    if (m.JoiningStatus.HasValue)
+                        //    {
+                        //        m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
+                        //    }
+                        //    if (m.PreparationStatus.HasValue)
+                        //    {
+                        //        m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
+                        //    }
+                        //    if (m.OfferStatus.HasValue)
+                        //    {
+                        //        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                        //    }
+                        //    if (m.MeetingStatus.HasValue)
+                        //    {
+                        //        m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
+                        //    }
+                        //    if (m.QCStatus.HasValue)
+                        //    {
+                        //        m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                        //    }
+
+                        //}
+
+
+                        return View(planner);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
     }
 }
