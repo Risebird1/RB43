@@ -33,8 +33,8 @@ namespace Risebird.Business.Interface
         string GetClientUserRole(int id);
         IEnumerable<Interviewer> GetInterviewers(string skills);
         IEnumerable<Candidate> GetIRFCandidates(int id);
-        Task<bool> AddCandidate(Candidate obj);
-        Task<bool> AddMultipleCandidates(List<Candidate> candidateList);
+        Task<string> AddCandidate(Candidate obj);
+        Task<string> AddMultipleCandidates(List<Candidate> candidateList);
         Task<bool> DeleteCandidate(int id);
         Candidate GetCandidate(int id, int irfId);
         bool UpdateCandidate(Candidate obj);

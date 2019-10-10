@@ -347,7 +347,7 @@
 
 
 
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("Success")) {
                 swal({
                     title: 'Successful',
                     text: '@ViewBag.Message',
@@ -358,7 +358,8 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Interview/Index';
+                        //window.location.href = '/IRF/Index';
+                        location.reload(true);
                     }
                 )
 
@@ -373,7 +374,9 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Interview/Index';
+                        //window.location.href = '/IRF/Index';
+                        location.reload(true);
+
                     }
                 )
             }
@@ -506,9 +509,9 @@
 
         // When the user clicks the button, open the modal
         modal.style.display = "block";
-    
+
     }
-    
+
 </script>
 <script>
     function DeleteCandidate(id) {

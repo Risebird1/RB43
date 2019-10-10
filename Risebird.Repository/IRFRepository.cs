@@ -1214,7 +1214,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<bool> AddCandidate(Candidate obj)
+        public async Task<string> AddCandidate(Candidate obj)
         {
             try
             {
@@ -1231,8 +1231,8 @@ namespace Risebird.Repository
                         ResumeLink = obj.ResumeLink
 
                     });
-                   
-                    return true;
+                    
+                    return "Candidate added successfully.";
                 }
 
             }
@@ -1240,17 +1240,17 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not add candidate.";
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not add candidate.";
             }
         }
 
-        public async Task<bool> AddMultipleCandidates(List<Candidate> candidateList)
+        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList)
         {
             try
             {
@@ -1274,7 +1274,7 @@ namespace Risebird.Repository
                     }
                     
 
-                    return true;
+                    return "Candidates imported successfully.";
                 }
 
             }
@@ -1282,13 +1282,13 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not import candidates.";
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not import candidates.";
             }
         }
 

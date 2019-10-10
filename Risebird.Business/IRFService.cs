@@ -489,30 +489,46 @@ namespace Risebird.Business
 
         }
 
-        public async Task<bool> AddCandidate(Candidate obj)
+        public async Task<string> AddCandidate(Candidate obj)
         {
             try
             {
+                //check if the candidate email exists for the IRFId
+                var duplicate = _irfRepository.GetIRFCandidates(obj.IRFId).Where(x=> x.EmailId==obj.EmailId);
+                if(duplicate != null && duplicate.Count()>0)
+                {
+                    return "Sorry! Candidate already exists for the IRF.";
+                }
                 return _irfRepository.AddCandidate(obj).Result;
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not add candidate.";
             }
         }
-        public async Task<bool> AddMultipleCandidates(List<Candidate> candidateList)
+        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList)
         {
             try
             {
+                var candidates = _irfRepository.GetIRFCandidates(candidateList.FirstOrDefault().IRFId);
+                foreach (var candidate in candidateList)
+                {
+                    //check if the candidate email exists for the IRFId
+                    var duplicate = candidates.Where(x => x.EmailId == candidate.EmailId);
+                    if (duplicate != null && duplicate.Count() > 0)
+                    {
+                        return "Sorry! One or more candidates already exist for the IRF.";
+                    }
+                }
                 return _irfRepository.AddMultipleCandidates(candidateList).Result;
             }
 
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
+                return "Sorry! Could not import candidates.";
             }
         }
         public Candidate GetCandidate(int id, int irfId)
