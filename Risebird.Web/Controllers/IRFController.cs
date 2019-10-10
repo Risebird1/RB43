@@ -1410,7 +1410,12 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
-                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id));                       
+                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id));
+                        if(TempData["SuccessErrorMessageCandidate"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
+                            TempData.Remove("SuccessErrorMessageCandidate");
+                        }
                         return View(candidateList);
 
                         //return View();
@@ -1476,16 +1481,19 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        if (_irfService.AddCandidate(model).Result)
-                        {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate added Successfully";
-                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
-                        }
+                        var result = _irfService.AddCandidate(model).Result;
+                        TempData["SuccessErrorMessageCandidate"] = result;
+                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        //if (result.ToLower().Contains("success"))
+                        //{
+                        //    TempData["SuccessErrorMessageCandidate"] = result;
+                        //    return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        //}
+                        //else
+                        //{
+                        //    TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
+                        //    return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        //}
                     }
                     else
                     {
@@ -1542,18 +1550,10 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-
-                        if (_irfService.AddMultipleCandidates(candidateList).Result)
-                        {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidates added Successfully!";
-                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                            return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
-                        }
-
+                        var result = _irfService.AddMultipleCandidates(candidateList).Result;
+                        TempData["SuccessErrorMessageCandidate"] = result;
+                        return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        
                     }
 
                     else
