@@ -10,17 +10,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-CREATE PROCEDURE [dbo].[usp_MyInterviews]   
-@emailID varchar(200)      
-AS    
-BEGIN    
-select InterviewMeetings.*, irf.id as irfIntId, irf.JDLink, ic.ApprovalComments from InterviewMeetings  
- inner join IRF  irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComments ic on InterviewMeetings.id = ic.InterviewId   
- where interviewer =@emailID and confirmationStatus = 1    
-    
-END 
+ 
+CREATE PROCEDURE [dbo].[usp_MyInterviews]     
+@emailID varchar(200)        
+AS      
+BEGIN      
+select InterviewMeetings.*, irf.id as irfIntId, irf.JDLink,irf.JobLevel, ic.ApprovalComments,ic.VideoLink from InterviewMeetings    
+ inner join IRF  irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComments ic on InterviewMeetings.id = ic.InterviewId     
+ where interviewer =@emailID and confirmationStatus = 1      
+      
+END   
 GO
 
 
