@@ -35,6 +35,7 @@ namespace Risebird.Business
         {
             try
             {
+                irfDetails.CreatedOn = DateTime.UtcNow;
                 return  _irfRepository.AddIRFDetails(irfDetails).Result;
             }
 
@@ -475,6 +476,19 @@ namespace Risebird.Business
             }
             
         }
+        public InterviewPlanner GetInterviewPlanner(int id)
+        {
+            try
+            {
+                return _irfRepository.GetInterviewPlanner(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
         public IEnumerable<Candidate> GetIRFCandidates(int id)
         {
             try
@@ -568,13 +582,20 @@ namespace Risebird.Business
                 var irf = _irfRepository.GetIRFbyId(irfId);
                 var inviteCount = irf.TotalInvites;
                 var calendlyLink = irf.CalendlyLink;
+                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.EmailId == email).FirstOrDefault();
+                //var candidateInviteCount = candidate.TotalInvites;
                 if (email != null && calendlyLink!=null)
                 {
                     var jdLink = irf.JDLink;
                     var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
                     var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x=>x.ClientRoleId==1 || x.ClientRoleId == 4);
                     _notificationHelper.SendCandidateInvite(ClientName, jdLink, irfClientUsers.ToList(),irf.JDTiltle.Split("|")[0],calendlyLink,email);
-                    _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+                    if(candidate.TotalInvites==0)
+                    {
+                        _irfRepository.UpdateIRFInvites(irfId, (inviteCount + 1));
+
+                    }
+                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites +1));
                     return true;
                 }
                 return false;

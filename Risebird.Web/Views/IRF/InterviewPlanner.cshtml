@@ -136,81 +136,140 @@
                                                 <td>Joining rate</td>
                                                 <td>50%</td>
                                                 <td>@Model.JoiningPercentage%</td>
-                                                <td>14</td>
-                                                <td>Staffing Agency</td>
+                                                
+                                                <td>
+                                                    @Html.EditorFor(m => m.JoiningProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.JoiningOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.JoiningTotal</td>
-                                                <td>t-14 days</td>
+                                                <td>
+                                                    @Model.IRFCreatedOn.AddDays(Model.OverAllProcessingTime - Model.JoiningProcessingTime)
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>Offer Acceptance rate</td>
                                                 <td>50%</td>
                                                 <td>@Model.OfferAcceptancePercentage%</td>
-                                                <td>2</td>
-                                                <td>Staffing Agency</td>
+
+                                                <td>
+                                                    @Html.EditorFor(m => m.OfferProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.OfferOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.OfferAcceptanceTotal</td>
-                                                <td>t-16 days</td>
+                                                <td>
+                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime + Model.ApprovalProcessingTime +Model.FinalSelectionProcessingTime)
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>Final selection rate</td>
                                                 <td>33%</td>
                                                 <td>@Model.FinalSelectionPercentage%</td>
-                                                <td>4</td>
-                                                <td>Risebird Interviewer and Delivery Team</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.FinalSelectionProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.FinalSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.FinalSelectionTotal</td>
-                                                <td>t-20 days</td>
+                                                <td>
+                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime + Model.RisebirdSelectionProcessingTime+Model.ApprovalProcessingTime)
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>Approval Rate</td>
                                                 <td>80%</td>
                                                 <td>@Model.ApprovalPercentage%</td>
-                                                <td>1</td>
-                                                <td>Risebird Interviewer and Delivery Team</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.ApprovalProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.ApprovalOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.ApprovalTotal</td>
                                                 <td>
-                                                    t-21 days
+                                                    @Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime +Model.RisebirdSelectionProcessingTime)
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Risebird Selection rate</td>
                                                 <td>33%</td>
                                                 <td>@Model.RisebirdSelectionPercentage%</td>
-                                                <td>1</td>
-                                                <td>Staffing agency</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.RisebirdSelectionProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.RisebirdSelectionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.RisebirdSelectionTotal</td>
-                                                <td>t-22 days</td>
+                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime + Model.CompletionProcessingTime)</td>
                                             </tr>
                                             <tr>
                                                 <td>Completion Rate</td>
                                                 <td>80%</td>
                                                 <td>@Model.CompletionPercentage%</td>
-                                                <td>2</td>
-                                                <td>Staffing agency and Risebird</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.CompletionProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.CompletionOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.CompletionTotal</td>
-                                                <td>t-24 days</td>
+                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime + Model.ConfirmationProcessingTime)</td>
                                             </tr>
                                             <tr>
                                                 <td>Confirmation Rate</td>
                                                 <td>80%</td>
                                                 <td>@Model.ConfirmationPercentage%</td>
-                                                <td>2</td>
-                                                <td>Staffing agency</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.ConfirmationProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.ConfirmationOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.ConfirmationTotal</td>
-                                                <td>t-26 days</td>
+                                                <td>@Model.IRFCreatedOn.AddDays(Model.InviteProcessingTime)</td>
                                             </tr>
                                             <tr>
                                                 <td>Invite Rate</td>
                                                 <td>90%</td>
                                                 <td>@Model.InvitePercentage%</td>
-                                                <td>2</td>
-                                                <td>Staffing agency</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.InviteProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
+                                                <td>
+                                                    @Html.EditorFor(model => model.InviteOwnedBy, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+
+                                                </td>
                                                 <td>@Model.TotalInvites</td>
-                                                <td>t-28 days</td>
+                                                <td>@Model.IRFCreatedOn</td>
                                             </tr>
                                             <tr>
                                                 <td>Overall</td>
                                                 <td>1.25%</td>
-                                                <td>@Model.OverallPercentage</td>
-                                                <td>28</td>
+                                                <td>@Model.OverallPercentage%</td>
+                                                <td>
+                                                    @Html.EditorFor(m => m.OverAllProcessingTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number" } })
+
+                                                </td>
                                                 <td></td>
                                                 <td>@Model.Overall</td>
                                                 <td></td>

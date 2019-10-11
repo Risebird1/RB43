@@ -66,7 +66,7 @@ IF NOT EXISTS(
       AND Object_ID = Object_ID(N'IRF'))
 BEGIN
     ALTER TABLE IRF
-    Add CreatedOn int
+    Add CreatedOn Date
 END
 END
 

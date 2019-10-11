@@ -195,7 +195,7 @@ namespace Risebird.CommonHelper
             try
             {
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
                
                 foreach (var clientUser in clientUsers)
