@@ -51,5 +51,7 @@ namespace Risebird.Repository.Interface
         bool UpdateCandidate(Candidate obj);
         IRF GetIRFbyId(int id);
         bool UpdateIRFInvites(int id, int totalInvites);
+        bool UpdateCandidateInvites(int id, int totalInvites);
+        InterviewPlanner GetInterviewPlanner(int id);
     }
 }

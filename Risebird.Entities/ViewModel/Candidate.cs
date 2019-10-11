@@ -23,5 +23,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string ResumeLink { get; set; }
         public string IRFName { get; set; }
+        public int TotalInvites { get; set; }
     }
 }

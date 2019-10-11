@@ -39,5 +39,6 @@ namespace Risebird.Business.Interface
         Candidate GetCandidate(int id, int irfId);
         bool UpdateCandidate(Candidate obj);
         bool SendInvite(int irfId, string email);
+        InterviewPlanner GetInterviewPlanner(int id);
     }
 }

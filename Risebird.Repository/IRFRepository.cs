@@ -433,6 +433,29 @@ namespace Risebird.Repository
             }
 
         }
+        public bool UpdateCandidateInvites(int id, int totalInvites)
+        {
+            try
+            {
+                var query = "Update Candidate set TotalInvites=@TotalInvites where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@TotalInvites", totalInvites);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
 
 
         public IEnumerable<Users> GetUsers()
@@ -459,6 +482,7 @@ namespace Risebird.Repository
                
 
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
+                parameters.Add("@CreatedOn", irfDetails.CreatedOn);
                 //parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1214,6 +1238,25 @@ namespace Risebird.Repository
             }
         }
 
+        public InterviewPlanner GetInterviewPlanner(int id)
+        {
+            try
+            {
+                var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<InterviewPlanner>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
         public async Task<string> AddCandidate(Candidate obj)
         {
             try

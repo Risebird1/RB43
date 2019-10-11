@@ -8,7 +8,27 @@ namespace Risebird.Entities.ViewModel
     {
 
         public string IRFName { get; set; }
+        public string InviteOwnedBy { get; set; }
+        public string ConfirmationOwnedBy { get; set; }
+        public string CompletionOwnedBy { get; set; }
+        public string RisebirdSelectionOwnedBy { get; set; }
+        public string ApprovalOwnedBy { get; set; }
+        public string FinalSelectionOwnedBy { get; set; }
+        public string OfferOwnedBy { get; set; }
+        public string JoiningOwnedBy { get; set; }
+        public DateTime IRFCreatedOn { get; set; }
         public int IRFId { get; set; }
+        public int OverAllProcessingTime { get; set; }
+
+        public int InviteProcessingTime { get; set; }
+        public int ConfirmationProcessingTime { get; set; }
+
+        public int CompletionProcessingTime { get; set; }
+        public int RisebirdSelectionProcessingTime { get; set; }
+        public int ApprovalProcessingTime { get; set; }
+        public int FinalSelectionProcessingTime { get; set; }
+        public int OfferProcessingTime { get; set; }
+        public int JoiningProcessingTime { get; set; }
         public int Overall { get; set; }
         public int TotalInvites { get; set; }
         public int ConfirmationTotal { get; set; }
