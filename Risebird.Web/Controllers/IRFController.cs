@@ -1410,8 +1410,15 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
-                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id));
-                        if(TempData["SuccessErrorMessageCandidate"] != null)
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)?.ToList();
+                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id))?.ToList();
+                        if(candidateList!= null && candidateList.Count>0)
+                        {
+                            
+                            candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                        }
+
+                        if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
                             TempData.Remove("SuccessErrorMessageCandidate");
