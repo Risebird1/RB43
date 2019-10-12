@@ -1447,6 +1447,116 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
+        public FileContentResult ExportCandidateList(string irfId, string irfName)
+        {
+            ExcelPackage Ep = new ExcelPackage();
+            ExcelWorksheet Sheet = Ep.Workbook.Worksheets.Add("Candidate Report");
+            string fileName = "Risebird" + DateTime.Now.ToString("dd/MM/yyyy") + "_" + irfName + "_Candidate_Report" + ".xlsx";
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {                       
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid)?.ToList();
+                        var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(irfId))?.ToList();
+                        if (candidateList != null && candidateList.Count > 0)
+                        {
+
+                            candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
+                        }
+
+                        string userEmailId = string.Empty;
+                     
+                        Sheet.Cells["A1:P1"].Style.Font.Bold = true;
+                        Sheet.Cells["A1:P1"].Style.Font.Size = 12;
+                        Sheet.Cells["A1:P1"].Style.WrapText = true;
+                        //Sheet.Column(1).Width = 30;
+                        //Sheet.Column(2).Width = 30;
+                        int startColumn = 1; int endColumn = 14;
+                        for (int a = startColumn; a <= endColumn; a++)
+                        {
+                            Sheet.Column(a).Width = 30;
+                        }
+                        Sheet.Cells[1, 1].Value = "Candidate Name";
+                        Sheet.Cells[1, 2].Value = "Candidate Email";
+                        Sheet.Cells[1, 3].Value = "Resume";
+                        Sheet.Cells[1, 4].Value = "Invite Sent";
+                        Sheet.Cells[1, 5].Value = "Invite Conformation";
+                       
+                        int i = 2;
+                        //string LastAction = null; ;
+
+                        if (candidateList.Count() > 0)
+                        {
+                            foreach (var item in candidateList)
+                            {
+                                Sheet.Cells[i, 1].Value = item.Name;
+                                Sheet.Cells[i, 2].Value = item.EmailId;
+                                if (!string.IsNullOrEmpty(item.ResumeLink))
+                                {
+                                    try
+                                    {
+                                        Sheet.Cells[i, 3].Hyperlink = new Uri(item.ResumeLink, UriKind.Absolute);
+                                        Sheet.Cells[i, 3].Value = "Resume Link";
+                                        Sheet.Cells[i, 3].Style.Font.UnderLine = true;
+                                        Sheet.Cells[i, 3].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Sheet.Cells[i, 3].Value = "No Resume";
+                                    }
+                                }
+                                else
+                                {
+                                    Sheet.Cells[i, 3].Value = "No Resume";
+                                }
+                                Sheet.Cells[i, 4].Value = item.TotalInvites;
+                                Sheet.Cells[i, 5].Value = item.InviteConfirmation;
+                               
+                                i++;
+                            }
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+                        else
+                        {
+                            ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                            Rng.Value = "No data available in table !!!";
+                            return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                        }
+
+                        //return View();
+                    }
+                    else
+                    {
+                        ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                        Rng.Value = "Data export failed !!!";
+                        return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                    }
+                }
+                else
+                {
+                    ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                    Rng.Value = "Data export failed !!!";
+                    return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                ExcelRange Rng = Sheet.Cells[2, 2, 2, 2];
+                Rng.Value = "Data export failed !!!";
+                return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
         public IActionResult AddCandidate(string irfId, string irfName)
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
