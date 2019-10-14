@@ -53,5 +53,6 @@ namespace Risebird.Repository.Interface
         bool UpdateIRFInvites(int id, int totalInvites);
         bool UpdateCandidateInvites(int id, int totalInvites);
         InterviewPlanner GetInterviewPlanner(int id);
+        Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
     }
 }

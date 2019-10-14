@@ -94,11 +94,18 @@
                             <div class="toolbar">
 
                                 <div class="row">
+                                    @*<div class="col-md- ml-md-auto">
 
-                                    <div class="col-md-3 ml-md-auto">
+                                    </div>*@
+
+                                    <div class="col-md-3 ml-md-auto" >
                                         <div class="form-group">
-                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);", @style="margin-left:442px" })
                                         </div>
+                                    </div>
+                                    <div class="col-md-3 ml-md-auto" >
+                                        <button type="button" style="margin-left:141px;margin-top: 2px;" class="btn btn-primary " ><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
+
                                     </div>
                                     <div>
                                         <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview")'"></i>

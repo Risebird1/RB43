@@ -1806,15 +1806,9 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        var planner = _irfService.GetInterviewPlanner(irfId);
-                        if (planner != null)
-                        {
-                            return View(new InterviewPlanner());
-                        }
-                        planner.IRFId = irfId;
-                        planner.IRFName = irfName;
+                        var planner = new InterviewPlanner();
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(irfId), profileName, emailid);
-                        if(meetings != null)
+                        if (meetings != null)
                         {
                             planner.Overall = (meetings != null ? meetings.Count() : 0);
                             planner.RisebirdSelectionTotal = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).Count();//new List<MeetingVM>();
@@ -1826,19 +1820,19 @@ namespace Risebird.Web.Controllers
                             planner.OfferAcceptanceTotal = meetings.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 2).Count();
                             planner.JoiningTotal = meetings.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1).Count();
 
-                            if(planner.Overall!=0)
+                            if (planner.Overall != 0)
                             {
-                                planner.InvitePercentage = ((planner.TotalInvites *100)/ planner.Overall);
+                                planner.InvitePercentage = ((planner.TotalInvites * 100) / planner.Overall);
                             }
-                            if(planner.TotalInvites!=0)
+                            if (planner.TotalInvites != 0)
                             {
-                                planner.ConfirmationPercentage = ((planner.ConfirmationTotal *100)/ planner.TotalInvites);
+                                planner.ConfirmationPercentage = ((planner.ConfirmationTotal * 100) / planner.TotalInvites);
 
                             }
 
                             if (planner.ConfirmationTotal != 0)
                             {
-                                planner.CompletionPercentage = ((planner.CompletionTotal * 100)/ planner.ConfirmationTotal) ;
+                                planner.CompletionPercentage = ((planner.CompletionTotal * 100) / planner.ConfirmationTotal);
 
                             }
                             if (planner.CompletionTotal != 0)
@@ -1848,33 +1842,63 @@ namespace Risebird.Web.Controllers
                             }
                             if (planner.RisebirdSelectionTotal != 0)
                             {
-                                planner.ApprovalPercentage = ((planner.ApprovalTotal *100) / planner.RisebirdSelectionTotal) ;
+                                planner.ApprovalPercentage = ((planner.ApprovalTotal * 100) / planner.RisebirdSelectionTotal);
 
                             }
                             if (planner.ApprovalTotal != 0)
                             {
-                                planner.FinalSelectionPercentage = ((planner.FinalSelectionTotal *100)/ planner.ApprovalTotal);
+                                planner.FinalSelectionPercentage = ((planner.FinalSelectionTotal * 100) / planner.ApprovalTotal);
 
                             }
                             if (planner.FinalSelectionTotal != 0)
                             {
-                                planner.OfferAcceptancePercentage = ((planner.OfferAcceptanceTotal * 100) / planner.FinalSelectionTotal) ;
+                                planner.OfferAcceptancePercentage = ((planner.OfferAcceptanceTotal * 100) / planner.FinalSelectionTotal);
 
                             }
-                            if (planner.OfferAcceptanceTotal!= 0)
+                            if (planner.OfferAcceptanceTotal != 0)
                             {
-                                planner.JoiningPercentage = ((planner.JoiningTotal * 100 )/ planner.OfferAcceptanceTotal) ;
+                                planner.JoiningPercentage = ((planner.JoiningTotal * 100) / planner.OfferAcceptanceTotal);
 
                             }
                             if (planner.Overall != 0)
                             {
-                                planner.OverallPercentage = ((planner.JoiningTotal * 100) / planner.Overall) ;
+                                planner.OverallPercentage = ((planner.JoiningTotal * 100) / planner.Overall);
 
                             }
                         }
+
+                        planner = _irfService.GetInterviewPlanner(irfId);
+                        if (planner.ApprovalOwnedBy == null)
+                        {
+                            planner.JoiningOwnedBy = "Staffing agency";
+                            planner.OfferOwnedBy = "Staffing agency";
+                            planner.FinalSelectionOwnedBy = "Risebird Interviewer and Delivery Team";
+                            planner.ApprovalOwnedBy = "Risebird Interviewer and Delivery Team";
+                            planner.RisebirdSelectionOwnedBy = "Staffing agency";
+                            planner.CompletionOwnedBy = "Staffing agency and Risebird";
+                            planner.ConfirmationOwnedBy= "Staffing agency";
+                            planner.InviteOwnedBy = "Staffing agency";
+                            planner.JoiningProcessingTime =14;
+                            planner.OfferProcessingTime =2;
+                            planner.FinalSelectionProcessingTime = 4;
+                            planner.ApprovalProcessingTime = 1;
+                            planner.RisebirdSelectionProcessingTime = 1;
+                            planner.CompletionProcessingTime = 2;
+                            planner.ConfirmationProcessingTime = 2;
+                            planner.InviteProcessingTime = 2;
+                        }
+                        //if (planner != null)
+                        //{
+                        //    return View(new InterviewPlanner());
+                        //}
+                        planner.IRFId = irfId;
+                        planner.IRFName = irfName;
+                        planner.OverAllProcessingTime = (planner.JoiningProcessingTime+planner.OfferProcessingTime+ planner.FinalSelectionProcessingTime+ planner.ApprovalProcessingTime
+                            +planner.RisebirdSelectionProcessingTime+planner.CompletionProcessingTime+planner.ConfirmationProcessingTime+planner.InviteProcessingTime);
+
                         //ViewBag.JoiningDaysDate = planner.IRFCreatedOn.AddDays(planner.OverAllProcessingTime - planner.JoiningProcessingTime);
 
-                        
+
                         return View(planner);
                     }
                     else
@@ -1893,6 +1917,53 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditInterviewPlanner(InterviewPlanner model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        
+                        if (_irfService.AddUpdateInterviewPlanner(model).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "Interview Planner updated Successfully";
+                            return RedirectToAction("Index");
+
+                            //return RedirectToAction("GetCandidateList", new { irfId = model.IRFId, irfName = model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "Sorry! Interview Planner update failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Adding IRF has failed";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

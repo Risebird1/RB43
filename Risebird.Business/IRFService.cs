@@ -607,5 +607,20 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model)
+        {
+            try
+            {
+                return _irfRepository.AddUpdateInterviewPlanner(model).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
     }
 }
