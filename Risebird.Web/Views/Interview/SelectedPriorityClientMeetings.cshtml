@@ -135,14 +135,14 @@
                                 <div class="row">
 
                                     <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
-                                            <button type="button" style="float: right;margin-right: 0px;" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
-                                            @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
-                                        </div>
-                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview")'"></i>
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+
+
 
                                     </div>
+                                    <i type="submit" style="margin-top:4px;margin-left:-63px;margin-right:17px;height:33px;font-size:35px;color:green" class="fa fa-file-excel-o" style="color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview")'"></i>
 
                                 </div>
 

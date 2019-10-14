@@ -1242,12 +1242,13 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
+                //var query = "Select InterviewPlanner.*,IRF.CreatedOn as [IRFCreatedOn] from InterviewPlanner inner join [IRF] on InterviewPlanner.IRFId = [IRF].id  where InterviewPlanner.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewPlanner>(query, dynamicParameters);
+                    var results = SqlMapper.Query<InterviewPlanner>(con, "usp_GetInterviewPlanner", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
                     return results.FirstOrDefault();
                 }
             }
@@ -1257,6 +1258,51 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", model.IRFId);
+                dynamicParameters.Add("@InviteOwnedBy", model.InviteOwnedBy);
+                dynamicParameters.Add("@ConfirmationOwnedBy", model.ConfirmationOwnedBy);
+                dynamicParameters.Add("@CompletionOwnedBy", model.CompletionOwnedBy);
+                dynamicParameters.Add("@RisebirdSelectionOwnedBy", model.RisebirdSelectionOwnedBy);
+                dynamicParameters.Add("@ApprovalOwnedBy", model.ApprovalOwnedBy);
+                dynamicParameters.Add("@FinalSelectionOwnedBy", model.FinalSelectionOwnedBy);
+                dynamicParameters.Add("@OfferOwnedBy", model.OfferOwnedBy);
+                dynamicParameters.Add("@JoiningOwnedBy", model.JoiningOwnedBy);
+                dynamicParameters.Add("@OverAllProcessingTime", model.OverAllProcessingTime);
+                dynamicParameters.Add("@InviteProcessingTime", model.InviteProcessingTime);
+                dynamicParameters.Add("@ConfirmationProcessingTime", model.ConfirmationProcessingTime);
+                dynamicParameters.Add("@CompletionProcessingTime", model.CompletionProcessingTime);
+                dynamicParameters.Add("@RisebirdSelectionProcessingTime", model.RisebirdSelectionProcessingTime);
+                dynamicParameters.Add("@ApprovalProcessingTime", model.ApprovalProcessingTime);
+                dynamicParameters.Add("@FinalSelectionProcessingTime", model.FinalSelectionProcessingTime);
+                dynamicParameters.Add("@OfferProcessingTime", model.OfferProcessingTime);
+                dynamicParameters.Add("@JoiningProcessingTime", model.JoiningProcessingTime);
+
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query<int>(con, "usp_AddUpdateInterviewPlanner", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<string> AddCandidate(Candidate obj)
         {
             try
