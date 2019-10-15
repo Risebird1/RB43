@@ -1396,6 +1396,68 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
+        public IActionResult BudgetConsumedChart()
+        {
+            try
+            {
+                string id = TempData.Peek("id").ToString();
+                string irfId = TempData.Peek("irfId").ToString();
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        var selectedMeeting = new List<MeetingVM>();
+                        var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid);
+                        meetings = meetings.Where(x => x.MeetingStatus!=null && x.MeetingStatus == 4).ToList();
+                        var chartData = new List<MeetingBudgetChart>();
+
+                        foreach (var item in meetings)
+                        {
+                            if(chartData!=null && chartData.Where(x=>x.Date==item.interviewDate).Count()>0)
+                            {
+                                chartData.Where(x => x.Date == item.interviewDate).FirstOrDefault().Cost += item.PerMintuteRate;
+                            }
+                            else
+                            {
+                                var obj = new MeetingBudgetChart();
+                                obj.Date = item.interviewDate;
+                                obj.Cost = item.PerMintuteRate;
+                                chartData.Add(obj);
+                            }
+
+                        }
+
+
+
+
+                        //ViewBag.IRF = irfId;
+                        //ViewBag.IRFintId = id;
+
+                        return Json(chartData);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Account");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Account");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
         public IActionResult GetCandidateList(string id, string irfName)
         {
             try

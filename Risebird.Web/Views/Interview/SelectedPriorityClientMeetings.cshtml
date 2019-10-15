@@ -17,7 +17,8 @@
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
+    filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>
+        (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
@@ -91,6 +92,87 @@
         filter: alpha(opacity = 50);
     }
 </style>
+@*<style>
+    /* The Modal (background) */
+    .mod {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .mod-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 40%;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        /*-webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s*/
+    }
+
+    /* The Close Button */
+    .close {
+        color: #fefefe !important;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    table {
+        white-space: nowrap !important;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .mod-header {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
+
+    .mod-body {
+        padding: 2px 16px;
+    }
+
+    .mod-footer {
+        padding: 2px 16px;
+        background-color: #14406e;
+        color: white;
+    }
+
+    .mod-content .mod-header {
+        font-size: 10px;
+    }
+</style>*@
+
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -135,14 +217,14 @@
                                 <div class="row">
 
                                     <div class="col-md-3 ml-md-auto">
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action(" ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
                                         <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
 
 
 
                                     </div>
-                                    <i type="submit" style="margin-top:4px;margin-left:-63px;margin-right:17px;height:33px;font-size:35px;color:green" class="fa fa-file-excel-o" style="color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview")'"></i>
+                                    <i type="submit" style="margin-top:4px;margin-left:-63px;margin-right:17px;height:33px;font-size:35px;color:green" class="fa fa-file-excel-o" style="color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action(" SelectedPriorityExporttoExcel", "Interview" )'"></i>
 
                                 </div>
 
@@ -157,7 +239,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form action="@Url.Action("SelectedPriorityClientMeetings","Interview")" method="post" id="form">
+                                        <form action="@Url.Action(" SelectedPriorityClientMeetings","Interview")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -192,7 +274,7 @@
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
-                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                            <option value="@item.Split(" |")[0]">@item.Split("|")[0]</option>
                                                                         }
                                                                     }
                                                                 </select>
@@ -302,6 +384,8 @@
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
                                                 <th>Report Link</th>
+                                                <th>Action</th>
+
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -315,12 +399,15 @@
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
                                                 <th>Report Link</th>
+                                                <th>Action</th>
 
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
+                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
                                                 <tr id=@item.imid>
                                                     <td> @item.interviewDate </td>
                                                     <td> @item.candidateName </td>
@@ -341,6 +428,9 @@
                                                     </td>
                                                     <td>  </td>
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    <td class="text-right">
+                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                    </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -358,7 +448,110 @@
             </div>
             <!-- end col-md-12 -->
         </div>
+        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <!-- Modal content -->
+            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5>Client Feedback</h5>
+                    <span class="close" id="feedbackPopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+                                <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                            </div>
 
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="approvalComments" class="form-group">
+                                <label>Approval Comments</label>
+                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+
+                                @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+                                <label for="selectionDropdown"><b>Final Selection</b></label>
+                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="selectionComments" class="form-group">
+                                <label>Final Comments</label>
+
+                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+
+                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+
+                                <label for="offerDropdown"><b>Offer Status</b></label>
+                                <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="offerComments" class="form-group">
+                                <label>Offer Comments</label>
+                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+
+                                @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div class="form-group">
+
+                                <label for="joiningDropdown"><b>Joining Status</b></label>
+                                <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6 pr-1">
+                            <div id="joiningComments" class="form-group">
+                                <label>Joining Comments</label>
+                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+
+                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+                </div>
+            </div>
+
+        </div>
         <!-- end row -->
     </div>
     <footer class="footer">
@@ -419,97 +612,288 @@
     }
 </style>
 <script>
-    $(document).ready(function () {
+            $(document).ready(function () {
 
-        $("#ResetFilter").click(function () {
-                ResetFilter();
-            })
-            if ('@filter' != "") {
-                ApplySessionFilter();
-              }
-        $("#PrimarySkill").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#CandidateName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#ClientHR").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#InterviewDate").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $("#ClientName").multiselect({
-            includeSelectAllOption: true,
-            selectedClass: 'active1',
-            buttonWidth: '270px',
-            maxHeight: 200
-        });
-        $('#meeting').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
+                $("#ResetFilter").click(function () {
+                    ResetFilter();
+                })
+                if ('@filter' != "") {
+                    ApplySessionFilter();
+                }
+                $("#PrimarySkill").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+                $("#CandidateName").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+                $("#ClientHR").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+                $("#InterviewDate").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+                $("#ClientName").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+                $('#meeting').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#meeting').DataTable();
+            });
+            function ResetFilter() {
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Interview/SelectedPriorityClientMeetings",
+                    success: function (data) {
+                        window.location.href = "/Interview/ResetSelectedPriorityClientMeetingsfilters";
+                    }
+                });
             }
+            function ApplySessionFilter() {
+                var strtDte = '@strtDte';
+                var endDte = '@endDte';
+                var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
+                var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
+                var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
+                var interviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
+                var clientName =  @Html.Raw(Json.Serialize(ClientName));
 
-        });
-        var table = $('#meeting').DataTable();
-    });
-     function ResetFilter() {
-           
-             $.ajax({
-            type: "POST",
-            url: "/Interview/SelectedPriorityClientMeetings",
-                 success: function (data) {
-                    window.location.href = "/Interview/ResetSelectedPriorityClientMeetingsfilters";
-                 }
+                $('input[name=StartDate]').val(strtDte);
+                $('input[name=EndDate]').val(endDte);
+                $("#PrimarySkill").val(primarySkillsArr);
+                $("#CandidateName").val(candidateName);
+                $("#ClientHR").val(clientHR);
+                $("#InterviewDate").val(interviewDate);
+                $("#ClientName").val(clientName);
+                var form = $("#form").serialize();
+                $.ajax({
+                    type: "POST",
+                    url: "/Interview/SelectedPriorityClientMeetings",
+                    data: form,
+                    success: function (data) {
+                    }
                 });
-    }
-     function ApplySessionFilter() {
-            var strtDte = '@strtDte';
-            var endDte = '@endDte';
-            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-            var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
-            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-            var interviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
-            var clientName =  @Html.Raw(Json.Serialize(ClientName));
-
-            $('input[name=StartDate]').val(strtDte);
-            $('input[name=EndDate]').val(endDte);
-            $("#PrimarySkill").val(primarySkillsArr);
-            $("#CandidateName").val(candidateName);
-            $("#ClientHR").val(clientHR);
-            $("#InterviewDate").val(interviewDate);
-            $("#ClientName").val(clientName);
-            var form = $("#form").serialize();
-             $.ajax({
-            type: "POST",
-            url: "/Interview/SelectedPriorityClientMeetings",
-            data: form,
-                 success: function (data) {
-                 }
-                });
-    }
+            }
 </script>
 
-@*<script type="text/javascript">
+<script>
+    var imid = "";
+    var span = document.getElementById("feedbackPopUp");
+    var comm = '';
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    //window.onclick = function (event) {
+    //    var modal = document.getElementById("myModal");
+    //    if (event.target == modal) {
+    //        modal.style.display = "none";
+    //    }
+    //}
+</script>
+<script>
+    function ModalButtonClick(item) {
+        imid = item.imid;
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn_" + item.imid);
+
+        // Get the <span> element that closes the modal
+        //var span = document.getElementById("feedbackPopUp");
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        //document.getElementById("IsApproved").checked = item.IsApproved;
+        document.getElementById("appComments").value = item.ApprovalComments;
+
+        document.getElementById("selecComments").value = item.FinalComments;
+
+        document.getElementById("joinComments").value = item.JoiningComments;
+
+        document.getElementById("offComments").value = item.OfferComments;
+
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getApprovalStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#approveDropdown").html(s);
+                if (item.IsApproved != null) {
+                    $("#approveDropdown").val(item.IsApproved);
+                }
+                else {
+                    $("#approveDropdown").val("-1");
+
+                }
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getSelectionStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#selectionDropdown").html(s);
+                if (item.IsSelected != null) {
+                    $("#selectionDropdown").val(item.IsSelected);
+                }
+                else {
+                    $("#selectionDropdown").val("-1");
+                }
+
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getOfferStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#offerDropdown").html(s);
+                if (item.OfferStatus != null) {
+                    $("#offerDropdown").val(item.OfferStatus);
+                }
+                else {
+                    $("#offerDropdown").val("-1");
+                }
+
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/getJoiningStatusList",
+            data: "{}",
+            success: function (data) {
+                var s = '<option value="-1">Please Select a Status</option>';
+                for (var i = 0; i < data.length; i++) {
+                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                }
+                $("#joiningDropdown").html(s);
+                if (item.JoiningStatus != null) {
+                    $("#joiningDropdown").val(item.JoiningStatus);
+                }
+                else {
+                    $("#joiningDropdown").val("-1");
+                }
+
+            }
+        });
+
+
+
+        //if (item.ApprovalComments != 'Approved') {
+        //    comm = item.ApprovalComments;
+        //}
+        //else {
+        //    comm = '';
+        //}
+        //if (item.IsApproved) {
+        //    //var commentId = 'approvalComments';
+        //    document.getElementById('approvalComments').style.display = "none";
+        //}
+        //else {
+        //    document.getElementById('approvalComments').style.display = "block";
+
+        //}
+        //var commentId = 'approvalComments';
+
+    }
+
+    //function ApprovalChanged() {
+    //    var commentId = 'approvalComments';
+    //    document.getElementById("appComments").value = comm;
+
+    //    //var checkElem = document.getElementById("checkBoxDiv_" + imid);
+
+    //    var isChecked = document.getElementById("IsApproved").checked;
+
+    //    if (isChecked == false) {
+
+    //        document.getElementById(commentId).style.display = "block";
+    //    }
+    //    else {
+    //        document.getElementById(commentId).style.display = "none";
+    //    }
+    //}
+
+    function SavePopUp() {
+        debugger;
+        var approvalComment = document.getElementById("appComments").value;
+        var isApproved = document.getElementById("approveDropdown").value;
+
+        var selectionComment = document.getElementById("selecComments").value;
+        var isSelected = document.getElementById("selectionDropdown").value;
+
+        var joiningComment = document.getElementById("joinComments").value;
+        var joiningStatus = document.getElementById("joiningDropdown").value;
+
+        var offerComment = document.getElementById("offComments").value;
+        var offerStatus = document.getElementById("offerDropdown").value;
+        var id = imid;
+
+        $.ajax({
+            type: "GET",
+            url: "/Interview/SaveClientFeedback",
+            data: { 'imid': id, 'isApproved': isApproved, 'approvalComment': approvalComment, 'isSelected': isSelected, 'selectionComment': selectionComment, 'joiningStatus': joiningStatus, 'joiningComment': joiningComment, 'offerStatus': offerStatus, 'offerComment': offerComment },
+            success: function (data) {
+
+                location.reload(true);
+
+            }
+        });
+    }
+
+</script>
+@*
+    <script type="text/javascript">
 
         $(".dataloading").hide();
         $(".datatable").hide();
@@ -608,7 +992,8 @@
     }
 </script>
 <!-- Keep the Page Content Here.-->
-@*<script type="text/javascript">
+@*
+    <script type="text/javascript">
         window.onload = function () {
             setTimeout(function () {
                 loader.style.display = "none";

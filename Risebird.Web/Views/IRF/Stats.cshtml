@@ -101,6 +101,21 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Daily Meetings Cost</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="myCostChart" style="display: block;height: 350px;width: 100%;"></canvas>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                        
                     </div>
@@ -337,6 +352,55 @@
             });
 
 
+        }
+    });
+
+    $.ajax({
+        url: '/IRF/BudgetConsumedChart',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+            debugger;
+            var xData = [];
+            var yData = [];
+            var backgroundColor = [];
+            for (i = 0; i < chData.length; i++) {
+                xData.push(chData[i].date);
+                yData.push(chData[i].cost);
+                backgroundColor.push("rgba(0, 0, 255, 1)");
+            }
+            //var aData = chData;
+            var aLabels = xData;
+            var aDatasets1 = yData;
+            var dataT = {
+                labels: aLabels,
+                datasets: [{
+                    label: "Daily Meetings Cost",
+                    data: aDatasets1,
+                    fill: false,
+                    //backgroundColor: [ "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+                    //backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
+
+                    backgroundColor: backgroundColor,//["rgba(0, 0, 255, 1)"],
+                    //borderColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)", "rgb(255, 99, 132)", "rgb(63, 191, 63)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
+                    borderWidth: 1
+                }]
+            };
+            var ctx = $("#myCostChart").get(0).getContext("2d");
+            var myNewChart = new Chart(ctx, {
+                type: 'bar',
+                data: dataT,
+                options: {
+                    responsive: true,
+                    title: { display: true },
+                    //title: { display: true, text: 'CHART.JS DEMO CHART' },
+                    legend: { position: 'bottom' },
+                    scales: {
+                        xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                    },
+                }
+            });
         }
     });
 
