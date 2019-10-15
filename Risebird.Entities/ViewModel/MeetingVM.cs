@@ -135,6 +135,8 @@ namespace Risebird.Entities.ViewModel
         public string FinalSelectionStat { get; set; }
         public string FinalComments { get; set; }
         public int InviteCount { get; set; }
+        public int PerMintuteRate { get; set; }
+        public int TotalBudget { get; set; }
 
     }
 }
