@@ -49,6 +49,8 @@ namespace Risebird.Entities.Enum
 
     public enum OfferStatus
     {
+        [Description("None")]
+        None = -1,
         [Description("Offer Released")]
         OfferReleased = 1,
         [Description("Offer Accepted")]
@@ -91,6 +93,8 @@ namespace Risebird.Entities.Enum
 
     public enum JoiningStatus
     {
+        [Description("None")]
+        None=-1,
         [Description("Joined")]
         Joining = 1,
         [Description("Not Joined")]
