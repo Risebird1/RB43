@@ -14,6 +14,10 @@
     string[] ClientHR = new string[] { };
     string[] InterviewDate = new string[] { };
     string[] ClientName = new string[] { };
+    string[] ApprovalStatus = new string[] { };
+    string[] SelectionStatus = new string[] { };
+    string[] JoiningStatus = new string[] { };
+    string[] OfferStatus = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("ClientSelectedMeetingsfilters") != null)
 {
@@ -24,6 +28,10 @@
     CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
     InterviewDate = filter.InterviewDate != null ? filter.InterviewDate : new string[] { };
+    ApprovalStatus = filter.ApprovalStatus != null ? filter.ApprovalStatus : new string[] { };
+    SelectionStatus = filter.SelectionStatus != null ? filter.SelectionStatus : new string[] { };
+    JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
+    OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
 }
 <style>
@@ -125,7 +133,7 @@
 
                                     <div class="col-md-3 ml-md-auto">
                                         <div class="form-group">
-                                            @Html.ActionLink("Back to List", "SelectedPriorityClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @Html.ActionLink("Back to List", "SelectedPriorityClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" ,@style="margin-top:3px"})
                                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
                                         </div>
                                     </div>
@@ -218,10 +226,6 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
                                                                 Client
@@ -253,13 +257,80 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                Approval Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SelectionStatus">
+                                                                Selection Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                Joining Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                                Offer Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
                                                         <div class="form-group col-md-12">
                                                             <div class="row">
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
                                                                 </div>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <button type="button"  id="ResetFilter"  style="float:right;margin-top: 39px;" class="btn btn-primary" >Reset Filter</button>
+                                                                    <button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="btn btn-primary">Reset Filter</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -293,6 +364,10 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
+                                                <th>Final Selection Status</th>
+                                                <th>Offer Status</th>
+                                                <th>Joining Status</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -311,49 +386,57 @@
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
+                                                <th>Final Selection Status</th>
+                                                <th>Offer Status</th>
+                                                <th>Joining Status</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
+                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.joiningTime </td>
-                                                    <td class="wordwrap"> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td class="wordwrap"> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                                <td>@item.NextLevelApprovalStat</td>
+                                                <td>@item.FinalSelectionStat</td>
+                                                <td>@item.OfferStatusStatDesc</td>
+                                                <td>@item.JoiningStatusStatDesc</td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -458,7 +541,30 @@
             buttonWidth: '270px',
             maxHeight: 200
         });
-
+        $("#ApprovalStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#SelectionStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#JoiningStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#OfferStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
         $("#InterviewDate").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',

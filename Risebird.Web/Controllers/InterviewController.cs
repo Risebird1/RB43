@@ -296,7 +296,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -304,9 +304,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -315,6 +315,14 @@ namespace Risebird.Web.Controllers
                             if (m.QCStatus.HasValue)
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsSelected.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                             selectedMeeting.Add(m);
                         }
@@ -329,11 +337,19 @@ namespace Risebird.Web.Controllers
                         filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = selectedMeeting.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                         filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = selectedMeeting.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = selectedMeeting.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
 
                         selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                         && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                         && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
                         if (selectedMeeting.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -371,7 +387,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                 }
-                                if (m.JoiningStatus.HasValue)
+                                if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                 {
                                     m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                 }
@@ -379,9 +395,9 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                 }
-                                if (m.OfferStatus.HasValue)
+                                if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                 {
-                                    m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                    m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                 }
                                 if (m.MeetingStatus.HasValue)
                                 {
@@ -390,6 +406,14 @@ namespace Risebird.Web.Controllers
                                 if (m.QCStatus.HasValue)
                                 {
                                     m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
+                                if (m.IsApproved.HasValue)
+                                {
+                                    m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                }
+                                if (m.IsSelected.HasValue)
+                                {
+                                    m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                                 }
                                 selectedMeeting.Add(m);
                             }
@@ -457,7 +481,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -465,9 +489,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -476,6 +500,14 @@ namespace Risebird.Web.Controllers
                             if (m.QCStatus.HasValue)
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                            }
+                            if (m.IsApproved.HasValue)
+                            {
+                                m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                            }
+                            if (m.IsSelected.HasValue)
+                            {
+                                m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
                             selectedMeeting.Add(m);
                         }
@@ -489,11 +521,19 @@ namespace Risebird.Web.Controllers
                         filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = selectedMeeting.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                         filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = selectedMeeting.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = selectedMeeting.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
 
                         selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                         && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                         && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                         && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                        && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                        && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
                         if (selectedMeeting.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -519,7 +559,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                 }
-                                if (m.JoiningStatus.HasValue)
+                                if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                 {
                                     m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                 }
@@ -527,9 +567,9 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                 }
-                                if (m.OfferStatus.HasValue)
+                                if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                 {
-                                    m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                    m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                 }
                                 if (m.MeetingStatus.HasValue)
                                 {
@@ -538,6 +578,14 @@ namespace Risebird.Web.Controllers
                                 if (m.QCStatus.HasValue)
                                 {
                                     m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
+                                if (m.IsApproved.HasValue)
+                                {
+                                    m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                }
+                                if (m.IsSelected.HasValue)
+                                {
+                                    m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                                 }
                                 selectedMeeting.Add(m);
                             }
@@ -851,6 +899,7 @@ namespace Risebird.Web.Controllers
                         filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
                         filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
                         filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
 
@@ -860,6 +909,7 @@ namespace Risebird.Web.Controllers
                         && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
                         && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                         && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                         && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                         && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
                         && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
@@ -1770,6 +1820,7 @@ namespace Risebird.Web.Controllers
                             filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
                             filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
                             filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
+                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
 
@@ -1779,6 +1830,7 @@ namespace Risebird.Web.Controllers
                             && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
                             && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                             && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                             && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
                             && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
                             && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
@@ -2006,7 +2058,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -2014,9 +2066,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -2060,11 +2112,19 @@ namespace Risebird.Web.Controllers
                             filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = selectedMeeting.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                             filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = selectedMeeting.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                             filter.ClientName = filter.ClientName == null ? filter.ClientName = selectedMeeting.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
 
                             selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                             && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                             && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                            && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
                             if (selectedMeeting.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -2090,7 +2150,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                     }
-                                    if (m.JoiningStatus.HasValue)
+                                    if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                     {
                                         m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                     }
@@ -2098,9 +2158,9 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                     }
-                                    if (m.OfferStatus.HasValue)
+                                    if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                     {
-                                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                        m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                     }
                                     if (m.MeetingStatus.HasValue)
                                     {
@@ -2109,6 +2169,14 @@ namespace Risebird.Web.Controllers
                                     if (m.QCStatus.HasValue)
                                     {
                                         m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                    }
+                                    if (m.IsApproved.HasValue)
+                                    {
+                                        m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                    }
+                                    if (m.IsSelected.HasValue)
+                                    {
+                                        m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                                     }
                                     selectedMeeting.Add(m);
                                 }
@@ -2293,7 +2361,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -2301,9 +2369,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -2348,7 +2416,12 @@ namespace Risebird.Web.Controllers
                             filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
                             filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                             filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
                             filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                            filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
                             meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
@@ -2357,6 +2430,11 @@ namespace Risebird.Web.Controllers
                             && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
                             && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                             && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                            && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                            && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.Interviewer.Count() > 0 ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
                             if (meetings.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -2378,7 +2456,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                     }
-                                    if (m.JoiningStatus.HasValue)
+                                    if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                     {
                                         m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                     }
@@ -2386,9 +2464,9 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                     }
-                                    if (m.OfferStatus.HasValue)
+                                    if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                     {
-                                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                        m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                     }
                                     if (m.MeetingStatus.HasValue)
                                     {
@@ -2398,7 +2476,14 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                                     }
-
+                                    if (m.IsApproved.HasValue)
+                                    {
+                                        m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                    }
+                                    if (m.IsSelected.HasValue)
+                                    {
+                                        m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
+                                    }
                                 }
                                 meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                             }
@@ -2462,7 +2547,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -2470,9 +2555,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -2515,7 +2600,12 @@ namespace Risebird.Web.Controllers
                         filter.ConfirmationStatus = filter.ConfirmationStatus == null ? filter.ConfirmationStatus = meetings.Select(x => x.confirmationStatus).ToArray() : filter.ConfirmationStatus = filter.ConfirmationStatus;
                         filter.MeetingStatus = filter.MeetingStatus == null ? filter.MeetingStatus = meetings.Select(x => x.MeetingStatusStatusDesc).ToArray() : filter.MeetingStatus = filter.MeetingStatus;
                         filter.InterviewStatus = filter.InterviewStatus == null ? filter.InterviewStatus = meetings.Select(x => x.intervieweStatusStatDesc).ToArray() : filter.InterviewStatus = filter.InterviewStatus;
+                        filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                        filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                        filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                        filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
                         filter.Interviewer = filter.Interviewer == null ? filter.Interviewer = meetings.Select(x => x.interviewer).ToArray() : filter.Interviewer = filter.Interviewer;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = meetings.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
                         meetings = meetings.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
@@ -2524,6 +2614,11 @@ namespace Risebird.Web.Controllers
                         && (filter.ConfirmationStatus.Count() > 0 ? filter.ConfirmationStatus.Contains(c.confirmationStatus) : c.confirmationStatus == null)
                         && (filter.MeetingStatus.Count() > 0 ? filter.MeetingStatus.Contains(c.MeetingStatusStatusDesc) : c.MeetingStatusStatusDesc == string.Empty)
                         && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
+                        && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                        && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                        && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                        && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                         && (filter.Interviewer.Count() > 0 ? filter.Interviewer.Contains(c.interviewer) : c.interviewer == null)).ToList();
 
                         if (meetings.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -2545,7 +2640,7 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                 }
-                                if (m.JoiningStatus.HasValue)
+                                if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                 {
                                     m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                 }
@@ -2553,9 +2648,9 @@ namespace Risebird.Web.Controllers
                                 {
                                     m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                 }
-                                if (m.OfferStatus.HasValue)
+                                if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                 {
-                                    m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                    m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                 }
                                 if (m.MeetingStatus.HasValue)
                                 {
@@ -2564,6 +2659,14 @@ namespace Risebird.Web.Controllers
                                 if (m.QCStatus.HasValue)
                                 {
                                     m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                }
+                                if (m.IsApproved.HasValue)
+                                {
+                                    m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                }
+                                if (m.IsSelected.HasValue)
+                                {
+                                    m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                                 }
 
                             }
@@ -2751,7 +2854,7 @@ namespace Risebird.Web.Controllers
                             {
                                 m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                             }
-                            if (m.JoiningStatus.HasValue)
+                            if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                             {
                                 m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                             }
@@ -2759,9 +2862,9 @@ namespace Risebird.Web.Controllers
                             {
                                 m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                             }
-                            if (m.OfferStatus.HasValue)
+                            if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                             {
-                                m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                             }
                             if (m.MeetingStatus.HasValue)
                             {
@@ -2781,17 +2884,17 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-                        var list = new SelectList(new[]
-{
-    new { ID = "Today", Name = "Today"},
-    new { ID = "Tomorrow", Name = "Tomorrow"  },
-    new { ID = "Yesterday", Name = "Yesterday"  },
-    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-    new { ID = "All", Name = "All"},
-},
-"ID", "Name", "All");
+//                        var list = new SelectList(new[]
+//{
+//    new { ID = "Today", Name = "Today"},
+//    new { ID = "Tomorrow", Name = "Tomorrow"  },
+//    new { ID = "Yesterday", Name = "Yesterday"  },
+//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+//    new { ID = "All", Name = "All"},
+//},
+//"ID", "Name", "All");
 
-                        ViewData["list"] = list;
+//                        ViewData["list"] = list;
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
@@ -2805,11 +2908,19 @@ namespace Risebird.Web.Controllers
                             filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = selectedMeeting.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                             filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = selectedMeeting.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                             filter.ClientName = filter.ClientName == null ? filter.ClientName = selectedMeeting.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+                            filter.ApprovalStatus = filter.ApprovalStatus == null ? filter.ApprovalStatus = meetings.Select(x => x.NextLevelApprovalStat).ToArray() : filter.ApprovalStatus = filter.ApprovalStatus;
+                            filter.SelectionStatus = filter.SelectionStatus == null ? filter.SelectionStatus = meetings.Select(x => x.FinalSelectionStat).ToArray() : filter.SelectionStatus = filter.SelectionStatus;
+                            filter.JoiningStatus = filter.JoiningStatus == null ? filter.JoiningStatus = meetings.Select(x => x.JoiningStatusStatDesc).ToArray() : filter.JoiningStatus = filter.JoiningStatus;
+                            filter.OfferStatus = filter.OfferStatus == null ? filter.OfferStatus = meetings.Select(x => x.OfferStatusStatDesc).ToArray() : filter.OfferStatus = filter.OfferStatus;
 
                             selectedMeeting = selectedMeeting.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
                             && (filter.ClientHR.Count() > 0 ? filter.ClientHR.Contains(c.ClientHrContact) : c.ClientHrContact == null)
                             && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                             && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                             && (filter.ApprovalStatus.Count() > 0 ? filter.ApprovalStatus.Contains(c.NextLevelApprovalStat) : c.NextLevelApprovalStat == string.Empty)
+                            && (filter.SelectionStatus.Count() > 0 ? filter.SelectionStatus.Contains(c.FinalSelectionStat) : c.FinalSelectionStat == string.Empty)
+                            && (filter.OfferStatus.Count() > 0 ? filter.OfferStatus.Contains(c.OfferStatusStatDesc) : c.OfferStatusStatDesc == string.Empty)
+                            && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)
                             && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
                             if (selectedMeeting.Count == 0 && filter.StartDate != null && filter.EndDate != null)
@@ -2847,7 +2958,7 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                                     }
-                                    if (m.JoiningStatus.HasValue)
+                                    if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
                                     {
                                         m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                                     }
@@ -2855,9 +2966,9 @@ namespace Risebird.Web.Controllers
                                     {
                                         m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                                     }
-                                    if (m.OfferStatus.HasValue)
+                                    if (m.OfferStatus.HasValue && m.OfferStatus != -1)
                                     {
-                                        m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
+                                        m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
                                     }
                                     if (m.MeetingStatus.HasValue)
                                     {
@@ -2866,6 +2977,14 @@ namespace Risebird.Web.Controllers
                                     if (m.QCStatus.HasValue)
                                     {
                                         m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
+                                    }
+                                    if (m.IsApproved.HasValue)
+                                    {
+                                        m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
+                                    }
+                                    if (m.IsSelected.HasValue)
+                                    {
+                                        m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                                     }
                                     selectedMeeting.Add(m);
                                 }
