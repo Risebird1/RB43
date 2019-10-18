@@ -482,6 +482,7 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        
         [Authorize]
         public string GetInterviewerSkills(string id)
         {
@@ -1106,6 +1107,8 @@ namespace Risebird.Web.Controllers
         public IActionResult EditIRF(string id)
         {
             try
+
+
             {
                 if (HttpContext.Session.GetString("email") != null)
                 {
@@ -1146,6 +1149,7 @@ namespace Risebird.Web.Controllers
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
                     TempData["JDLink"] = model.JDLink;
+                    TempData["EditIRFId"] = model.IRFId;
 
 
                     return View(model);
@@ -1175,6 +1179,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
+                        
                         if ((model.JDFile != null))
                         {
 
@@ -1195,17 +1200,34 @@ namespace Risebird.Web.Controllers
                         {
                             model.JDLink = TempData["JDLink"] != null ? TempData["JDLink"].ToString() : null;
                         }
-
-                        if (_irfService.UpdateIRF(model))
+                        if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
                         {
-                            TempData["SuccessErrorMessage"] = "IRF saved Successfully";
-                            return RedirectToAction("Index");
+                            if (_irfService.AddIRFDetails(model).Result)
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                return RedirectToAction("Index");
+                            }
+
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
-                            return RedirectToAction("Index");
+                            if (_irfService.UpdateIRF(model))
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                                return RedirectToAction("Index");
+                            }
+                            else
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                return RedirectToAction("Index");
+                            }
                         }
+                       
                     }
                     else
                     {

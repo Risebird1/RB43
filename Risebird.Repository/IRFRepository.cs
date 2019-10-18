@@ -556,7 +556,7 @@ namespace Risebird.Repository
                     {
                         DynamicParameters param = new DynamicParameters();
                         param.Add("@irfIntId", irfID);
-                        param.Add("@InterviewerUserId", item.InterviewerId);
+                        param.Add("@InterviewerUserId", item.UserId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
                         
