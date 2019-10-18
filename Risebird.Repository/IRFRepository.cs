@@ -251,9 +251,10 @@ namespace Risebird.Repository
             {
                 if (emailid != string.Empty && profileName == "Client")
                 {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc";
+                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by StartDate desc";
                     var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@IsDeleted", 0);
+                    //dynamicParameters.Add("@IsDeleted", 0);
                     dynamicParameters.Add("@emailid", emailid);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
@@ -263,9 +264,10 @@ namespace Risebird.Repository
                 }
                 else
                 {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc";
+                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by StartDate desc";
                     var dynamicParameters = new DynamicParameters();
-                    dynamicParameters.Add("@IsDeleted", 0);
+                    //dynamicParameters.Add("@IsDeleted", 0);
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
                         var results = con.Query<IRF>(query, dynamicParameters);
@@ -1007,6 +1009,30 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> UnArchiveIRF(int IRFId)
+        {
+            try
+            {
+                var query = "update IRF set IsDeleted=0 where id = @IRFId;";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", IRFId);
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
 
         public IEnumerable<MeetingVM> GetIRFInterviewMeetings(int id)
         {

@@ -98,6 +98,8 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Calendly Link")]
         public string CalendlyLink { get; set; }
         public int TotalInvites { get; set; }
+        public string ArchiveStatus { get; set; }
+        public string[] ClientRole { get; set; }
     }
 
     public class IRF
@@ -129,6 +131,9 @@ namespace Risebird.Entities.ViewModel
         public int ScheduleMeetings { get; set; }
         public string CalendlyLink { get; set; }
         public int TotalInvites { get; set; }
+
+        public string ArchiveStatus { get; set; }
+        public string[] ClientRole { get; set; }
         
     }
 }

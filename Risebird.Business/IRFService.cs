@@ -239,6 +239,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> UnArchiveIRF(int id)
+        {
+            try
+            {
+                return _irfRepository.UnArchiveIRF(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public async Task<bool> DeleteCandidate(int id)
         {
             try

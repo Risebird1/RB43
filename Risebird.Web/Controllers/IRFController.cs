@@ -15,6 +15,7 @@ using Risebird.CommonHelper;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml;
+using Newtonsoft.Json;
 
 namespace Risebird.Web.Controllers
 {
@@ -40,6 +41,7 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
+                var list = new List<string>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -49,6 +51,20 @@ namespace Risebird.Web.Controllers
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
                     foreach (var irf in irfList)
                     {
+                        irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
+                        var roles = _irfRepository.GetTransClientUser(irf.id);
+                        var tempList = new List<string>();
+                        foreach (var item in roles)
+                        {
+                            tempList.Add(item.Role);
+                        }
+                        irf.ClientRole = tempList.ToArray();
+                        
+                        foreach (var role in irf.ClientRole.ToList())
+                        {
+                            if (list != null && !list.Contains(role))
+                                list.Add(role);
+                        }
                         var meetings= _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
                         var selectedMeeting = new List<MeetingVM>();
                         irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
@@ -86,8 +102,92 @@ namespace Risebird.Web.Controllers
                         ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
                         TempData.Remove("SuccessErrorMessage");
                     }
-                    //ViewBag.Message = "Failed";
+                    if (HttpContext.Session.GetString("IRFfilters") != null)
+                    {
+                        var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
+                        if (filter.StartDate != null && filter.EndDate != null)
+                        {
+                            irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                        }
+                        //var sorted = new SortedList<string>();
+                        //var list = new List<string>();
+                        //foreach (var irf in irfList)
+                        //{
+                        //    foreach (var role in irf.ClientRole.ToList())
+                        //    {
+                        //        if(list!=null && !list.Contains(role))
+                        //        list.Add(role);
+                        //    }
+                        //}
+                        filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
+                        filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                        filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+
+                        //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
+
+                        irfList = irfList.Where(c => filter.ClientRole.Intersect(c.ClientRole).Any()
+                        && filter.RFID.Contains(c.IRFId)
+                        && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
+                        && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
+
+
+                        if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                        {
+                            irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                            foreach (var irf in irfList)
+                            {
+                                irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
+                                var roles = _irfRepository.GetTransClientUser(irf.id);
+                                var tempList = new List<string>();
+                                foreach (var item in roles)
+                                {
+                                    tempList.Add(item.Role);
+                                }
+                                irf.ClientRole = tempList.ToArray();
+                                var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                                var selectedMeeting = new List<MeetingVM>();
+                                irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
+                                if (meetings != null)
+                                {
+                                    selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
+                                    irf.ScheduleMeetings = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
+                                }
+
+                                irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
+                                var confirmedMeetings = meetings.Where(x => x.confirmationStatus == "1").Count();
+                                var consumedBudget = (irf.PerMintuteRate * confirmedMeetings);
+                                if (irf.TotalBudget != 0)
+                                {
+                                    consumedBudget = (consumedBudget / irf.TotalBudget) * (100);
+                                    irf.BudgetConsumed = consumedBudget.ToString() + "%";
+                                }
+                                else
+                                {
+                                    irf.BudgetConsumed = "Not Defined";
+                                }
+                                //irf.BudgetConsumed = consumedBudget + "%";
+                            }
+                            if (profileName != null && profileName.Contains("Client"))
+                            {
+                                //ViewBag.IsClientUser = true;
+                                irfList.ToList().ForEach(c => c.IsClientUser = true);
+                            }
+                            //else
+                            //{
+                            //    ViewBag.IsClientUser = false;
+                            //}
+                            irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+
+                        }
+
+
+
+                    }
+                    ViewBag.RoleList = list;
                     return View(irfList);
+
+                    //ViewBag.Message = "Failed";
                 }
                 else
                 {
@@ -99,6 +199,196 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Index(IRFFilter filter)
+        {
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                if(filter !=null)
+                {
+                    HttpContext.Session.SetString("IRFfilters", JsonConvert.SerializeObject(filter));
+
+                }
+                var list = new List<string>();
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                {
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                    foreach (var irf in irfList)
+                    {
+                        irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
+                        var roles = _irfRepository.GetTransClientUser(irf.id);
+                        var tempList = new List<string>();
+                        foreach (var item in roles)
+                        {
+                            tempList.Add(item.Role);
+                        }
+                        irf.ClientRole = tempList.ToArray();
+
+                        foreach (var role in irf.ClientRole.ToList())
+                        {
+                            if (list != null && !list.Contains(role))
+                                list.Add(role);
+                        }
+                        var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                        var selectedMeeting = new List<MeetingVM>();
+                        irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
+                        if (meetings != null)
+                        {
+                            selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
+                            irf.ScheduleMeetings = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
+                        }
+
+                        irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
+                        var confirmedMeetings = meetings.Where(x => x.confirmationStatus == "1").Count();
+                        var consumedBudget = (irf.PerMintuteRate * confirmedMeetings);
+                        if (irf.TotalBudget != 0)
+                        {
+                            consumedBudget = (consumedBudget / irf.TotalBudget) * (100);
+                            irf.BudgetConsumed = consumedBudget.ToString() + "%";
+                        }
+                        else
+                        {
+                            irf.BudgetConsumed = "Not Defined";
+                        }
+                        //irf.BudgetConsumed = consumedBudget + "%";
+                    }
+                    if (profileName != null && profileName.Contains("Client"))
+                    {
+                        ViewBag.IsClientUser = true;
+                        irfList.ToList().ForEach(c => c.IsClientUser = true);
+                    }
+                    else
+                    {
+                        ViewBag.IsClientUser = false;
+                    }
+                    //if (TempData["SuccessErrorMessage"] != null)
+                    //{
+                    //    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                    //    TempData.Remove("SuccessErrorMessage");
+                    //}
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                    }
+                    
+                    filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
+                    filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
+                    filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
+                    filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
+
+                    //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
+                    //irfList = irfList.Where(x => filter.RFID.Contains(x.IRFId)).ToList();
+                    //var newList = new List<IRF>();
+                    ////irfList = irfList.Where(x => x.ClientRole.Any(y => filter.ClientRole.Contains(y))).ToList();
+                    //foreach (var irf in irfList)
+                    //{
+                    //    foreach (var item in irf.ClientRole)
+                    //    {
+                    //        if (list.Contains(item))
+                    //        {
+                    //            newList.Add(irf);
+                    //            continue;
+                    //        }
+                           
+                    //    }
+                    //}
+                    //irfList = newList.Distinct().ToList();
+                    irfList = irfList.Where(c=> filter.ClientRole.Intersect(c.ClientRole).Any() 
+                    && filter.RFID.Contains(c.IRFId)
+                    && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
+                    && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
+
+
+
+                    if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                    {
+                        irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                        foreach (var irf in irfList)
+                        {
+                            irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
+                            var roles = _irfRepository.GetTransClientUser(irf.id);
+                            var tempList = new List<string>();
+                            foreach (var item in roles)
+                            {
+                                tempList.Add(item.Role);
+                            }
+                            irf.ClientRole = tempList.ToArray();
+                            var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                            var selectedMeeting = new List<MeetingVM>();
+                            irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
+                            if (meetings != null)
+                            {
+                                selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
+                                irf.ScheduleMeetings = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
+                            }
+
+                            irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
+                            var confirmedMeetings = meetings.Where(x => x.confirmationStatus == "1").Count();
+                            var consumedBudget = (irf.PerMintuteRate * confirmedMeetings);
+                            if (irf.TotalBudget != 0)
+                            {
+                                consumedBudget = (consumedBudget / irf.TotalBudget) * (100);
+                                irf.BudgetConsumed = consumedBudget.ToString() + "%";
+                            }
+                            else
+                            {
+                                irf.BudgetConsumed = "Not Defined";
+                            }
+                            //irf.BudgetConsumed = consumedBudget + "%";
+                        }
+                        if (profileName != null && profileName.Contains("Client"))
+                        {
+                            irfList.ToList().ForEach(c => c.IsClientUser = true);
+                        }
+
+                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+
+                    }
+                    
+                    ViewBag.RoleList = list;
+                    return View(irfList);
+
+                    //ViewBag.Message = "Failed";
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+        public async Task<IActionResult> ResetIRFFilter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    HttpContext.Session.Remove("IRFfilters");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
 
         [Authorize]
         [HttpGet]
@@ -339,6 +629,46 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
+        [Authorize]
+        public IActionResult UnArchiveIRF(string id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_irfService.UnArchiveIRF(Convert.ToInt16(id)).Result)
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF restored Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF restore Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF restore Failed";
                 return RedirectToAction("Index");
             }
 

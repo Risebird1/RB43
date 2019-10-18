@@ -1,8 +1,29 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.IRF>
-
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "IRF";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] RFID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] ClientRole = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+
 }
 <style>
     .spanclass {
@@ -17,6 +38,7 @@
         overflow: hidden !important;
         text-overflow: ellipsis;
     }
+
     .multiple_row > h2 {
         font-size: 18px;
         background-color: #5f95b1;
@@ -66,7 +88,33 @@
     .list-group {
         margin-bottom: 150px;
     }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
 
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
 </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -96,15 +144,139 @@
                     <div class="card-header">
                         <h4 class="card-title">Interview Request Forms</h4>
                     </div>
-                    @if (ViewBag.IsClientUser == false)
-                    {
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                            <div class="text-right">
-                                <button type="button" style="margin-right: 14px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
+                    <div class="row" style="margin-left:1008px">
+                        @if (ViewBag.IsClientUser == false)
+                        {
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                <div class="text-right">
+                                    <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
+                                </div>
+                            </div>
+
+                        }
+                        <div>
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+
+                        </div>
+                    </div>
+                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="@Url.Action("Index","IRF")" method="post" id="form">
+
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        Start Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        End Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientRole">Client Role</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ClientRole" name="ClientRole" class="form-control multiselect" multiple="multiple">
+
+                                                            @foreach (var item in ViewBag.RoleList)
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    }
+
+                    </div>
 
                     <!-- end content-->
                 </div>
@@ -179,9 +351,19 @@
                                 </button>
                                 @if (!@item.IsClientUser)
                                 {
-                                    <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                        <i class="now-ui-icons fa fa-archive"></i>
-                                    </button>
+                                    if (!item.IsDeleted)
+                                    {
+                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                            <i class="now-ui-icons fa fa-archive"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                            <i class="now-ui-icons fa fa-undo"></i>
+                                        </button>
+                                    }
+
                                 }
 
                             </div>
@@ -286,12 +468,12 @@
         var IdIRF = dataID;
         swal.fire({
             title: 'Are you sure?',
-            text: "It will permanently deleted !",
+            text: "It will be archived!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!',
+            confirmButtonText: 'Yes, archive it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
                     var IdIRF = dataID;
@@ -303,7 +485,7 @@
                         },
                         error: function () {
                             //reject("error message")
-                            swal.fire("Error deleting!", "Please try again", "error");
+                            swal.fire("Error archiving!", "Please try again", "error");
                         }
                     })
                 })
@@ -312,9 +494,9 @@
         }).then(function (result) {
             if (result.dismiss !== 'cancel') {
                 swal.fire({
-                    title: 'Deleted!',
+                    title: 'Archived!',
                     type: 'success',
-                    html: '<p>Your file has been deleted.</p>',
+                    html: '<p>IRF has been archived.</p>',
                     showCancelButton: false,
                     confirmButtonColor: '#3085d6',
                     confirmButtonText: 'Close!',
@@ -326,7 +508,7 @@
             else if (result.dismiss === 'cancel') {
                 swal.fire(
                     'Cancelled',
-                    'Your file has been not deleted :)',
+                    'IRF has not been archived! :)',
                     'error'
                 )
             }
@@ -365,4 +547,83 @@
         var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
+    function UnArchiveIRF(id) {
+
+        var url = '/IRF/UnArchiveIRF?id=' + id;
+        window.location.href = url;
+    };
+    //UnArchiveIRF
+</script>
+<script>
+    $(document).ready(function () {
+        
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+        
+        $("#RFID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ClientName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ArchiveStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });       
+        $("#ClientRole").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+       
+    });
+
+    function ResetFilter() {
+
+             $.ajax({
+            type: "POST",
+            url: "/IRF/Index",
+                 success: function (data) {
+                    window.location.href = "/IRF/ResetIRFFilter";
+                 }
+                });
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
+            
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#RFID").val(rFID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#ClientRole").val(clientRole);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/IRF/Index",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }
+
 </script>
