@@ -2076,6 +2076,18 @@ namespace Risebird.Web.Controllers
                                 candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
                                 candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
                                 candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
+                                candidate.Type = workSheet.Cells[rowIterator, 4].Value.ToString();
+                                candidate.Location = workSheet.Cells[rowIterator, 5].Value.ToString();
+                                candidate.Skill = workSheet.Cells[rowIterator, 6].Value.ToString();
+                                candidate.WorkAuth = workSheet.Cells[rowIterator, 7].Value.ToString();
+                                candidate.CurrentLocation = workSheet.Cells[rowIterator, 8].Value.ToString();
+                                candidate.CurrentEmployer = workSheet.Cells[rowIterator, 9].Value.ToString();
+                                candidate.Phone = workSheet.Cells[rowIterator, 10].Value.ToString();
+                                candidate.TotalExperience = Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
+                                candidate.CurrentSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
+                                candidate.ExpectedSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
+                                candidate.Notice = Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
+
                                 candidate.IRFId = IRFId;
                                 candidateList.Add(candidate);
                             }
@@ -2294,7 +2306,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 3;
+                int startColumn = 1; int endColumn = 14;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 35;
@@ -2302,7 +2314,18 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 1].Value = "Name";
                 Sheet.Cells[1, 2].Value = "EmailId";
                 Sheet.Cells[1, 3].Value = "Resume Link";
-                
+                Sheet.Cells[1, 4].Value = "Type(FTE/Contract)";
+                Sheet.Cells[1, 5].Value = "Location Submitted For";
+                Sheet.Cells[1, 6].Value = "Skill";
+                Sheet.Cells[1, 7].Value = "Work Authorization";
+                Sheet.Cells[1, 8].Value = "Current Location";
+                Sheet.Cells[1, 9].Value = "Current Employer";
+                Sheet.Cells[1, 10].Value = "Phone";
+                Sheet.Cells[1, 11].Value = "Total Experience";
+                Sheet.Cells[1, 12].Value = "Current Salary";
+                Sheet.Cells[1, 13].Value = "Expected Salary";
+                Sheet.Cells[1, 14].Value = "Notice";
+
                 
                 return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                 

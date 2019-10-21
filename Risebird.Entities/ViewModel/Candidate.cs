@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -25,5 +26,41 @@ namespace Risebird.Entities.ViewModel
         public string IRFName { get; set; }
         public int TotalInvites { get; set; }
         public int InviteConfirmation { get; set; }
+
+        [Required]
+        public string Type { get; set; }
+
+        [DisplayName("Location Submitted For")]
+        [Required]
+        public string Location { get; set; }
+        [DisplayName("Current Location")]
+        [Required]
+        //[RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
+        public string CurrentLocation { get; set; }
+        [Required]
+        public string Skill { get; set; }
+        [DisplayName("Work Authorization")]
+        [Required]
+        public string WorkAuth { get; set; }
+        [DisplayName("Current Employer")]
+        //[Required]
+        public string CurrentEmployer { get; set; }
+        [Required]
+        public string Phone { get; set; }
+
+        [DisplayName("Total Experience(years)")]
+        [Required]
+        public decimal TotalExperience { get; set; }
+        [DisplayName("Current Salary(lacs)")]
+        [Required]
+        public decimal CurrentSalary { get; set; }
+        [DisplayName("Expected Salary(lacs)")]
+        [Required]
+        public decimal ExpectedSalary { get; set; }
+
+        [Required]
+        public decimal Notice { get; set; }
+        
+
     }
 }

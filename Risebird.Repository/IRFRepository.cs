@@ -1337,13 +1337,24 @@ namespace Risebird.Repository
                 {
 
 
-                    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink,Type, Location, Skill, WorkAuth, CurrentLocation, CurrentEmployer, Phone, TotalExperience, CurrentSalary, ExpectedSalary, Notice) Values (@IRFId,@Name,@EmailId,@ResumeLink ,@Type, @Location, @Skill, @WorkAuth, @CurrentLocation, @CurrentEmployer, @Phone, @TotalExperience, @CurrentSalary, @ExpectedSalary, @Notice);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         IRFId = obj.IRFId,
                         Name = obj.Name,
                         EmailId = obj.EmailId,
-                        ResumeLink = obj.ResumeLink
+                        ResumeLink = obj.ResumeLink,
+                        Type = obj.Type,
+                        Location = obj.Location,
+                        Skill = obj.Skill,
+                        WorkAuth = obj.WorkAuth,
+                        CurrentLocation = obj.CurrentLocation,
+                        CurrentEmployer = obj.CurrentEmployer,
+                        Phone = obj.Phone,
+                        TotalExperience = obj.TotalExperience,
+                        CurrentSalary = obj.CurrentSalary,
+                        ExpectedSalary = obj.ExpectedSalary,
+                        Notice = obj.Notice
 
                     });
                     
@@ -1376,13 +1387,24 @@ namespace Risebird.Repository
                     {
                         foreach (var item in candidateList)
                         {
-                            string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink) Values (@IRFId,@Name,@EmailId,@ResumeLink);";
+                            string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink,Type, Location, Skill, WorkAuth, CurrentLocation, CurrentEmployer, Phone, TotalExperience, CurrentSalary, ExpectedSalary, Notice) Values (@IRFId,@Name,@EmailId,@ResumeLink ,@Type, @Location, @Skill, @WorkAuth, @CurrentLocation, @CurrentEmployer, @Phone, @TotalExperience, @CurrentSalary, @ExpectedSalary, @Notice);";
                             var affectedRows = con.Execute(sqlInsertReport, new
                             {
                                 IRFId = item.IRFId,
                                 Name = item.Name,
                                 EmailId = item.EmailId,
-                                ResumeLink = item.ResumeLink
+                                ResumeLink = item.ResumeLink,
+                                Type = item.Type,
+                                Location = item.Location,
+                                Skill = item.Skill,
+                                WorkAuth = item.WorkAuth,
+                                CurrentLocation = item.CurrentLocation,
+                                CurrentEmployer = item.CurrentEmployer,
+                                Phone = item.Phone,
+                                TotalExperience = item.TotalExperience,
+                                CurrentSalary = item.CurrentSalary,
+                                ExpectedSalary = item.ExpectedSalary,
+                                Notice = item.Notice
 
                             });
                         }
@@ -1439,11 +1461,23 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink, Type=@Type, Location=@Location, Skill=@Skill, WorkAuth=@WorkAuth, CurrentLocation=@CurrentLocation, CurrentEmployer=@CurrentEmployer, Phone=@Phone, TotalExperience=@TotalExperience, CurrentSalary=@CurrentSalary, ExpectedSalary=@ExpectedSalary, Notice=@Notice  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Name", obj.Name);
                 dynamicParameters.Add("@EmailId", obj.EmailId);
                 dynamicParameters.Add("@ResumeLink", obj.ResumeLink);
+                dynamicParameters.Add("@Type", obj.Type);
+                dynamicParameters.Add("@Location", obj.Location);
+                dynamicParameters.Add("@Skill", obj.Skill);
+                dynamicParameters.Add("@WorkAuth", obj.WorkAuth);
+                dynamicParameters.Add("@CurrentLocation", obj.CurrentLocation);
+                dynamicParameters.Add("@CurrentEmployer", obj.CurrentEmployer);
+                dynamicParameters.Add("@Phone", obj.Phone);
+                dynamicParameters.Add("@TotalExperience", obj.TotalExperience);
+                dynamicParameters.Add("@CurrentSalary", obj.CurrentSalary);
+                dynamicParameters.Add("@ExpectedSalary", obj.ExpectedSalary);
+                dynamicParameters.Add("@Notice", obj.Notice);
+
                 dynamicParameters.Add("@id", obj.id);
 
 
