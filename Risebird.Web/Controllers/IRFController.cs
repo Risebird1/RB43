@@ -257,7 +257,6 @@ namespace Risebird.Web.Controllers
                         {
                             irf.BudgetConsumed = "Not Defined";
                         }
-                        //irf.BudgetConsumed = consumedBudget + "%";
                     }
                     if (profileName != null && profileName.Contains("Client"))
                     {
@@ -268,11 +267,7 @@ namespace Risebird.Web.Controllers
                     {
                         ViewBag.IsClientUser = false;
                     }
-                    //if (TempData["SuccessErrorMessage"] != null)
-                    //{
-                    //    ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                    //    TempData.Remove("SuccessErrorMessage");
-                    //}
+                    
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
@@ -283,23 +278,7 @@ namespace Risebird.Web.Controllers
                     filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
-                    //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
-                    //irfList = irfList.Where(x => filter.RFID.Contains(x.IRFId)).ToList();
-                    //var newList = new List<IRF>();
-                    ////irfList = irfList.Where(x => x.ClientRole.Any(y => filter.ClientRole.Contains(y))).ToList();
-                    //foreach (var irf in irfList)
-                    //{
-                    //    foreach (var item in irf.ClientRole)
-                    //    {
-                    //        if (list.Contains(item))
-                    //        {
-                    //            newList.Add(irf);
-                    //            continue;
-                    //        }
-                           
-                    //    }
-                    //}
-                    //irfList = newList.Distinct().ToList();
+                    
                     irfList = irfList.Where(c=> filter.ClientRole.Intersect(c.ClientRole).Any() 
                     && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)

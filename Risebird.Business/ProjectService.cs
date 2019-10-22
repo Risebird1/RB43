@@ -141,7 +141,7 @@ namespace Risebird.Business
             try
             {
                 projectDetails.ProjectIRFMappings = projectDetails.ProjectIRFMappings.Where(x => x.IsAdded == true).ToList();
-
+                projectDetails.CreatedOn = DateTime.Now;
                 return _projectRepository.AddProject(projectDetails).Result;
             }
 
@@ -157,6 +157,19 @@ namespace Risebird.Business
             try
             {
                 return _projectRepository.DeleteProject(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UnArchiveProject(int id)
+        {
+            try
+            {
+                return _projectRepository.UnArchiveProject(id).Result;
             }
 
             catch (Exception e)

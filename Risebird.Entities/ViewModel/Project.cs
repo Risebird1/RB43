@@ -21,12 +21,15 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Project OwnerEmail")]
         [Required]
         public string ProjectOwnerId { get; set; }
+        public string ArchiveStatus { get; set; }
 
         public int TotalIRF { get; set; }
         public int TotalInterviews { get; set; }
         public bool IsDeleted { get; set; }
         public IList<ProjectIRFMapping> ProjectIRFMappings { get; set; }
         public bool IsClientUser { get; set; }
+
+        public DateTime CreatedOn { get; set; }
 
     }
 }

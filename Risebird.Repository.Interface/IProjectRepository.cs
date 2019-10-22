@@ -16,5 +16,6 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteProject(int id);
         Task<bool> UpdateProject(Project projectDetails);
         IEnumerable<Client> GetClients();
+        Task<bool> UnArchiveProject(int id);
     }
 }
