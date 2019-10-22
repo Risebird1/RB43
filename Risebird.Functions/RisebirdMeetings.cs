@@ -35,6 +35,7 @@ namespace Risebird.Functions
             string JobRole = string.Empty;
             DateTime interviewDate = DateTime.UtcNow;
             string interviewDuration = string.Empty;
+            string interviewDetails = string.Empty;
             string slot = string.Empty;
             string primaryskill = string.Empty;
             string candidateName = string.Empty;
@@ -90,6 +91,8 @@ namespace Risebird.Functions
                             if (((JToken)mainFamilies1).Path == "payload.event_type")
                             {
                                 interviewDuration = ((JProperty)mainFamilies1).Value["duration"].ToString();
+                                interviewDetails = ((JProperty)mainFamilies1).Value["name"].ToString();
+
                             }
                             else if (((JToken)mainFamilies1).Path == "payload.event")
                             {
@@ -274,6 +277,50 @@ namespace Risebird.Functions
                 {
                     log.Error($"Failed to send mail. Please check all filled and try again.");
                 }
+                try
+                {
+                    var mailMessage = new MailMessage();
+                    mailMessage.From = new MailAddress("hire@risebird.io", "Interview Schedule Alert");
+                    using (SqlConnection conn = new SqlConnection(str))
+                    {
+                        conn.Open();
+                        SqlCommand cmd = new SqlCommand(
+                            "usp_ListOfIRFClientHRs", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        var reader = cmd.ExecuteReader();
+                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        while (reader.Read())
+                        {
+                            mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));
+                        }
+                        mailMessage.Subject = candidateName+ " has scheduled their interview on date: " + interviewDate;
+
+                        StringBuilder msgBody = new StringBuilder("Dear Clients,");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine(candidateName + " has scheduled their interview on date: " + interviewDate + " . Details are ");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Candidate Email: " + candidateEmail);
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Interview Details: " + interviewDetails);
+                        msgBody.Append("\n");                        
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Thank You, Team Risebird");
+
+                        mailMessage.Body = msgBody.ToString();
+                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                        smtpClient.Credentials = credentials;
+
+                        smtpClient.Send(mailMessage);
+                        log.Info("Interview schedule mail sent to interviewer.");
+                    }
+                }
+                catch (Exception)
+                {
+                    log.Error($"Failed to send mail. Please check all filled and try again.");
+                }
             }
             else if (!string.IsNullOrEmpty(IRFID) && comfirmationStatus == "2")
             {
@@ -314,6 +361,50 @@ namespace Risebird.Functions
 
                         smtpClient.Send(mailMessage);
                         log.Info("Interview cancelled mail sent to interviewer.");
+                    }
+                }
+                catch (Exception)
+                {
+                    log.Error($"Failed to send mail. Please check all filled and try again.");
+                }
+                try
+                {
+                    var mailMessage = new MailMessage();
+                    mailMessage.From = new MailAddress("hire@risebird.io", "Interview Cancellation Alert");
+                    using (SqlConnection conn = new SqlConnection(str))
+                    {
+                        conn.Open();
+                        SqlCommand cmd = new SqlCommand(
+                            "usp_ListOfIRFClientHRs", conn);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
+                        var reader = cmd.ExecuteReader();
+                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        while (reader.Read())
+                        {
+                            mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));
+                        }
+                        mailMessage.Subject = candidateName + " has cancelled their interview on date: " + interviewDate;
+
+                        StringBuilder msgBody = new StringBuilder("Dear Clients,");
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine(candidateName + " has cancelled their interview on date: " + interviewDate + " . Details are ");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Candidate Email: " + candidateEmail);
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Interview Details: " + interviewDetails);
+                        msgBody.Append("\n");
+                        msgBody.Append("\n");
+                        msgBody.AppendLine("Thank You, Team Risebird");
+
+                        mailMessage.Body = msgBody.ToString();
+                        SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                        System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                        smtpClient.Credentials = credentials;
+
+                        smtpClient.Send(mailMessage);
+                        log.Info("Interview schedule mail sent to interviewer.");
                     }
                 }
                 catch (Exception)
