@@ -1,8 +1,29 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.Project>
-
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Project";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] ProjectID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Location = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("Projectfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<ProjectFilter>(HttpContextAccessor.HttpContext.Session.GetString("Projectfilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    ProjectID = filter.ProjectID != null ? filter.ProjectID : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Location = filter.Location != null ? filter.Location : new string[] { };
+
 }
 <style>
     .spanclass {
@@ -68,6 +89,35 @@
         margin-bottom: 150px;
     }
 </style>
+<style>
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+</style>
+
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -96,16 +146,139 @@
                     <div class="card-header">
                         <h4 class="card-title">Projects</h4>
                     </div>
-                    @if (ViewBag.IsClientUser == false)
-                    {
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                            <div class="text-right">
-                                <button type="button" style="margin-right: 14px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Project" onclick="location.href='@Url.Action("Add", "Project")'" data-original-title="Tooltip on top"> Add Project</span></button>
+                    <div class="row" style="margin-left:1008px">
+                        @if (ViewBag.IsClientUser == false)
+                        {
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                <div class="text-right">
+                                    <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Project" onclick="location.href='@Url.Action("Add", "Project")'" data-original-title="Tooltip on top"> Add Project</span></button>
+                                </div>
+                            </div>
+                        }
+                        <div>
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>
+                    </div>
+                    
+
+                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="@Url.Action("Index","Project")" method="post" id="form">
+
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        Start Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        End Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ProjectID">ProjectID</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ProjectID" name="ProjectID" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
+
+                                                            @foreach (var item in Model.Select(x => x.Location).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.EndClient).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    }
 
+                    </div>
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -179,9 +352,19 @@
                                     </button>
                                     @if (!@item.IsClientUser)
                                     {
-                                        <button type="button" onclick="javascript:DeleteProject('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
-                                            <i class="now-ui-icons fa fa-archive"></i>
-                                        </button>
+                                        if (!item.IsDeleted)
+                                        {
+                                            <button type="button" onclick="javascript:DeleteProject('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
+                                                <i class="now-ui-icons fa fa-archive"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:UnArchiveProject('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                <i class="now-ui-icons fa fa-undo"></i>
+                                            </button>
+                                        }
+
                                     }
 
                                 </div>
@@ -361,4 +544,82 @@
         var url = '/Project/Stats?id=' + id + '&name=' + name;
         window.location.href = url;
     };
+    function UnArchiveProject(id) {
+
+        var url = '/Project/UnArchiveProject?id=' + id;
+        window.location.href = url;
+    };
+</script>
+<script>
+    $(document).ready(function () {
+
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+        $("#ProjectID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ClientName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ArchiveStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#Location").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+    });
+
+    function ResetFilter() {
+
+             $.ajax({
+            type: "POST",
+            url: "/Project/Index",
+                 success: function (data) {
+                    window.location.href = "/Project/ResetProjectFilter";
+                 }
+                });
+    }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var projectID =  @Html.Raw(Json.Serialize(ProjectID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var location =  @Html.Raw(Json.Serialize(Location));
+
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#ProjectID").val(projectID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#Location").val(location);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/Project/Index",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }
+
 </script>

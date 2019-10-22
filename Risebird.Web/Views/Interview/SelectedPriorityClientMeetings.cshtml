@@ -100,85 +100,7 @@
         filter: alpha(opacity = 50);
     }
 </style>
-@*<style>
-    /* The Modal (background) */
-    .mod {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
 
-    /* Modal Content */
-    .mod-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 40%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        /*-webkit-animation-name: animatetop;
-            -webkit-animation-duration: 0.4s;
-            animation-name: animatetop;
-            animation-duration: 0.4s*/
-    }
-
-    /* The Close Button */
-    .close {
-        color: #fefefe !important;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: #000;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .mod-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    .mod-body {
-        padding: 2px 16px;
-    }
-
-    .mod-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .mod-content .mod-header {
-        font-size: 10px;
-    }
-</style>*@
 
 
 
@@ -224,15 +146,15 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-3 ml-md-auto">
+                                    <div class="col-md-5 ml-md-auto">
                                         <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
                                         <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
 
-
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export Selected Candidate</span></button>
 
                                     </div>
-                                    <i type="submit" style="margin-top:4px;margin-left:-63px;margin-right:17px;height:33px;font-size:35px;color:green" class="fa fa-file-excel-o" style="color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action(" SelectedPriorityExporttoExcel", "Interview" )'"></i>
+                                    
 
                                 </div>
 

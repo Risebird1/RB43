@@ -33,10 +33,11 @@ namespace Risebird.Repository
             IEnumerable<Project> projects = new List<Project>();
             try
             {
+                //select * from Project where IsDeleted=0
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     projects = SqlMapper.Query<Project>(
-                        con, "select * from Project where IsDeleted=0", null, commandType: System.Data.CommandType.Text);
+                        con, "select * from Project", null, commandType: System.Data.CommandType.Text);
                 }
                 return projects;
             }
@@ -113,7 +114,7 @@ namespace Risebird.Repository
                 {
                     
                     
-                    string sqlInsertReport = "INSERT INTO Project (Name,Client, EndClient, Location, ProjectOwnerId, IsDeleted ) Values (@Name,@Client,@EndClient, @Location,@ProjectOwnerId, @IsDeleted);";
+                    string sqlInsertReport = "INSERT INTO Project (Name,Client, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@Client,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         Name = projectDetails.Name,
@@ -121,7 +122,7 @@ namespace Risebird.Repository
                         EndClient = projectDetails.EndClient,
                         Location = projectDetails.Location,
                         ProjectOwnerId = projectDetails.ProjectOwnerId,
-
+                        CreatedOn =projectDetails.CreatedOn,
                         IsDeleted = false
 
                     });
@@ -189,6 +190,29 @@ namespace Risebird.Repository
                 return false;
             }
         }
+        public async Task<bool> UnArchiveProject(int id)
+        {
+            try
+            {
+                var query = "update Project set IsDeleted=0 where id = @id;";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
 
         public async Task<bool> UpdateProject(Project projectDetails)
         {

@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[Project](
 	[Client] [varchar](100) NULL,
 	[EndClient] [varchar](100) NULL,
 	[ProjectOwnerId] [varchar](100) NULL,
+	[CreatedOn] [date] NULL,
  CONSTRAINT [PK_Project] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -18,6 +19,20 @@ CREATE TABLE [dbo].[Project](
 ) ON [PRIMARY]
 
 END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CreatedOn')
+      AND Object_ID = Object_ID(N'Project'))
+BEGIN
+    ALTER TABLE Project
+    Add CreatedOn Date
+END
+END
+
+
 Go
 
 

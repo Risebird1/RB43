@@ -9,6 +9,17 @@ CREATE TABLE [dbo].[Candidate](
 	[EmailId] [varchar](200) NULL,
 	[ResumeLink] [varchar](500) NULL,
 	[TotalInvites] INT NOT NULL DEFAULT 0,
+	[Type] [varchar](100) NULL,
+	[Location] [varchar](100) NULL,
+	[Skill] [varchar](500) NULL,
+	[WorkAuth] [varchar](100) NULL,
+	[CurrentLocation] [varchar](100) NULL,
+	[CurrentEmployer] [varchar](200) NULL,
+	[Phone] [nvarchar](200) NULL,
+	[TotalExperience] [decimal](10, 2) NULL,
+	[CurrentSalary] [decimal](10, 2) NULL,
+	[ExpectedSalary] [decimal](10, 2) NULL,
+	[Notice] [decimal](10, 2) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
@@ -26,6 +37,112 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add TotalInvites INT DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Type')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [Type] VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Location')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add [Location] VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Skill')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add Skill VARCHAR(500)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'WorkAuth')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add WorkAuth VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CurrentLocation')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add CurrentLocation VARCHAR(100)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CurrentEmployer')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add CurrentEmployer VARCHAR(200)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Phone')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add Phone NVARCHAR(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalExperience')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add TotalExperience decimal (10,2)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CurrentSalary')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add CurrentSalary decimal (10,2)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ExpectedSalary')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add ExpectedSalary decimal (10,2)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'Notice')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add Notice decimal (10,2)
 END
 End
 

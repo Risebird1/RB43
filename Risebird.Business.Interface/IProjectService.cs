@@ -17,5 +17,6 @@ namespace Risebird.Business.Interface
         bool UpdateProject(Project model);
         IEnumerable<Client> GetClients();
         IEnumerable<ProjectIRFMapping> GetProjectCluster(int id);
+        Task<bool> UnArchiveProject(int id);
     }
 }

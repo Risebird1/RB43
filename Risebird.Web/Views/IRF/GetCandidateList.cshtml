@@ -183,12 +183,8 @@
                             <div class="toolbar">
 
                                 <div class="row">
-                                    @*<div class="col-md-3 ml-md-auto">
-                                            <div class="form-group">
-                                                @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
-                                            </div>
-                                        </div>*@
-                                    <div class="col-md-4 ml-md-auto">
+                                   
+                                    <div class="col-md-6 ml-md-auto">
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Add Candidates</span></button>
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("AddCandidate", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Add Candidate</span></button>
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Candidate List" onclick="location.href='@Url.Action("ExportCandidateList", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Export Candidate</span></button>

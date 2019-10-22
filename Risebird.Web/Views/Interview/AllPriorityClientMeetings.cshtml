@@ -135,20 +135,16 @@
                             <div class="toolbar">
 
                                 <div class="row">
-                                    @*<div class="col-md- ml-md-auto">
+                                   
 
-        </div>*@
-
-                                    <div class="col-md-3 ml-md-auto">
+                                    <div class="col-md-5 ml-md-auto">
                                         <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" ><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export All Candidate" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export All Candidate</span></button>
 
                                     </div>
-                                    <i type="submit" class="fa fa-file-excel-o" style="margin-top:4px;margin-left:-63px;margin-right:17px;height:33px;font-size:35px;color:green" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview")'"></i>
-
-                                    
+                                             
                                 </div>
 
 
