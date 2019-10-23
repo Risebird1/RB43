@@ -66,7 +66,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Preffered Location.")]
         public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
-        [Required(ErrorMessage = "Please enter Staffing Agency.")]
+       
         public string staffingAgency { get; set; }
         [Display(Name = "Expected Per Hour Rate")]
         [Required(ErrorMessage = "Please enter Expected Per Hour Rate.")]
