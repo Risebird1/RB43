@@ -1872,7 +1872,7 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells["A1:P1"].Style.WrapText = true;
                         //Sheet.Column(1).Width = 30;
                         //Sheet.Column(2).Width = 30;
-                        int startColumn = 1; int endColumn = 14;
+                        int startColumn = 1; int endColumn = 18;
                         for (int a = startColumn; a <= endColumn; a++)
                         {
                             Sheet.Column(a).Width = 30;
@@ -1880,9 +1880,21 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[1, 1].Value = "Candidate Name";
                         Sheet.Cells[1, 2].Value = "Candidate Email";
                         Sheet.Cells[1, 3].Value = "Resume";
-                        Sheet.Cells[1, 4].Value = "Invite Sent";
-                        Sheet.Cells[1, 5].Value = "Invite Conformation";
-                       
+                        Sheet.Cells[1, 4].Value = "Type";
+                        Sheet.Cells[1, 5].Value = "Location";
+                        Sheet.Cells[1, 6].Value = "Skill";
+                        Sheet.Cells[1, 7].Value = "Work Auth";
+                        Sheet.Cells[1, 8].Value = "Current Location";
+                        Sheet.Cells[1, 9].Value = "Current Employer";
+                        Sheet.Cells[1, 10].Value = "Phone";
+                        Sheet.Cells[1, 11].Value = "Total Experience";
+                        Sheet.Cells[1, 12].Value = "Current Salary";
+                        Sheet.Cells[1, 13].Value = "Expected Salary";
+                        Sheet.Cells[1, 14].Value = "Notice";
+                        Sheet.Cells[1, 15].Value = "Invites Sent";
+                        Sheet.Cells[1, 16].Value = "Invite Confirmation";
+
+
                         int i = 2;
                         //string LastAction = null; ;
 
@@ -1910,8 +1922,27 @@ namespace Risebird.Web.Controllers
                                 {
                                     Sheet.Cells[i, 3].Value = "No Resume";
                                 }
-                                Sheet.Cells[i, 4].Value = item.TotalInvites;
-                                Sheet.Cells[i, 5].Value = item.InviteConfirmation;
+                                Sheet.Cells[i, 4].Value = item.Type != null ? item.Type : "NA";
+                                Sheet.Cells[i, 5].Value = item.Location != null ? item.Location : "NA";
+
+                                Sheet.Cells[i, 6].Value = item.Skill != null ? item.Skill : "NA";
+
+                                Sheet.Cells[i, 7].Value = item.WorkAuth != null ? item.WorkAuth : "NA";
+
+                                Sheet.Cells[i, 8].Value = item.CurrentLocation != null ? item.CurrentLocation : "NA";
+
+                                Sheet.Cells[i, 9].Value = item.CurrentEmployer != null ? item.CurrentEmployer : "NA";
+
+                                Sheet.Cells[i, 10].Value = item.Phone != null ? item.Phone : "NA";
+
+                                Sheet.Cells[i, 11].Value = Convert.ToString(item.TotalExperience);//item.TotalExperience != 0 ? Convert.ToString(item.TotalExperience) : "NA";
+                                Sheet.Cells[i, 12].Value = Convert.ToString(item.CurrentSalary);//item.CurrentSalary != 0 ? Convert.ToString(item.CurrentSalary) : "NA";
+
+                                Sheet.Cells[i, 13].Value = Convert.ToString(item.ExpectedSalary);// item.ExpectedSalary != 0 ? Convert.ToString(item.ExpectedSalary) : "NA";
+                                Sheet.Cells[i, 14].Value = Convert.ToString(item.Notice);// item.Notice != 0 ? Convert.ToString(item.Notice) : "NA";
+
+                                Sheet.Cells[i, 15].Value = item.TotalInvites;
+                                Sheet.Cells[i, 16].Value = item.InviteConfirmation;
                                
                                 i++;
                             }
