@@ -11,6 +11,7 @@ namespace Risebird.Entities.ViewModel
         public string[] RisebirdHR { get; set; }
         public string[] InterviewDate { get; set; }
         public string[] InterviewDuration { get; set; }
+        public string[] JobLevel { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
 

@@ -9,8 +9,8 @@
         color: red;
     }
 </style>
-
-@using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new { enctype = "multipart/form-data" }))
+<script src="~/js/CustomValidation/EmailValidation.js"></script>
+@using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateEmail()" }))
 {
 
     @Html.AntiForgeryToken()
@@ -102,6 +102,8 @@
 
                                             @Html.EditorFor(model => model.TO, new { htmlAttributes = new { @class = "form-control", placeholder = "Use ';' for multiple sender", required = "required" } })
                                             @Html.ValidationMessageFor(model => model.TO, "", new { @class = "text-danger" })
+                                            <label class="text-danger" id="checkTo" style="color:red"></label>
+
                                         </div>
 
                                     </div>
@@ -141,7 +143,7 @@
                 </div>
 
             </div>
-            
+
         </div>
         <footer class="footer">
             <div class=" container-fluid ">
@@ -180,30 +182,84 @@
 }
 <!-- PAGE CONTENT WRAPPER -->
 <loading></loading>
-@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
-{
-    <script type="text/javascript">
-        window.onload = function ()
-        {
-                                sweetAlert({
-                                    title: "Risebird Notification",
-                                    text:'@ViewBag.Message',
-                                    type: "success"
-                                });
-         };
-    </script>
-}
-@if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
-{
-    <script type="text/javascript">
+@*@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
+    {
+        <script type="text/javascript">
             window.onload = function ()
             {
-                    sweetAlert({
-                        title: "Risebird Notification",
+                                    sweetAlert({
+                                        title: "Risebird Notification",
+                                        text:'@ViewBag.Message',
+                                        type: "success"
+                                    });
+             };
+        </script>
+    }
+    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
+    {
+        <script type="text/javascript">
+                window.onload = function ()
+                {
+                        sweetAlert({
+                            title: "Risebird Notification",
+                        text: '@ViewBag.Message',
+                       type: "error"
+                       });
+               };
+        </script>
+    }*@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("success")) {
+                swal({
+                    title: 'Risebird Notification',
                     text: '@ViewBag.Message',
-                   type: "error"
-                   });
-           };
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Mail/Mail';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Risebird Notification',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Mail/Mail';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
     </script>
+
 }
 
