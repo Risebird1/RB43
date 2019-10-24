@@ -1494,18 +1494,25 @@ namespace Risebird.Web.Controllers
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
                         myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
-
-                        var list = new SelectList(new[]
-{
-    new { ID = "Today", Name = "Today"},
-    new { ID = "Tomorrow", Name = "Tomorrow"  },
-      new { ID = "Yesterday", Name = "Yesterday"},
-    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-    new { ID = "All", Name = "All"},
-},
-"ID", "Name", "Today");
-
-                        ViewData["list"] = list;
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+                                    
+                                }
+                                catch (Exception e)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+                        }
                         if (HttpContext.Session.GetString("MyInterviewfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("MyInterviewfilters"));
@@ -1514,16 +1521,30 @@ namespace Risebird.Web.Controllers
                             {
                                 myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                             }
+                            else if (filter.StartDate!=null && filter.EndDate==null)
+                            {
+                                filter.EndDate = filter.StartDate;
 
-                            filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+                            else if (filter.StartDate == null && filter.EndDate != null)
+                            {
+                                filter.StartDate = filter.EndDate;
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+
+                            //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
                             filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
-
+                            filter.JobLevel = filter.JobLevel == null ? filter.JobLevel = myInterview.Select(x => x.JobLevelDesc).ToArray() : filter.JobLevel = filter.JobLevel;
                             filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                             filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                             filter.RisebirdHR = filter.RisebirdHR == null ? filter.RisebirdHR = myInterview.Select(x => x.risebirdHR).ToArray() : filter.RisebirdHR = filter.RisebirdHR;
-
-                            myInterview = myInterview.Where(c => filter.InterviewDuration.Contains(c.interviewDuration)
-                           && (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
+                            //filter.InterviewDuration.Contains(c.interviewDuration)
+                            myInterview = myInterview.Where(c =>(filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
+                            && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
                            && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
@@ -1533,6 +1554,20 @@ namespace Risebird.Web.Controllers
                                 myInterview = _meetingService.GetAllAssignedInterviews(emailid);
 
                                 myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                            }
+                            else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
+                            {
+                                filter.EndDate = filter.StartDate;
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                            }
+                            else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
+                            {
+                                filter.StartDate = filter.EndDate;
+
+                                myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
                             }
                         }
 
@@ -1585,17 +1620,30 @@ namespace Risebird.Web.Controllers
                         {
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                         }
+                        else if (filter.StartDate != null && filter.EndDate == null)
+                        {
+                            filter.EndDate = filter.StartDate;
 
-                        filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        }
+                        else if (filter.StartDate == null && filter.EndDate != null)
+                        {
+                            filter.StartDate = filter.EndDate;
+
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        }
+                        //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
                         filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
-
+                        filter.JobLevel = filter.JobLevel == null ? filter.JobLevel = myInterview.Select(x => x.JobLevelDesc).ToArray() : filter.JobLevel = filter.JobLevel;
                         filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
                         filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
                         filter.RisebirdHR = filter.RisebirdHR == null ? filter.RisebirdHR = myInterview.Select(x => x.risebirdHR).ToArray() : filter.RisebirdHR = filter.RisebirdHR;
 
-                        myInterview = myInterview.Where(c => filter.InterviewDuration.Contains(c.interviewDuration)
-                       && (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
-                       && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                        myInterview = myInterview.Where(c =>(filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
+                        && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
+                        && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
                        && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                        && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
@@ -1604,6 +1652,20 @@ namespace Risebird.Web.Controllers
                             myInterview = _meetingService.GetAllAssignedInterviews(emailid);
 
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        }
+                        else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
+                        {
+                            filter.EndDate = filter.StartDate;
+
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        }
+                        else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
+                        {
+                            filter.StartDate = filter.EndDate;
+
+                            myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
                         }
                         if (TempData["SuccessErrorMessage"] != null)
                         {
@@ -4306,8 +4368,14 @@ namespace Risebird.Web.Controllers
             {
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-
                 var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                foreach (var item in myInterview)
+                {
+                    if(item.IsApproved.HasValue)
+                    {
+                        item.NextLevelApprovalStat = ((NextLevelApprovalStatus)item.IsApproved).GetDescription();
+                    }
+                }                
                 //myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                 myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
 
@@ -4316,7 +4384,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 10;
+                int startColumn = 1; int endColumn = 11;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 35;
@@ -4404,7 +4472,7 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 6].Value = "No Video";
                         }
-                        Sheet.Cells[i, 11].Value = item.ApprovalComments !=null ? item.ApprovalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 11].Value = item.NextLevelApprovalStat !=null ? item.NextLevelApprovalStat : "Comments not submitted.";
 
 
                         i++;

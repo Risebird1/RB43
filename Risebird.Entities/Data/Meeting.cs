@@ -42,6 +42,9 @@ namespace Risebird.Entities.Data
         public string ApprovalComments { get; set; }
         public int JobLevel { get; set; }
         public string JobLevelDesc { get; set; }
+        public int? IsApproved { get; set; }
+        public string NextLevelApprovalStat { get; set; }
+
 
     }
 }

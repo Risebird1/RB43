@@ -13,7 +13,8 @@
     string[] CandidateName = new string[] { };
     string[] RisebirdHR = new string[] { };
     string[] InterviewDate = new string[] { };
-    string[] InterviewDuration = new string[] { };
+    string[] JobLevel = new string[] { };
+    //string[] InterviewDuration = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("MyInterviewfilters") != null)
 {
@@ -24,7 +25,9 @@
     CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
     RisebirdHR = filter.RisebirdHR != null ? filter.RisebirdHR : new string[] { };
     InterviewDate = filter.InterviewDate != null ? filter.InterviewDate : new string[] { };
-    InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
+    JobLevel = filter.JobLevel != null ? filter.JobLevel : new string[] { };
+
+    //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
 }
 <style>
     #style-2::-webkit-scrollbar-track {
@@ -208,6 +211,26 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JobLevel">
+                                                                Job Level
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="JobLevel" name="JobLevel" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.Select(x => x.JobLevelDesc).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
                                                                 Candidate Name
                                                             </label>
@@ -223,10 +246,6 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
                                                                 Zoom ID
@@ -243,7 +262,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
+                                                        @*<div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">Duration</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="InterviewDuration" name="InterviewDuration" class="form-control multiselect" multiple="multiple">
@@ -256,7 +275,7 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
                                                         <div class="form-group col-md-12">
                                                             <div class="row">
                                                                 <div class="col-md-6 col-sm-6">
@@ -351,7 +370,11 @@
 
                                                 <td> @item.risebirdHR</td>
                                                 <td class="text-right">
-                                                    <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                                    @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                    {
+                                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+
+                                                    }
                                                     <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
                                                 </td>
@@ -469,13 +492,18 @@
             buttonWidth: '270px',
             maxHeight: 200
         });
-
-        $("#InterviewDuration").multiselect({
+        $("#JobLevel").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '270px',
             maxHeight: 200
         });
+        //$("#InterviewDuration").multiselect({
+        //    includeSelectAllOption: true,
+        //    selectedClass: 'active1',
+        //    buttonWidth: '270px',
+        //    maxHeight: 200
+        //});
 
         //FilterInterviews("Today");// on page load default dropdownlist value set
 
@@ -511,7 +539,8 @@
             var CandidateName =  @Html.Raw(Json.Serialize(CandidateName));
             var RisebirdHR =  @Html.Raw(Json.Serialize(RisebirdHR));
             var InterviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
-            var InterviewDuration =  @Html.Raw(Json.Serialize(InterviewDuration));
+            var JobLevel =  @Html.Raw(Json.Serialize(JobLevel));
+            @*//var InterviewDuration =  @Html.Raw(Json.Serialize(InterviewDuration));*@
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -519,7 +548,8 @@
             $("#CandidateName").val(CandidateName);
             $("#RisebirdHR").val(RisebirdHR);
             $("#InterviewDate").val(InterviewDate);
-            $("#InterviewDuration").val(InterviewDuration);
+            $("#JobLevel").val(JobLevel);
+            //$("#InterviewDuration").val(InterviewDuration);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
