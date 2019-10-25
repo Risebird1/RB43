@@ -1512,6 +1512,16 @@ namespace Risebird.Web.Controllers
                             {
                                 item.resumeLink = "";
                             }
+
+                            if(item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if(item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
                         }
                         if (HttpContext.Session.GetString("MyInterviewfilters") != null)
                         {
@@ -1552,20 +1562,55 @@ namespace Risebird.Web.Controllers
                             if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate != null)
                             {
                                 myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                                foreach (var item in myInterview)
+                                {
+                                    if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                    }
+                                    if (item.MeetingStatus.HasValue)
+                                    {
+                                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
+                                    }
+                                }
                                 myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
                             }
                             else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
                             {
                                 filter.EndDate = filter.StartDate;
+                                myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                                foreach (var item in myInterview)
+                                {
+                                    if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                    }
+                                    if (item.MeetingStatus.HasValue)
+                                    {
+                                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
+                                    }
+                                }
                                 myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
 
                             }
                             else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
                             {
                                 filter.StartDate = filter.EndDate;
+                                myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                                foreach (var item in myInterview)
+                                {
+                                    if (item.InterviewStatus.HasValue)
+                                    {
+                                        item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                    }
+                                    if (item.MeetingStatus.HasValue)
+                                    {
+                                        item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
+                                    }
+                                }
                                 myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
 
                             }
@@ -1616,6 +1661,19 @@ namespace Risebird.Web.Controllers
                         var myInterview = _meetingService.GetAllAssignedInterviews(emailid);
                         // myInterview = myInterview.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        foreach (var item in myInterview)
+                        {
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if (item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
+                        }
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -1656,14 +1714,38 @@ namespace Risebird.Web.Controllers
                         else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
                         {
                             filter.EndDate = filter.StartDate;
+                            myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                            foreach (var item in myInterview)
+                            {
+                                if (item.InterviewStatus.HasValue)
+                                {
+                                    item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                }
+                                if (item.MeetingStatus.HasValue)
+                                {
+                                    item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
+                                }
+                            }
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
 
                         }
                         else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
                         {
                             filter.StartDate = filter.EndDate;
+                            myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                            foreach (var item in myInterview)
+                            {
+                                if (item.InterviewStatus.HasValue)
+                                {
+                                    item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                                }
+                                if (item.MeetingStatus.HasValue)
+                                {
+                                    item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
 
+                                }
+                            }
                             myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
 
                         }
@@ -3377,7 +3459,11 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
+                        //var mydate = DateTime.Parse("21-07-2006");
+                        //InterviewDate.Replace("/", "-");
+                        
+                        
+                        var result = _meetingService.AssignYourself(id, emailid.ToLower(), InterviewDate/* Convert.ToDateTime(InterviewDate.Split(" ")[0])*/);
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
