@@ -170,6 +170,35 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@emailID", emailID);
+                    parameters.Add("@ClientId", clientId);
+                    parameters.Add("@irfId", irfId);
+                    //usp_CheckCompletedInterviews
+                    return await SqlMapper.QueryAsync<int>(con, "usp_CheckCompletedInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
+
 
         private DynamicParameters SetStoredProcedureParameterForMeeting(MeetingVM entity)
         {

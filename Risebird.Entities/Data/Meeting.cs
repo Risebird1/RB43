@@ -6,6 +6,7 @@ namespace Risebird.Entities.Data
     {
         public int id { get; set; }
         public string clientName { get; set; }
+        public int ClientId { get; set; }
         public string JobRole { get; set; }
         public DateTime interviewDate { get; set; }
         public string interviewSlot { get; set; }
@@ -44,6 +45,13 @@ namespace Risebird.Entities.Data
         public string JobLevelDesc { get; set; }
         public int? IsApproved { get; set; }
         public string NextLevelApprovalStat { get; set; }
+        public int? MeetingStatus { get; set; }
+        public int? InterviewStatus { get; set; }
+        public int? IsSelected { get; set; }
+
+        public string MeetingStatusDesc { get; set; }
+        public string InterviewStatusDesc { get; set; }
+
 
 
     }

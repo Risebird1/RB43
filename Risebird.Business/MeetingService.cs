@@ -259,8 +259,16 @@ namespace Risebird.Business
         {
             try
             {
+                var finalList = new List<Meeting>();
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
-                return assignedMeeting;
+                foreach (var item in assignedMeeting)
+                {
+                    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
+                    {
+                        finalList.Add(item);
+                    }
+                }
+                return finalList;
             }
             catch (Exception ex)
             {
@@ -276,12 +284,14 @@ namespace Risebird.Business
         /// <param name="interviewerMail"></param>
         /// <param name="interviewDate"></param>
         /// <returns></returns>
-        public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
+        public string AssignYourself(int meetingid, string interviewerMail, string InterviewDate)
         {
             try
             {
+                var newArr = InterviewDate.Split(" ")[0].Split("/");
+                var date = newArr[1] + "-" + newArr[0] + "-" + newArr[2] +" "+ InterviewDate.Split(" ")[1];
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
-                var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
+                var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == DateTime.Parse(date));
                 if (checkDateMeeting.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";

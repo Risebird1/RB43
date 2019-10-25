@@ -11,6 +11,6 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string SkillName { get; set; }
         public int RatingId { get; set; }
-        public int Timing { get; set; }
+        public int? Timing { get; set; }
     }
 }
