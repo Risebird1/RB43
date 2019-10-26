@@ -3459,11 +3459,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        //var mydate = DateTime.Parse("21-07-2006");
-                        //InterviewDate.Replace("/", "-");
-                        
-                        
-                        var result = _meetingService.AssignYourself(id, emailid.ToLower(), InterviewDate/* Convert.ToDateTime(InterviewDate.Split(" ")[0])*/);
+                        var result = _meetingService.AssignYourself(id, emailid.ToLower(), Convert.ToDateTime(InterviewDate));
                         TempData["SuccessErrorMessage"] = result;
                         ViewBag.Message = result;
                         return RedirectToAction("OpenInterview");
