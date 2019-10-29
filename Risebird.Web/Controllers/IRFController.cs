@@ -2259,7 +2259,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SendInvite(string irfId, string IRFName, string emailId)
+        public IActionResult SendInvite(string irfId, string IRFName, string emailId, DateTime endDate)
         {
             try
             {
@@ -2271,6 +2271,11 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        if(endDate<DateTime.Now)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested IRF positions have been filled.";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
                         if (_irfService.SendInvite(Convert.ToInt32(irfId),emailId))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invitation sent successfully!";

@@ -60,6 +60,8 @@ namespace Risebird.Entities.ViewModel
 
        
         public decimal Notice { get; set; }
+
+        public DateTime EndDate { get; set; }
         
 
     }
