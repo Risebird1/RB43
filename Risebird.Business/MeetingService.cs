@@ -284,12 +284,12 @@ namespace Risebird.Business
         /// <param name="interviewerMail"></param>
         /// <param name="interviewDate"></param>
         /// <returns></returns>
-        public string AssignYourself(int meetingid, string interviewerMail, DateTime InterviewDate)
+        public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
-                var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == InterviewDate);
+                var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
                 if (checkDateMeeting.Count() > 0)
                 {
                     return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";

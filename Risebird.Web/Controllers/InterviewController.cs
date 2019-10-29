@@ -4307,7 +4307,7 @@ namespace Risebird.Web.Controllers
                 //ViewBag.IsSelected = true;
                 foreach (var m in meetings)
                 {
-                    if (m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
+                    if (m.InterviewStatus!= null && m.InterviewStatus.HasValue && (m.InterviewStatus.Value == 2 || m.InterviewStatus.Value == 4))
                     {
                         m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
                     }
@@ -4316,39 +4316,39 @@ namespace Risebird.Web.Controllers
                         continue;
                     }
 
-                    if (m.L2InterviewStatus.HasValue)
+                    if (m.L2InterviewStatus != null && m.L2InterviewStatus.HasValue)
                     {
                         m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
                     }
-                    if (m.L2InterviewStatus.HasValue)
+                    if (m.L2InterviewStatus!= null && m.L2InterviewStatus.HasValue)
                     {
                         m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
                     }
-                    if (m.JoiningStatus.HasValue)
+                    if (m.JoiningStatus != null && m.JoiningStatus.HasValue)
                     {
                         m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
                     }
-                    if (m.PreparationStatus.HasValue)
+                    if (m.PreparationStatus != null && m.PreparationStatus.HasValue)
                     {
                         m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
                     }
-                    if (m.OfferStatus.HasValue)
+                    if (m.OfferStatus != null &&  m.OfferStatus.HasValue)
                     {
                         m.OfferStatusStatDesc = ((PreparationStatus)(m.OfferStatus)).GetDescription();
                     }
-                    if (m.MeetingStatus.HasValue)
+                    if (m.MeetingStatus != null && m.MeetingStatus.HasValue)
                     {
                         m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
                     }
-                    if (m.QCStatus.HasValue)
+                    if (m.QCStatus != null && m.QCStatus.HasValue)
                     {
                         m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                     }
-                    if (m.IsApproved.HasValue)
+                    if (m.IsApproved != null && m.IsApproved.HasValue)
                     {
                         m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                     }
-                    if (m.IsApproved.HasValue)
+                    if (m.IsSelected != null && m.IsSelected.HasValue)
                     {
                         m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                     }
