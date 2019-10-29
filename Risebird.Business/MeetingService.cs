@@ -284,7 +284,7 @@ namespace Risebird.Business
         /// <param name="interviewerMail"></param>
         /// <param name="interviewDate"></param>
         /// <returns></returns>
-        public string AssignYourself(int meetingid, string interviewerMail, string InterviewDate)
+        public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
         {
             try
             {
