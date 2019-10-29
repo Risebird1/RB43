@@ -18,7 +18,7 @@ namespace Risebird.Functions
     public static class HRScheduledTodayReminder
     {
         [FunctionName("HRScheduledTodayReminder")]
-        public static void Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -42,7 +42,7 @@ namespace Risebird.Functions
                         {
                             var hrMailList = new List<string>();
                             var candidateEmails = new List<string>();
-                            var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (2,4)";
+                            var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (1,4)";
                             var dynamicParameters = new DynamicParameters();
                             dynamicParameters.Add("@IRFId", irf);
                             using (SqlConnection con = new SqlConnection(str))

@@ -62,7 +62,7 @@ namespace Risebird.Functions
                     {
                         var hrMailList = new List<string>();
                         var candidateEmails= new List<string>();
-                        var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (2,4)";
+                        var checkQuery = "select UserList.EmailId from  TransClientUser join UserList on TransClientUser.ClientUserId = UserList.Id where TransClientUser.IRFId=@IRFId and ClientRoleId in (1,4)";
                         var dynamicParameters = new DynamicParameters();
                         dynamicParameters.Add("@IRFId", irf);
                         using (SqlConnection con = new SqlConnection(str))
