@@ -12,5 +12,6 @@ namespace Risebird.CommonHelper.Interface
         string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string interviewer);
         string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments);
         string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId);
+        string CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
     }
 }

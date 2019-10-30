@@ -205,6 +205,10 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Resume</th>
+                                                <th>Invite Sent</th>
+                                                <th>Invite Confirmation</th>
+                                                <th> Actions </th>
+                                                
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
@@ -216,9 +220,7 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
-                                                <th>Invite Sent</th>
-                                                <th>Invite Confirmation</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -227,6 +229,10 @@
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
                                                 <th>Resume</th>
+                                                <th>Invite Sent</th>
+                                                <th>Invite Confirmation</th>
+                                                <th> Actions </th>
+                                               
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
@@ -238,9 +244,7 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
-                                                <th>Invite Sent</th>
-                                                <th>Invite Confirmation</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -258,6 +262,16 @@
                                                 {
                                                     <td>No Resume</td>
                                                 }
+                                                <td>@item.TotalInvites</td>
+                                                <td>@item.InviteConfirmation</td>
+                                                <td class="text-right">
+                                                    <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+
+                                                </td>
+                                              
                                                 <td>@item.Type</td>
                                                 <td>@item.Location</td>
                                                 <td>@item.Skill</td>
@@ -270,14 +284,7 @@
                                                 <td>@item.ExpectedSalary</td>
                                                 <td>@item.Notice</td>
 
-                                                <td>@item.TotalInvites</td>
-                                                <td>@item.InviteConfirmation</td>
-                                                <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
 
-                                                </td>
                                             </tr>
                                             }
                                         </tbody>
