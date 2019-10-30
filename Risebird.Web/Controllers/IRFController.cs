@@ -2302,7 +2302,55 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Index");
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+            }
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult CancelInvite(string irfId, string IRFName, string emailId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    {
+                        
+                        if (_irfService.CancelInvite(Convert.ToInt32(irfId), emailId))
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Invite cancelled successfully!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not cancel invite!";
+                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                        }
+
+                        //return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
             }
 
         }

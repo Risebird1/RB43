@@ -42,5 +42,6 @@ namespace Risebird.Business.Interface
         InterviewPlanner GetInterviewPlanner(int id);
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int id);
+        bool CancelInvite(int irfId, string email);
     }
 }

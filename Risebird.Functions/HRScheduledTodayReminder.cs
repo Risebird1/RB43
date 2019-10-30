@@ -18,13 +18,13 @@ namespace Risebird.Functions
     public static class HRScheduledTodayReminder
     {
         [FunctionName("HRScheduledTodayReminder")]
-        public static void Run([TimerTrigger("0 0 0 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
                 var unfilteredMeetings = new List<ScheduledCandidate>();
-                var query = "select InterviewMeetings.*, IRF.id as IRFintId from InterviewMeetings join IRF on InterviewMeetings.IRFId=IRF.IRFId  where confirmationStatus=1";
+                var query = "select InterviewMeetings.*, IRF.id as IRFintId, IRF.JDTiltle,Client.[Name] as Client from InterviewMeetings join IRF on InterviewMeetings.IRFId=IRF.IRFId join Client on Client.id=IRF.ClientId  where confirmationStatus=1";
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 using (SqlConnection con = new SqlConnection(str))
                 {
@@ -63,7 +63,10 @@ namespace Risebird.Functions
                             }
                             //var now = (DateTime.Now);
                             //string asString = now.ToString("dd MMMM yyyy hh:mm:ss tt");
-                            SendMailToHR(hrMailList, candidateEmails, unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().IRFId);
+                            var client = unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().Client;
+                            var primarySkill = unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().JDTiltle.Split('|')[0];
+
+                            SendMailToHR(hrMailList, candidateEmails, unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().IRFId, client, primarySkill);
                             log.Info($"HrTodayScheduled Timer trigger function executed for IRFId: {irf}");
 
                         }
@@ -77,7 +80,7 @@ namespace Risebird.Functions
             }
         }
 
-        public static void SendMailToHR(List<string> hrEmails, List<string> candidates, string irfName)
+        public static void SendMailToHR(List<string> hrEmails, List<string> candidates, string irfName, string client, string primarySkill)
         {
             try
             {
@@ -96,7 +99,7 @@ namespace Risebird.Functions
                     candidateBody.Append("\n");
                 }
 
-                object[] parameters = new object[] { irfName, candidateBody };
+                object[] parameters = new object[] { irfName,client, primarySkill, candidateBody };
                 mailMessage.Subject = "Interview scheduled for taday " + DateTime.Now.ToString("dd MMMM yyyy");
                 string rawEmail = GetBlobData("mailtemplate", "HRScheduledTodayReminder.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -168,6 +171,8 @@ namespace Risebird.Functions
         public int IRFintId { get; set; }
         public string IRFId { get; set; }
         public string candidateEmail{ get; set; }
+        public string JDTiltle { get; set; }
+        public string Client { get; set; }
         public DateTime interviewDate { get; set; }
     }
 }

@@ -620,6 +620,38 @@ namespace Risebird.Business
             }
         }
 
+        public bool CancelInvite(int irfId, string email)
+        {
+            try
+            {
+                //update irf Invite count here
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                //var inviteCount = irf.TotalInvites;
+                //var calendlyLink = irf.CalendlyLink;
+                var candidate = _irfRepository.GetIRFCandidates(irfId).Where(x => x.EmailId == email).FirstOrDefault();
+                //var candidateInviteCount = candidate.TotalInvites;
+                if (email != null)
+                {
+                    var jdLink = irf.JDLink;
+                    var ClientName = _clientService.GetClient(irf.ClientId)?.Name;
+                    var irfClientUsers = _irfRepository.GetTransClientUser(irfId).Where(x => x.ClientRoleId == 1 || x.ClientRoleId == 4);
+                    var result=_notificationHelper.CancelCandidateInvite(ClientName,  irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0],  email); 
+                    if(result.ToLower().Contains("success"))
+                    {
+                        return true;
+                    }
+                    
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+
         public async Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model)
         {
             try
