@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace Risebird.Functions
                 var candidates = new List<NoScheduleCandidate>();
                 var unfilteredCandidate = new List<NoScheduleCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, Candidate.EmailId, Candidate.Phone from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
+                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client,Candidate.[Name] as CandidateName, Candidate.EmailId, Candidate.Phone from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
                 
                 using (SqlConnection con = new SqlConnection(str))
                 {
@@ -75,7 +76,11 @@ namespace Risebird.Functions
                         }
                         if (hrMailList != null)
                         {
-                            candidateEmails = candidates.Where(x => x.id == irf).Select(x => x.EmailId).ToList();
+                            foreach (var candidate in candidates.Where(x => x.id == irf))
+                            {
+                                candidateEmails.Add(candidate.CandidateName + "|" + candidate.EmailId);
+                            }
+                            //candidateEmails = candidates.Where(x => x.id == irf).Select(x => x.EmailId).ToList();
                         }
                         if (candidateEmails == null || candidateEmails.Count() == 0)
                         {
@@ -110,14 +115,53 @@ namespace Risebird.Functions
                 {
                     mailMessage.Bcc.Add(new MailAddress(hrEmail, null));
                 }
-                StringBuilder candidateBody = new StringBuilder();
+
+                DataTable dt = new DataTable();
+                dt.Columns.AddRange(new DataColumn[2] { new DataColumn("Name", typeof(string)),
+                    new DataColumn("Email", typeof(string)) });
                 foreach (var candidate in candidates)
                 {
-                    candidateBody.AppendLine(candidate);
-                    candidateBody.Append("\n");
+                    dt.Rows.Add(candidate.Split('|')[0], candidate.Split('|')[1]);
                 }
 
-                object[] parameters = new object[] { irfName, client, primarySkill, candidateBody};
+                StringBuilder sb = new StringBuilder();
+                //Table start.
+                sb.Append("<table cellpadding='5' cellspacing='0' style='border: 1px solid #ccc;font-size: 9pt;font-family:Arial'>");
+
+                //Adding HeaderRow.
+                sb.Append("<tr>");
+                foreach (DataColumn column in dt.Columns)
+                {
+                    sb.Append("<th style='background-color: #B8DBFD;border: 1px solid #ccc; width:200px'>" + column.ColumnName + "</th>");
+                }
+                sb.Append("</tr>");
+
+
+                //Adding DataRow.
+                foreach (DataRow row in dt.Rows)
+                {
+                    sb.Append("<tr>");
+                    foreach (DataColumn column in dt.Columns)
+                    {
+                        sb.Append("<td style='width:100px;border: 1px solid #ccc'>" + row[column.ColumnName].ToString() + "</td>");
+                    }
+                    sb.Append("</tr>");
+                }
+
+                //Table end.
+                sb.Append("</table>");
+
+
+
+
+                //StringBuilder candidateBody = new StringBuilder();
+                //foreach (var candidate in candidates)
+                //{
+                //    candidateBody.AppendLine(candidate);
+                //    candidateBody.Append("\n");
+                //}
+
+                object[] parameters = new object[] { irfName, client, primarySkill, sb};
                 mailMessage.Subject = "Schedule pending!";
                 string rawEmail = GetBlobData("mailtemplate", "HRNoScheduleMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -190,6 +234,7 @@ namespace Risebird.Functions
         public int id { get; set; }
         public string IRFId { get; set; }
         public string EmailId { get; set; }
+        public string CandidateName { get; set; }
         public string Phone { get; set; }
         public string JDTiltle { get; set; }
         public string Client { get; set; }
