@@ -57,8 +57,15 @@ namespace Risebird.Functions
                 if (candidates != null && candidates.Count() != 0)
                 {
                     var irfList = new List<int>();
+                    //foreach (var candidate in candidates)
+                    //{
+                    //    if(irfList!=null && irfList.Where(x=> x==candidate.id).Count()==0)
+                    //    {
+                    //        irfList.Add(candidate.id);
+                    //    }
+                    //}
                     irfList = candidates.Select(x => x.id).ToList();
-                    irfList.Distinct();
+                    irfList = irfList.Distinct().ToList();
                     foreach (var irf in irfList)
                     {
                         var hrMailList = new List<string>();
