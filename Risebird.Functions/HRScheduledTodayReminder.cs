@@ -35,8 +35,15 @@ namespace Risebird.Functions
                 {
                     unfilteredMeetings = unfilteredMeetings.Where(x => x.interviewDate.Date == DateTime.Today.Date).ToList();
                     var irfList = new List<int>();
+                    //foreach (var meeting in unfilteredMeetings)
+                    //{
+                    //    if (irfList != null && irfList.Where(x => x == meeting.IRFintId).Count() == 0)
+                    //    {
+                    //        irfList.Add(meeting.IRFintId);
+                    //    }
+                    //}
                     irfList = unfilteredMeetings.Select(x => x.IRFintId).ToList();
-                    irfList.Distinct();
+                    irfList = irfList.Distinct().ToList();
                     if (irfList != null)
                     {
                         foreach (var irf in irfList)
