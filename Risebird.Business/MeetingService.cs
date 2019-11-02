@@ -615,18 +615,18 @@ namespace Risebird.Business
                     //if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
                     {
                        // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
-                        var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
-                        var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
+                        //var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
+                        //var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
 
-                        var interviewDate = reportModel.interviewDate;
-                        var candidateName = reportModel.CandidateName;
-                        var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
-                        if(!reportModel.IsEdited)
-                        {
-                            var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
-                            _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
+                        //var interviewDate = reportModel.interviewDate;
+                        //var candidateName = reportModel.CandidateName;
+                        //var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
+                        //if(!reportModel.IsEdited)
+                        //{
+                        //    var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
+                        //    _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
-                        }
+                        //}
                     }
                 }
 

@@ -162,7 +162,7 @@ namespace Risebird.Functions
                 //}
 
                 object[] parameters = new object[] { irfName, client, primarySkill, sb};
-                mailMessage.Subject = "Schedule pending!";
+                mailMessage.Subject = "Schedule Pending Alert!";
                 string rawEmail = GetBlobData("mailtemplate", "HRNoScheduleMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
