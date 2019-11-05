@@ -779,37 +779,36 @@
             }
         }
     }
-    function checkUniqueness(val) {
-        var element = document.getElementById("btnUploadSaveAs");
-        $.ajax({
-            type: "GET",
-            url: "/IRF/CheckUniqueness",
-            data: { 'value': val },
-            success: function (response) {
-                if (response == false) {
-                    if (element != null) {
-                        element.disabled = true;
-                    }
-                    document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
-                    document.getElementById("IRFId").focus();
-                    return false;
-                }
-                else {
-                    document.getElementById("uniqueMsg").innerHTML = "";
-                    if (element != null) {
-                        element.disabled = false;
-                    }
-                    return true;
-                }
+    //function checkUniqueness(val) {
+    //    var element = document.getElementById("btnUploadSaveAs");
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/IRF/CheckUniqueness",
+    //        data: { 'value': val },
+    //        success: function (response) {
+    //            if (response == false) {
+    //                if (element != null) {
+    //                    element.disabled = true;
+    //                }
+    //                document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+    //                document.getElementById("IRFId").focus();
+    //                return false;
+    //            }
+    //            else {
+    //                document.getElementById("uniqueMsg").innerHTML = "";
+    //                if (element != null) {
+    //                    element.disabled = false;
+    //                }
+    //                return true;
+    //            }
 
-            }
-        });
+    //        }
+    //    });
         
-    }
+    //}
 </script>
 <script>
     $(document).ready(function () {
-        document.getElementById("btnUploadSaveAs").disabled = true;
 
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length; i++) {
