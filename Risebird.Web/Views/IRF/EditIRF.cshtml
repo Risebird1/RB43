@@ -91,8 +91,8 @@
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onchange = "IRFNameChanged()" } })
-
+                                        @Html.EditorFor(m => m.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "IRFNameChanged()" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                         @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
 
 
@@ -732,9 +732,41 @@
     function IRFNameChanged() {
         debugger;
         var name = document.getElementById("IRFId").value;
+        //var result = checkUniqueness(name);
+        //if (result == false);
+        //{
+        //    return;
+        //}
+        var element = document.getElementById("btnUploadSaveAs");
+        //var uniqueRes = true;
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/IRF/CheckUniqueness",
+        //    data: { 'value': name },
+        //    success: function (response) {
+        //        if (response == false) {
+        //            if (element != null) {
+        //                element.disabled = true;
+        //            }
+        //            document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+        //            document.getElementById("IRFId").focus();
+        //            uniqueRes = false;
+        //        }
+        //        else {
+        //            document.getElementById("uniqueMsg").innerHTML = "";
+        //            if (element != null) {
+        //                element.disabled = false;
+        //            }
+                    
+        //        }
+
+        //    }
+        //});
+        //if (!uniqueRes) {
+        //    return;
+        //}       
         if (name != irfName) {
             document.getElementById("btnUpload").disabled = true;
-            var element = document.getElementById("btnUploadaveAs");
             if (element != null) {
                 element.disabled = false;
             }
@@ -742,15 +774,43 @@
         }
         else {
             document.getElementById("btnUpload").disabled = false;
-            var element = document.getElementById("btnUploadaveAs");
             if (element != null) {
                 element.disabled = true;
             }
         }
     }
+    function checkUniqueness(val) {
+        var element = document.getElementById("btnUploadSaveAs");
+        $.ajax({
+            type: "GET",
+            url: "/IRF/CheckUniqueness",
+            data: { 'value': val },
+            success: function (response) {
+                if (response == false) {
+                    if (element != null) {
+                        element.disabled = true;
+                    }
+                    document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
+                    document.getElementById("IRFId").focus();
+                    return false;
+                }
+                else {
+                    document.getElementById("uniqueMsg").innerHTML = "";
+                    if (element != null) {
+                        element.disabled = false;
+                    }
+                    return true;
+                }
+
+            }
+        });
+        
+    }
 </script>
 <script>
     $(document).ready(function () {
+        document.getElementById("btnUploadSaveAs").disabled = true;
+
         var inputs = document.getElementsByTagName("input");
         for (i = 0; i <= inputs.length; i++) {
             inputs[i].addEventListener("input", function () {
