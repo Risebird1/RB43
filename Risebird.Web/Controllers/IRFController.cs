@@ -1183,6 +1183,11 @@ namespace Risebird.Web.Controllers
                         }
                         if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
                         {
+                            if(!(_irfService.CheckUniqueness(model.IRFId)))
+                            {
+                                TempData["SuccessErrorMessage"] = "Sorry!IRF with this name already exits!";
+                                return RedirectToAction("Index");
+                            }
                             if (_irfService.AddIRFDetails(model).Result)
                             {
                                 TempData["SuccessErrorMessage"] = "IRF saved Successfully";
