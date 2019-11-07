@@ -1,0 +1,66 @@
+﻿@{
+    ViewData["Title"] = "CallTwilio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
+
+
+<div >
+    
+    
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Profile</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="pull-right">
+                            <button onclick="callCustomer('+919284487005')" type="button" class="btn btn-primary btn-lg call-customer-button">
+                                <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                                Call customer
+                            </button>
+                        </div>
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    
+</div>
+
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+        //updateCallStatus("Ready");
+        console.log("ready!");
+    });
+
+    function callCustomer(phoneNumber) {
+        //updateCallStatus("Calling " + phoneNumber + "...");
+
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+</script>
+
