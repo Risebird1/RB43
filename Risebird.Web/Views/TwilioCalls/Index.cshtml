@@ -24,6 +24,10 @@
                                 <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
                                 Call customer
                             </button>
+                            <button onclick="hangUp()" type="button" class="btn btn-primary btn-lg call-customer-button">
+                                <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                                Hang Up
+                            </button>
                         </div>
 
                     </div>
@@ -61,6 +65,9 @@
 
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
     }
 </script>
 

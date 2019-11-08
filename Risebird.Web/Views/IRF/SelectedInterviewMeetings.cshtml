@@ -133,6 +133,9 @@
         font-size: 10px;
     }
 </style>
+
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -195,7 +198,7 @@
                                                 <th>Candidate Name</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
-                                                <th>Candidate Contact</th>
+                                                @*<th>Candidate Contact</th>*@
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -211,11 +214,7 @@
                                                 <th>Final Selection Status</th>
                                                 <th>Final Selection Comments</th>
                                                 <th class="no-sort"></th>
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <th>Action</th>
-
-                                                }
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -224,7 +223,7 @@
                                                 <th>Candidate Name</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
-                                                <th>Candidate Contact</th>
+                                                @*<th>Candidate Contact</th>*@
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
@@ -240,10 +239,8 @@
                                                 <th>Final Selection Status</th>
                                                 <th>Final Selection Comments</th>
                                                 <th class="no-sort"></th>
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <th>Action</th>
-                                                }
+                                                <th>Action</th>
+
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -266,7 +263,7 @@
                                                         <td>No Resume</td>
                                                     }
 
-                                                    @if (item.MobileNumber != null)
+                                                    @*@if (item.MobileNumber != null)
                                                     {
                                                         <td>@item.MobileNumber</td>
 
@@ -274,7 +271,7 @@
                                                     else
                                                     {
                                                         <td>No Contact</td>
-                                                    }
+                                                    }*@
                                                     <td> @item.ClientHrContact </td>
                                                     <td> @item.confirmationStatus</td>
                                                     <td> @item.MeetingStatusStatusDesc </td>
@@ -299,13 +296,22 @@
                                                         <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
                                                     </td>
                                                     <td></td>
-                                                    @if (ViewBag.ProfileName == "client")
-                                                    {
-                                                        <td class="text-right">
+                                                    <td class="text-right">
+                                                        @if (ViewBag.ProfileName == "client")
+                                                        {
                                                             <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                            @*<span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>*@
-                                                        </td>
-                                                    }
+                                                        }
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                                                            <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+
+                                                        }
+                                                    </td>
+
+
+
+
                                                 </tr>
                                             }
                                         </tbody>
@@ -471,7 +477,48 @@
         var table = $('#meeting').DataTable();
     });
 </script>
+<script>
+    //var hangUpButton = $(".hangUpButton");
+    //var callCandidateButtons = $(".callButton");
+    $(document).ready(function () {
+        //hangUpButton.prop("disabled", true);
+        //callCandidateButtons.prop("disabled", true);
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
 
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+        console.log("ready!");
+        //callCandidateButtons.prop("disabled", false);
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        // Enable the hang up button and disable the call buttons
+        //callCandidateButtons.prop("disabled", true);
+        //hangUpButton.prop("disabled", false);
+
+    });
+
+    Twilio.Device.disconnect(function (connection) {
+        // Disable the hangup button and enable the call buttons
+        //callCandidateButtons.prop("disabled", false);
+        //hangUpButton.prop("disabled", true);
+    });
+
+
+</script>
 <script>
     var imid = "";
     var span = document.getElementById("feedbackPopUp");
@@ -635,7 +682,7 @@
     //}
 
     function SavePopUp() {
-        
+
         var approvalComment = document.getElementById("appComments").value;
         var isApproved = document.getElementById("approveDropdown").value;
 
