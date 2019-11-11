@@ -139,6 +139,7 @@
     }
 </style>
 
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 
 <div class="main-panel" id="main-panel">
@@ -183,7 +184,7 @@
                             <div class="toolbar">
 
                                 <div class="row">
-                                   
+
                                     <div class="col-md-6 ml-md-auto">
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Add Candidates</span></button>
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add a Candidate." onclick="location.href='@Url.Action("AddCandidate", "IRF", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Add Candidate</span></button>
@@ -208,14 +209,14 @@
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
                                                 <th> Actions </th>
-                                                
+
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
                                                 <th>Work Auth</th>
                                                 <th>Current Location</th>
                                                 <th>Current Employer</th>
-                                                <th>Phone</th>
+                                                @*<th>Phone</th>*@
                                                 <th>Total Experience</th>
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
@@ -232,14 +233,14 @@
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
                                                 <th> Actions </th>
-                                               
+
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
                                                 <th>Work Auth</th>
                                                 <th>Current Location</th>
                                                 <th>Current Employer</th>
-                                                <th>Phone</th>
+                                                @*<th>Phone</th>*@
                                                 <th>Total Experience</th>
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
@@ -250,43 +251,48 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.id>
+                                                <tr id=@item.id>
 
-                                                <td> @item.Name</td>
-                                                <td> @item.EmailId</td>
-                                                @if (item.ResumeLink != null && item.ResumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                <td>@item.TotalInvites</td>
-                                                <td>@item.InviteConfirmation</td>
-                                                <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
+                                                    <td> @item.Name</td>
+                                                    <td> @item.EmailId</td>
+                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    <td>@item.TotalInvites</td>
+                                                    <td>@item.InviteConfirmation</td>
+                                                    <td class="text-right">
+                                                        <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
 
-                                                    <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-times"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
+                                                        <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-times"></i></span>
+                                                        @if (item.Phone != null && item.Phone != string.Empty)
+                                                        {
+                                                            <span onclick="callCandidate(@item.Phone)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                                                            <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
 
-                                                </td>
-                                              
-                                                <td>@item.Type</td>
-                                                <td>@item.Location</td>
-                                                <td>@item.Skill</td>
-                                                <td>@item.WorkAuth</td>
-                                                <td>@item.CurrentLocation</td>
-                                                <td>@item.CurrentEmployer</td>
-                                                <td>@item.Phone</td>
-                                                <td>@item.TotalExperience</td>
-                                                <td>@item.CurrentSalary</td>
-                                                <td>@item.ExpectedSalary</td>
-                                                <td>@item.Notice</td>
+                                                        }
+                                                    </td>
+
+                                                    <td>@item.Type</td>
+                                                    <td>@item.Location</td>
+                                                    <td>@item.Skill</td>
+                                                    <td>@item.WorkAuth</td>
+                                                    <td>@item.CurrentLocation</td>
+                                                    <td>@item.CurrentEmployer</td>
+                                                    @*<td>@item.Phone</td>*@
+                                                    <td>@item.TotalExperience</td>
+                                                    <td>@item.CurrentSalary</td>
+                                                    <td>@item.ExpectedSalary</td>
+                                                    <td>@item.Notice</td>
 
 
-                                            </tr>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -431,7 +437,48 @@
 
 }
 
+    <script>
+    //var hangUpButton = $(".hangUpButton");
+    //var callCandidateButtons = $(".callButton");
+    $(document).ready(function () {
+        //hangUpButton.prop("disabled", true);
+        //callCandidateButtons.prop("disabled", true);
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
 
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+        console.log("ready!");
+        //callCandidateButtons.prop("disabled", false);
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        // Enable the hang up button and disable the call buttons
+        //callCandidateButtons.prop("disabled", true);
+        //hangUpButton.prop("disabled", false);
+
+    });
+
+    Twilio.Device.disconnect(function (connection) {
+        // Disable the hangup button and enable the call buttons
+        //callCandidateButtons.prop("disabled", false);
+        //hangUpButton.prop("disabled", true);
+    });
+
+
+    </script>
 <script>
     $(document).ready(function () {
 

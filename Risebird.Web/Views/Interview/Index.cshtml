@@ -31,6 +31,7 @@
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
     Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
 }
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 
 <style>
@@ -348,7 +349,7 @@
                                                     <th>JD Link</th>
                                                     <th>Zoom Link</th>
                                                     <th>Risebird HR</th>
-                                                    <th>Candidate Contact</th>
+                                                    @*<th>Candidate Contact</th>*@
                                                     <th>Client HR</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
@@ -381,7 +382,7 @@
                                                     <th>JD Link</th>
                                                     <th>Zoom Link</th>
                                                     <th>Risebird HR</th>
-                                                    <th>Candidate Contact</th>
+                                                    @*<th>Candidate Contact</th>*@
                                                     <th>Client HR</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
@@ -431,7 +432,7 @@
 
                                                         <td class="wordwrap"> @item.zoomLink</td>
                                                         <td> @item.risebirdHR</td>
-                                                        <td>@item.MobileNumber</td>
+                                                        @*<td>@item.MobileNumber</td>*@
                                                         <td> @item.ClientHrContact </td>
                                                         <td>@item.staffingAgency</td>
                                                         <td> @item.interviewDuration </td>
@@ -459,7 +460,12 @@
                                                             <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                             <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                                                                <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
 
+                                                            }
                                                         </td>
                                                     </tr>
                                                 }
@@ -510,39 +516,40 @@
             </div>
         </footer>
     </div>
-    <style>
-        .caret {
-            display: none !important;
-        }
+</div>
+<style>
+    .caret {
+        display: none !important;
+    }
 
-        .multiselect-container {
-            width: 100% !important;
-        }
+    .multiselect-container {
+        width: 100% !important;
+    }
 
-        .modal-lg {
-            max-width: 690px !important;
-        }
+    .modal-lg {
+        max-width: 690px !important;
+    }
 
-        .dropdown-toggle {
-            background-color: white !important;
-            color: black !important;
-            border: 1px solid #ccc !important;
-        }
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
 
-        #StartDate, #EndDate {
-            width: 270px;
-        }
+    #StartDate, #EndDate {
+        width: 270px;
+    }
 
-        .modal-content .modal-body {
-            padding-top: 10px;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         $(document).ready(function () {
             $("#ResetFilter").click(function () {
@@ -603,7 +610,7 @@
 
     });
          function ResetFilter() {
-           
+
              $.ajax({
             type: "POST",
             url: "/Interview/Index",
@@ -643,11 +650,11 @@
     }
 
 
-    </script>
-    @if (ViewBag.Message != null)
-    {
+</script>
+@if (ViewBag.Message != null)
+{
 
-        <script type="text/javascript">
+    <script type="text/javascript">
 
         function my_code() {
             var msg = '@ViewBag.Message';
@@ -688,111 +695,97 @@
         }
 
         window.onload = my_code();
-        </script>
-
-    }
-
-
-    <script>
-        $(document).ready(function () {
-            // FilterInterviews("Today");// on page load default dropdownlist value set
-
-            $('#meeting').DataTable({
-                "pagingType": "full_numbers",
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                responsive: false,
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search records",
-                }
-
-            });
-            var table = $('#meeting').DataTable();
-        });
     </script>
 
-    <script type="text/javascript">
-        //// script for loader starts here
+}
+
+
+<script>
+    $(document).ready(function () {
+        // FilterInterviews("Today");// on page load default dropdownlist value set
+
+        $('#meeting').DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [
+                [10, 25, 50, -1],
+                [10, 25, 50, "All"]
+            ],
+            responsive: false,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search records",
+            }
+
+        });
+        var table = $('#meeting').DataTable();
+    });
+</script>
+
+<script type="text/javascript">
+    //// script for loader starts here
+    $(".dataloading").hide();
+    $("#meeting").hide();
+    var loader;
+    function ShowProgress() {
         $(".dataloading").hide();
         $("#meeting").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meeting").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+    };
+    ShowProgress();
 
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meeting").show();
-            }, 2000);
-        };
+    window.onload = function () {
+        setTimeout(function () {
+            loader.style.display = "none";
+            $(".dataloading").show();
+            $("#meeting").show();
+        }, 2000);
+    };
         //// script for loader ends here
-    </script>
-    <script>
+</script>
+<script>
+    //var hangUpButton = $(".hangUpButton");
+    //var callCandidateButtons = $(".callButton");
+    $(document).ready(function () {
+        //hangUpButton.prop("disabled", true);
+        //callCandidateButtons.prop("disabled", true);
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
 
-        //function FilterInterviews(filterValue) {
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+        console.log("ready!");
+        //callCandidateButtons.prop("disabled", false);
 
-        //    $.ajax({
-        //        type: "GET",
-        //        url: "/Interview/GetFilteredInterviews",
-        //        data: { 'filterValue': filterValue },
-        //        success: function (data) {
+    });
 
-        //            if (data == '' && filterValue == 'seven') {
-        //                $('#tableID').html('');
-        //                $('#tableID').html('No interviews for the next seven days.');
-        //                $('#tableID').css("margin-left", "452px");
-        //                return;
-        //            }
-        //            if (data == '' && filterValue == 'all') {
-        //                $('#tableID').html('');
-        //                $('#tableID').html('No interviews.');
-        //                $('#tableID').css("margin-left", "452px");
-        //                return;
-        //            }
-        //            if (data == '') {
-        //                $('#tableID').html('');
-        //                $('#tableID').html('No interviews for ' + filterValue + '.');
-        //                $('#tableID').css("margin-left", "452px");
-        //                return;
-        //            }
-        //            $('#tableID').css("margin-left", "");
-        //            $('#tableID').html('');
-        //            $('#tableID').html(data);
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
 
-        //            $('#meeting').DataTable({
-        //                "pagingType": "full_numbers",
-        //                "lengthMenu": [
-        //                    [10, 25, 50, -1],
-        //                    [10, 25, 50, "All"]
-        //                ],
-        //                responsive: false,
-        //                language: {
-        //                    search: "_INPUT_",
-        //                    searchPlaceholder: "Search records",
-        //                }
+    Twilio.Device.connect(function (connection) {
+        // Enable the hang up button and disable the call buttons
+        //callCandidateButtons.prop("disabled", true);
+        //hangUpButton.prop("disabled", false);
 
-        //            });
-        //            var table = $('#meeting').DataTable();
+    });
+
+    Twilio.Device.disconnect(function (connection) {
+        // Disable the hangup button and enable the call buttons
+        //callCandidateButtons.prop("disabled", false);
+        //hangUpButton.prop("disabled", true);
+    });
 
 
-
-        //        },
-        //        error: function (err) {
-        //            alert(err.responseText);
-        //        }
-        //    });
-        //}
-    </script>
+</script>

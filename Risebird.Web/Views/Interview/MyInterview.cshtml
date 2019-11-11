@@ -78,6 +78,9 @@
         filter: alpha(opacity = 50);
     }
 </style>
+
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -129,10 +132,10 @@
                                         </div>
                                     </div>
                                     @*<div class="col-sm-9">
-            <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
+                                            <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
 
 
-        </div>*@
+                                        </div>*@
                                     <div>
                                         <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
 
@@ -161,7 +164,7 @@
                                                                 Start Date
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
-                                                                <input id="StartDate" name="StartDate" type="date" class="form-control"  onblur="checkStartDate(this.value)" >
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control" onblur="checkStartDate(this.value)">
                                                             </div>
                                                             <label class="text-danger col-md-6 col-sm-6" id="startDateCheck" style="display:none;"></label>
 
@@ -267,19 +270,19 @@
                                                             </div>
                                                         </div>
                                                         @*<div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">Duration</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="InterviewDuration" name="InterviewDuration" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.interviewDuration).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">Duration</label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="InterviewDuration" name="InterviewDuration" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.interviewDuration).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>*@
+                                                                    </select>
+                                                                </div>
+                                                            </div>*@
                                                         <div class="form-group col-md-12">
                                                             <div class="row">
                                                                 <div class="col-md-6 col-sm-6">
@@ -312,7 +315,7 @@
                                                 <th>Job Level</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>Candidate Contact</th>
+                                                @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
@@ -329,7 +332,7 @@
                                                 <th>Job Level</th>
                                                 <th>Candidate Name</th>
                                                 <th>Candidate Email</th>
-                                                <th>Candidate Contact</th>
+                                                @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
@@ -343,53 +346,60 @@
 
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.id>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.interviewSlot </td>
-                                                <td> @item.interviewDuration </td>
-                                                <td> @item.JobLevelDesc </td>
-                                                <td> @item.candidateName</td>
-                                                <td> @item.candidateEmail</td>
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                <td>@item.MeetingStatusDesc</td>
-                                                <td>@item.InterviewStatusDesc</td>
-
-                                                @if (item.JDLink != null && item.JDLink != "")
-                                                {
-                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No JD</td>
-                                                }
-
-                                                <td> @item.risebirdHR</td>
-                                                <td class="text-right">
-                                                    @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                <tr id=@item.id>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.interviewSlot </td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.JobLevelDesc </td>
+                                                    <td> @item.candidateName</td>
+                                                    <td> @item.candidateEmail</td>
+                                                    @*@if (item.MobileNumber != null)
                                                     {
-                                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                                        <td>@item.MobileNumber</td>
 
                                                     }
-                                                    <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                </td>
-                                            </tr>
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }*@
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    <td>@item.MeetingStatusDesc</td>
+                                                    <td>@item.InterviewStatusDesc</td>
+
+                                                    @if (item.JDLink != null && item.JDLink != "")
+                                                    {
+                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No JD</td>
+                                                    }
+
+                                                    <td> @item.risebirdHR</td>
+                                                    <td class="text-right">
+                                                        @if (item.interviewDate.Date >= DateTime.Now.Date)
+                                                        {
+                                                            <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+
+                                                        }
+                                                        <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate"  class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                                                            <span onclick="hangUp()" title="Hang up"  class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+
+                                                        }
+
+                                                    </td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -534,7 +544,7 @@
         var table = $('#MyInterviewList').DataTable();
     });
     function ResetFilter() {
-           
+
              $.ajax({
             type: "POST",
             url: "/Interview/MyInterview",
@@ -597,32 +607,48 @@
     };
     //// script for loader ends here
 </script>
-@*@if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
-    {
-        <script type="text/javascript">
-            window.onload = function ()
-            {
-                sweetAlert({
-                    title: "Risebird Notification",
-                    text:'@ViewBag.Message',
-                    type: "success"
-                });
-            };
-        </script>
+<script>
+    //var hangUpButton = $(".hangUpButton");
+    //var callCandidateButtons = $(".callButton");
+    $(document).ready(function () {
+        //hangUpButton.prop("disabled", true);
+        //callCandidateButtons.prop("disabled", true);
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+        console.log("ready!");
+        //callCandidateButtons.prop("disabled", false);
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
     }
-    @if (ViewBag.Message != null && (ViewBag.Message.Contains("Failed")))
-    {
-        <script type="text/javascript">
-            window.onload = function ()
-            {
-                sweetAlert({
-                    title: "Risebird Notification",
-                    text: '@ViewBag.Message',
-                    type: "error"
-                });
-            };
-        </script>
-    }*@
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        // Enable the hang up button and disable the call buttons
+        //callCandidateButtons.prop("disabled", true);
+        //hangUpButton.prop("disabled", false);
+
+    });
+
+    Twilio.Device.disconnect(function (connection) {
+        // Disable the hangup button and enable the call buttons
+        //callCandidateButtons.prop("disabled", false);
+        //hangUpButton.prop("disabled", true);
+    });
+
+
+</script>
 
 
 
@@ -720,7 +746,7 @@
         var dateEnd = endDateValue.substring(8, 10);
         var EndDate = new Date(yearEnd, monthEnd, dateEnd);
 
-        
+
         if (StartDate > EndDate) {
             document.getElementById("submitFilter").disabled = true;
             document.getElementById("startDateCheck").style.display = "block";
