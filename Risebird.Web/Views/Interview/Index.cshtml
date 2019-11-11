@@ -364,7 +364,8 @@
                                                     <th>Final Selection Comments</th>
                                                     <th class="no-sort"></th>
                                                     @*<th>Interview Device Details</th>*@
-                                                    <th class="disabled-sorting text-right">Actions</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th style="text-align:center">Call</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -397,12 +398,15 @@
                                                     <th>Final Selection Comments</th>
                                                     <th class="no-sort"></th>
                                                     @*<th>Interview Device Details</th>*@
-                                                    <th class="disabled-sorting text-right">Actions</th>
+                                                    <th class="disabled-sorting" style="text-align:center">Actions</th>
+                                                    <th style="text-align:center">Call</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
                                                 @foreach (var item in Model)
                                                 {
+                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
                                                     <tr id=@item.imid>
                                                         <td title=@item.IRFId> @item.IRFId </td>
                                                         <td> @item.interviewDate </td>
@@ -460,12 +464,14 @@
                                                             <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                             <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
                                                             <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                           
+                                                        </td>
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty && (DateTime.Now.AddMinutes(-5) <= item.interviewDate) && (item.interviewDate <= DateTime.Now.AddMinutes(5)))
                                                             {
-                                                                <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
-                                                                <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
-
+                                                                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)"data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                             }
+
                                                         </td>
                                                     </tr>
                                                 }
@@ -483,6 +489,41 @@
                     <!--  end card  -->
                 </div>
                 <!-- end col-md-12 -->
+            </div>
+            <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+                <!-- Modal content -->
+                <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                        <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+                        <span class="close" id="callPopUp">&times;</span>
+                    </div>
+                    <div class="modal-body" style="padding: 2px 16px;">
+                        <div class="row">
+                            <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+                        </div>
+
+                        <div class="">
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%"class="btn btn-fill btn-danger" value="Hang Up">
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+                    </div>
+                </div>
+
             </div>
             <!-- end row -->
         </div>
@@ -748,11 +789,15 @@
         //// script for loader ends here
 </script>
 <script>
-    //var hangUpButton = $(".hangUpButton");
-    //var callCandidateButtons = $(".callButton");
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
     $(document).ready(function () {
-        //hangUpButton.prop("disabled", true);
-        //callCandidateButtons.prop("disabled", true);
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
@@ -761,8 +806,6 @@
 
     /* Callback to let us know Twilio Client is ready */
     Twilio.Device.ready(function (device) {
-        console.log("ready!");
-        //callCandidateButtons.prop("disabled", false);
 
     });
 
@@ -775,17 +818,38 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        // Enable the hang up button and disable the call buttons
-        //callCandidateButtons.prop("disabled", true);
-        //hangUpButton.prop("disabled", false);
-
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
     });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
     Twilio.Device.disconnect(function (connection) {
-        // Disable the hangup button and enable the call buttons
-        //callCandidateButtons.prop("disabled", false);
-        //hangUpButton.prop("disabled", true);
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+        
     });
+
+    function ModalButtonClick(candidateObj) {
+        candidate = candidateObj.candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");       
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(candidateObj.MobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
 
 </script>
+
