@@ -185,7 +185,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells["A1:P1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 25;
+                int startColumn = 1; int endColumn = 28;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 40;
@@ -205,16 +205,19 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1,13].Value = "Risebird HR";
                 Sheet.Cells[1,14].Value = "Candidate Contact";
                 Sheet.Cells[1,15].Value = "Client HR";
-                Sheet.Cells[1,16].Value = "Staffing Agency";
-                Sheet.Cells[1,17].Value = "Interview Duration";
-                Sheet.Cells[1,18].Value = "Expected Joining Time";
-                Sheet.Cells[1,19].Value = "Preferred Location";
-                Sheet.Cells[1,20].Value = "Expected Per Hour Rate";
-                Sheet.Cells[1,21].Value = "Current Employer";
-                Sheet.Cells[1,22].Value = "Approval Status";
-                Sheet.Cells[1,23].Value = "Approval Comments";
-                Sheet.Cells[1,24].Value = "Final Selection Status";
-                Sheet.Cells[1,25].Value = "Final Selection Comments";
+                Sheet.Cells[1, 16].Value = "End Client Name";
+                Sheet.Cells[1, 17].Value = "Video Link";
+                Sheet.Cells[1, 18].Value = "Interviewer Comment";
+                Sheet.Cells[1,19].Value = "Staffing Agency";
+                Sheet.Cells[1,20].Value = "Interview Duration";
+                Sheet.Cells[1,21].Value = "Expected Joining Time";
+                Sheet.Cells[1,22].Value = "Preferred Location";
+                Sheet.Cells[1,23].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1,24].Value = "Current Employer";
+                Sheet.Cells[1,25].Value = "Approval Status";
+                Sheet.Cells[1,26].Value = "Approval Comments";
+                Sheet.Cells[1,27].Value = "Final Selection Status";
+                Sheet.Cells[1,28].Value = "Final Selection Comments";
                 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -291,16 +294,36 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 13].Value = item.risebirdHR;
                         Sheet.Cells[i, 14].Value = item.MobileNumber;
                         Sheet.Cells[i, 15].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 16].Value = item.staffingAgency;
-                        Sheet.Cells[i, 17].Value = item.interviewDuration;
-                        Sheet.Cells[i, 18].Value = item.joiningTime;
-                        Sheet.Cells[i, 19].Value = item.preferredLocation;
-                        Sheet.Cells[i, 20].Value = item.expectedPerHourRate;
-                        Sheet.Cells[i, 21].Value = item.currentEmployerName;
-                        Sheet.Cells[i, 22].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "";
-                        Sheet.Cells[i, 23].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
-                        Sheet.Cells[i, 24].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
-                        Sheet.Cells[i, 25].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 16].Value = item.ClientName;
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 17].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 17].Value = "Video Link";
+                                Sheet.Cells[i, 17].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception e)
+                            {
+                                Sheet.Cells[i, 17].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 17].Value = "No Video";
+                        }
+                        Sheet.Cells[i, 18].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 19].Value = item.staffingAgency;
+                        Sheet.Cells[i, 20].Value = item.interviewDuration;
+                        Sheet.Cells[i, 21].Value = item.joiningTime;
+                        Sheet.Cells[i, 22].Value = item.preferredLocation;
+                        Sheet.Cells[i, 23].Value = item.expectedPerHourRate;
+                        Sheet.Cells[i, 24].Value = item.currentEmployerName;
+                        Sheet.Cells[i, 25].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "";
+                        Sheet.Cells[i, 26].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 27].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
+                        Sheet.Cells[i, 28].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
                         
                         i++;
                     }
