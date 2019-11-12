@@ -387,7 +387,8 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = _irfService.GetQualityController();
+                ViewBag.QualityController = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -1113,7 +1114,8 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
-                    ViewBag.QualityController = _irfService.GetQualityController();
+                    ViewBag.QualityController = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
+                    ViewBag.EmergencyInterviewers = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
 
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))

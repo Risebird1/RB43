@@ -84,6 +84,8 @@ namespace Risebird.Entities.ViewModel
         public IList<TransClientUser> ClientCollection { get; set; }
         public IList<TransQualityController> QualityController { get; set; }
         public IList<TransInterviewer> InterviewerCollection { get; set; }
+        public IList<TransEmergencyInterviewer> EmergencyInterviewerCollection { get; set; }
+
         public string ClientCompName { get; set; }
 
         public SelectList JoinabilityTypeList { get; set; }

@@ -66,14 +66,10 @@ delete from TransSkillGeneral where IRFId=@id
 delete from TransTechSkill where IRFId=@id
 
 delete from TransSelectability where IRFId=@id
-
-
-
+delete from TransEmergencyInterviewer where IRFId=@id
 
 
 End
-
-
 
 GO
 

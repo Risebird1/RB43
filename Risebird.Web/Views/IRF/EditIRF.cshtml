@@ -656,6 +656,55 @@
                                 </div><!--end of col-md-12-->
                             </div>
 
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Approved Emergency Interviewer List</h2>
+                                    </div><!--end of multiple location-->
+                                </div><!--end of col-md-12-->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="EmergencyInterviewerTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Skills</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int i = 0; i < Model.EmergencyInterviewerCollection.Count(); i++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownListFor(m => m.EmergencyInterviewerCollection[i].UserId, (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                        </td>
+
+                                                        <td>
+                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                            @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
+
+                                                        </td>
+
+                                                        <td>
+
+                                                            <div class="form-control">
+                                                                <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                    </div>
+                                </div><!--end of col-md-12-->
+                            </div>
+
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
@@ -671,7 +720,7 @@
                                         {
                                             <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
                                             if (Model.LoggedEmail == "kamini@risebird.io")
-                                            { 
+                                            {
                                                 <button type="submit" class="btn btn-fill btn-primary" id="btnUploadSaveAs" value="Save">Save As</button>
                                             }
 
@@ -946,6 +995,16 @@
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id + " option").remove();
                 }
+
+                var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
+                for (i = 0; i < drpdownsEI.length; i++) {
+                    $("#" + drpdownsEI[i].id + " option").remove();
+                }
+
+                var drpdownsQC = $('[id^="QualityController"][id$="UserId"]');
+                for (i = 0; i < drpdownsQC.length; i++) {
+                    $("#" + drpdownsQC[i].id + " option").remove();
+                }
                 //var drpdwnId = $("#InterviewerCollection_" + index + "__InterviewerId");
                 ////drpdwnId.options.length = 0;
                 //$("#InterviewerCollection_" + index + "__InterviewerId option").remove();
@@ -976,7 +1035,52 @@
 
                     }
 
+                    for (i = 0; i < drpdownsEI.length; i++) {
+                        //$("#" + drpdowns[i].id).append(option);
 
+
+                        $(data).each(function () {
+                            var option = $("<option />");
+
+                            //Set Text part.
+                            option.html(this.text);
+
+                            //Set Value part.
+                            option.val(this.value);
+
+                            //Add the Option element to DropDownList.
+
+                            $("#" + drpdownsEI[i].id).append(option);
+
+                            EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
+
+                            //drpdwnId.append(option);
+                        });
+                    }
+
+
+                    for (i = 0; i < drpdownsQC.length; i++) {
+                        //$("#" + drpdowns[i].id).append(option);
+
+
+                        $(data).each(function () {
+                            var option = $("<option />");
+
+                            //Set Text part.
+                            option.html(this.text);
+
+                            //Set Value part.
+                            option.val(this.value);
+
+                            //Add the Option element to DropDownList.
+
+                            $("#" + drpdownsQC[i].id).append(option);
+
+                            QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
+
+                            //drpdwnId.append(option);
+                        });
+                    }
 
                 }
 
@@ -1316,7 +1420,7 @@
        // document.getElementById("btnUpload").disabled = false;
 
     }
-
+    
     function AddRowInterviewer() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -1354,6 +1458,57 @@
 
         // add cloned row as last row
         $("#InterviewerTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
+
+    }
+    //EmergencyInterviewerTable
+    function AddRowEmergencyInterviewer() {
+        document.getElementById("btnUpload").disabled = false;
+
+        var table = document.getElementById("EmergencyInterviewerTable");
+        var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
+
+        var $ttc = $("#EmergencyInterviewerTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#EmergencyInterviewerTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#EmergencyInterviewerTable").find("tbody tr:last").after($tr);
 
         // Find the affected form
         var $form = $tr.closest("FORM");
@@ -1427,6 +1582,23 @@
 
     }
 
+    function EmergencyInterviewerChanged(val, id) {
+
+        var index = id.charAt(31);
+        var skillElementid = 'EmergencyInterviewerCollection_' + index + '__PrimarySkill';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
+
     function ClientUserChanged(val, id) {
 
         var index = id.charAt(17);
@@ -1449,7 +1621,7 @@
         var skillElementid = 'QualityController_' + index + '__PrimarySkill';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetQCSkills",
+            url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
