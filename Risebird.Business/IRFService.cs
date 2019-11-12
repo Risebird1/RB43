@@ -331,6 +331,7 @@ namespace Risebird.Business
                 var transInterviewer = _irfRepository.GetTransInterviewer(id);
                 var transQualityController = _irfRepository.GetTransQualityController(id);
                 var transSelectability = _irfRepository.GetTransSelectability(id);
+                var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
 
 
                 //assign values retrieved to the model
@@ -338,6 +339,7 @@ namespace Risebird.Business
                 model.ClientCompName = IRF.ClientCompName;
                 model.IRFId = IRF.IRFId;
                 model.InterviewerCollection = (IList<TransInterviewer>)(transInterviewer);
+                model.EmergencyInterviewerCollection = (IList<TransEmergencyInterviewer>)(transEmergencyInterviewer);
                 model.JDLink = IRF.JDLink;
                 model.JDTiltle = IRF.JDTiltle;
                 model.JobCountry = IRF.JobCountry;

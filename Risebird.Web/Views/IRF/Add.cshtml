@@ -85,37 +85,37 @@
                         @using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="row">
+                            <div class="row">
 
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+                                <div class="col-md-3 col-sm-3 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
 
-                                    @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                    @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-                                    @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                        @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
 
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 px-1">
-                                <div class="form-group">
-                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                    @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                <div class="col-md-3 col-sm-3 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                    @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line"} })
-                                    @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
 
+                                    </div>
                                 </div>
-                            </div>
 
-                        </div>
+                            </div>
 
 
                             <div class="row">
@@ -628,7 +628,7 @@
 
                                                 <tr>
                                                     <td>
-                                                        @Html.DropDownList("InterviewerCollection[0].InterviewerId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
+                                                        @Html.DropDownList("InterviewerCollection[0].UserId", (SelectList)ViewBag.Interviewers, new { @class = "form-control", @onchange = "InterviewerChanged(this.value, this.id)" })
                                                     </td>
 
                                                     <td>
@@ -647,7 +647,7 @@
                                         </a>*@
 
                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'InterviewerId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
 
                                                     </td>
                                                 </tr>
@@ -701,6 +701,58 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Approved Emergency Interviewer</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="EmergencyInterviewerTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Skills</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                        @Html.TextBox("EmergencyInterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
+
+                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
+
+                                                        <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+
+                                    </div>
+                                </div>
+                            </div>
+
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
@@ -837,8 +889,8 @@
         }
 
         if (inCorrectCount == 0) {
-            // check interviewers list InterviewerCollection_  InterviewerId
-            var drpdowns = $('[id^="InterviewerCollection"][id$="InterviewerId"]');
+            // check interviewers list InterviewerCollection_  UserId
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
             for (i = 0; i < drpdowns.length; i++) {
                 
                 var interviewId = $("#" + drpdowns[i].id).val();
@@ -856,7 +908,7 @@
             return true;
         }
         else {
-            var drpdowns = $('[id^="InterviewerCollection"][id$="InterviewerId"]');
+            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
             for (i = 0; i < drpdowns.length; i++) {
 
                 var interviewId = $("#" + drpdowns[i].id).val();
@@ -927,13 +979,23 @@
             data: { 'skills': skills },
             success: function (data) {
 
-                var drpdowns = $('[id^="InterviewerCollection"][id$="InterviewerId"]');
+                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
                     $("#" + drpdowns[i].id+" option").remove();
                 }
-                //var drpdwnId = $("#InterviewerCollection_" + index + "__InterviewerId");
+
+                var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
+                for (i = 0; i < drpdownsEI.length; i++) {
+                    $("#" + drpdownsEI[i].id + " option").remove();
+                }
+
+                var drpdownsQC = $('[id^="QualityController"][id$="UserId"]');
+                for (i = 0; i < drpdownsQC.length; i++) {
+                    $("#" + drpdownsQC[i].id + " option").remove();
+                }
+                //var drpdwnId = $("#InterviewerCollection_" + index + "UserId");
                 ////drpdwnId.options.length = 0;
-                //$("#InterviewerCollection_" + index + "__InterviewerId option").remove();
+                //$("#InterviewerCollection_" + index + "UserId option").remove();
                 
                 if (data.length > 0) {
 
@@ -956,6 +1018,51 @@
                             
                             InterviewerChanged(drpdowns[i].value, drpdowns[i].id);   
                             
+                            //drpdwnId.append(option);
+                        });
+                    }
+                    for (i = 0; i < drpdownsEI.length; i++) {
+                        //$("#" + drpdowns[i].id).append(option);
+
+
+                        $(data).each(function () {
+                            var option = $("<option />");
+
+                            //Set Text part.
+                            option.html(this.text);
+
+                            //Set Value part.
+                            option.val(this.value);
+
+                            //Add the Option element to DropDownList.
+
+                            $("#" + drpdownsEI[i].id).append(option);
+
+                            EmergencyInterviewerChanged(drpdownsEI[i].value, drpdownsEI[i].id);
+
+                            //drpdwnId.append(option);
+                        });
+                    }
+
+                    for (i = 0; i < drpdownsQC.length; i++) {
+                        //$("#" + drpdowns[i].id).append(option);
+
+
+                        $(data).each(function () {
+                            var option = $("<option />");
+
+                            //Set Text part.
+                            option.html(this.text);
+
+                            //Set Value part.
+                            option.val(this.value);
+
+                            //Add the Option element to DropDownList.
+
+                            $("#" + drpdownsQC[i].id).append(option);
+
+                            QCChanged(drpdownsQC[i].value, drpdownsQC[i].id);
+
                             //drpdwnId.append(option);
                         });
                     }
@@ -1380,6 +1487,57 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
+    function AddRowEmergencyInterviewer() {
+        document.getElementById("btnUpload").disabled = false;
+
+        var table = document.getElementById("EmergencyInterviewerTable");
+        var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
+
+        var $ttc = $("#EmergencyInterviewerTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#EmergencyInterviewerTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#EmergencyInterviewerTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
+
+    }
+
 
     function AddRowQualityController() {
         document.getElementById("btnUpload").disabled = false;
@@ -1439,6 +1597,22 @@
 
 
     }
+    function EmergencyInterviewerChanged(val, id) {
+
+        var index = id.charAt(31);
+        var skillElementid = 'EmergencyInterviewerCollection_' + index + '__SkillId';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetInterviewerSkills",
+            data: { 'id': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
+
+
+    }
+
 
     function ClientUserChanged(val, id) {
 
@@ -1462,7 +1636,7 @@
         var skillElementid = 'QualityController_' + index + '__SkillId';
         $.ajax({
             type: "GET",
-            url: "/IRF/GetQCSkills",
+            url: "/IRF/GetInterviewerSkills",
             data: { 'id': val },
             success: function (data) {
                 $("#" + skillElementid).val(data);
@@ -1478,26 +1652,29 @@
         TechSkillChanged();
         //Perform Ajax request.
        
-        var id = $("#InterviewerCollection_0__InterviewerId").val();
+        var id = $("#InterviewerCollection_0__UserId").val();
         $.ajax({
             type: "GET",
             url: "/IRF/GetInterviewerSkills",
             data: { 'id': id },
             success: function (data) {
                 $("#InterviewerCollection_0__SkillId").val(data);
+                $("#QualityController_0__SkillId").val(data);
+                $("#EmergencyInterviewerCollection_0__SkillId").val(data);
+
             }
         });
 
         //Get QC Skills
-        var id = $("#QualityController_0__UserId").val();
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetQCSkills",
-            data: { 'id': id },
-            success: function (data) {
-                $("#QualityController_0__SkillId").val(data);
-            }
-        });
+        //var id = $("#QualityController_0__UserId").val();
+        //$.ajax({
+        //    type: "GET",
+        //    url: "/IRF/GetQCSkills",
+        //    data: { 'id': id },
+        //    success: function (data) {
+        //        $("#QualityController_0__SkillId").val(data);
+        //    }
+        //});
 
         //Get Client Users based on clietn ID
         var clientId = $("#ClientId").val();

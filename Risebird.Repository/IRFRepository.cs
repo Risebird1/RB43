@@ -561,7 +561,16 @@ namespace Risebird.Repository
                                 commandType: CommandType.StoredProcedure);
                         
                     }
+                    //update trans emergency interviewer table
+                    foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                    {
+                        DynamicParameters param = new DynamicParameters();
+                        param.Add("@irfIntId", irfID);
+                        param.Add("@InterviewerUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+                                commandType: CommandType.StoredProcedure);
 
+                    }
                     //update trans Client table
 
                     foreach (var item in irfDetails.ClientCollection)
@@ -581,7 +590,7 @@ namespace Risebird.Repository
                     {
                         DynamicParameters param2 = new DynamicParameters();
                         param2.Add("@irfIntId", irfID);
-                        param2.Add("@QCUserId", item.UserId);
+                        param2.Add("@InterviewerUserId", item.UserId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
                                 commandType: CommandType.StoredProcedure);
 
@@ -705,7 +714,20 @@ namespace Risebird.Repository
 
                         }
                     }
-                    
+
+                    // update trans emergency interviewers table
+                    if (irfDetails.EmergencyInterviewerCollection != null)
+                    {
+                        foreach (var item in irfDetails.EmergencyInterviewerCollection)
+                        {
+                            DynamicParameters param = new DynamicParameters();
+                            param.Add("@irfIntId", irfDetails.id);
+                            param.Add("@InterviewerUserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransEmergencyInterviewer", param,
+                                    commandType: CommandType.StoredProcedure);
+
+                        }
+                    }
 
                     //update trans Client table
 
@@ -733,7 +755,7 @@ namespace Risebird.Repository
                         {
                             DynamicParameters param2 = new DynamicParameters();
                             param2.Add("@irfIntId", irfDetails.id);
-                            param2.Add("@QCUserId", item.UserId);
+                            param2.Add("@InterviewerUserId", item.UserId);
                             var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransQualityController", param2,
                                     commandType: CommandType.StoredProcedure);
 
@@ -853,15 +875,7 @@ namespace Risebird.Repository
                                             commandType: CommandType.StoredProcedure);
                     return result;
                 }
-                
-                //var query = "Select * from TransInterviewer where IRFId = @IRFId";
-                //var dynamicParameters = new DynamicParameters();
-                //dynamicParameters.Add("@IRFId", id);
-                //using (SqlConnection con = new SqlConnection(connectionString))
-                //{
-                //    var results = con.Query<TransInterviewer>(query, dynamicParameters);
-                //    return results;
-                //}
+                                
 
             }
             catch (SqlException ex)
@@ -870,6 +884,28 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<TransEmergencyInterviewer> GetTransEmergencyInterviewer(int id)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@irfId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<TransEmergencyInterviewer>(con, "usp_GetTransEmergencyInterviewer", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public IEnumerable<TransClientUser> GetTransClientUser(int id)
         {
