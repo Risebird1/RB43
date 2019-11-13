@@ -48,7 +48,9 @@ namespace Risebird.Entities.Data
         public int? MeetingStatus { get; set; }
         public int? InterviewStatus { get; set; }
         public int? IsSelected { get; set; }
-
+        public int? QCStatus { get; set; }
+        public string QCComment { get; set; }
+        public string QCStatusDesc { get; set; }
         public string MeetingStatusDesc { get; set; }
         public string InterviewStatusDesc { get; set; }
 

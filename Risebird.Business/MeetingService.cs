@@ -188,6 +188,16 @@ namespace Risebird.Business
             return false;
         }
 
+        public bool SaveQCFeedback(string imid, string qcStatus, string comment)
+        {
+            if (!string.IsNullOrEmpty(qcStatus) && !string.IsNullOrEmpty(imid))
+            {
+                //var val = Convert.ToInt32(value);
+                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), Convert.ToInt32(qcStatus), comment);
+                return result;
+            }
+            return false;
+        }
         public bool PostSelectionStatus(string imid, string value, string comment)
         {           
             if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
@@ -259,7 +269,7 @@ namespace Risebird.Business
         {
             try
             {
-                var finalList = new List<Meeting>();
+                //var finalList = new List<Meeting>();
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 //foreach (var item in assignedMeeting)
                 //{
@@ -276,6 +286,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public List<Meeting> GetQualityControlInterviews(string emailID)
+        {
+            try
+            {
+                //var finalList = new List<Meeting>();
+                var assignedMeeting = _meetingRespository.GetQualityControlInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                //foreach (var item in assignedMeeting)
+                //{
+                //    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
+                //    {
+                //        finalList.Add(item);
+                //    }
+                //}
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         /// <summary>
         /// Assign Yourself

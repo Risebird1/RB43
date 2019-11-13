@@ -170,6 +170,31 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<Meeting>> GetQualityControlInterview(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyQualityControlInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
         public async Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId)
         {
             try
@@ -1070,6 +1095,36 @@ namespace Risebird.Repository
                 {
                     var result =  SqlMapper.Query<int>(con, "usp_AddUpdateClientFeedback", dynamicParameters,
                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool SaveQCFeedback(int imid, int qcStatus, string comment)
+        {
+            try
+            {
+                //var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var query = "update InterviewComments set QCStatus=@QCStatus, QCComment=@QCComment where InterviewId=@InterviewId";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@QCStatus", qcStatus);
+                dynamicParameters.Add("@QCComment", comment);
+                dynamicParameters.Add("@InterviewId", imid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
                     return true;
                 }
 
