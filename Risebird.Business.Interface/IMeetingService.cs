@@ -34,5 +34,8 @@ namespace Risebird.Business.Interface
         bool SaveClientFeedback(string imid, string isApproved, string approvalComment, string isSelected, string selectionComment, string joiningStatus, string joiningComment, string offerStatus, string offerComment);
         List<Meeting> GetQualityControlInterviews(string emailID);
         bool SaveQCFeedback(string imid, string qcStatus, string comment);
+        List<Meeting> GetQCOpenInterviews(string emailId);
+        string QCAssignYourself(int meetingid, string interviewerMail);
+        bool QCUnassignYourself(int meetingid, string email);
     }
 }

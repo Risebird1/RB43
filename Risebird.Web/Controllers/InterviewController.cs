@@ -3709,6 +3709,43 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> QCAssignYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var result = _meetingService.QCAssignYourself(id, emailid.ToLower());
+                        TempData["SuccessErrorMessage"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("QCOpenInterviews");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("QCOpenInterviews");
+            }
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id)
         {
@@ -3750,6 +3787,49 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
                 return RedirectToAction("MyInterview");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnAssignQC(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Interviewer")                       
+                    {
+                        if (_meetingService.QCUnassignYourself(id, email.ToLower()))
+                        {
+                            TempData["SuccessErrorMessage"] = "Successfully unassigned!";
+                            return RedirectToAction("MyQualityControlledInterviews");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
+                            return RedirectToAction("MyQualityControlledInterviews");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyQualityControlledInterviews");
             }
         }
 
@@ -5001,6 +5081,57 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCOpenInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = _meetingService.GetQCOpenInterviews(emailid);
+                        //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        meetings = meetings.Select(x => {x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "All");
+
+                        ViewData["list"] = list;
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 

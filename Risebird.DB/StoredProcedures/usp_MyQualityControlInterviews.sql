@@ -14,10 +14,9 @@ Create PROCEDURE [dbo].[usp_MyQualityControlInterviews]
 @emailID varchar(200)        
 AS      
 BEGIN      
-select InterviewMeetings.*, irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel, ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ic.QCStatus, ic.QCComment from InterviewMeetings    
-inner join IRF  irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComments ic on InterviewMeetings.id = ic.InterviewId     
-where IRF.id in (select IRFId from TransQualityController tqc join UserList ul on tqc.UserId= ul.id where EmailId = @emailID) and ic.InterviewStatus in (2,4)
-      
+select InterviewMeetings.*, qcfr.*,irf.id as irfIntId,irf.ClientId, irf.JDLink,irf.JobLevel, ic.ApprovalComments, ic.IsApproved,ic.InterviewStatus,ic.IsSelected, ic.MeetingStatus,ic.VideoLink, ic.QCStatus, ic.QCComment from InterviewMeetings    
+ inner join IRF  irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComments ic on InterviewMeetings.id = ic.InterviewId left join QCFeedbackReport qcfr on qcfr.InterviewId = InterviewMeetings.id    
+ where QCInterviewer = @emailID  
 END   
 GO
 

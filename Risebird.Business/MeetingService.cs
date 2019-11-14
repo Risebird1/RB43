@@ -237,6 +237,20 @@ namespace Risebird.Business
             }
         }
 
+        public List<Meeting> GetQCOpenInterviews(string emailId)
+        {
+            try
+            {
+                var openMeeting = _meetingRespository.GetQCOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList().Where(x=> x.QCInterviewer == null).ToList();
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         public List<Meeting> GetAllQCInterviews(string emailId)
         {
             try
@@ -355,6 +369,22 @@ namespace Risebird.Business
             //}
         }
 
+        public string QCAssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+               
+                return _meetingRespository.QCAssignYourself(meetingid, interviewerMail);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            
+        }
+
         public bool UnassignYourself(int meetingid, string email)
         {
             try
@@ -388,6 +418,21 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public bool QCUnassignYourself(int meetingid, string email)
+        {
+            try
+            {
+                return _meetingRespository.QCUnassignYourself(meetingid).Result;
+                
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
         public InterviewComments GetInterviewComments(int interviewId)
         {

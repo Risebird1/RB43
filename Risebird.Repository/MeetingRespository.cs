@@ -97,6 +97,31 @@ namespace Risebird.Repository
             return null;
         }
 
+        public async Task<IEnumerable<Meeting>> GetQCOpenInterviews(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyQCOpenInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
         public async Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailID)
         {
             try
@@ -330,7 +355,7 @@ namespace Risebird.Repository
                 {
                     SqlMapper.Query<string>(
                         con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
-                    return "Interviewer assigned successfully.";
+                    return "Interview assigned successfully.";
                 }
             }
             catch (SqlException ex)
@@ -343,6 +368,52 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
+        }
+
+        //public string QCAssignYourself(int meetingid, string interviewerMail)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            SqlMapper.Query<string>(
+        //                con, "update [dbo].[InterviewMeetings] set QCInterviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
+        //            return "Interviewer assigned successfully.";
+        //        }
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return "Failed to assigned interview, Please contact Risebird HR.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return "Failed to assigned interview, Please contact Risebird HR.";
+        //    }
+        //}
+        public string QCAssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set QCInterviewer=@value where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@value", interviewerMail);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return "Interview assigned successfully.";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+
         }
 
         public async Task<bool> UnassignYourself(int meetingid)
@@ -369,6 +440,32 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> QCUnassignYourself(int meetingid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_UnAssignQCInterviewer", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
         public async Task<InterviewComments> GetInterviewComments(int interviewId)
         {

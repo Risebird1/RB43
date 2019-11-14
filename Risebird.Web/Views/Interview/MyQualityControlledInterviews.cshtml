@@ -375,8 +375,8 @@
 
                                                     <td> @item.risebirdHR</td>
                                                     <td class="text-right">
+                                                        <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                                         <span title="QC Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-
                                                         @*<span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>*@
                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
@@ -439,6 +439,76 @@
                             </div>
 
                         </div>
+                        @*<div class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label" for="idFraudLipSync"><b>Fraud Lip Sync</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idFraudLipSync" name="idFraudLipSync">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idQuestionsRelevance"><b>Questions' Relevance with JD</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsRelevance" name="idQuestionsRelevance">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idHandsOncoding"><b> Hands-on coding</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idHandsOncoding" name="idHandsOncoding">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idBias"><b>Bias and Candidate handling</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idBias" name="idBias">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idTechnicalCommunication"><b>Technical Communication skills</b></label>
+                                        <input class="form-control"  style="margin-top: -23px;" type="checkbox" id="idTechnicalCommunication" name="idTechnicalCommunication">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idChaptering"><b>Chaptering completed</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idChaptering" name="idChaptering">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label" for="idQuestionsFilled"><b>Questions Filled</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsFilled" name="idQuestionsFilled">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idTechSkillsMetric"><b>Tech Skills Metric</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idTechSkillsMetric" name="idTechSkillsMetric">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idSelectabilityMetric"><b>Selectability Metric</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idSelectabilityMetric" name="idSelectabilityMetric">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idJoinabilityMetric"><b>Joinability Metric</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idJoinabilityMetric" name="idJoinabilityMetric">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idGeneralSkillMetric"><b>General Skill metric</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idGeneralSkillMetric" name="idGeneralSkillMetric">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idCommentsfilled"><b>Comments filled</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idCommentsfilled" name="idCommentsfilled">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idMeaningfulAssessments"><b>Useful/meaningful assessments</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idMeaningfulAssessments" name="idMeaningfulAssessments">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idGrammar"><b>Correct English Grammar </b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idGrammar" name="idGrammar">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label" for="idProctoring"><b>Proctoring report filled</b></label>
+                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idProctoring" name="idProctoring">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>*@
+                        
 
                         <div class="">
                             <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
