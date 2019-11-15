@@ -188,12 +188,12 @@ namespace Risebird.Business
             return false;
         }
 
-        public bool SaveQCFeedback(string imid, string qcStatus, string comment)
+        public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
         {
             if (!string.IsNullOrEmpty(qcStatus) && !string.IsNullOrEmpty(imid))
             {
                 //var val = Convert.ToInt32(value);
-                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), Convert.ToInt32(qcStatus), comment);
+                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), Convert.ToInt32(qcStatus), comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
                 return result;
             }
             return false;
@@ -688,9 +688,9 @@ namespace Risebird.Business
                 //}
                 //reportModel.OverallScore = (total / 4);
                 var result =await _meetingRespository.AddInterviewReport(reportModel);
-                if(reportModel.InterviewStatus.HasValue)
+                if(reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
-                    //if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
+                    if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
                     {
                        // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
                         //var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
@@ -698,11 +698,20 @@ namespace Risebird.Business
 
                         //var interviewDate = reportModel.interviewDate;
                         //var candidateName = reportModel.CandidateName;
-                        //var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
+                        var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
+                        var mailIds = new List<string>();
+                        foreach (var item in irfQualityControllers)
+                        { 
+                            if(item.EmailId!=null)
+                            {
+                                mailIds.Add(item.EmailId);
+                            }
+                        }
+                        _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
+
                         //if(!reportModel.IsEdited)
                         //{
                         //    var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
-                        //    _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
                         //}
                     }

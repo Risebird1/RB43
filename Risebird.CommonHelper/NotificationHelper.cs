@@ -91,9 +91,6 @@ namespace Risebird.CommonHelper
         }
 
 
-
-
-
         public string SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate)
         {
             try
@@ -110,6 +107,37 @@ namespace Risebird.CommonHelper
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
                
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+        public string SendQCInterviewerMail(List<string> interviwers, string meetingDate)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var mails in interviwers)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { meetingDate };
+                mailMessage.Subject = "Interview dated: " + meetingDate + " submitted for quality check.";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "QCInterviewMailTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));

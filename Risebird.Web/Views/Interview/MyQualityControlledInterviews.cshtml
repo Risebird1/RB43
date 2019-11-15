@@ -439,7 +439,7 @@
                             </div>
 
                         </div>
-                        @*<div class="form-horizontal">
+                        <div class="form-horizontal">
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
@@ -507,7 +507,7 @@
                                 </div>
 
                             </div>
-                        </div>*@
+                        </div>
                         
 
                         <div class="">
@@ -744,7 +744,24 @@
         modal.style.display = "block";
 
         //document.getElementById("IsApproved").checked = item.IsApproved;
-        document.getElementById("qcComments").value = item.QCComment;
+        document.getElementById("qcComments").value = item.QCComment
+
+        document.getElementById("idFraudLipSync").checked = item.FraudLipSync;
+        document.getElementById("idQuestionsRelevance").checked = item.QuestionsRelevance;
+        document.getElementById("idHandsOncoding").checked = item.HandsOnCoding;
+        document.getElementById("idBias").checked = item.BiasAndCandidateHandling;
+        document.getElementById("idTechnicalCommunication").checked = item.TechnicalCommunicationSkills;
+        document.getElementById("idChaptering").checked = item.ChapteringCompleted;
+        document.getElementById("idQuestionsFilled").checked = item.QuestionsFilled;
+        document.getElementById("idTechSkillsMetric").checked = item.TechSkillsMetric;
+        document.getElementById("idSelectabilityMetric").checked = item.SelectabilityMetric;
+        document.getElementById("idJoinabilityMetric").checked = item.JoinabilityMetric;
+        document.getElementById("idGeneralSkillMetric").checked = item.GeneralSkillMetric;
+        document.getElementById("idCommentsfilled").checked = item.CommentsFilled;
+        document.getElementById("idMeaningfulAssessments").checked = item.MeaningfulAssessments;
+        document.getElementById("idGrammar").checked = item.CorrectEnglishGrammar;
+        document.getElementById("idProctoring").checked = item.ProctoringReportFilled;
+
 
         
         $.ajax({
@@ -772,16 +789,36 @@
     
 
     function SavePopUp() {
-        debugger;
         var comment = document.getElementById("qcComments").value;
         var qcStatus = document.getElementById("qcDropdown").value;
+
+        var FraudLipSync = document.getElementById("idFraudLipSync").checked;
+        var QuestionsRelevance = document.getElementById("idQuestionsRelevance").checked  ;
+        var HandsOnCoding = document.getElementById("idHandsOncoding").checked;
+        var BiasAndCandidateHandling =document.getElementById("idBias").checked;
+        var TechnicalCommunicationSkills = document.getElementById("idTechnicalCommunication").checked;
+        var ChapteringCompleted = document.getElementById("idChaptering").checked;
+        var QuestionsFilled = document.getElementById("idQuestionsFilled").checked;
+        var TechSkillsMetric =document.getElementById("idTechSkillsMetric").checked ;
+        var SelectabilityMetric = document.getElementById("idSelectabilityMetric").checked;
+        var JoinabilityMetric = document.getElementById("idJoinabilityMetric").checked;
+        var GeneralSkillMetric = document.getElementById("idGeneralSkillMetric").checked ;
+        var CommentsFilled = document.getElementById("idCommentsfilled").checked;
+        var MeaningfulAssessments = document.getElementById("idMeaningfulAssessments").checked ;
+        var CorrectEnglishGrammar = document.getElementById("idGrammar").checked ;
+        var ProctoringReportFilled = document.getElementById("idProctoring").checked ;
         
         var id = imid;
 
         $.ajax({
             type: "GET",
             url: "/Interview/SaveQCFeedback",
-            data: { 'imid': id, 'qcStatus': qcStatus, 'comment': comment },
+            data: {
+                'imid': id, 'qcStatus': qcStatus, 'comment': comment, 'FraudLipSync': FraudLipSync, 'QuestionsRelevance': QuestionsRelevance, 'HandsOnCoding': HandsOnCoding, 'BiasAndCandidateHandling': BiasAndCandidateHandling, 'TechnicalCommunicationSkills': TechnicalCommunicationSkills, 'ChapteringCompleted': ChapteringCompleted,
+                'QuestionsFilled': QuestionsFilled, 'TechSkillsMetric': TechSkillsMetric, 'SelectabilityMetric': SelectabilityMetric, 'JoinabilityMetric': JoinabilityMetric,
+                'GeneralSkillMetric': GeneralSkillMetric, 'CommentsFilled': CommentsFilled, 'MeaningfulAssessments': MeaningfulAssessments, 'CorrectEnglishGrammar': CorrectEnglishGrammar,
+                'ProctoringReportFilled': ProctoringReportFilled
+            },
             success: function (data) {
 
                 location.reload(true);
