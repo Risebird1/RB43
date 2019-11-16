@@ -17,9 +17,10 @@ CREATE PROCEDURE [dbo].[usp_GetTransQualityController]
 AS
 Begin
 
-select TransQualityController.*, Interviewer.PrimarySkill from TransQualityController 
+select TransQualityController.*, Interviewer.PrimarySkill, ul.EmailId from TransQualityController 
 inner join 
-Interviewer on TransQualityController.InterviewerId = Interviewer.id where IRFId=@irfId
+Interviewer on TransQualityController.InterviewerId = Interviewer.id join UserList ul on ul.id= TransQualityController.UserId where IRFId=@irfId
+
 
 End
 

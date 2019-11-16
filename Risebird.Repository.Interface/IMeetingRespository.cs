@@ -50,5 +50,10 @@ namespace Risebird.Repository.Interface
         bool SaveClientFeedback(int imid, int isApproved, string approvalComment, int isSelected, string selectionComment, int joiningStatus, string joiningComment, int offerStatus, string offerComment);
         //Task<InterviewReport> GetInteviewReport(int interviewId, int irfId);
         Task<IEnumerable<int>> CheckCompletedInterviews(string emailID, int clientId, int irfId);
+        Task<IEnumerable<Meeting>> GetQualityControlInterview(string emailID);
+        bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled);
+        Task<IEnumerable<Meeting>> GetQCOpenInterviews(string emailID);
+        string QCAssignYourself(int meetingid, string interviewerMail);
+        Task<bool> QCUnassignYourself(int meetingid);
     }
 }

@@ -188,6 +188,16 @@ namespace Risebird.Business
             return false;
         }
 
+        public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
+        {
+            if (!string.IsNullOrEmpty(qcStatus) && !string.IsNullOrEmpty(imid))
+            {
+                //var val = Convert.ToInt32(value);
+                var result = _meetingRespository.SaveQCFeedback(Convert.ToInt32(imid), Convert.ToInt32(qcStatus), comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
+                return result;
+            }
+            return false;
+        }
         public bool PostSelectionStatus(string imid, string value, string comment)
         {           
             if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
@@ -218,6 +228,20 @@ namespace Risebird.Business
             try
             {
                 var openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public List<Meeting> GetQCOpenInterviews(string emailId)
+        {
+            try
+            {
+                var openMeeting = _meetingRespository.GetQCOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList().Where(x=> x.QCInterviewer == null).ToList();
                 return openMeeting;
             }
             catch (Exception ex)
@@ -259,7 +283,7 @@ namespace Risebird.Business
         {
             try
             {
-                var finalList = new List<Meeting>();
+                //var finalList = new List<Meeting>();
                 var assignedMeeting = _meetingRespository.GetAllAssignedInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 //foreach (var item in assignedMeeting)
                 //{
@@ -276,6 +300,29 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public List<Meeting> GetQualityControlInterviews(string emailID)
+        {
+            try
+            {
+                //var finalList = new List<Meeting>();
+                var assignedMeeting = _meetingRespository.GetQualityControlInterview(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                //foreach (var item in assignedMeeting)
+                //{
+                //    if(_meetingRespository.CheckCompletedInterviews(item.candidateEmail,item.ClientId, item.irfIntId).Result.ToList().Count()==0)
+                //    {
+                //        finalList.Add(item);
+                //    }
+                //}
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         /// <summary>
         /// Assign Yourself
@@ -322,6 +369,22 @@ namespace Risebird.Business
             //}
         }
 
+        public string QCAssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+               
+                return _meetingRespository.QCAssignYourself(meetingid, interviewerMail);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            
+        }
+
         public bool UnassignYourself(int meetingid, string email)
         {
             try
@@ -355,6 +418,21 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public bool QCUnassignYourself(int meetingid, string email)
+        {
+            try
+            {
+                return _meetingRespository.QCUnassignYourself(meetingid).Result;
+                
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
         public InterviewComments GetInterviewComments(int interviewId)
         {
@@ -610,9 +688,9 @@ namespace Risebird.Business
                 //}
                 //reportModel.OverallScore = (total / 4);
                 var result =await _meetingRespository.AddInterviewReport(reportModel);
-                if(reportModel.InterviewStatus.HasValue)
+                if(reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
-                    //if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
+                    if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
                     {
                        // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
                         //var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
@@ -620,11 +698,20 @@ namespace Risebird.Business
 
                         //var interviewDate = reportModel.interviewDate;
                         //var candidateName = reportModel.CandidateName;
-                        //var irfClientUsers = _irfRepository.GetTransClientUser(reportModel.IRFId);
+                        var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
+                        var mailIds = new List<string>();
+                        foreach (var item in irfQualityControllers)
+                        { 
+                            if(item.EmailId!=null)
+                            {
+                                mailIds.Add(item.EmailId);
+                            }
+                        }
+                        _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
+
                         //if(!reportModel.IsEdited)
                         //{
                         //    var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
-                        //    _notificationHelper.SendIRFBasedClientMail(irfClientUsers.ToList(), interviewDate, JDtitle.Split("|")[0], candidateName, reportLink, intervieweStatusStatDesc, reportModel.VideoLink, reportModel.InterviewerComment);
 
                         //}
                     }

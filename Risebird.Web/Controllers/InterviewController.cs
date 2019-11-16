@@ -3709,6 +3709,43 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> QCAssignYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var result = _meetingService.QCAssignYourself(id, emailid.ToLower());
+                        TempData["SuccessErrorMessage"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("QCOpenInterviews");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("QCOpenInterviews");
+            }
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnassignYourself(int id)
         {
@@ -3750,6 +3787,49 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
                 return RedirectToAction("MyInterview");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnAssignQC(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Interviewer")                       
+                    {
+                        if (_meetingService.QCUnassignYourself(id, email.ToLower()))
+                        {
+                            TempData["SuccessErrorMessage"] = "Successfully unassigned!";
+                            return RedirectToAction("MyQualityControlledInterviews");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageMyInterview"] = "Sorry! Could not unassign!";
+                            return RedirectToAction("MyQualityControlledInterviews");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyQualityControlledInterviews");
             }
         }
 
@@ -4100,6 +4180,22 @@ namespace Risebird.Web.Controllers
 
         }
 
+        public bool SaveQCFeedback(string imid, string qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
+        {
+            var result = _meetingService.SaveQCFeedback(imid, qcStatus, comment, FraudLipSync, QuestionsRelevance, HandsOnCoding, BiasAndCandidateHandling, TechnicalCommunicationSkills, ChapteringCompleted, QuestionsFilled, TechSkillsMetric, SelectabilityMetric, JoinabilityMetric, GeneralSkillMetric, CommentsFilled, MeaningfulAssessments, CorrectEnglishGrammar, ProctoringReportFilled);
+            if (result)
+            {
+                TempData["SuccessErrorMessage"] = "Saved Successfully";
+
+            }
+            else
+                TempData["SuccessErrorMessage"] = "Failed";
+
+            return result;
+
+        }
+
+
         [HttpGet]
         public ActionResult getApprovalStatusList()
         {
@@ -4107,6 +4203,18 @@ namespace Risebird.Web.Controllers
                                    select new { ID = (int)s, Name = s.GetDescription() };
             //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
             return Json((approvalStatuses.Select(x => new
+            {
+                Value = x.ID,
+                Description = x.Name
+            }).ToList()));
+        }
+        [HttpGet]
+        public ActionResult getQCStatusList()
+        {
+            var qcStatuses = from QCStatus s in Enum.GetValues(typeof(QCStatus))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            //model.OfferStatusList = new SelectList(offerStatuses, "ID", "Name");
+            return Json((qcStatuses.Select(x => new
             {
                 Value = x.ID,
                 Description = x.Name
@@ -4804,7 +4912,227 @@ namespace Risebird.Web.Controllers
 
         }
 
-        
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyQualityControlledInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _meetingService.GetQualityControlInterviews(emailid);
+                        //myInterview = myInterview.Where(x => x.interviewDate.Date >= DateTime.Now.Date).ToList();
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if (item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
+                            if (item.QCStatus.HasValue)
+                            {
+                                item.QCStatusDesc = ((QCStatus)(item.QCStatus)).GetDescription();
+
+                            }
+                        }
+                        //if (HttpContext.Session.GetString("MyInterviewfilters") != null)
+                        //{
+                        //    var filter = JsonConvert.DeserializeObject<MyInterviewFilter>(HttpContext.Session.GetString("MyInterviewfilters"));
+
+                        //    if (filter.StartDate != null && filter.EndDate != null)
+                        //    {
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        //    }
+                        //    else if (filter.StartDate != null && filter.EndDate == null)
+                        //    {
+                        //        filter.EndDate = filter.StartDate;
+
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        //    }
+                        //    else if (filter.StartDate == null && filter.EndDate != null)
+                        //    {
+                        //        filter.StartDate = filter.EndDate;
+
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        //    }
+
+                        //    //filter.InterviewDuration = filter.InterviewDuration == null ? filter.InterviewDuration = myInterview.Select(x => x.interviewDuration).ToArray() : filter.InterviewDuration = filter.InterviewDuration;
+                        //    filter.InterviewSlot = filter.InterviewSlot == null ? filter.InterviewSlot = myInterview.Select(x => x.interviewSlot).ToArray() : filter.InterviewSlot = filter.InterviewSlot;
+                        //    filter.JobLevel = filter.JobLevel == null ? filter.JobLevel = myInterview.Select(x => x.JobLevelDesc).ToArray() : filter.JobLevel = filter.JobLevel;
+                        //    filter.InterviewDate = filter.InterviewDate == null ? filter.InterviewDate = myInterview.Select(x => Convert.ToString(x.interviewDate)).ToArray() : filter.InterviewDate = filter.InterviewDate;
+                        //    filter.CandidateName = filter.CandidateName == null ? filter.CandidateName = myInterview.Select(x => x.candidateName).ToArray() : filter.CandidateName = filter.CandidateName;
+                        //    filter.RisebirdHR = filter.RisebirdHR == null ? filter.RisebirdHR = myInterview.Select(x => x.risebirdHR).ToArray() : filter.RisebirdHR = filter.RisebirdHR;
+                        //    //filter.InterviewDuration.Contains(c.interviewDuration)
+                        //    myInterview = myInterview.Where(c => (filter.InterviewSlot.Count() > 0 ? filter.InterviewSlot.Contains(c.interviewSlot) : c.interviewSlot == null)
+                        //    && (filter.JobLevel.Count() > 0 ? filter.JobLevel.Contains(c.JobLevelDesc) : c.JobLevelDesc == null)
+                        //   && (filter.InterviewDate.Count() > 0 ? filter.InterviewDate.Contains(Convert.ToString(c.interviewDate)) : c.interviewDate == null)
+                        //   && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
+                        //   && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
+
+                        //    if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate != null)
+                        //    {
+                        //        myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        //        foreach (var item in myInterview)
+                        //        {
+                        //            if (item.InterviewStatus.HasValue)
+                        //            {
+                        //                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                        //            }
+                        //            if (item.MeetingStatus.HasValue)
+                        //            {
+                        //                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                        //            }
+                        //        }
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+                        //    }
+                        //    else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
+                        //    {
+                        //        filter.EndDate = filter.StartDate;
+                        //        myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        //        foreach (var item in myInterview)
+                        //        {
+                        //            if (item.InterviewStatus.HasValue)
+                        //            {
+                        //                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                        //            }
+                        //            if (item.MeetingStatus.HasValue)
+                        //            {
+                        //                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                        //            }
+                        //        }
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        //    }
+                        //    else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
+                        //    {
+                        //        filter.StartDate = filter.EndDate;
+                        //        myInterview = _meetingService.GetAllAssignedInterviews(emailid);
+                        //        foreach (var item in myInterview)
+                        //        {
+                        //            if (item.InterviewStatus.HasValue)
+                        //            {
+                        //                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                        //            }
+                        //            if (item.MeetingStatus.HasValue)
+                        //            {
+                        //                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                        //            }
+                        //        }
+                        //        myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
+
+                        //    }
+                        //}
+
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                            //TempData.Clear();
+                        }
+                        return View(myInterview);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> QCOpenInterviews()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = _meetingService.GetQCOpenInterviews(emailid);
+                        //meetings = meetings.Where(x => x.interviewDate == DateTime.Now.Date).ToList();
+                        meetings = meetings.Select(x => {x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        var list = new SelectList(new[]
+{
+    new { ID = "Today", Name = "Today"},
+    new { ID = "Tomorrow", Name = "Tomorrow"  },
+    new { ID = "Next Seven Days", Name = "Next Seven Days" },
+    new { ID = "All", Name = "All"},
+},
+"ID", "Name", "All");
+
+                        ViewData["list"] = list;
+                        if (TempData["SuccessErrorMessage"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                            TempData.Remove("SuccessErrorMessage");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
     }
 
 }

@@ -12,6 +12,7 @@ namespace Risebird.Entities.ViewModel
         public int UserId { get; set; }
 
         public string PrimarySkill { get; set; }
+        public string EmailId { get; set; }
     }
     //public class QualityController
     //{

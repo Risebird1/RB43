@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[PreferredLocation][varchar] (200) null,
 	[ExpectedPerHourRate][varchar](200) null,
 	[staffingAgenecy][varchar](200) null,
+	[QCInterviewer][varchar](200) null,
 	[joiningTime][varchar](200) null,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
@@ -71,6 +72,17 @@ BEGIN
     ALTER TABLE InterviewMeetings
     DROP COLUMN FinalComments
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'QCInterviewer')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add QCInterviewer VARCHAR(200)
+END
+
 
 
 

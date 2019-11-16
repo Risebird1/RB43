@@ -48,9 +48,27 @@ namespace Risebird.Entities.Data
         public int? MeetingStatus { get; set; }
         public int? InterviewStatus { get; set; }
         public int? IsSelected { get; set; }
-
+        public int? QCStatus { get; set; }
+        public string QCComment { get; set; }
+        public string QCStatusDesc { get; set; }
         public string MeetingStatusDesc { get; set; }
         public string InterviewStatusDesc { get; set; }
+        public string QCInterviewer { get; set; }
+        public bool FraudLipSync { get; set; }
+        public bool QuestionsRelevance { get; set; }
+        public bool HandsOnCoding { get; set; }
+        public bool BiasAndCandidateHandling { get; set; }
+        public bool TechnicalCommunicationSkills { get; set; }
+        public bool ChapteringCompleted { get; set; }
+        public bool QuestionsFilled { get; set; }
+        public bool TechSkillsMetric { get; set; }
+        public bool SelectabilityMetric { get; set; }
+        public bool JoinabilityMetric { get; set; }
+        public bool GeneralSkillMetric { get; set; }
+        public bool CommentsFilled { get; set; }
+        public bool MeaningfulAssessments { get; set; }
+        public bool CorrectEnglishGrammar { get; set; }
+        public bool ProctoringReportFilled { get; set; }
 
 
 
