@@ -69,6 +69,7 @@ namespace Risebird.Entities.Data
         public bool MeaningfulAssessments { get; set; }
         public bool CorrectEnglishGrammar { get; set; }
         public bool ProctoringReportFilled { get; set; }
+        public bool IsEmergency { get; set; }
 
 
 

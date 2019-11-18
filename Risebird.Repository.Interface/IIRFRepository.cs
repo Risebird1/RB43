@@ -56,5 +56,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
         Task<bool> UnArchiveIRF(int IRFId);
         IEnumerable<TransEmergencyInterviewer> GetTransEmergencyInterviewer(int id);
+        Task<IEnumerable<string>> GetEmergencyInterviwerBasedOnIRFId(int irfId);
+        bool UpdateEmergencyFlag(int id, string emailId);
     }
 }

@@ -13,7 +13,11 @@ CREATE PROCEDURE [dbo].[usp_OpenInterviews]
   
 AS
 BEGIN
-select * from [dbo].[InterviewMeetings] where interviewer is null and comfirmationStatus = 'Confirmed'
-
+select InterviewMeetings.*, irf.JDLink from InterviewMeetings  
+ inner join IRF irf on InterviewMeetings.IRFId=irf.IRFId   
+ inner join [dbo].[TransInterviewer] tirf on IRF.id =tirf.IRFId  
+ inner join [dbo].[Interviewer] inte on tirf.InterviewerId = inte.id  
+ inner join [dbo].[UserList] ul on inte.UserId = ul.id  
+ where interviewer is null and confirmationStatus = 1 and IsEmergency=0 and ul.EmailId = @emailID  
 END
 GO 
