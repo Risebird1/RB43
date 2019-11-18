@@ -1153,6 +1153,34 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<string>> GetEmergencyInterviwerBasedOnIRFId(int irfId)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFId", irfId); // Normal parametersmeters 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_ListEmergencyInterviewers", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
         public IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix()
         {
             try
@@ -1530,6 +1558,66 @@ namespace Risebird.Repository
             }
 
         }
+
+        public bool UpdateEmergencyFlag(int id, string emailId)
+        {
+            try
+            {
+                //var query = "update InterviewMeetings set [IsEmergency] = 1 where id=@id"; 
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@id", id);
+
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+                //    var results = con.Query<int>(query, dynamicParameters);
+                //    return true;
+                //}
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                parameters.Add("@EmailId", emailId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_UpdateEmergencyFlag", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+        public async Task<bool> UnassignYourself(int meetingid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+
 
 
     }

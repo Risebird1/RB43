@@ -21,6 +21,7 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[staffingAgenecy][varchar](200) null,
 	[QCInterviewer][varchar](200) null,
 	[joiningTime][varchar](200) null,
+	[IsEmergency] [bit] NOT NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
@@ -82,8 +83,15 @@ BEGIN
     ALTER TABLE InterviewMeetings
     Add QCInterviewer VARCHAR(200)
 END
-
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsEmergency')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add IsEmergency bit not null default 0
+END
 
 
 END

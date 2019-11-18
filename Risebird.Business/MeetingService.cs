@@ -227,7 +227,18 @@ namespace Risebird.Business
         {
             try
             {
-                var openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var openMeeting = new List<Meeting>();
+                openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.ToList();//.OrderByDescending(x => x.interviewDate).ToList();
+                var emergencyMeetings = _meetingRespository.GetAllEmergencyOpenInterviews(emailId).Result.ToList();
+                if(emergencyMeetings!=null)
+                {
+                    var date = DateTime.Now;
+                    foreach (var item in emergencyMeetings)
+                    {
+                        openMeeting.Add(item);
+                    }
+                }
+                openMeeting = openMeeting.OrderByDescending(x => x.interviewDate).ToList();
                 return openMeeting;
             }
             catch (Exception ex)
@@ -394,8 +405,19 @@ namespace Risebird.Business
                 if (meeting != null && meeting.Result != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
-                   
-                    var interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                    var timeDiff = meeting.Result.interviewDate.Hour - DateTime.Now.Hour;
+                    var interviwers = new List<string>();
+                    if (timeDiff <= 6)
+                    {
+                        //update flag for Emergency Interview
+                        _irfRepository.UpdateEmergencyFlag(meetingid, email);
+                        interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
+                    }
+                    else
+                    {
+                        interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                    }
+                     
                     if (interviwers != null)
                     {
                         interviwers.Remove(email);

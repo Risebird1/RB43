@@ -359,6 +359,7 @@
                                                     <th>Preferred Location</th>
                                                     <th>Expected Per Hour Rate</th>
                                                     <th>Current Employer</th>
+                                                    <th>Emergency Interview</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
                                                     <th class="no-sort"></th>
@@ -388,13 +389,14 @@
                                                     @*<th>Candidate Contact</th>*@
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
-                                                    <th>Video Link</th>                                                  
+                                                    <th>Video Link</th>
                                                     <th>Staffing Agenecy</th>
                                                     <th>Interview Duration</th>
                                                     <th>Expected Joining Time</th>
                                                     <th>Preferred Location</th>
                                                     <th>Expected Per Hour Rate</th>
                                                     <th>Current Employer</th>
+                                                    <th>Emergency Interview</th>
                                                     <th>Approval Status</th>
                                                     <th>Approval Comments</th>
                                                     <th class="no-sort"></th>
@@ -459,6 +461,9 @@
                                                     <td> @item.preferredLocation</td>
                                                     <td> @item.expectedPerHourRate</td>
                                                     <td> @item.currentEmployerName</td>
+                                                    <td>
+                                                        @item.IsEmergency
+                                                    </td>
                                                     <td>
                                                         @item.NextLevelApprovalStat
                                                     </td>

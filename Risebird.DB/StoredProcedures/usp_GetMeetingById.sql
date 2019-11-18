@@ -43,7 +43,7 @@ SELECT [InterviewMeetings].id as imid
 	 ,InterviewComments.FinalComments
 	 ,InterviewComments.IsApproved
 	 ,InterviewComments.IsSelected
-
+	 ,IRF.id as irfIntId
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId

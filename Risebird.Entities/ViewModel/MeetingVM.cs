@@ -137,6 +137,8 @@ namespace Risebird.Entities.ViewModel
         public int InviteCount { get; set; }
         public int PerMintuteRate { get; set; }
         public int TotalBudget { get; set; }
+        public bool IsEmergency { get; set; }
+
 
     }
 }
