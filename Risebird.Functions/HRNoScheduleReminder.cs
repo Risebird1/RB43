@@ -57,13 +57,7 @@ namespace Risebird.Functions
                 if (candidates != null && candidates.Count() != 0)
                 {
                     var irfList = new List<int>();
-                    //foreach (var candidate in candidates)
-                    //{
-                    //    if(irfList!=null && irfList.Where(x=> x==candidate.id).Count()==0)
-                    //    {
-                    //        irfList.Add(candidate.id);
-                    //    }
-                    //}
+                    
                     irfList = candidates.Select(x => x.id).ToList();
                     irfList = irfList.Distinct().ToList();
                     foreach (var irf in irfList)
@@ -95,7 +89,7 @@ namespace Risebird.Functions
                         }
                         var client = candidates.Where(x => x.id == irf).FirstOrDefault().Client;
                         var primarySkill = (candidates.Where(x => x.id == irf).FirstOrDefault().JDTiltle).Split('|')[0];
-                        SendMailToHR(hrMailList, candidateEmails, candidates.Where(x=> x.id ==irf).FirstOrDefault().IRFId, client, primarySkill);
+                        //SendMailToHR(hrMailList, candidateEmails, candidates.Where(x=> x.id ==irf).FirstOrDefault().IRFId, client, primarySkill);
                         log.Info($"HrNoSchedule Timer trigger function executed for IRFId: {irf}");
 
                     }
@@ -236,15 +230,15 @@ namespace Risebird.Functions
 
     }
 
-    public class NoScheduleCandidate
-    {
-        public int id { get; set; }
-        public string IRFId { get; set; }
-        public string EmailId { get; set; }
-        public string CandidateName { get; set; }
-        public string Phone { get; set; }
-        public string JDTiltle { get; set; }
-        public string Client { get; set; }
-        public DateTime EndDate { get; set; }
-    }
+    //public class NoScheduleCandidate
+    //{
+    //    public int id { get; set; }
+    //    public string IRFId { get; set; }
+    //    public string EmailId { get; set; }
+    //    public string CandidateName { get; set; }
+    //    public string Phone { get; set; }
+    //    public string JDTiltle { get; set; }
+    //    public string Client { get; set; }
+    //    public DateTime EndDate { get; set; }
+    //}
 }

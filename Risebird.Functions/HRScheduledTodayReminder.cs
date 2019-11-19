@@ -74,7 +74,7 @@ namespace Risebird.Functions
                             var client = unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().Client;
                             var primarySkill = unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().JDTiltle.Split('|')[0];
 
-                            SendMailToHR(hrMailList, candidateEmails, unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().IRFId, client, primarySkill);
+                            //SendMailToHR(hrMailList, candidateEmails, unfilteredMeetings.Where(x => x.IRFintId == irf).FirstOrDefault().IRFId, client, primarySkill);
                             log.Info($"HrTodayScheduled Timer trigger function executed for IRFId: {irf}");
 
                         }
@@ -207,15 +207,15 @@ namespace Risebird.Functions
         }
     }
 
-    public class ScheduledCandidate
-    {
-        public int id { get; set; }
-        public int IRFintId { get; set; }
-        public string IRFId { get; set; }
-        public string candidateEmail{ get; set; }
-        public string candidateName{ get; set; }
-        public string JDTiltle { get; set; }
-        public string Client { get; set; }
-        public DateTime interviewDate { get; set; }
-    }
+    //public class ScheduledCandidate
+    //{
+    //    public int id { get; set; }
+    //    public int IRFintId { get; set; }
+    //    public string IRFId { get; set; }
+    //    public string candidateEmail{ get; set; }
+    //    public string candidateName{ get; set; }
+    //    public string JDTiltle { get; set; }
+    //    public string Client { get; set; }
+    //    public DateTime interviewDate { get; set; }
+    //}
 }
