@@ -180,12 +180,12 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
-                Sheet.Cells["A1:P1"].Style.Font.Bold = true;
-                Sheet.Cells["A1:P1"].Style.Font.Size = 12;
-                Sheet.Cells["A1:P1"].Style.WrapText = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Bold = true;
+                Sheet.Cells["A1:Z1"].Style.Font.Size = 12;
+                Sheet.Cells["A1:Z1"].Style.WrapText = true;
                 //Sheet.Column(1).Width = 30;
                 //Sheet.Column(2).Width = 30;
-                int startColumn = 1; int endColumn = 28;
+                int startColumn = 1; int endColumn = 40;
                 for (int a = startColumn; a <= endColumn; a++)
                 {
                     Sheet.Column(a).Width = 40;

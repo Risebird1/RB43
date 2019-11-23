@@ -9,6 +9,6 @@ namespace Risebird.Entities.Enum
         Basic = 0,
         Medium = 1,
         Expert = 2,
-        Pundit = 3
+        Scholar = 3
     }
 }
