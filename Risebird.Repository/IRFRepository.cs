@@ -252,7 +252,7 @@ namespace Risebird.Repository
                 if (emailid != string.Empty && profileName == "Client")
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by StartDate desc";
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
                     dynamicParameters.Add("@emailid", emailid);
@@ -265,7 +265,7 @@ namespace Risebird.Repository
                 else
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by StartDate desc";
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
                     using (SqlConnection con = new SqlConnection(connectionString))

@@ -69,6 +69,8 @@
                                         <th hidden></th>
                                         <th>Name</th>
                                         <th>Description</th>
+                                        <th>GST</th>
+                                        <th>Address</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </thead>
@@ -77,21 +79,25 @@
                                         <th hidden></th>
                                         <th>Name</th>
                                         <th>Description</th>
+                                        <th>GST</th>
+                                        <th>Address</th>
                                         <th class="disabled-sorting text-right">Actions</th>
                                     </tr>
                                 </tfoot>
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr id=@item.id>
-                                            <td hidden>@item.id</td>
-                                            <td>@item.Name</td>
-                                            <td>@item.Description</td>
-                                            <td class="text-right">
-                                                <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to delete client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
-                                            </td>
-                                        </tr>
+                                    <tr id=@item.id>
+                                        <td hidden>@item.id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td>@item.GST</td>
+                                        <td>@item.OfficeAddress</td>
+                                        <td class="text-right">
+                                            <span onclick="location.href = '@Url.Action("EditClient", "Client", new { id = item.id})'" title="Click here to edit client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                            <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to delete client" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                        </td>
+                                    </tr>
                                     }
                                 </tbody>
                             </table>

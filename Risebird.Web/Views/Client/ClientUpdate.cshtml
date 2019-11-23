@@ -47,7 +47,20 @@
                                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
-
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.GST, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                        <div class="col-md-6 col-sm-6">
+                                            @Html.EditorFor(model => model.GST, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.GST, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.OfficeAddress, htmlAttributes: new { @class = "control-label col-md-2 col-sm-2 desp-label" })
+                                        <div class="col-md-6 col-sm-6">
+                                            @Html.EditorFor(model => model.OfficeAddress, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.OfficeAddress, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
                                     <div class="form-group col-sm-12">
                                         <div class="pull-right">
                                             <input type="submit" id="btnUpload" value="Save" class="btn btn btn-primary" />

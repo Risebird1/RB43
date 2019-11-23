@@ -192,6 +192,8 @@ namespace Risebird.Repository
 
             parameters.Add("@clientName", entity.Name);
             parameters.Add("@clientDescr", entity.Description);
+            parameters.Add("@GST", entity.GST);
+            parameters.Add("@officeAddress", entity.OfficeAddress);
 
             return parameters;
         }
