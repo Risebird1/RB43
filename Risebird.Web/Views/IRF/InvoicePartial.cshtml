@@ -1,0 +1,481 @@
+﻿
+
+@model Risebird.Entities.ViewModel.InvoiceModel
+
+
+<style>
+
+    .main-panel {
+        width: 100% !important;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .table-responsive {
+        overflow: hidden;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #013855;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 45px;
+    }
+
+    #btnPlus, #btnMinus {
+        padding: 2px;
+    }
+
+    #btnMinus {
+        position: absolute;
+        margin-left: 12px;
+    }
+
+    #btnPlus {
+        background-color: #4a89dc;
+    }
+
+    .glyphicon {
+        top: -1px;
+        right: -2px;
+        vertical-align: middle;
+        line-height: 0;
+    }
+    table{
+        border-collapse:collapse;
+    }
+
+    .tableBill td,th{
+        border-right:1px solid rgb(229,229,229) ;
+        border-bottom:1px solid rgb(229,229,229) ;
+    }
+</style>
+<style>
+    
+    .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 16px;
+        line-height: 24px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+    }
+</style>
+
+<meta charset="utf-8" />
+<link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
+<link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!--     Fonts and icons     -->
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<!-- CSS Files -->
+<link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
+<script src="~/Newassets/js/core/jquery.min.js"></script>
+<script src="~/Newassets/js/core/popper.min.js"></script>
+<script src="~/Newassets/js/core/bootstrap.min.js"></script>
+<script src="~/Newassets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
+<script src="~/Newassets/js/plugins/moment.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                @*<div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>*@
+                <a class="navbar-brand">
+                    Invoice
+                </a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body" style="padding:112px">
+                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+
+                        <div class="canvas_div_pdf">
+                            <div style="text-align:center">
+                                <img src="~/images/risebird.png">
+                                <h3 style="font-family: 'Merriweather'"><b>RISEBIRD TALENT Solutions (OPC) Private Limited</b></h3>
+                                <h4 style="font-size:18px">
+                                    C/o H D GUPTA, DOCTORS COMPLEX, GUBBARA PHATAK, LOHIYABAZAR, LASHKAR Gwalior, Gwalior, Madhya
+                                    Pradesh, India, 474001
+                                </h4>
+                            </div>
+                            <div style="text-align:left">
+                                <p style="font-family: 'Merriweather'; font-size:50px"><b>INVOICE</b></p>
+                                <p style="font-family:'Merriweather'">
+                                    <span style="font-size:18px"><b>Invoice No. 12345</b></span><br />
+                                    <span style="font-size:32px; color:blue">
+                                        <b>
+                                            INVOICE REFERENCE  CODE: RBMLAMJ19P2
+                                        </b>
+                                    </span>
+
+                                </p>
+                                @*<p style="font-family: 'Merriweather'; font-size:18px"><b>Invoice No. 12345</b></p>
+                                <p style="font-family: 'Merriweather'; font-size:32px;color:blue">
+                                    <b>
+                                        INVOICE REFERENCE  CODE: RBMLAMJ19P2
+                                    </b>
+                                </p>*@
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <table>
+                                        <tr>
+                                            <td style="font-size:18px;font-family:Roboto">
+                                                <b>PREPARED FOR</b>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:19px;font-family:Arial">
+                                                <b>MPHASIS LIMITED</b>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:22px;font-family:Calibri">
+                                                Bagmane World Technology Center,<br />
+                                                Marathalli Ring Road,<br />
+                                                Doddanakhundi Village,<br />
+                                                Bangalore 560048
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:22px;font-family:Roboto">GSTIN: 29AAACB6820C2Z0</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:22px;font-family:Roboto">PO Number: 100040074112</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:22px;font-family:Roboto">SR Number: 16391</td>
+
+                                        </tr>
+
+                                    </table>
+                                </div>
+                                <div class="col-md-4">
+                                    <table style="font-size:18px;font-family:Roboto">
+                                        <tr>
+                                            <td>
+                                                <b>PREPARED DATE</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                9th Sep 2019
+
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <b>SUBMISSION DATE</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                9th Sep 2019
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <b>EXPIRY DATE</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                14th Sep 2019
+                                            </td>
+
+
+                                        </tr>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <br />
+                            <p style="font-size:22px;font-family:Roboto"><b>PURPOSE</b> : Candidate screening services using Expert-Led Video Interviews</p>
+                            <table style="border-style:solid;border-color:rgb(229,229,229);border-width:1px" class="tableBill">
+                                <thead style="font-size:20px;font-family:Roboto;background-color:rgb(217,196,177)">
+                                    <tr style="height:100px">
+                                        <th>Total Number of interviews- June 2019</th>
+                                        <th>Number of Interviews for Partial invoice-June 2019</th>
+                                        <th>Actual Price Per Interview- INR</th>
+                                        <th>Discount offered</th>
+                                        <th>Discounted Price per Interview</th>
+                                        <th>Partial Payable- June 2019- INR</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody style="font-family:Arial;font-size:18px">
+                                    <tr style="height:35px">
+                                        <td>474</td>
+                                        <td>56</td>
+                                        <td>5600</td>
+                                        <td>39.28%</td>
+                                        <td>3400</td>
+                                        <td>1,90,400</td>
+
+                                    </tr>
+                                    <tr style="height:35px">
+                                        <td></td>
+                                        <td colspan="4">
+                                            Billable Amount- INR
+                                        </td>
+                                        <td>
+                                            1,90,400
+                                        </td>
+                                    </tr>
+                                    <tr style="height:35px">
+                                        <td></td>
+                                        <td colspan="4">
+                                            IGST-18%
+                                        </td>
+                                        <td>
+                                            34,272
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size:24px;font-family:Merriweather; background-color:lightgray; height:60px">
+                                        <td colspan="5" style="text-align:center;">
+                                            <b>Net Payable- INR</b>
+                                        </td>
+                                        <td><b>2,24,672</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br />
+
+                            <ol type="1" style="font-family:Arial;font-size:18px">
+                                <li>Any disputes beyond 7 days of delivery of interview will not be entertained and the invoice will be treated as accepted in full</li>
+                                <li>TAN: BPLR07887F</li>
+                                <li>PAN: AAICR9056Q</li>
+                                <li>GSTIN: 23AAICR9056Q1ZM</li>
+                                <li>CIN: U74999MP2018OPC045610</li>
+                                <li> 
+                                    Account Details –
+                                    <ol type="a">
+                                        <li>Bank Name – ICICI Bank Powai, Mumbai - Branch</li>
+                                        <li>Account Name  - RISEBIRD TALENT SOLUTIONS (OPC) PRIVATE LIMITED</li>
+                                        <li>Account Number – 002005035797</li>
+                                        <li>IFSC – ICIC0000020, ICICI BANK LTD, MUMBAI - POWAI</li>
+                                        <li>ICICI Bank SWIFT Code:   ICICINBBCTS</li>
+                                    </ol>
+                                </li>
+                                <li>Delay in payment will attract interest @Html.Raw("@") 1.5% per month until realization of payment.</li>
+                                <li>All interview recordings and feedback reports will be deleted from our records after the receipt of payment or 30 days of submitting the invoice or whichever is earlier.</li>
+                                <li>In case of drive or where we have used Persistent communication infrastructure or where candidate has restricted the recording or in exception case where candidate has requested for phone call due to some emergency - Video/Audio links shall not be available</li>
+
+                            </ol>
+
+
+                            @*<table>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                PREPARED FOR
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                MPHASIS LIMITED
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                Bagmane World Technology Center,<br />
+                                Marathalli Ring Road,<br />
+                                Doddanakhundi Village,<br />
+                                Bangalore 560048
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>GSTIN: 29AAACB6820C2Z0</td>
+
+                        </tr>
+                        <tr>
+                            <td>PO Number: 100040074112</td>
+
+                        </tr>
+                        <tr>
+                            <td>SR Number: 16391</td>
+
+                        </tr>
+
+                    </table>
+
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                PREPARED DATE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                9th Sep 2019
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                SUBMISSION DATE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                9th Sep 2019
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                EXPIRY DATE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                14th Sep 2019
+                            </td>
+                        </tr>
+                    </table>
+
+                </td>
+            </tr>
+        </table>*@
+                        </div>
+
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+
+                
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+       
+        <!-- end row -->
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+           
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+
+
+    function getPDF() {
+
+        var HTML_Width = $(".canvas_div_pdf").width();
+        var HTML_Height = $(".canvas_div_pdf").height();
+        var top_left_margin = 15;
+        var PDF_Width = HTML_Width + (top_left_margin * 2);
+        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+        var canvas_image_width = HTML_Width;
+        var canvas_image_height = HTML_Height;
+
+        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+        html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
+            canvas.getContext('2d');
+
+            console.log(canvas.height + "  " + canvas.width);
+
+
+            var imgData = canvas.toDataURL("image/jpeg", 1.0);
+            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+            for (var i = 1; i <= totalPDFPages; i++) {
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+            }
+
+            pdf.save("Invoice.pdf");
+        });
+    };
+</script>
+
+
+
+
+@*<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>*@

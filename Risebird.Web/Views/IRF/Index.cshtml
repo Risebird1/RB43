@@ -350,6 +350,9 @@
                                 <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                     <i class="now-ui-icons fa fa-industry"></i>
                                 </button>
+                                <button type="button" onclick="location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                    <i class="now-ui-icons fa fa-money"></i>
+                                </button>
                                 @if (!@item.IsClientUser)
                                 {
                                     if (!item.IsDeleted)
