@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Configuration;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
@@ -20,14 +21,17 @@ namespace Risebird.Business
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly ITwilioHelper _twilioHelper;
         private readonly IClientService _clientService;
+        private readonly IConfiguration _configuration;
 
-        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService)
+
+        public IRFService(IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, ITwilioHelper twilioHelper, INotificationHelper notificationHelper, IClientService clientService, IConfiguration configuration)
         {
             _irfRepository = irfRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _twilioHelper = twilioHelper;
             _notificationHelper = notificationHelper;
             _clientService = clientService;
+            _configuration = configuration;
         }
 
         #region IRF Functions
@@ -496,6 +500,67 @@ namespace Risebird.Business
             try
             {
                 return _irfRepository.GetInterviewPlanner(id);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+        public InvoiceModel GetInvoiceModel(int irfId)
+        {
+            try
+            {
+                var irfDetails = _irfRepository.GetIRFbyId(irfId);
+                var currentMonth = DateTime.Now.Month;
+                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && x.MeetingStatus ==4 && x.interviewDate.Month ==currentMonth).ToList();
+                var invoiceModel = new InvoiceModel();
+                if(irfDetails!=null && invoiceModel!=null)
+                {
+                    var address = "Bagmane World Technology Center, Marathalli Ring Road, Doddanakhundi Village,Bangalore 560048";
+                    var strb = new StringBuilder();
+                    var addressArray = address.Split(",");
+                    for (int i=1; i <= addressArray.Length; i++)
+                    {
+                        if(i!= addressArray.Length)
+                        {
+                            strb.Append(addressArray[i-1] + "," + "<br/>");
+                        }
+                        else
+                        {
+                            strb.Append(addressArray[i - 1]);
+                        }
+                    }
+                    //foreach (var item in address.Split(","))
+                    //{
+                    //    strb.Append(item + "," + "<br/>");
+                    //}
+                    invoiceModel.CurrentMonth = DateTime.Now.ToString("MMMM yyyy");
+                    invoiceModel.InterviewCount = interviewDetails.Count();
+                    invoiceModel.ClientAddress = strb.ToString();//irfDetails.ClientAddress;
+                    invoiceModel.ClientGSTIN = irfDetails.ClientGST;
+                    invoiceModel.ClientName = irfDetails.ClientCompName;
+                    invoiceModel.RisebirdAddress = _configuration["RisebirdDetails:Address"];
+                    invoiceModel.PricePerInterview = irfDetails.PerMintuteRate;
+                    invoiceModel.RisebirdAccountName = _configuration["RisebirdDetails:AccountName"];
+                    invoiceModel.RisebirdAccountNumber = _configuration["RisebirdDetails:AccountNumber"];
+                    invoiceModel.RisebirdBankName = _configuration["RisebirdDetails:BankName"];
+                    invoiceModel.RisebirdPAN = _configuration["RisebirdDetails:PAN"];
+                    invoiceModel.RisebirdTAN = _configuration["RisebirdDetails:TAN"];
+                    invoiceModel.RisebirdGSTIN = _configuration["RisebirdDetails:GSTIN"];
+                    invoiceModel.RisebirdCIN = _configuration["RisebirdDetails:CIN"];
+                    invoiceModel.RisebirdIFSC = _configuration["RisebirdDetails:IFSC"];
+                    invoiceModel.RisebirdICICIBankSwiftCode = _configuration["RisebirdDetails:ICICIBankSWIFTCode"];
+                    invoiceModel.PartialInterviewCount = invoiceModel.InterviewCount;
+                    invoiceModel.Discount = irfDetails.Discount;
+                    invoiceModel.DiscountedPricePerInterview = (1 - (irfDetails.Discount / 100)) * irfDetails.PerMintuteRate;
+                    invoiceModel.PartialPayable = invoiceModel.PartialInterviewCount * invoiceModel.DiscountedPricePerInterview;
+                    invoiceModel.IGST = (0.18) * (invoiceModel.PartialPayable);
+                    invoiceModel.Netpayable = invoiceModel.PartialPayable + invoiceModel.IGST;
+                }
+                
+                return invoiceModel;
             }
             catch (Exception e)
             {

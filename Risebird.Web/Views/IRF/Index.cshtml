@@ -331,6 +331,9 @@
                                     <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
                                         <i class="now-ui-icons fa fa-comments"></i>
                                     </button>
+                                    <button type="button" onclick="location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                        <i class="now-ui-icons fa fa-money"></i>
+                                    </button>
                                 }
                                 <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
@@ -350,6 +353,7 @@
                                 <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                     <i class="now-ui-icons fa fa-industry"></i>
                                 </button>
+
                                 @if (!@item.IsClientUser)
                                 {
                                     if (!item.IsDeleted)

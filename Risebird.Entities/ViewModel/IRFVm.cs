@@ -136,7 +136,10 @@ namespace Risebird.Entities.ViewModel
         public int TotalInvites { get; set; }
 
         public string ArchiveStatus { get; set; }
+        public string ClientGST { get; set; }
+        public string ClientAddress { get; set; }
         public string[] ClientRole { get; set; }
+        public double Discount { get; set; }
         
     }
 }
