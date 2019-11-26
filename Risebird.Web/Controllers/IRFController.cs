@@ -2553,7 +2553,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var model = new InvoiceModel();
-
+                        model = _irfService.GetInvoiceModel(irfId);
                         
                         return PartialView("InvoicePartial", model);
                     }

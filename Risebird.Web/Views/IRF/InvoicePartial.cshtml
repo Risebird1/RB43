@@ -123,8 +123,9 @@
                                 <img src="~/images/risebird.png">
                                 <h3 style="font-family: 'Merriweather'"><b>RISEBIRD TALENT Solutions (OPC) Private Limited</b></h3>
                                 <h4 style="font-size:18px">
-                                    C/o H D GUPTA, DOCTORS COMPLEX, GUBBARA PHATAK, LOHIYABAZAR, LASHKAR Gwalior, Gwalior, Madhya
-                                    Pradesh, India, 474001
+                                    @Model.RisebirdAddress
+                                    @*C/o H D GUPTA, DOCTORS COMPLEX, GUBBARA PHATAK, LOHIYABAZAR, LASHKAR Gwalior, Gwalior, Madhya
+                                    Pradesh, India, 474001*@
                                 </h4>
                             </div>
                             <div style="text-align:left">
@@ -157,16 +158,17 @@
                                         </tr>
                                         <tr>
                                             <td style="font-size:19px;font-family:Arial">
-                                                <b>MPHASIS LIMITED</b>
+                                                <b>@Model.ClientName@*MPHASIS LIMITED*@</b>
                                             </td>
 
                                         </tr>
                                         <tr>
                                             <td style="font-size:22px;font-family:Calibri">
-                                                Bagmane World Technology Center,<br />
+                                                @Html.Raw(Model.ClientAddress)
+                                                @*Bagmane World Technology Center,<br />
                                                 Marathalli Ring Road,<br />
                                                 Doddanakhundi Village,<br />
-                                                Bangalore 560048
+                                                Bangalore 560048*@
                                             </td>
 
                                         </tr>
@@ -193,8 +195,8 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                9th Sep 2019
+                                            <td id="preparedDate">
+                                               
 
                                             </td>
 
@@ -206,34 +208,20 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                9th Sep 2019
+                                            <td id="submissionDate">
+                                                
                                             </td>
 
                                         </tr>
-                                        <tr>
-                                            <td>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                            </td>
-
-                                        </tr>
+                                        
                                         <tr>
                                             <td>
                                                 <b>EXPIRY DATE</b>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                14th Sep 2019
+                                            <td id="expiryDate">
+                                                
                                             </td>
 
 
@@ -247,23 +235,30 @@
                             <table style="border-style:solid;border-color:rgb(229,229,229);border-width:1px" class="tableBill">
                                 <thead style="font-size:20px;font-family:Roboto;background-color:rgb(217,196,177)">
                                     <tr style="height:100px">
-                                        <th>Total Number of interviews- June 2019</th>
-                                        <th>Number of Interviews for Partial invoice-June 2019</th>
+                                        <th>Total Number of interviews- @Model.CurrentMonth</th>
+                                        <th>Number of Interviews for Partial invoice-@Model.CurrentMonth </th>
                                         <th>Actual Price Per Interview- INR</th>
                                         <th>Discount offered</th>
                                         <th>Discounted Price per Interview</th>
-                                        <th>Partial Payable- June 2019- INR</th>
+                                        <th>Partial Payable- @Model.CurrentMonth - INR</th>
 
                                     </tr>
                                 </thead>
                                 <tbody style="font-family:Arial;font-size:18px">
                                     <tr style="height:35px">
-                                        <td>474</td>
-                                        <td>56</td>
-                                        <td>5600</td>
-                                        <td>39.28%</td>
-                                        <td>3400</td>
-                                        <td>1,90,400</td>
+                                        <td>@Model.InterviewCount</td>
+                                        <td>@Model.PartialInterviewCount</td>
+                                        <td>@Model.PricePerInterview</td>
+                                        <td>@Model.Discount%</td>
+                                        <td>@Model.DiscountedPricePerInterview</td>
+                                        <td>@Model.PartialPayable</td>
+
+                                        @*<td>474</td>
+        <td>56</td>
+        <td>5600</td>
+        <td>39.28%</td>
+        <td>3400</td>
+        <td>1,90,400</td>*@
 
                                     </tr>
                                     <tr style="height:35px">
@@ -272,7 +267,8 @@
                                             Billable Amount- INR
                                         </td>
                                         <td>
-                                            1,90,400
+                                            @Model.PartialPayable
+                                            @*1,90,400*@
                                         </td>
                                     </tr>
                                     <tr style="height:35px">
@@ -281,14 +277,15 @@
                                             IGST-18%
                                         </td>
                                         <td>
-                                            34,272
+                                            @Model.IGST
+                                            @*34,272*@
                                         </td>
                                     </tr>
                                     <tr style="font-size:24px;font-family:Merriweather; background-color:lightgray; height:60px">
                                         <td colspan="5" style="text-align:center;">
                                             <b>Net Payable- INR</b>
                                         </td>
-                                        <td><b>2,24,672</b></td>
+                                        <td><b>@Model.Netpayable@*2,24,672*@</b></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -296,18 +293,18 @@
 
                             <ol type="1" style="font-family:Arial;font-size:18px">
                                 <li>Any disputes beyond 7 days of delivery of interview will not be entertained and the invoice will be treated as accepted in full</li>
-                                <li>TAN: BPLR07887F</li>
-                                <li>PAN: AAICR9056Q</li>
-                                <li>GSTIN: 23AAICR9056Q1ZM</li>
-                                <li>CIN: U74999MP2018OPC045610</li>
+                                <li>TAN: @Model.RisebirdTAN</li>
+                                <li>PAN: @Model.RisebirdPAN</li>
+                                <li>GSTIN: @Model.RisebirdGSTIN</li>
+                                <li>CIN: @Model.RisebirdCIN</li>
                                 <li> 
                                     Account Details –
                                     <ol type="a">
-                                        <li>Bank Name – ICICI Bank Powai, Mumbai - Branch</li>
-                                        <li>Account Name  - RISEBIRD TALENT SOLUTIONS (OPC) PRIVATE LIMITED</li>
-                                        <li>Account Number – 002005035797</li>
-                                        <li>IFSC – ICIC0000020, ICICI BANK LTD, MUMBAI - POWAI</li>
-                                        <li>ICICI Bank SWIFT Code:   ICICINBBCTS</li>
+                                        <li>Bank Name – @Model.RisebirdBankName</li>
+                                        <li>Account Name  - @Model.RisebirdAccountName</li>
+                                        <li>Account Number – @Model.RisebirdAccountNumber</li>
+                                        <li>IFSC – @Model.RisebirdIFSC</li>
+                                        <li>ICICI Bank SWIFT Code: @Model.RisebirdICICIBankSwiftCode</li>
                                     </ol>
                                 </li>
                                 <li>Delay in payment will attract interest @Html.Raw("@") 1.5% per month until realization of payment.</li>
@@ -436,12 +433,21 @@
 
 
 <script>
+    $(document).ready(function () {
+        var d = new Date();
+        var dateStr = d.toString();
+        var date = dateStr.split(' ');
+        var shortDate = date[2] + " " + date[1] + ", " + date[3];
+        document.getElementById("preparedDate").innerHTML = shortDate;
+        document.getElementById("submissionDate").innerHTML = shortDate;
+        document.getElementById("expiryDate").innerHTML = shortDate;
 
+
+    })
 
     function getPDF() {
-
-        var HTML_Width = $(".canvas_div_pdf").width();
-        var HTML_Height = $(".canvas_div_pdf").height();
+        var HTML_Width = ($(".canvas_div_pdf").width());
+        var HTML_Height = ($(".canvas_div_pdf").height());
         var top_left_margin = 15;
         var PDF_Width = HTML_Width + (top_left_margin * 2);
         var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
