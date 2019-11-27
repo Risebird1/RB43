@@ -44,5 +44,6 @@ namespace Risebird.Business.Interface
         Task<bool> UnArchiveIRF(int id);
         bool CancelInvite(int irfId, string email);
         InvoiceModel GetInvoiceModel(int irfId);
+        IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
     }
 }

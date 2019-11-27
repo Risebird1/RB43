@@ -1326,6 +1326,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        //GetCandidateIRFInvites
+        public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
+        {
+            try
+            {
+                var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Candidate>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         public InterviewPlanner GetInterviewPlanner(int id)
         {

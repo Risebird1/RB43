@@ -583,6 +583,19 @@ namespace Risebird.Business
 
         }
 
+        public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
+        {
+            try
+            {
+                return _irfRepository.GetCandidateIRFInvites(emailId).Where(x=> x.EndDate.Date <= DateTime.Now.Date);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
         public async Task<string> AddCandidate(Candidate obj)
         {
             try

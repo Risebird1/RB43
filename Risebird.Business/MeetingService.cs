@@ -311,6 +311,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<Meeting> GetCandidateInterviews(string emailID)
+        {
+            try
+            {
+                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         public List<Meeting> GetQualityControlInterviews(string emailID)
         {

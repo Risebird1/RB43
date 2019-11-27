@@ -56,5 +56,6 @@ namespace Risebird.Repository.Interface
         string QCAssignYourself(int meetingid, string interviewerMail);
         Task<bool> QCUnassignYourself(int meetingid);
         Task<IEnumerable<Meeting>> GetAllEmergencyOpenInterviews(string emailID);
+        Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID);
     }
 }
