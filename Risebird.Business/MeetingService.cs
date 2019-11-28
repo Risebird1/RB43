@@ -469,6 +469,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool CancelInterview(int meetingid, string interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if( _meetingRespository.CancelInterview(meetingid))
+                {
+                    //send mail to the HRs
+                    var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
+                    
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate);
+                    return true;
+                }
+                return false;
+                    
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
 
         public InterviewComments GetInterviewComments(int interviewId)

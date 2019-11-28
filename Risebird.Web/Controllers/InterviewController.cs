@@ -5198,6 +5198,49 @@ namespace Risebird.Web.Controllers
                 return null;
             }
         }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Candidate" )
+                    {
+                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"),candidateEmail))
+                        {
+                            //TempData["SuccessErrorMessage"] = "Interview cancelled successfully";
+                            return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessage"] = "Sorry! Could not cancel interview!";
+                            return Json(new { url = Url.Action("CandidateInterviews", "Interview") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageMyInterview"] = "Unassignment is Failed";
+                return RedirectToAction("MyInterview");
+            }
+        }
 
     }
 

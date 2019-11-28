@@ -14,5 +14,6 @@ namespace Risebird.CommonHelper.Interface
         string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId);
         string CancelCandidateInvite(string ClientName, List<TransClientUser> clientUsers, string primarySkill, string emailId);
         string SendQCInterviewerMail(List<string> interviwers, string meetingDate);
+        string SendInterviewCancelledMail(List<string> interviewers, string interviewDate);
     }
 }

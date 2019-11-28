@@ -466,6 +466,31 @@ namespace Risebird.Repository
 
         }
 
+
+        public bool CancelInterview(int meetingid)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set confirmationStatus=@value where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@value", 2);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
         public async Task<bool> UnassignYourself(int meetingid)
         {
             try
@@ -513,6 +538,33 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public List<string> ListInterviewersMail(string candidateEmail, string interviewDate)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@candidateEmail", candidateEmail);
+                parameters.Add("@interviewDate", interviewDate);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result =SqlMapper.Query<string>(
+                        con, "usp_ListOfCancelledInterviewInterviwer", parameters, commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

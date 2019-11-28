@@ -5,6 +5,7 @@ BEGIN
 
 CREATE TABLE [dbo].[CandidatesMaster](
 	[id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
 	[Name] [varchar](200) NULL,
 	[EmailId] [varchar](200) NULL,
 	[ResumeLink] [varchar](500) NULL,
@@ -20,6 +21,7 @@ CREATE TABLE [dbo].[CandidatesMaster](
 	[CurrentSalary] [decimal](10, 2) NULL,
 	[ExpectedSalary] [decimal](10, 2) NULL,
 	[Notice] [decimal](10, 2) NULL,
+	CONSTRAINT [FK__CandidatesMaster] FOREIGN KEY (IRFId) REFERENCES IRF(id),
  CONSTRAINT [PK_CandidatesMaster] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
