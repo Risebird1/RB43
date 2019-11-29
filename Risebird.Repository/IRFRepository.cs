@@ -1331,7 +1331,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
+                var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1417,33 +1417,60 @@ namespace Risebird.Repository
         {
             try
             {
+
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", obj.IRFId);
+                parameters.Add("@Name", obj.Name );
+                parameters.Add("@EmailId", obj.EmailId);
+                parameters.Add("@ResumeLink", obj.ResumeLink );
+                parameters.Add("@Type", obj.Type );
+                parameters.Add("@Location", obj.Location );
+                parameters.Add("@Skill", obj.Skill);
+                parameters.Add("@WorkAuth", obj.WorkAuth);
+                parameters.Add("@CurrentLocation", obj.CurrentLocation);
+                parameters.Add("@CurrentEmployer", obj.CurrentEmployer);
+                parameters.Add("@Phone", obj.Phone);
+                parameters.Add("@TotalExperience", obj.TotalExperience);
+                parameters.Add("@CurrentSalary", obj.CurrentSalary);
+                parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
+                parameters.Add("@Notice", obj.Notice );
+
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-
-
-                    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink,Type, Location, Skill, WorkAuth, CurrentLocation, CurrentEmployer, Phone, TotalExperience, CurrentSalary, ExpectedSalary, Notice) Values (@IRFId,@Name,@EmailId,@ResumeLink ,@Type, @Location, @Skill, @WorkAuth, @CurrentLocation, @CurrentEmployer, @Phone, @TotalExperience, @CurrentSalary, @ExpectedSalary, @Notice);";
-                    var affectedRows = con.Execute(sqlInsertReport, new
-                    {
-                        IRFId = obj.IRFId,
-                        Name = obj.Name,
-                        EmailId = obj.EmailId,
-                        ResumeLink = obj.ResumeLink,
-                        Type = obj.Type,
-                        Location = obj.Location,
-                        Skill = obj.Skill,
-                        WorkAuth = obj.WorkAuth,
-                        CurrentLocation = obj.CurrentLocation,
-                        CurrentEmployer = obj.CurrentEmployer,
-                        Phone = obj.Phone,
-                        TotalExperience = obj.TotalExperience,
-                        CurrentSalary = obj.CurrentSalary,
-                        ExpectedSalary = obj.ExpectedSalary,
-                        Notice = obj.Notice
-
-                    });
-                    
+                    SqlMapper.Query<string>(
+                        con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
                     return "Candidate added successfully.";
                 }
+
+                //using (SqlConnection con = new SqlConnection(connectionString))
+                //{
+
+
+                //    string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink,Type, Location, Skill, WorkAuth, CurrentLocation, CurrentEmployer, Phone, TotalExperience, CurrentSalary, ExpectedSalary, Notice) Values (@IRFId,@Name,@EmailId,@ResumeLink ,@Type, @Location, @Skill, @WorkAuth, @CurrentLocation, @CurrentEmployer, @Phone, @TotalExperience, @CurrentSalary, @ExpectedSalary, @Notice);";
+                //    var affectedRows = con.Execute(sqlInsertReport, new
+                //    {
+                //        IRFId = obj.IRFId,
+                //        Name = obj.Name,
+                //        EmailId = obj.EmailId,
+                //        ResumeLink = obj.ResumeLink,
+                //        Type = obj.Type,
+                //        Location = obj.Location,
+                //        Skill = obj.Skill,
+                //        WorkAuth = obj.WorkAuth,
+                //        CurrentLocation = obj.CurrentLocation,
+                //        CurrentEmployer = obj.CurrentEmployer,
+                //        Phone = obj.Phone,
+                //        TotalExperience = obj.TotalExperience,
+                //        CurrentSalary = obj.CurrentSalary,
+                //        ExpectedSalary = obj.ExpectedSalary,
+                //        Notice = obj.Notice
+
+                //    });
+
+                //    return "Candidate added successfully.";
+                //}
 
             }
 
@@ -1469,28 +1496,26 @@ namespace Risebird.Repository
 
                     if(candidateList !=null && candidateList.Count()>0)
                     {
-                        foreach (var item in candidateList)
+                        foreach (var obj in candidateList)
                         {
-                            string sqlInsertReport = "INSERT INTO Candidate (IRFId,Name, EmailId,ResumeLink,Type, Location, Skill, WorkAuth, CurrentLocation, CurrentEmployer, Phone, TotalExperience, CurrentSalary, ExpectedSalary, Notice) Values (@IRFId,@Name,@EmailId,@ResumeLink ,@Type, @Location, @Skill, @WorkAuth, @CurrentLocation, @CurrentEmployer, @Phone, @TotalExperience, @CurrentSalary, @ExpectedSalary, @Notice);";
-                            var affectedRows = con.Execute(sqlInsertReport, new
-                            {
-                                IRFId = item.IRFId,
-                                Name = item.Name,
-                                EmailId = item.EmailId,
-                                ResumeLink = item.ResumeLink,
-                                Type = item.Type,
-                                Location = item.Location,
-                                Skill = item.Skill,
-                                WorkAuth = item.WorkAuth,
-                                CurrentLocation = item.CurrentLocation,
-                                CurrentEmployer = item.CurrentEmployer,
-                                Phone = item.Phone,
-                                TotalExperience = item.TotalExperience,
-                                CurrentSalary = item.CurrentSalary,
-                                ExpectedSalary = item.ExpectedSalary,
-                                Notice = item.Notice
-
-                            });
+                            DynamicParameters parameters = new DynamicParameters();
+                            parameters.Add("@IRFId", obj.IRFId);
+                            parameters.Add("@Name", obj.Name);
+                            parameters.Add("@EmailId", obj.EmailId);
+                            parameters.Add("@ResumeLink", obj.ResumeLink);
+                            parameters.Add("@Type", obj.Type);
+                            parameters.Add("@Location", obj.Location);
+                            parameters.Add("@Skill", obj.Skill);
+                            parameters.Add("@WorkAuth", obj.WorkAuth);
+                            parameters.Add("@CurrentLocation", obj.CurrentLocation);
+                            parameters.Add("@CurrentEmployer", obj.CurrentEmployer);
+                            parameters.Add("@Phone", obj.Phone);
+                            parameters.Add("@TotalExperience", obj.TotalExperience);
+                            parameters.Add("@CurrentSalary", obj.CurrentSalary);
+                            parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
+                            parameters.Add("@Notice", obj.Notice);
+                            SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
+                            
                         }
                     }
                     
@@ -1580,6 +1605,7 @@ namespace Risebird.Repository
 
         }
 
+
         public bool UpdateEmergencyFlag(int id, string emailId)
         {
             try
@@ -1613,6 +1639,7 @@ namespace Risebird.Repository
             }
 
         }
+
         public async Task<bool> UnassignYourself(int meetingid)
         {
             try

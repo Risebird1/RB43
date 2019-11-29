@@ -1,0 +1,178 @@
+/****** Object:  StoredProcedure [dbo].[usp_AddCandidate]    Script Date: 29-11-2019 4.27.37 PM ******/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_AddCandidate'))
+BEGIN
+    DROP PROCEDURE dbo.usp_AddCandidate
+END
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+create PROCEDURE [dbo].[usp_AddCandidate]
+@IRFId int,
+@Name varchar(200),
+@EmailId varchar(200),
+@ResumeLink varchar(500),
+@Type varchar(200),
+@Location varchar(200),
+@Skill varchar(200),
+@WorkAuth varchar(200), 
+@CurrentLocation varchar(200),
+@CurrentEmployer varchar(200),
+@Phone varchar(200),
+@TotalExperience decimal(10,2),
+@CurrentSalary decimal(10,2),
+@ExpectedSalary decimal(10,2),
+@Notice decimal(10,2)
+
+AS
+Begin
+declare
+@ProfileId int = (select id from [Profile] where [Name]='Candidate')
+IF NOT EXISTS (SELECT 1   FROM   CandidatesMaster    WHERE  EmailId = @EmailId)
+Begin
+INSERT INTO [dbo].[UserList]
+           (
+		   idProfile,
+		   FirstName,	
+		   LastName,
+		   EmailId,
+		   LastLogin,
+		   LastLogout,
+		   IsActive,
+		   ImageURL,
+		   MobileNumber
+           )
+     VALUES
+           (23,
+@Name,
+null,
+@EmailId,
+null,
+null,
+1,
+null,
+null
+)
+
+declare
+@UserId int = (select id from UserList where EmailId=@EmailId and idProfile=@ProfileId)
+
+insert into CandidatesMaster
+([UserId],
+[Name],
+[EmailId],
+[ResumeLink],
+[Type],
+[Location],
+[Skill],
+[WorkAuth],
+[CurrentLocation],
+[CurrentEmployer],
+[Phone],
+[TotalExperience],
+[CurrentSalary],
+[ExpectedSalary],
+[Notice]
+)
+values(@UserId,
+@Name,
+@EmailId,
+@ResumeLink,
+@Type,
+@Location,
+@Skill,
+@WorkAuth,
+@CurrentLocation,
+@CurrentEmployer,
+@Phone,
+@TotalExperience,
+@CurrentSalary,
+@ExpectedSalary,
+@Notice
+
+)
+insert into Candidate
+([IRFId],
+[Name],
+[EmailId],
+[ResumeLink],
+[Type],
+[Location],
+[Skill],
+[WorkAuth],
+[CurrentLocation],
+[CurrentEmployer],
+[Phone],
+[TotalExperience],
+[CurrentSalary],
+[ExpectedSalary],
+[Notice]
+)
+values(@IRFId,
+@Name,
+@EmailId,
+@ResumeLink,
+@Type,
+@Location,
+@Skill,
+@WorkAuth,
+@CurrentLocation,
+@CurrentEmployer,
+@Phone,
+@TotalExperience,
+@CurrentSalary,
+@ExpectedSalary,
+@Notice
+
+)
+
+End
+
+Else
+
+Begin
+insert into Candidate
+([IRFId],
+[Name],
+[EmailId],
+[ResumeLink],
+[Type],
+[Location],
+[Skill],
+[WorkAuth],
+[CurrentLocation],
+[CurrentEmployer],
+[Phone],
+[TotalExperience],
+[CurrentSalary],
+[ExpectedSalary],
+[Notice]
+)
+values(@IRFId,
+@Name,
+@EmailId,
+@ResumeLink,
+@Type,
+@Location,
+@Skill,
+@WorkAuth,
+@CurrentLocation,
+@CurrentEmployer,
+@Phone,
+@TotalExperience,
+@CurrentSalary,
+@ExpectedSalary,
+@Notice
+
+)
+
+End
+
+END
+
+GO
+
+

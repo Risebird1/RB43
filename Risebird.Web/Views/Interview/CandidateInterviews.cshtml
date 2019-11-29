@@ -145,6 +145,11 @@
                                                 <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
                                                 <span>Interview Date:</span> <p>@item.interviewDate.ToString("dd MMM yyyy")  </p>
                                                 <span>Interviewer Id:</span> <p>@item.interviewer  </p>
+                                                <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
+                                                <span>JD Link:</span> <p><a href="@item.JDLink" target="_blank">Job Description</a>  </p>
+                                                <span>Job Ends on:</span> <p> @item.EndDate.ToString("dd MMM yyyy") </p>
+                                                <span>Resume:</span> <p><a href="@item.resumeLink" target="_blank">Resume</a>   </p>
+
 
                                             </div>
                                         </div>
@@ -160,23 +165,30 @@
                                 @*<button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFName, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
             <i class="now-ui-icons  fa fa-calendar"></i>
         </button>*@
-
+                                @*<a href="@item.CalendlyLink" target="_blank" title="Reschedule Meeting">
+                                    <i class="now-ui-icons  fa fa-calendar"></i>
+                                </a>
                                 <a href="@item.zoomLink" target="_blank" title="Join Meeting">
                                     <i class="now-ui-icons fa fa-meetup" style="font-size:20px"></i>
-                                </a>
-
+                                </a>*@
+                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Reschedule Meeting">
+                                    <i class="now-ui-icons fa fa-calendar"></i>
+                                </button>
+                                <button type="button" onclick="window.open('@item.zoomLink')" class="btn btn-warning btn-icon btn-sm" title="Join Meeting">
+                                    <i class="now-ui-icons fa fa-meetup"></i>
+                                </button>
                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
                                 {
-                                    <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-info btn-icon btn-sm" title="Call Interviewer">
+                                    <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
                                         <i class="now-ui-icons fa fa-phone"></i>
                                     </button>
                                 }
                                 @*&& (DateTime.Now.AddMinutes(-5) <= item.interviewDate) && (item.interviewDate <= DateTime.Now.AddMinutes(65))*@
-                                
+
 
                                 @*<button type="button" onclick="javascript:CancelInterview('@item.id');" class="btn btn-success btn-icon btn-sm" title="Cancel interview request.">
-                                    <i class="now-ui-icons  fas fa-remove"></i>
-                                </button>*@
+            <i class="now-ui-icons  fas fa-remove"></i>
+        </button>*@
                                 <button type="button" onclick="javascript:CancelInterview(@jsonObject);" class="btn btn-danger btn-icon btn-sm" title="Cancel interview request.">
                                     <i class="now-ui-icons  fa fa-envelope"></i>
                                 </button>

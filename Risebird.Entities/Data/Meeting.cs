@@ -10,11 +10,14 @@ namespace Risebird.Entities.Data
         public int ClientId { get; set; }
         public string JobRole { get; set; }
         public DateTime interviewDate { get; set; }
+        public DateTime EndDate { get; set; }
         public string interviewSlot { get; set; }
         public string interviewDuration { get; set; }
         public string primaryskill { get; set; }
+        public string JDTiltle { get; set; }
         public string candidateEmail { get; set; }
         public string candidateName { get; set; }
+        public string CalendlyLink { get; set; }
         public string ClientHrContact { get; set; }
         public string resumeLink { get; set; }
         public string confirmationStatus { get; set; }

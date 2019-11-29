@@ -316,7 +316,7 @@ namespace Risebird.Business
             try
             {
                 ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
-                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID).Result.Where(x=> x.MeetingStatus.HasValue && (x.MeetingStatus==2 || x.MeetingStatus==4)).OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)

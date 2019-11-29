@@ -5141,7 +5141,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    var profileName =  HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
@@ -5206,7 +5206,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    var profileName =HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");

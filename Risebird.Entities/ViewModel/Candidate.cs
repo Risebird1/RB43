@@ -65,6 +65,8 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string ClientName { get; set; }
         public string ClientCompName { get; set; }
+        public string JDTiltle { get; set; }
+        public string JDLink { get; set; }
         
 
     }
