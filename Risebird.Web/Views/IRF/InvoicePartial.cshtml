@@ -94,13 +94,7 @@
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
-                @*<div class="navbar-toggle">
-                        <button type="button" class="navbar-toggler">
-                            <span class="navbar-toggler-bar bar1"></span>
-                            <span class="navbar-toggler-bar bar2"></span>
-                            <span class="navbar-toggler-bar bar3"></span>
-                        </button>
-                    </div>*@
+
                 <a class="navbar-brand">
                     Invoice
                 </a>
@@ -116,290 +110,191 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body" style="padding:112px">
-                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+                        <div class="row">
+                            <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf"  value="Generate PDF" onclick="getPDF()">
+                            @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                        </div>
+                            <div class="canvas_div_pdf">
+                                <div style="text-align:center">
+                                    <img src="~/images/risebird.png">
+                                    <h3 style="font-family: 'Merriweather'"><b>RISEBIRD TALENT Solutions (OPC) Private Limited</b></h3>
+                                    <h4 style="font-size:18px">
+                                        @Model.RisebirdAddress
 
-                        <div class="canvas_div_pdf">
-                            <div style="text-align:center">
-                                <img src="~/images/risebird.png">
-                                <h3 style="font-family: 'Merriweather'"><b>RISEBIRD TALENT Solutions (OPC) Private Limited</b></h3>
-                                <h4 style="font-size:18px">
-                                    @Model.RisebirdAddress
-                                    @*C/o H D GUPTA, DOCTORS COMPLEX, GUBBARA PHATAK, LOHIYABAZAR, LASHKAR Gwalior, Gwalior, Madhya
-                                    Pradesh, India, 474001*@
-                                </h4>
-                            </div>
-                            <div style="text-align:left">
-                                <p style="font-family: 'Merriweather'; font-size:50px"><b>INVOICE</b></p>
-                                <p style="font-family:'Merriweather'">
-                                    <span style="font-size:18px"><b>Invoice No. 12345</b></span><br />
-                                    <span style="font-size:32px; color:blue">
-                                        <b>
-                                            INVOICE REFERENCE  CODE: RBMLAMJ19P2
-                                        </b>
-                                    </span>
-
-                                </p>
-                                @*<p style="font-family: 'Merriweather'; font-size:18px"><b>Invoice No. 12345</b></p>
-                                <p style="font-family: 'Merriweather'; font-size:32px;color:blue">
-                                    <b>
-                                        INVOICE REFERENCE  CODE: RBMLAMJ19P2
-                                    </b>
-                                </p>*@
-
-                            </div>
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <table>
-                                        <tr>
-                                            <td style="font-size:18px;font-family:Roboto">
-                                                <b>PREPARED FOR</b>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:19px;font-family:Arial">
-                                                <b>@Model.ClientName@*MPHASIS LIMITED*@</b>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:22px;font-family:Calibri">
-                                                @Html.Raw(Model.ClientAddress)
-                                                @*Bagmane World Technology Center,<br />
-                                                Marathalli Ring Road,<br />
-                                                Doddanakhundi Village,<br />
-                                                Bangalore 560048*@
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:22px;font-family:Roboto">GSTIN: 29AAACB6820C2Z0</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:22px;font-family:Roboto">PO Number: 100040074112</td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:22px;font-family:Roboto">SR Number: 16391</td>
-
-                                        </tr>
-
-                                    </table>
+                                    </h4>
                                 </div>
-                                <div class="col-md-4">
-                                    <table style="font-size:18px;font-family:Roboto">
-                                        <tr>
-                                            <td>
-                                                <b>PREPARED DATE</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td id="preparedDate">
-                                               
+                                <div style="text-align:left">
+                                    <p style="font-family: 'Merriweather'; font-size:50px"><b>INTERVIEW INVOICE</b></p>
+                                    <p style="font-family:'Merriweather'">
+                                        <span style="font-size:18px"><b>Invoice No. @Model.InvoiceNumber</b></span><br />
+                                        <span style="font-size:32px; color:blue">
+                                            <b>
+                                                INVOICE REFERENCE  CODE: @Model.InvoiceReferenceCode
+                                            </b>
+                                        </span>
 
-                                            </td>
+                                    </p>
 
-
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <b>SUBMISSION DATE</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td id="submissionDate">
-                                                
-                                            </td>
-
-                                        </tr>
-                                        
-                                        <tr>
-                                            <td>
-                                                <b>EXPIRY DATE</b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td id="expiryDate">
-                                                
-                                            </td>
-
-
-                                        </tr>
-                                    </table>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <table>
+                                            <tr>
+                                                <td style="font-size:18px;font-family:Roboto">
+                                                    <b>PREPARED FOR</b>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:19px;font-family:Arial">
+                                                    <b>@Model.ClientName</b>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Calibri">
+                                                    @Html.Raw(Model.ClientAddress)
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Roboto">GSTIN: 29AAACB6820C2Z0</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Roboto">PO Number: 100040074112</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Roboto">SR Number: 16391</td>
+
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <table style="font-size:18px;font-family:Roboto">
+                                            <tr>
+                                                <td>
+                                                    <b>PREPARED DATE</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="preparedDate"></td>
+
+
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>SUBMISSION DATE</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="submissionDate"></td>
+
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <b>EXPIRY DATE</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="expiryDate"></td>
+
+
+                                            </tr>
+                                        </table>
+                                    </div>
+
+                                </div>
+                                <br />
+                                <p style="font-size:22px;font-family:Roboto"><b>PURPOSE</b> : Candidate screening services using Expert-Led Video Interviews</p>
+                                <table style="border-style:solid;border-color:rgb(229,229,229);border-width:1px" class="tableBill">
+                                    <thead style="font-size:20px;font-family:Roboto;background-color:rgb(217,196,177)">
+                                        <tr style="height:100px">
+                                            <th>Total Number of interviews- @Model.CurrentMonth</th>
+                                            <th>Number of Interviews for Partial invoice-@Model.CurrentMonth </th>
+                                            <th>Actual Price Per Interview- INR</th>
+                                            <th>Discount offered</th>
+                                            <th>Discounted Price per Interview</th>
+                                            <th>Partial Payable- @Model.CurrentMonth - INR</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-family:Arial;font-size:18px">
+                                        <tr style="height:35px">
+                                            <td>@Model.InterviewCount</td>
+                                            <td>@Model.PartialInterviewCount</td>
+                                            <td>@Model.PricePerInterview</td>
+                                            <td>@Model.Discount%</td>
+                                            <td>@Model.DiscountedPricePerInterview</td>
+                                            <td>@Model.PartialPayable</td>
+
+
+
+                                        </tr>
+                                        <tr style="height:35px">
+                                            <td></td>
+                                            <td colspan="4">
+                                                Billable Amount- INR
+                                            </td>
+                                            <td>
+                                                @Model.PartialPayable
+
+                                            </td>
+                                        </tr>
+                                        <tr style="height:35px">
+                                            <td></td>
+                                            <td colspan="4">
+                                                IGST-18%
+                                            </td>
+                                            <td>
+                                                @Model.IGST
+
+                                            </td>
+                                        </tr>
+                                        <tr style="font-size:24px;font-family:Merriweather; background-color:lightgray; height:60px">
+                                            <td colspan="5" style="text-align:center;">
+                                                <b>Net Payable- INR</b>
+                                            </td>
+                                            <td><b>@Model.Netpayable@*2,24,672*@</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+
+                                <ol type="1" style="font-family:Arial;font-size:18px">
+                                    <li>Any disputes beyond 7 days of delivery of interview will not be entertained and the invoice will be treated as accepted in full</li>
+                                    <li>TAN: @Model.RisebirdTAN</li>
+                                    <li>PAN: @Model.RisebirdPAN</li>
+                                    <li>GSTIN: @Model.RisebirdGSTIN</li>
+                                    <li>CIN: @Model.RisebirdCIN</li>
+                                    <li>
+                                        Account Details –
+                                        <ol type="a">
+                                            <li>Bank Name – @Model.RisebirdBankName</li>
+                                            <li>Account Name  - @Model.RisebirdAccountName</li>
+                                            <li>Account Number – @Model.RisebirdAccountNumber</li>
+                                            <li>IFSC – @Model.RisebirdIFSC</li>
+                                            <li>ICICI Bank SWIFT Code: @Model.RisebirdICICIBankSwiftCode</li>
+                                        </ol>
+                                    </li>
+                                    <li>Delay in payment will attract interest @Html.Raw("@") 1.5% per month until realization of payment.</li>
+                                    <li>All interview recordings and feedback reports will be deleted from our records after the receipt of payment or 30 days of submitting the invoice or whichever is earlier.</li>
+                                    <li>In case of drive or where we have used Persistent communication infrastructure or where candidate has restricted the recording or in exception case where candidate has requested for phone call due to some emergency - Video/Audio links shall not be available</li>
+
+                                </ol>
+
+
 
                             </div>
-                            <br />
-                            <p style="font-size:22px;font-family:Roboto"><b>PURPOSE</b> : Candidate screening services using Expert-Led Video Interviews</p>
-                            <table style="border-style:solid;border-color:rgb(229,229,229);border-width:1px" class="tableBill">
-                                <thead style="font-size:20px;font-family:Roboto;background-color:rgb(217,196,177)">
-                                    <tr style="height:100px">
-                                        <th>Total Number of interviews- @Model.CurrentMonth</th>
-                                        <th>Number of Interviews for Partial invoice-@Model.CurrentMonth </th>
-                                        <th>Actual Price Per Interview- INR</th>
-                                        <th>Discount offered</th>
-                                        <th>Discounted Price per Interview</th>
-                                        <th>Partial Payable- @Model.CurrentMonth - INR</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody style="font-family:Arial;font-size:18px">
-                                    <tr style="height:35px">
-                                        <td>@Model.InterviewCount</td>
-                                        <td>@Model.PartialInterviewCount</td>
-                                        <td>@Model.PricePerInterview</td>
-                                        <td>@Model.Discount%</td>
-                                        <td>@Model.DiscountedPricePerInterview</td>
-                                        <td>@Model.PartialPayable</td>
-
-                                        @*<td>474</td>
-        <td>56</td>
-        <td>5600</td>
-        <td>39.28%</td>
-        <td>3400</td>
-        <td>1,90,400</td>*@
-
-                                    </tr>
-                                    <tr style="height:35px">
-                                        <td></td>
-                                        <td colspan="4">
-                                            Billable Amount- INR
-                                        </td>
-                                        <td>
-                                            @Model.PartialPayable
-                                            @*1,90,400*@
-                                        </td>
-                                    </tr>
-                                    <tr style="height:35px">
-                                        <td></td>
-                                        <td colspan="4">
-                                            IGST-18%
-                                        </td>
-                                        <td>
-                                            @Model.IGST
-                                            @*34,272*@
-                                        </td>
-                                    </tr>
-                                    <tr style="font-size:24px;font-family:Merriweather; background-color:lightgray; height:60px">
-                                        <td colspan="5" style="text-align:center;">
-                                            <b>Net Payable- INR</b>
-                                        </td>
-                                        <td><b>@Model.Netpayable@*2,24,672*@</b></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <br />
-
-                            <ol type="1" style="font-family:Arial;font-size:18px">
-                                <li>Any disputes beyond 7 days of delivery of interview will not be entertained and the invoice will be treated as accepted in full</li>
-                                <li>TAN: @Model.RisebirdTAN</li>
-                                <li>PAN: @Model.RisebirdPAN</li>
-                                <li>GSTIN: @Model.RisebirdGSTIN</li>
-                                <li>CIN: @Model.RisebirdCIN</li>
-                                <li> 
-                                    Account Details –
-                                    <ol type="a">
-                                        <li>Bank Name – @Model.RisebirdBankName</li>
-                                        <li>Account Name  - @Model.RisebirdAccountName</li>
-                                        <li>Account Number – @Model.RisebirdAccountNumber</li>
-                                        <li>IFSC – @Model.RisebirdIFSC</li>
-                                        <li>ICICI Bank SWIFT Code: @Model.RisebirdICICIBankSwiftCode</li>
-                                    </ol>
-                                </li>
-                                <li>Delay in payment will attract interest @Html.Raw("@") 1.5% per month until realization of payment.</li>
-                                <li>All interview recordings and feedback reports will be deleted from our records after the receipt of payment or 30 days of submitting the invoice or whichever is earlier.</li>
-                                <li>In case of drive or where we have used Persistent communication infrastructure or where candidate has restricted the recording or in exception case where candidate has requested for phone call due to some emergency - Video/Audio links shall not be available</li>
-
-                            </ol>
 
 
-                            @*<table>
-            <tr>
-                <td>
-                    <table>
-                        <tr>
-                            <td>
-                                PREPARED FOR
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td>
-                                MPHASIS LIMITED
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td>
-                                Bagmane World Technology Center,<br />
-                                Marathalli Ring Road,<br />
-                                Doddanakhundi Village,<br />
-                                Bangalore 560048
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td>GSTIN: 29AAACB6820C2Z0</td>
-
-                        </tr>
-                        <tr>
-                            <td>PO Number: 100040074112</td>
-
-                        </tr>
-                        <tr>
-                            <td>SR Number: 16391</td>
-
-                        </tr>
-
-                    </table>
-
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <td>
-                                PREPARED DATE
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                9th Sep 2019
-
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                SUBMISSION DATE
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                9th Sep 2019
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                EXPIRY DATE
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                14th Sep 2019
-                            </td>
-                        </tr>
-                    </table>
-
-                </td>
-            </tr>
-        </table>*@
                         </div>
 
-
+                        <!-- end content-->
                     </div>
-
-                    <!-- end content-->
-                </div>
 
                 
                 <!--  end card  -->
@@ -438,9 +333,10 @@
         var dateStr = d.toString();
         var date = dateStr.split(' ');
         var shortDate = date[2] + " " + date[1] + ", " + date[3];
+        var shortDate2 = (7 +parseInt(date[2])) + " " + date[1] + ", " + date[3];
         document.getElementById("preparedDate").innerHTML = shortDate;
         document.getElementById("submissionDate").innerHTML = shortDate;
-        document.getElementById("expiryDate").innerHTML = shortDate;
+        document.getElementById("expiryDate").innerHTML = shortDate2;
 
 
     })
