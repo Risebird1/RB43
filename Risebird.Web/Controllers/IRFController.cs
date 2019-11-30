@@ -2621,5 +2621,44 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult OpenCandidateInvites()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Candidate")
+                    {
+                        
+                        var irfList = _irfService.GetCandidateIRFInvites(emailid)?.ToList();
+                        
+                        return View(irfList);
+
+                        //return View();
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
     }
 }

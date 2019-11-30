@@ -311,6 +311,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<Meeting> GetCandidateInterviews(string emailID)
+        {
+            try
+            {
+                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         public List<Meeting> GetQualityControlInterviews(string emailID)
         {
@@ -454,6 +469,29 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool CancelInterview(int meetingid, string interviewDate, string candidateEmail)
+        {
+            try
+            {
+                if( _meetingRespository.CancelInterview(meetingid))
+                {
+                    //send mail to the HRs
+                    var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
+                    
+                    _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate);
+                    return true;
+                }
+                return false;
+                    
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
 
         public InterviewComments GetInterviewComments(int interviewId)

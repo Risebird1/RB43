@@ -1,0 +1,209 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@{
+    ViewData["Title"] = "Open Candidate Invites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+<style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
+
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+    .list-group-item-text {
+        padding-top: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+    }
+
+        .list-group-item-text span {
+            float: left;
+            font-weight: 700;
+            padding-right: 5px;
+        }
+
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
+
+    .list-group {
+        margin-bottom: 150px;
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Open Interview Invites
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Open Interview Invites</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 ml-md-auto">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                        @*<div class="col-auto">
+                            @if (ViewBag.IsClientUser == false)
+                            {
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
+
+                            }
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>*@
+                    </div>
+                    
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-3 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+
+                            <div class="statistics statistics-horizontal">
+                                <div class="info info-horizontal">
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFName</h3>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row" style="font-size:smaller;">
+
+                                        <div class="col-12">
+                                            <div class="group inner list-group-item-text">
+                                                <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
+                                                <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
+                                                <span>Job Ends on :</span> <p>@item.EndDate.ToString("dd MMM yyyy")  </p>
+                                                <span>Jd Link:</span><p><a href="@item.JDLink" target="_blank">Job Description</a></p>
+                                                @*<span>Total Invites:</span> <p>@item.TotalInvites  </p>*@
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <div class="stats text-center">
+                               
+                               
+                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                    <i class="now-ui-icons fa fa-calendar"></i>
+                                </button>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>

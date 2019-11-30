@@ -219,6 +219,32 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyCandidateInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
+
         public async Task<IEnumerable<Meeting>> GetQualityControlInterview(string emailID)
         {
             try
@@ -440,6 +466,31 @@ namespace Risebird.Repository
 
         }
 
+
+        public bool CancelInterview(int meetingid)
+        {
+            try
+            {
+                var query = "update [dbo].[InterviewMeetings] set confirmationStatus=@value where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@value", 2);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
         public async Task<bool> UnassignYourself(int meetingid)
         {
             try
@@ -487,6 +538,33 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
+            }
+        }
+
+        public List<string> ListInterviewersMail(string candidateEmail, string interviewDate)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@candidateEmail", candidateEmail);
+                parameters.Add("@interviewDate", interviewDate);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result =SqlMapper.Query<string>(
+                        con, "usp_ListOfCancelledInterviewInterviwer", parameters, commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
 

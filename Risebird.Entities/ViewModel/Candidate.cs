@@ -57,11 +57,16 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Expected Salary(lacs)")]
        
         public decimal ExpectedSalary { get; set; }
-
        
         public decimal Notice { get; set; }
 
         public DateTime EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public string CalendlyLink { get; set; }
+        public string ClientName { get; set; }
+        public string ClientCompName { get; set; }
+        public string JDTiltle { get; set; }
+        public string JDLink { get; set; }
         
 
     }

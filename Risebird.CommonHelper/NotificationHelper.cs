@@ -284,5 +284,42 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SendInterviewCancelledMail(List<string> interviewers, string interviewDate)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var mails in interviewers)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                }
+                mailMessage.Subject = "Interview has been Cancelled on date: " + interviewDate;
+
+                StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled on interviewdate: " + interviewDate + " .");
+                msgBody.AppendLine(
+                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                mailMessage.Body = msgBody.ToString();
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
     }
 }
