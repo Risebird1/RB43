@@ -145,19 +145,19 @@
                         <h4 class="card-title">Interview Request Forms</h4>
                     </div>
                     <div class="row">
-                    <div class="col-md-3 ml-md-auto">
-                        <div class="form-group">
+                        <div class="col-md-3 ml-md-auto">
+                            <div class="form-group">
 
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-auto">
-                        @if (ViewBag.IsClientUser == false)
-                        {
-                            <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
+                        <div class="col-auto">
+                            @if (ViewBag.IsClientUser == false)
+                            {
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
 
-                        }
-                        <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                    </div>
+                            }
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>
                     </div>
                     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
@@ -331,9 +331,10 @@
                                     <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
                                         <i class="now-ui-icons fa fa-comments"></i>
                                     </button>
-                                    <button type="button" onclick="location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                    <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
                                         <i class="now-ui-icons fa fa-money"></i>
                                     </button>
+                                    //location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'
                                 }
                                 <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
@@ -377,6 +378,63 @@
                 </div>
             }
         </div>
+        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <!-- Modal content -->
+            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5>Invoice</h5>
+                    <span class="close" id="invoicePopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                    End Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+                </div>
+            </div>
+
+        </div>
+
         <!-- end row -->
     </div>
     <footer class="footer">
@@ -561,14 +619,14 @@
 </script>
 <script>
     $(document).ready(function () {
-        
+
         $("#ResetFilter").click(function () {
                 ResetFilter();
             })
             if ('@filter' != "") {
                 ApplySessionFilter();
               }
-        
+
         $("#RFID").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
@@ -586,14 +644,14 @@
             selectedClass: 'active1',
             buttonWidth: '270px',
             maxHeight: 200
-        });       
+        });
         $("#ClientRole").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '270px',
             maxHeight: 200
         });
-       
+
     });
 
     function ResetFilter() {
@@ -613,7 +671,7 @@
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
-            
+
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -629,6 +687,64 @@
                  success: function (data) {
                  }
                 });
+    }
+
+</script>
+<script>
+    var irfId = "";
+    var irfName = "";
+    var span = document.getElementById("invoicePopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+   
+</script>
+<script>
+    function InvoicePopUp(id, irfName) {
+        
+        irfId = id;
+        irfName = irfName;
+        
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+        
+
+    }
+
+
+    function SavePopUp() {
+        var sDate=  $("#stDateInvoice").val();
+        //var stDate = document.getElementById("stDateInvoice").value;
+        var endDate = document.getElementById("EndDateInvoice").value;
+        if (sDate == null || sDate == "") {
+            document.getElementById("stDate_Error").innerHTML = "Kindly enter Start Date";
+        }
+        else {
+            document.getElementById("stDate_Error").innerHTML = "";                        
+
+        }
+        if (endDate == null || endDate == "") {
+            document.getElementById("endDate_Error").innerHTML = "Kindly enter End Date";
+        }
+        else {
+            document.getElementById("stDate_Error").innerHTML = "";                      
+
+        }
+        if (sDate == "" || endDate == "") {
+            return;
+        }
+
+        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName+ '&startDate=' + sDate+ '&endDate=' + endDate ;
+        window.location.href = url;
     }
 
 </script>

@@ -2540,7 +2540,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Invoice(int irfId, string irfName)
+        public IActionResult Invoice(int irfId, string irfName, DateTime startDate, DateTime endDate)
         {
             try
             {
@@ -2553,7 +2553,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
                         var model = new InvoiceModel();
-                        model = _irfService.GetInvoiceModel(irfId);
+                        model = _irfService.GetInvoiceModel(irfId, startDate, endDate);
                         
                         return PartialView("InvoicePartial", model);
                     }

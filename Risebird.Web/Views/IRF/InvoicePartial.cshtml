@@ -213,12 +213,12 @@
                                 <table style="border-style:solid;border-color:rgb(229,229,229);border-width:1px" class="tableBill">
                                     <thead style="font-size:20px;font-family:Roboto;background-color:rgb(217,196,177)">
                                         <tr style="height:100px">
-                                            <th>Total Number of interviews- @Model.CurrentMonth</th>
-                                            <th>Number of Interviews for Partial invoice-@Model.CurrentMonth </th>
+                                            <th>Total Number of interviews- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy"))</th>
+                                            <th>Number of Interviews for Partial invoice- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")) </th>
                                             <th>Actual Price Per Interview- INR</th>
                                             <th>Discount offered</th>
                                             <th>Discounted Price per Interview</th>
-                                            <th>Partial Payable- @Model.CurrentMonth - INR</th>
+                                            <th>Partial Payable- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")) - INR</th>
 
                                         </tr>
                                     </thead>

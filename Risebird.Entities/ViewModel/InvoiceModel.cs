@@ -34,5 +34,7 @@ namespace Risebird.Entities.ViewModel
         public double Netpayable { get; set; }
         public double IGST { get; set; }
         public double Discount { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

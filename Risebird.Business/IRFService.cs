@@ -508,13 +508,13 @@ namespace Risebird.Business
             }
 
         }
-        public InvoiceModel GetInvoiceModel(int irfId)
+        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate)
         {
             try
             {
                 var irfDetails = _irfRepository.GetIRFbyId(irfId);
                 var currentMonth = DateTime.Now.Month;
-                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus ==4 || x.MeetingStatus == 2)).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
+                var interviewDetails = _irfRepository.GetIRFInterviewMeetings(irfId).Where(x => x.MeetingStatus.HasValue && (x.MeetingStatus ==4 || x.MeetingStatus == 2) && x.interviewDate.Date<=endDate.Date && x.interviewDate.Date>= startDate.Date).ToList();// && x.interviewDate.Month ==currentMonth).ToList();
                 var invoiceModel = new InvoiceModel();
                 if(irfDetails!=null && invoiceModel!=null)
                 {
@@ -538,6 +538,8 @@ namespace Risebird.Business
                     //}
                     invoiceModel.CurrentMonth = DateTime.Now.ToString("MMMM yyyy");
                     Random generator = new Random();
+                    invoiceModel.StartDate = startDate;
+                    invoiceModel.EndDate = endDate;
                     invoiceModel.InvoiceNumber= generator.Next(0, 999999).ToString("D6");
                     invoiceModel.InvoiceReferenceCode = "RB" + irfDetails.ClientCompName.Substring(0, 2).ToUpper() + irfDetails.JDTiltle.Split("|")[0].Substring(0, 2).ToUpper() + currentMonth.ToString().Substring(0, 2).ToUpper();
                     invoiceModel.InterviewCount = interviewDetails.Count();
