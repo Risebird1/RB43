@@ -143,8 +143,7 @@
                                         <div class="col-12">
                                             <div class="group inner list-group-item-text">
                                                 <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
-                                                <span>Interview Date:</span> <p>@item.interviewDate.ToString("dd MMM yyyy")  </p>
-                                                <span>Interviewer Id:</span> <p>@item.interviewer  </p>
+                                                <span>Interview Date:</span> <p>@item.interviewDate  </p>                                                
                                                 <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
                                                 <span>JD Link:</span> <p><a href="@item.JDLink" target="_blank">Job Description</a>  </p>
                                                 <span>Job Ends on:</span> <p> @item.EndDate.ToString("dd MMM yyyy") </p>
@@ -169,15 +168,15 @@
                                 <button type="button" onclick="window.open('@item.zoomLink')" class="btn btn-warning btn-icon btn-sm" title="Join Meeting">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
-                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty)
+                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && (DateTime.Now.AddMinutes(-5) <= item.interviewDate) && (item.interviewDate <= DateTime.Now.AddMinutes(65)))
                                 {
                                     <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
                                         <i class="now-ui-icons fa fa-phone"></i>
                                     </button>
                                 }
                                
-                                <button type="button" onclick="javascript:CancelInterview(@jsonObject);" class="btn btn-danger btn-icon btn-sm" title="Cancel interview request.">
-                                    <i class="now-ui-icons  fa fa-envelope"></i>
+                                <button type="button" onclick="javascript:CancelInterview(@jsonObject);" class="btn btn-round btn-danger btn-icon btn-sm like" title="Cancel interview request.">
+                                    <i class="fa fa-times"></i>
                                 </button>
 
                             </div>
