@@ -18,7 +18,7 @@ namespace Risebird.Entities.ViewModel
         public string EndClient { get; set; }
         [Required]
         public string Location { get; set; }
-        [DisplayName("Project OwnerEmail")]
+        [DisplayName("Project Owner Email")]
         [Required]
         public string ProjectOwnerId { get; set; }
         public string ArchiveStatus { get; set; }

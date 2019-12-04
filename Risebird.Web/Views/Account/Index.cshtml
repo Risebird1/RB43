@@ -1,0 +1,599 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.Account>
+@{
+    ViewData["Title"] = "Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
+
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+    .list-group-item-text {
+        padding-top: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+    }
+
+        .list-group-item-text span {
+            float: left;
+            font-weight: 700;
+            padding-right: 5px;
+        }
+
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
+
+    .list-group {
+        margin-bottom: 150px;
+    }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+</style>
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Accounts
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Accounts</h4>
+                    </div>
+                    <div class="row" style="margin-left:1008px">
+                        @if (ViewBag.IsClientUser == false)
+                        {
+                            <div class="toolbar">
+                                <!--        Here you can write extra buttons/actions for the toolbar              -->
+                                <div class="text-right">
+                                    <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Account" onclick="location.href='@Url.Action("Add", "Account")'" data-original-title="Tooltip on top"> Add Account</span></button>
+                                </div>
+                            </div>
+                        }
+                        @*<div>
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>*@
+                    </div>
+
+
+                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="@Url.Action("Index","Project")" method="post" id="form">
+
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        Start Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        End Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ProjectID">ProjectID</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ProjectID" name="ProjectID" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
+
+                                                            @foreach (var item in Model.Select(x => x.Location).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.Select(x => x.EndClient).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row">
+            @if (Model != null && Model.Count() != 0)
+            {
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-body ">
+
+                                <div class="statistics statistics-horizontal">
+                                    <div class="info info-horizontal">
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <h3 class="info-title" style="font-size:smaller;"> @item.Name</h3>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row" style="font-size:smaller;">
+
+                                            <div class="col-12">
+                                                <div class="group inner list-group-item-text">
+                                                    @*<span>Client Name:</span> <p>@item.ClientCompName</p>*@
+                                                    @*<span>Primary Skill:</span> <p>@item.JDTiltle.Split("|")[0]</p>*@
+
+                                                    <span>Total Projects:</span> <p>@item.TotalProjects</p>
+                                                    <span>Client:</span> <p> @item.Client </p>
+                                                    <span>End Client:</span> <p> @item.EndClient</p>
+                                                    <span>Location:</span> <p> @item.Location</p>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer ">
+                                <div class="stats text-center">
+                                    @if (!@item.IsClientUser)
+                                    {
+                                        <button type="button" onclick="javascript:EditAccount('@item.id');" class="btn btn-primary btn-icon btn-sm " title="Edit">
+                                            <i class="now-ui-icons fa fa-edit"></i>
+                                        </button>
+                                        @*<button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
+                                                <i class="now-ui-icons fa fa-comments"></i>
+                                            </button>*@
+                                    }
+                                    @*<button type="button" onclick="location.href='@Url.Action("GetProjectInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Meetings">
+                                        <i class="now-ui-icons fa fa-meetup"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("GetSelectedInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Selected Meeting">
+                                        <i class="now-ui-icons fa fa-check"></i>
+                                    </button>*@
+                                    @*<button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
+                                            <i class="now-ui-icons fa fa-meetup"></i>GetSelectedInterviewMeetings
+                                        </button>*@
+                                    @*<button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
+                                            <i class="now-ui-icons fa fa-check"></i>
+                                        </button>*@
+
+                                    <button type="button" onclick="javascript:stats('@item.id','@item.Name');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="Stats">
+                                        <i class="now-ui-icons fa fa-industry"></i>
+                                    </button>
+                                    @if (!@item.IsClientUser)
+                                    {
+                                        if (!item.IsDeleted)
+                                        {
+                                            <button type="button" onclick="javascript:ArchiveAccount('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
+                                                <i class="now-ui-icons fa fa-archive"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:UnArchiveAccount('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                <i class="now-ui-icons fa fa-undo"></i>
+                                            </button>
+                                        }
+
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/Account/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.href = '/Account/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+
+
+
+<script type="text/javascript">
+    function ArchiveAccount(dataID) {
+
+        var IdProject = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "It will be Archived!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, archive it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    var Id = dataID;
+                    $.ajax({
+                        url: '/Archive/ArchiveAccount?id=' + Id,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error archiving!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Archived!',
+                    type: 'success',
+                    html: '<p>The Account has been Archived.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/Account/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'Your file has not been archived :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+    //function SelectedInterviewMeetings(id, IRFid) {
+
+    //    var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+    //    window.location.href = url;
+    //};
+    //function GetInterviewMeetings(id, IRFid) {
+
+    //    var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+    //    window.location.href = url;
+    //};
+    function EditAccount(id) {
+
+        var url = '/Account/Edit?id=' + id;
+        window.location.href = url;
+    };
+    function stats(id, name) {
+
+        var url = '/Account/Stats?id=' + id + '&name=' + name;
+        window.location.href = url;
+    };
+    function UnArchiveAccount(id) {
+
+        var url = '/Account/UnArchiveAccount?id=' + id;
+        window.location.href = url;
+    };
+</script>
+<script>
+    @*$(document).ready(function () {
+
+        $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+              }
+
+        $("#ProjectID").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ClientName").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#ArchiveStatus").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+        $("#Location").multiselect({
+            includeSelectAllOption: true,
+            selectedClass: 'active1',
+            buttonWidth: '270px',
+            maxHeight: 200
+        });
+
+    });*@
+
+    //function ResetFilter() {
+
+    //         $.ajax({
+    //        type: "POST",
+    //        url: "/Project/Index",
+    //             success: function (data) {
+    //                window.location.href = "/Project/ResetProjectFilter";
+    //             }
+    //            });
+    //}
+        @*function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var projectID =  @Html.Raw(Json.Serialize(ProjectID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var location =  @Html.Raw(Json.Serialize(Location));
+
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#ProjectID").val(projectID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#Location").val(location);
+            var form = $("#form").serialize();
+             $.ajax({
+            type: "POST",
+            url: "/Project/Index",
+            data: form,
+                 success: function (data) {
+                 }
+                });
+    }*@
+
+</script>
