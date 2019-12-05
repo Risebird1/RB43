@@ -149,6 +149,9 @@ namespace Risebird.Web
             services.AddScoped<ITwilioHelper, TwilioHelper>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IAccountService, AccountService>();
+
         }
     }
      //Global level antiforgery token security to stop malicious scripts

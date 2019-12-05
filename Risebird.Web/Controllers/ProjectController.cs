@@ -278,7 +278,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Adding Project has failed";
+                TempData["SuccessErrorMessageProject"] = "Adding Project has failed";
                 return RedirectToAction("Index");
             }
         }
@@ -331,7 +331,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Editing Project has failed";
+                TempData["SuccessErrorMessageProject"] = "Editing Project has failed";
                 return RedirectToAction("Index");
             }
         }
