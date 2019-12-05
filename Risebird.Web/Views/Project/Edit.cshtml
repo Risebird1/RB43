@@ -195,7 +195,7 @@
                                     @Html.TextBoxFor(m => m.ProjectIRFMappings[i].IRFId, new { @class = "form-control", @readonly = "readonly"})
 
                                 </td>*@
-                                                <td> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                                                <td> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
                                                 <td>@Model.ProjectIRFMappings[i].PrimarySkills</td>
                                                 <td>@Model.ProjectIRFMappings[i].Client</td>
                                                 <td class="text-right">
