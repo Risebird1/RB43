@@ -398,7 +398,7 @@
 
                                                 </td>
                                                 <td>
-                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && ((DateTime.Now.AddMinutes(-5) <= item.interviewDate) || (item.interviewDate <= DateTime.Now.AddMinutes(65))))
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) >= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                     {
                                                         <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                     }
