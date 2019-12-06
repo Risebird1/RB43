@@ -338,12 +338,12 @@
                                                 <i class="now-ui-icons fa fa-archive"></i>
                                             </button>
                                         }
-                                        else
+                                        @*else
                                         {
                                             <button type="button" onclick="javascript:UnArchiveAccount('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
                                                 <i class="now-ui-icons fa fa-undo"></i>
                                             </button>
-                                        }
+                                        }*@
 
                                     }
 
@@ -461,7 +461,7 @@
                 return new Promise(function (resolve, reject) {
                     var Id = dataID;
                     $.ajax({
-                        url: '/Archive/ArchiveAccount?id=' + Id,
+                        url: '/Account/ArchiveAccount?id=' + Id,
                         success: function (result) {
                             resolve(result)
 

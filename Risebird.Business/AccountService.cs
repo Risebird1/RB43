@@ -158,6 +158,33 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> ArchiveAccount(int id)
+        {
+            try
+            {
+                return _accountRepository.ArchiveAccount(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UnArchiveAccount(int id)
+        {
+            try
+            {
+                return _accountRepository.UnArchiveAccount(id).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
 
 
