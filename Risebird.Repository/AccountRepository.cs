@@ -36,7 +36,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     accounts = SqlMapper.Query<Account>(
-                        con, "select Account.*, a.TotalProjects from Account left join (select Count(AccountId) as TotalProjects, AccountId from AccountProjectMapping group by AccountId) a on Account.id=a.AccountId", null, commandType: System.Data.CommandType.Text);
+                        con, "select Account.*, a.TotalProjects from Account left join (select Count(AccountId) as TotalProjects, AccountId from AccountProjectMapping group by AccountId) a on Account.id=a.AccountId where Account.IsDeleted=0", null, commandType: System.Data.CommandType.Text);
                 }
                 return accounts;
             }
@@ -195,8 +195,56 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<bool> ArchiveAccount(int id)
+        {
+            try
+            {
+                var query = "update Account set IsDeleted=1 where id=@id";
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, parameters);
+                    return true;
+                }
 
+            }
 
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnArchiveAccount(int id)
+        {
+            try
+            {
+                var query = "update Account set IsDeleted=0 where id = @id;";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
 
 
 

@@ -188,5 +188,87 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        [Authorize]
+        public IActionResult ArchiveAccount(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_accountService.ArchiveAccount(id).Result)
+                        {
+                            TempData["SuccessErrorMessageAccount"] = "Account archived Successfully.";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageAccount"] = "Sorry! Archiving account failed.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageAccount"] = "Sorry! Archiving account failed.";
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [Authorize]
+        public IActionResult UnArchiveAccount(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_accountService.UnArchiveAccount(id).Result)
+                        {
+                            TempData["SuccessErrorMessageAccount"] = "Account restored Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageAccount"] = "Account restore Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
     }
 }

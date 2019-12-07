@@ -13,5 +13,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddAccount(Account accountDetails);
         Account GetAccountById(int id);
         bool UpdateAccount(Account model);
+        Task<bool> ArchiveAccount(int id);
+        Task<bool> UnArchiveAccount(int id);
     }
 }
