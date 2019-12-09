@@ -304,6 +304,46 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<ResumeEvaluator> GetResumeEvaluators()
+        {
+            try
+            {
+                var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ResumeEvaluator>(query);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<HR> GetHRs()
+        {
+            try
+            {
+                var query = "select HR.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from HR join UserList ul on HR.UserId=ul.id";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<HR>(query);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        
         public string GetQCSkills(int userId)
         {
             try
@@ -595,6 +635,26 @@ namespace Risebird.Repository
 
                     }
 
+                    foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@irfId", irfID);
+                        param2.Add("@ResumeEvaluatorUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
+                    foreach (var item in irfDetails.HRCollection)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@irfId", irfID);
+                        param2.Add("@HRUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
+
 
                     return true;
                 }
@@ -760,6 +820,31 @@ namespace Risebird.Repository
 
                         }
                     }
+
+                    if(irfDetails.ResumeEvaluatorCollection!=null)
+                    {
+                        foreach (var item in irfDetails.ResumeEvaluatorCollection)
+                        {
+                            DynamicParameters param2 = new DynamicParameters();
+                            param2.Add("@irfId", irfDetails.id);
+                            param2.Add("@ResumeEvaluatorUserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransResumeEvaluator", param2,
+                                    commandType: CommandType.StoredProcedure);
+
+                        }
+                    }
+                    if (irfDetails.HRCollection!=null)
+                    {
+                        foreach (var item in irfDetails.HRCollection)
+                        {
+                            DynamicParameters param2 = new DynamicParameters();
+                            param2.Add("@irfId", irfDetails.id);
+                            param2.Add("@HRUserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransHR", param2,
+                                    commandType: CommandType.StoredProcedure);
+
+                        }
+                    }
                     
                     return true;
                 }
@@ -903,6 +988,52 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public IEnumerable<TransResumeEvaluator> GetTransResumeEvaluator(int id)
+        {
+            try
+            {
+                var query = "select tre.*, re.UserId from TransResumeEvaluator tre inner join ResumeEvaluator re on tre.ResumeEvaluatorId = re.id where IRFId=@irfId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransResumeEvaluator>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        public IEnumerable<TransHR> GetTransHR(int id)
+        {
+            try
+            {
+                var query = "select thr.*, HR.UserId from TransHR thr inner join HR  on thr.HRId = HR.id where IRFId=@irfId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransHR>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
 
 

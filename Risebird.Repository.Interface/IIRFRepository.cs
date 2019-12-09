@@ -59,5 +59,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<string>> GetEmergencyInterviwerBasedOnIRFId(int irfId);
         bool UpdateEmergencyFlag(int id, string emailId);
         IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
+        IEnumerable<ResumeEvaluator> GetResumeEvaluators();
+        IEnumerable<HR> GetHRs();
+        IEnumerable<TransResumeEvaluator> GetTransResumeEvaluator(int id);
+        IEnumerable<TransHR> GetTransHR(int id);
     }
 }

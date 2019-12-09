@@ -376,6 +376,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null)
             {
                 var model = new IRFVm();
+                var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                 model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
@@ -386,9 +387,11 @@ namespace Risebird.Web.Controllers
                 ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                ViewBag.Interviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.QualityController = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
-                ViewBag.EmergencyInterviewers = new SelectList(_irfRepository.GetInterviewers(), "id", "EmailId");
+                ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
+                ViewBag.ResumeEvaluators= new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+                ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
+                ViewBag.QualityController = new SelectList(interviewers, "id", "EmailId");
+                ViewBag.EmergencyInterviewers = new SelectList(interviewers, "id", "EmailId");
                 ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
                 var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                 select new { ID = (int)s, Name = s.GetDescription() };
@@ -1107,17 +1110,19 @@ namespace Risebird.Web.Controllers
                     {
                         skills = skills + "," + item.SkillId;
                     }
+                    var interviewers = _irfService.GetInterviewers(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
                     ViewBag.LevelTech = new SelectList(_irfRepository.GetLevelTech(), "id", "Name");
                     ViewBag.Skill = new SelectList(_irfRepository.GetSkills(), "id", "Name");
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
-                    ViewBag.Interviewers = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
-                    ViewBag.QualityController = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
-                    ViewBag.EmergencyInterviewers = new SelectList(_irfService.GetInterviewers(skills), "UserId", "EmailId");
+                    ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
+                    ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");
-
+                    ViewBag.ResumeEvaluators = new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
+                    ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                     var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                     ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name");
