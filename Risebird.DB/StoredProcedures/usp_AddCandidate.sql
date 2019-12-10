@@ -128,6 +128,8 @@ values(@IRFId,
 @Notice
 
 )
+insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where EmailId=@EmailId))
+
 
 End
 
@@ -168,6 +170,8 @@ values(@IRFId,
 @Notice
 
 )
+insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where EmailId=@EmailId))
+
 
 End
 

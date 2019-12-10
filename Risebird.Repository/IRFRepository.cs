@@ -323,6 +323,46 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IEnumerable<string> GetResumeEvaluatorsMailIds( int irfId)
+        {
+            try
+            {
+                var query = "select ul.EmailId from TransResumeEvaluator tre join ResumeEvaluator re on tre.ResumeEvaluatorId= re.id join UserList ul on ul.id= re.UserId where IRFId =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public IEnumerable<string> GetHRsMailIds(int irfId)
+        {
+            try
+            {
+                var query = "select ul.EmailId from TransHR thr join HR  on thr.HRId= HR.id join UserList ul on ul.id= HR.UserId where IRFId =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
         public IEnumerable<HR> GetHRs()
         {
             try

@@ -151,6 +151,9 @@ namespace Risebird.Web
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IEvaluatorRepository, EvaluatorRepository>();
+            services.AddScoped<IEvaluatorService, EvaluatorService>();
+
 
         }
     }

@@ -321,5 +321,39 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator)
+        {
+            try
+            {
+                //var mailsq = new List<string>();
+                //mailsq.Add("harshitjajoo95@gmail.com");
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var mails in mailIds)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { evaluator, candidateName, irfName };
+                mailMessage.Subject = "New Candidate has been onboarded on: " + DateTime.Now.ToString("dd MMM yyyy");
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ResumeEvaluationReminderTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+
     }
 }

@@ -615,7 +615,18 @@ namespace Risebird.Business
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
-                return _irfRepository.AddCandidate(obj).Result;
+                var result = _irfRepository.AddCandidate(obj).Result;
+                if (result.Contains("successfully"))
+                {
+                    //get all resume evaluators and hrs to send mails to
+                    var resumeEvaluators =_irfRepository.GetResumeEvaluatorsMailIds(obj.IRFId);
+                    _notificationHelper.SendCandidateOnboardedMail(resumeEvaluators.ToList(), obj.Name, obj.IRFName, "Evaluator");
+
+                    var hrs = _irfRepository.GetHRsMailIds(obj.IRFId);
+                    //send mails
+                    _notificationHelper.SendCandidateOnboardedMail(hrs.ToList(), obj.Name, obj.IRFName, "HR");
+                }
+                return result;
             }
 
             catch (Exception e)

@@ -63,5 +63,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<HR> GetHRs();
         IEnumerable<TransResumeEvaluator> GetTransResumeEvaluator(int id);
         IEnumerable<TransHR> GetTransHR(int id);
+        IEnumerable<string> GetHRsMailIds(int irfId);
+        IEnumerable<string> GetResumeEvaluatorsMailIds(int irfId);
     }
 }
