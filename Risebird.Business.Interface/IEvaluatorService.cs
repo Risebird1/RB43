@@ -8,5 +8,8 @@ namespace Risebird.Business.Interface
     public interface IEvaluatorService
     {
         List<CandidateResumeEvaluation> GetOpenEvaluations(string emailId);
+        string AssignSelectabilityYourself(int id, string mailId);
+        List<CandidateResumeEvaluation> GetAssignedSelectabilityEvaluations(string emailID);
+        bool UnAssignSelectability(int id);
     }
 }

@@ -6,6 +6,7 @@ namespace Risebird.Entities.Data
 {
     public class CandidateResumeEvaluation
     {
+        public int id { get; set; }
         public int CandidateId { get; set; }
         public int IRFId { get; set; }
         public int ResumeEvaluatorId { get; set; }
@@ -14,5 +15,7 @@ namespace Risebird.Entities.Data
         public string ResumeLink { get; set; }
         public string IRFName { get; set; }
         public string JDLink { get; set; }
+        public string RisebirdHR { get; set; }
+
     }
 }

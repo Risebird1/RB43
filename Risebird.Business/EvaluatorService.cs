@@ -36,6 +36,51 @@ namespace Risebird.Business
             }
         }
 
+        public string AssignSelectabilityYourself(int id, string mailId)
+        {
+            try
+            {
+                return _evaluatorRespository.AssignYourselfSelectability(id, mailId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+
+        }
+
+        public List<CandidateResumeEvaluation> GetAssignedSelectabilityEvaluations(string emailID)
+        {
+            try
+            {
+                var assignedEvaluations =_evaluatorRespository.GetAssignedSelectabilityEvaluations(emailID).Result.ToList();                
+                return assignedEvaluations;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public bool UnAssignSelectability(int id)
+        {
+            try
+            {
+                return _evaluatorRespository.UnAssignSelectability(id);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+
+
 
     }
 }
