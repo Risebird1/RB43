@@ -1,12 +1,15 @@
-﻿using Risebird.Business.Interface;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -15,12 +18,14 @@ namespace Risebird.Business
         private IEvaluatorRepository _evaluatorRespository;
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
+        private IMeetingRespository _meetingRespository;
 
-        public EvaluatorService(IEvaluatorRepository evaluatorRespository, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger)
+        public EvaluatorService(IEvaluatorRepository evaluatorRespository, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
         {
             _evaluatorRespository = evaluatorRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
+            _meetingRespository = meetingRespository;
         }
 
         public List<CandidateResumeEvaluation> GetOpenEvaluations(string emailId)
@@ -50,6 +55,20 @@ namespace Risebird.Business
             }
 
         }
+        public string AssignJoinabilityYourself(int id, string mailId)
+        {
+            try
+            {
+                return _evaluatorRespository.AssignYourselfJoinability(id, mailId);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+
+        }
 
         public List<CandidateResumeEvaluation> GetAssignedSelectabilityEvaluations(string emailID)
         {
@@ -64,7 +83,6 @@ namespace Risebird.Business
                 return null;
             }
         }
-
         public bool UnAssignSelectability(int id)
         {
             try
@@ -78,7 +96,116 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<EvaluatorReport> GetEvaluatorReport(int candidateId, int irfId)
+        {
+            try
+            {
+                //check whether an IRF exists for the given IRFId
+                //var check = _meetingRespository.GetIRFbyId(irfId);
+                //if (!check)
+                //{
+                //    return null;
+                //}
+                // check whether a feedback for the interviewId has already been submitted
+                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(candidateId);
 
+                var model = new EvaluatorReport();
+                var levels = _meetingRespository.GetLevels();
+
+                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    model.IsEdited = true;
+                    model.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
+
+                }
+                else
+                {
+                    model.IsEdited = false;
+
+                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityList = new List<SelectabilityEvaluatorReport>();
+                    foreach (var item in selectabilityDetails)
+                    {
+                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport();
+                        obj.CandidateId = candidateId;
+                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
+                        obj.WeightageRequired = item.Weightage;
+                        selectabilityList.Add(obj);
+                    }
+
+                    model.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
+                }
+
+                //get all values from database
+               
+
+                var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
+                
+
+                model.CandidateName = candidateDetails.Name;
+                model.ResumeLink = candidateDetails.ResumeLink;
+                model.IRFId = irfId;
+                model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                model.currentEmployerName = candidateDetails.CurrentEmployer;
+                model.PreferredLocation = candidateDetails.Location;
+                model.CandidateEmailId = candidateDetails.EmailId;
+                model.Level =new SelectList(levels, "id", "Name");
+                return model;
+                
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddSelectabilityReport(EvaluatorReport reportModel)
+        {
+            try
+            {               
+                var result = await _evaluatorRespository.AddSelectabilityReport(reportModel);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public List<CandidateHREvaluation> GetEvaluationsHR(string emailId)
+        {
+            try
+            {
+                return _evaluatorRespository.GetEvaluationsHR(emailId).Result.ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public List<CandidateHREvaluation> GetAssignedJoinabilityEvaluations(string emailID)
+        {
+            try
+            {
+                var assignedEvaluations = _evaluatorRespository.GetAssignedJoinabilityEvaluations(emailID).Result.ToList();
+                return assignedEvaluations;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
 
 

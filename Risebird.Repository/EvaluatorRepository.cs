@@ -80,6 +80,35 @@ namespace Risebird.Repository
             }
 
         }
+        /// <summary>
+        /// Resume evaluation for joinability assignment to HR
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="mailId"></param>
+        /// <returns></returns>
+        public string AssignYourselfJoinability(int id, string mailId)
+        {
+            try
+            {
+                var query = "update [dbo].[TransHREvaluatorIRF] set HREmailId=@value where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@value", mailId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return "Resume evaluation assigned successfully.";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assign Resume Evaluation. Please contact Risebird HR.";
+            }
+
+        }
 
         /// <summary>
         /// Get all assigned evaluations for selectability for Resume Evaluator
@@ -156,7 +185,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public Candidate GetIRFCandidate(int id)
+        public Candidate GetCandidate(int id)
         {
             try
             {
@@ -176,7 +205,147 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id)
+        {
+            try
+            {
+                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where CandidateId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SelectabilityEvaluatorReport>(query, dynamicParameters);
+                    return results;
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddSelectabilityReport(EvaluatorReport reportDetails)
+        {
+            try
+            {
+                bool result = false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //check if the data is edited
+                    if (reportDetails.IsEdited)
+                    {
+                        if (reportDetails.SelectabilityEvaluatorReportCollection != null)
+                        {
+                            //update Selectability Report table
+                            foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
+                            {
+                                string sqlSelectableReport = "update SelectabilityReport set ActualLevelId=@ActualLevelId, WeightageActual = @WeightageActual where CandidateId = @CandidateId";
+                                var result3 = con.Execute(sqlSelectableReport, new
+                                {
+                                    CandidateId = reportDetails.CandidateId,
+                                    ActualLevelId = item.ActualLevelId,
+                                    WeightageActual = item.WeightageActual,
+                                });
+                            }
+                            result = true;
+                        }
+
+
+                    }
+                    else
+                    {
+                        //add to interviewReport table
+                        if (reportDetails.SelectabilityEvaluatorReportCollection != null)
+                        {
+                            //update Selectability Report table
+                            foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
+                            {
+                                string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                                var result3 = con.Execute(sqlSelectableReport, new
+                                {
+                                    CandidateId = reportDetails.CandidateId,
+                                    RequiredLevelId = item.RequiredLevelId,
+                                    Type = item.Name,
+                                    Value = item.Value,
+                                    ActualLevelId = item.ActualLevelId,
+                                    WeightageRequired = item.WeightageRequired,
+                                    WeightageActual = item.WeightageActual
+                                });
+                            }
+                            result = true;
+                        }
+
+                    }
+                    
+                    return result;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IEnumerable<CandidateHREvaluation>> GetEvaluationsHR(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<CandidateHREvaluation>(con, "usp_OpenHREvaluations", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public async Task<IEnumerable<CandidateHREvaluation>> GetAssignedJoinabilityEvaluations(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<CandidateHREvaluation>(con, "usp_MyHREvaluations", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
 
     }
 }

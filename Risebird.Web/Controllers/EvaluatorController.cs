@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 
 namespace Risebird.Web.Controllers
 {
@@ -31,7 +32,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> OpenResumeEvaluations()
+        public async Task<IActionResult> OpenEvaluatorEvaluations()
         {
             try
             {
@@ -39,7 +40,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = "ResumeEvaluator";//HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator" || profileName == "HR")
+                    if (profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -70,7 +71,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         //[HttpPost]
-        public async Task<IActionResult> AssignYourself(int id)
+        public async Task<IActionResult> AssignSelectabilityYourself(int id)
         {
             try
             {
@@ -80,19 +81,13 @@ namespace Risebird.Web.Controllers
                     profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator" || profileName == "HR")
+                    if (profileName == "ResumeEvaluator")
                     {
                         var result = _evaluatorService.AssignSelectabilityYourself(id, "rohan.evans@gmail.com");
-
-                        //if (profileName== "ResumeEvaluator")
-                        //{
-
-                        //}
                         
-
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
-                        return RedirectToAction("OpenResumeEvaluations");
+                        return RedirectToAction("OpenEvaluatorEvaluations");
                     }
                     else
                     {
@@ -108,7 +103,44 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("OpenResumeEvaluations");
+                return RedirectToAction("OpenEvaluatorEvaluations");
+            }
+        }
+        [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> AssignJoinabilityYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "HR";// profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var result = _evaluatorService.AssignJoinabilityYourself(id, "rohan.evans@gmail.com");
+                        
+                        TempData["SuccessErrorMessageEvaluator"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("OpenHREvaluations");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("OpenHREvaluations");
             }
         }
 
@@ -122,7 +154,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator" || profileName == "HR")
+                    if (profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
@@ -214,13 +246,13 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageMyEvaluations"] = "Unassignment is Failed";
+                TempData["SuccessErrorMessageEvaluator"] = "Unassignment is Failed";
                 return RedirectToAction("MyEvaluations");
             }
         }
 
         [HttpGet]
-        public IActionResult SelectabilityReport(int interviewId, int irfId, bool isClient = false, bool isClientSelected = false)
+        public IActionResult SelectabilityReport(int candidateId, int irfId)
         {
             try
             {
@@ -231,8 +263,8 @@ namespace Risebird.Web.Controllers
                 {
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    //var model =
-                    return View();
+                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    return View(model);
                 }
                 else
                 {
@@ -246,6 +278,151 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SelectabilityReport(EvaluatorReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        
+
+                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            return RedirectToAction("MyEvaluations");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                            return RedirectToAction("MyEvaluations");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OpenHREvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = "HR";//HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var modelList = _evaluatorService.GetEvaluationsHR("rohan.evans@gmail.com");
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyHREvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "HR";//profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations("rohan.evans@gmail.com");
+                        foreach (var item in myEvaluationList)
+                        {
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    item.ResumeLink = new Uri(item.ResumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.ResumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.ResumeLink = "";
+                            }
+
+
+                        }
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+
+                        return View(myEvaluationList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
             }
         }
     }

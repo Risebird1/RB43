@@ -14,6 +14,11 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<CandidateResumeEvaluation>> GetAssignedSelectabilityEvaluations(string emailID);
         bool UnAssignSelectability(int id);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
-        Candidate GetIRFCandidate(int id);
+        Candidate GetCandidate(int id);
+        IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id);
+        Task<bool> AddSelectabilityReport(EvaluatorReport reportDetails);
+        Task<IEnumerable<CandidateHREvaluation>> GetEvaluationsHR(string emailID);
+        string AssignYourselfJoinability(int id, string mailId);
+        Task<IEnumerable<CandidateHREvaluation>> GetAssignedJoinabilityEvaluations(string emailID);
     }
 }

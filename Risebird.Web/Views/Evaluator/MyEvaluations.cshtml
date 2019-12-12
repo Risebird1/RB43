@@ -148,7 +148,7 @@
                                                     <td> @item.RisebirdHR</td>
                                                     <td class="text-center">
                                                         <span  onclick="javascript:UnAssignYourself('@item.id');" title="Unassign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("SelectabilityReport", "Evaluator", new { id = item.id, irfId= item.IRFId})'" title="Selectability Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("SelectabilityReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Selectability Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
                                                     </td>
                                                 </tr>
