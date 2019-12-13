@@ -19,5 +19,6 @@ namespace Risebird.Business.Interface
         string AssignJoinabilityYourself(int id, string mailId);
         List<CandidateHREvaluation> GetAssignedJoinabilityEvaluations(string emailID);
         bool UnAssignJoinability(int id);
+        Task<HRReport> GetHRJoinabilityReport(int candidateId, int irfId);
     }
 }

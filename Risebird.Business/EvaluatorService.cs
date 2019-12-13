@@ -221,6 +221,76 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<HRReport> GetHRJoinabilityReport(int candidateId, int irfId)
+        {
+            try
+            {
+                //check whether an IRF exists for the given IRFId
+                //var check = _meetingRespository.GetIRFbyId(irfId);
+                //if (!check)
+                //{
+                //    return null;
+                //}
+                // check whether a feedback for the interviewId has already been submitted
+                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(candidateId);
+
+                var model = new HRReport();
+                var levels = _meetingRespository.GetLevels();
+
+                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    model.IsEdited = true;
+                    model.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
+
+                }
+                else
+                {
+                    model.IsEdited = false;
+
+                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityList = new List<JoinabilityHRReport>();
+                    foreach (var item in joinabilityDetails)
+                    {
+                        JoinabilityHRReport obj = new JoinabilityHRReport();
+                        obj.CandidateId = candidateId;
+                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
+                        obj.WeightageRequired = item.Weightage;
+                        joinabilityList.Add(obj);
+                    }
+
+                    model.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
+                }
+
+                //get all values from database
+
+
+                var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
+
+
+                model.CandidateName = candidateDetails.Name;
+                model.ResumeLink = candidateDetails.ResumeLink;
+                model.IRFId = irfId;
+                model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                model.currentEmployerName = candidateDetails.CurrentEmployer;
+                model.PreferredLocation = candidateDetails.Location;
+                model.CandidateEmailId = candidateDetails.EmailId;
+                model.Level = new SelectList(levels, "id", "Name");
+                return model;
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
 
     }
 }

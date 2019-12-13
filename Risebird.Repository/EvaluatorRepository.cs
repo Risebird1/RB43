@@ -226,6 +226,27 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id)
+        {
+            try
+            {
+                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where CandidateId = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<JoinabilityHRReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddSelectabilityReport(EvaluatorReport reportDetails)
         {
             try

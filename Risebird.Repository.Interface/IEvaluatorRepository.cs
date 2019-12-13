@@ -21,5 +21,6 @@ namespace Risebird.Repository.Interface
         string AssignYourselfJoinability(int id, string mailId);
         Task<IEnumerable<CandidateHREvaluation>> GetAssignedJoinabilityEvaluations(string emailID);
         bool UnAssignJoinability(int id);
+        IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id);
     }
 }
