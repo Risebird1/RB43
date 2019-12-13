@@ -120,7 +120,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "HR")
                     {
-                        var result = _evaluatorService.AssignJoinabilityYourself(id, "rohan.evans@gmail.com");
+                        var result = _evaluatorService.AssignJoinabilityYourself(id, "hire@risebird.io");
                         
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
@@ -217,7 +217,7 @@ namespace Risebird.Web.Controllers
                     profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
                     var email = HttpContext.Session.GetString("email");
                     email = email.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator" || profileName == "HR")
+                    if (profileName == "ResumeEvaluator")
                     {
                         bool result;
                         result = _evaluatorService.UnAssignSelectability(id);
@@ -246,7 +246,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageEvaluator"] = "Unassignment is Failed";
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
                 return RedirectToAction("MyEvaluations");
             }
         }
@@ -340,7 +340,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var modelList = _evaluatorService.GetEvaluationsHR("rohan.evans@gmail.com");
+                        var modelList = _evaluatorService.GetEvaluationsHR("hire@risebird.io");
                         if (TempData["SuccessErrorMessageEvaluator"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
@@ -379,7 +379,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations("rohan.evans@gmail.com");
+                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations("hire@risebird.io");
                         foreach (var item in myEvaluationList)
                         {
                             if (!string.IsNullOrEmpty(item.ResumeLink))
@@ -423,6 +423,52 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnassignHRJoinability(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "HR";// profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        bool result;
+                        result = _evaluatorService.UnAssignJoinability(id);
+                        if (result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Unassigned successfully.";
+                            return Json(new { url = Url.Action("MyHREvaluations", "Evaluator") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                            return Json(new { url = Url.Action("MyHREvaluations", "Evaluator") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyHREvaluations");
             }
         }
     }

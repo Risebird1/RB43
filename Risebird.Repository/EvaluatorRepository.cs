@@ -346,6 +346,30 @@ namespace Risebird.Repository
             return null;
 
         }
+        public bool UnAssignJoinability(int id)
+        {
+            try
+            {
+                var query = "update TransHREvaluatorIRF set HREmailId=null where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
 
     }
 }

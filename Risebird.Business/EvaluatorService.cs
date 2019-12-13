@@ -207,6 +207,19 @@ namespace Risebird.Business
             }
         }
 
+        public bool UnAssignJoinability(int id)
+        {
+            try
+            {
+                return _evaluatorRespository.UnAssignJoinability(id);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
 
 
     }
