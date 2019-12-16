@@ -11,6 +11,7 @@ namespace Risebird.Entities.ViewModel
     public class InterviewReport
     {
         public int id { get; set; }
+        public int CandidateId { get; set; }
         public int IRFId { get; set; }
         public string IRFName { get; set; }
 
@@ -47,9 +48,12 @@ namespace Risebird.Entities.ViewModel
 
         public IList<SkillGeneralReport> SkillGeneralReportCollection { get; set; }
 
-        public IList<JoinabilityReport> JoinabilityReportCollection { get; set; }
-
-        public IList<SelectabilityReport> SelectabilityReportCollection { get; set; }
+        //public IList<JoinabilityReport> JoinabilityReportCollection { get; set; }
+        //JoinabilityHRReportCollection
+        public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
+        //public IList<SelectabilityReport> SelectabilityReportCollection { get; set; }
+        //SelectabilityEvaluatorReportCollection
+        public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
 
         [DisplayName("Technical Skill Comments")]
         public string TechSkillComments { get; set; }

@@ -292,7 +292,7 @@ namespace Risebird.Repository
                                     Value = item.Value,
                                     ActualLevelId = item.ActualLevelId,
                                     WeightageRequired = item.WeightageRequired,
-                                    WeightageActual = item.WeightageActual
+                                    WeightageActual = item.WeightageActual,
                                 });
                             }
                             result = true;
@@ -389,6 +389,77 @@ namespace Risebird.Repository
                 return false;
             }
 
+        }
+
+        public async Task<bool> AddJoinabilityReport(HRReport reportDetails)
+        {
+            try
+            {
+                bool result = false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //check if the data is edited
+                    if (reportDetails.IsEdited)
+                    {
+                        if (reportDetails.JoinabilityHRReportCollection != null)
+                        {
+                            //update Selectability Report table
+                            foreach (var item in reportDetails.JoinabilityHRReportCollection)
+                            {
+                                string sqlSelectableReport = "update JoinabilityReport set ActualLevelId=@ActualLevelId, WeightageActual = @WeightageActual where CandidateId = @CandidateId";
+                                var result3 = con.Execute(sqlSelectableReport, new
+                                {
+                                    CandidateId = reportDetails.CandidateId,
+                                    ActualLevelId = item.ActualLevelId,
+                                    WeightageActual = item.WeightageActual,
+                                });
+                            }
+                            result = true;
+                        }
+
+
+                    }
+                    else
+                    {
+                        //add to interviewReport table
+                        if (reportDetails.JoinabilityHRReportCollection != null)
+                        {
+                            //update Selectability Report table
+                            foreach (var item in reportDetails.JoinabilityHRReportCollection)
+                            {
+                                string sqlSelectableReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                                var result3 = con.Execute(sqlSelectableReport, new
+                                {
+                                    CandidateId = reportDetails.CandidateId,
+                                    RequiredLevelId = item.RequiredLevelId,
+                                    Type = item.Name,
+                                    Value = item.Value,
+                                    ActualLevelId = item.ActualLevelId,
+                                    WeightageRequired = item.WeightageRequired,
+                                    WeightageActual = item.WeightageActual,
+                                });
+                            }
+                            result = true;
+                        }
+
+                    }
+
+                    return result;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
         }
 
 

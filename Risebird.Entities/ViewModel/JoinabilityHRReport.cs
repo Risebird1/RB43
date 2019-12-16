@@ -16,6 +16,6 @@ namespace Risebird.Entities.ViewModel
         public int ActualLevelId { get; set; }
         public int WeightageRequired { get; set; }
         public int WeightageActual { get; set; }
-        public string Name { get; set; }s
+        public string Name { get; set; }
     }
 }

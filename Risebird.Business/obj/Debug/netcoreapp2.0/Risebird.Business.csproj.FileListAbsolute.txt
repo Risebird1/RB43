@@ -158,6 +158,9 @@ C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business\obj\Debug\netcoreapp2
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfo.cs
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.deps.json
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
@@ -170,9 +173,6 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csprojAssemblyReference.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CoreCompileInputs.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfoInputs.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfo.cs
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb

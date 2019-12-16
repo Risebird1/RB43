@@ -59,5 +59,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID);
         bool CancelInterview(int meetingid);
         List<string> ListInterviewersMail(string candidateEmail, string interviewDate);
+        int GetCandidateId(int id, string irfName);
     }
 }

@@ -923,45 +923,45 @@ namespace Risebird.Repository
                         }
                     }
 
-                    if(reportDetails.JoinabilityReportCollection!=null)
-                    {
-                        //update Joinability Report table
+                    //if(reportDetails.JoinabilityHRReportCollection!=null)
+                    //{
+                    //    //update Joinability Report table
 
-                        foreach (var item in reportDetails.JoinabilityReportCollection)
-                        {
+                    //    foreach (var item in reportDetails.JoinabilityHRReportCollection)
+                    //    {
 
-                            string sqlJoinReport = "INSERT INTO JoinabilityReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result3 = con.Execute(sqlJoinReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value= item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
-                        }
-                    }
+                    //        string sqlJoinReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                    //        var result3 = con.Execute(sqlJoinReport, new
+                    //        {
+                    //            CandidateId = reportDetails.CandidateId,
+                    //            RequiredLevelId = item.RequiredLevelId,
+                    //            Type = item.Name,
+                    //            Value= item.Value,
+                    //            ActualLevelId = item.ActualLevelId,
+                    //            WeightageRequired = item.WeightageRequired,
+                    //            WeightageActual = item.WeightageActual
+                    //        });
+                    //    }
+                    //}
 
-                    if(reportDetails.SelectabilityReportCollection!=null)
-                    {
-                        //update Selectability Report table
-                        foreach (var item in reportDetails.SelectabilityReportCollection)
-                        {
-                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (InterviewId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@InterviewId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                            var result3 = con.Execute(sqlSelectableReport, new
-                            {
-                                InterviewId = reportDetails.InterviewId,
-                                RequiredLevelId = item.RequiredLevelId,
-                                Type = item.Name,
-                                Value = item.Value,
-                                ActualLevelId = item.ActualLevelId,
-                                WeightageRequired = item.WeightageRequired,
-                                WeightageActual = item.WeightageActual
-                            });
-                        }
-                    }
+                    //if(reportDetails.SelectabilityEvaluatorReportCollection!=null)
+                    //{
+                    //    //update Selectability Report table
+                    //    foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
+                    //    {
+                    //        string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
+                    //        var result3 = con.Execute(sqlSelectableReport, new
+                    //        {
+                    //            CandidateId = reportDetails.CandidateId,
+                    //            RequiredLevelId = item.RequiredLevelId,
+                    //            Type = item.Name,
+                    //            Value = item.Value,
+                    //            ActualLevelId = item.ActualLevelId,
+                    //            WeightageRequired = item.WeightageRequired,
+                    //            WeightageActual = item.WeightageActual
+                    //        });
+                    //    }
+                    //}
                     
                     if(reportDetails.QuestionsCollection !=null)
                     {
@@ -1462,8 +1462,7 @@ namespace Risebird.Repository
             }
 
         }
-
-
+        
         private DynamicParameters SetStoredProcedureParameterForComments(InterviewComments entity)
         {
             var parameters = new DynamicParameters();
@@ -1485,5 +1484,30 @@ namespace Risebird.Repository
             parameters.Add("@JoiningStatus", entity.JoiningStatus);
             return parameters;
         }
+
+        public int GetCandidateId(int id, string irfName)
+        {
+            int result = 0;
+            try
+            {
+                var query = "select cm.id from InterviewMeetings im join CandidatesMaster cm on im.candidateEmail = cm.EmailId where im.IRFId = @irfName and im.id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@irfName", irfName);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    result = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+
     }
 }

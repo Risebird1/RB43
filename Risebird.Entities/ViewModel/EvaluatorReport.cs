@@ -59,12 +59,9 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         
         public bool IsClientUser { get; set; }
-
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }
+        public HRReport HRReport { get; set; }
       
-       
-       
-       
     }
 }

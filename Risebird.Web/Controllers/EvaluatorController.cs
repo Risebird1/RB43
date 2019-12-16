@@ -264,6 +264,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     return View(model);
                 }
                 else
@@ -468,6 +469,82 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyHREvaluations");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult JoinabilityReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = "HR";//profileName.Replace("\"", "");
+                if (profileName == "HR")
+                {
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> JoinabilityReport(HRReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = "HR";//profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+
+
+                        if (_evaluatorService.AddJoinabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            return RedirectToAction("MyHREvaluations");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                            return RedirectToAction("MyHREvaluations");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
                 return RedirectToAction("MyHREvaluations");
             }
         }

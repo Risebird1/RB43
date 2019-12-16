@@ -290,6 +290,20 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> AddJoinabilityReport(HRReport reportModel)
+        {
+            try
+            {
+                var result = await _evaluatorRespository.AddJoinabilityReport(reportModel);
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
 
     }
