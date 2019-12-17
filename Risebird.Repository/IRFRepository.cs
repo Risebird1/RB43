@@ -1741,7 +1741,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink, Type=@Type, Location=@Location, Skill=@Skill, WorkAuth=@WorkAuth, CurrentLocation=@CurrentLocation, CurrentEmployer=@CurrentEmployer, Phone=@Phone, TotalExperience=@TotalExperience, CurrentSalary=@CurrentSalary, ExpectedSalary=@ExpectedSalary, Notice=@Notice  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
+                //var query = "update Candidate set [Name] = @Name, EmailId=@EmailId, ResumeLink = @ResumeLink, Type=@Type, Location=@Location, Skill=@Skill, WorkAuth=@WorkAuth, CurrentLocation=@CurrentLocation, CurrentEmployer=@CurrentEmployer, Phone=@Phone, TotalExperience=@TotalExperience, CurrentSalary=@CurrentSalary, ExpectedSalary=@ExpectedSalary, Notice=@Notice  where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Name", obj.Name);
                 dynamicParameters.Add("@EmailId", obj.EmailId);
@@ -1763,9 +1763,11 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    SqlMapper.Query<int>(
+                        con, "usp_UpdateCandidate", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
+
 
             }
             catch (SqlException ex)
