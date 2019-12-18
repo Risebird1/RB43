@@ -204,6 +204,47 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        public string GetSelectabilityComments(int irfId, string emailId)
+        {
+            try
+            {
+                var query = "select SelectabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public string GetJoinabilityComments(int irfId, string emailId)
+        {
+            try
+            {
+                var query = "select JoinabilityComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
         public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id)
         {
@@ -299,7 +340,19 @@ namespace Risebird.Repository
                         }
 
                     }
-                    
+                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments where IRFId =@IRFId and EmailId=@EmailId ";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@IRFId", reportDetails.IRFId);
+                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
+                    try
+                    {
+                        con.Query<int>(query, dynamicParameters);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                     return result;
                 }
 
@@ -443,7 +496,19 @@ namespace Risebird.Repository
                         }
 
                     }
+                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments where IRFId =@IRFId and EmailId=@EmailId";
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@IRFId", reportDetails.IRFId);
+                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId); dynamicParameters.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
 
+                    try
+                    {
+                        con.Query<int>(query, dynamicParameters);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                     return result;
                 }
 

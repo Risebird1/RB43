@@ -336,7 +336,7 @@
                                     </button>
                                     //location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'
                                 }
-                                <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
                                 </button>
                                 <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
@@ -594,10 +594,10 @@
         var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
-    //GetCandidateList
-    function GetCandidateList(id, IRFid) {
+    //Candidates
+    function Candidates(id, IRFid) {
 
-        var url = '/IRF/GetCandidateList?id=' + id + '&irfName=' + IRFid;
+        var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
         window.location.href = url;
     };
     function EditIRF(id) {

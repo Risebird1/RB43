@@ -557,6 +557,8 @@ namespace Risebird.Business
                 var levels = _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
+                var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
+
                 if (!check)
                 {
                     return null;
@@ -576,7 +578,6 @@ namespace Risebird.Business
                     //get all values from database
                     var levelTech = _meetingRespository.GetLevelTech();
                     var skills = _meetingRespository.GetSkills();
-                    var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
                     //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
@@ -671,6 +672,7 @@ namespace Risebird.Business
 
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfName);
+                reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId);
                 if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
@@ -696,6 +698,8 @@ namespace Risebird.Business
 
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
                 }
+
+                reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
                 var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId);
                 if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {

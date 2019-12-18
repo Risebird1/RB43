@@ -1801,9 +1801,10 @@ namespace Risebird.Web.Controllers
             }
         }
 
+       
         [Authorize]
         [HttpGet]
-        public IActionResult GetCandidateList(string id, string irfName)
+        public IActionResult Candidates(string id, string irfName)
         {
             try
             {
@@ -2038,16 +2039,16 @@ namespace Risebird.Web.Controllers
                     {
                         var result = _irfService.AddCandidate(model).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
-                        return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         //if (result.ToLower().Contains("success"))
                         //{
                         //    TempData["SuccessErrorMessageCandidate"] = result;
-                        //    return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         //}
                         //else
                         //{
                         //    TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                        //    return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         //}
                     }
                     else
@@ -2119,14 +2120,14 @@ namespace Risebird.Web.Controllers
                         }
                         var result = _irfService.AddMultipleCandidates(candidateList).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
-                        return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
                         
                     }
 
                     else
                     {
                         TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                        return RedirectToAction("GetCandidateList", new { id = IRFId, irfName = IRFName });
+                        return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
                     }
 
                 }
@@ -2159,12 +2160,12 @@ namespace Risebird.Web.Controllers
                         if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate deleted Successfully";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                     }
                     else
@@ -2234,12 +2235,12 @@ namespace Risebird.Web.Controllers
                         if (_irfService.UpdateCandidate(model))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate updated successfully!";
-                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Candidate update failed!";
-                            return RedirectToAction("GetCandidateList", new { id = model.IRFId, irfName = model.IRFName });
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
 
                     }
@@ -2286,17 +2287,17 @@ namespace Risebird.Web.Controllers
                         if(endDate<DateTime.Now)
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite! The requested IRF positions have been filled.";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         if (_irfService.SendInvite(Convert.ToInt32(irfId),emailId))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invitation sent successfully!";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
                         //return View();
@@ -2315,7 +2316,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
-                return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
             }
 
         }
@@ -2338,12 +2339,12 @@ namespace Risebird.Web.Controllers
                         if (_irfService.CancelInvite(Convert.ToInt32(irfId), emailId))
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Invite cancelled successfully!";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
                         else
                         {
                             TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not cancel invite!";
-                            return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                            return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
                         //return View();
@@ -2362,7 +2363,7 @@ namespace Risebird.Web.Controllers
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
-                return RedirectToAction("GetCandidateList", new { id = Convert.ToInt32(irfId), irfName = IRFName });
+                return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
             }
 
         }
@@ -2601,7 +2602,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Interview Planner updated Successfully";
                             return RedirectToAction("Index");
 
-                            //return RedirectToAction("GetCandidateList", new { irfId = model.IRFId, irfName = model.IRFName });
+                            //return RedirectToAction("Candidates", new { irfId = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {

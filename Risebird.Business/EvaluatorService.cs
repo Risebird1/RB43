@@ -153,6 +153,7 @@ namespace Risebird.Business
                 model.currentEmployerName = candidateDetails.CurrentEmployer;
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
+                model.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, candidateDetails.EmailId);
                 model.Level =new SelectList(levels, "id", "Name");
                 return model;
                 
@@ -266,11 +267,9 @@ namespace Risebird.Business
                 }
 
                 //get all values from database
-
-
+                
                 var candidateDetails = _evaluatorRespository.GetCandidate(candidateId);
-
-
+                
                 model.CandidateName = candidateDetails.Name;
                 model.ResumeLink = candidateDetails.ResumeLink;
                 model.IRFId = irfId;
@@ -278,6 +277,7 @@ namespace Risebird.Business
                 model.currentEmployerName = candidateDetails.CurrentEmployer;
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
+                model.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, candidateDetails.EmailId);
                 model.Level = new SelectList(levels, "id", "Name");
                 return model;
 
