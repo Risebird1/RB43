@@ -1838,6 +1838,48 @@ namespace Risebird.Repository
             }
         }
 
+        public int GetInterviewMeetings(string irfName, string candidateEmail)
+        {
+            int result = 0;
+            try
+            {
+                var query = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail=@candidateEmail and confirmationStatus=1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfName);
+                dynamicParameters.Add("@candidateEmail", candidateEmail);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    result = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return result;
+            }
+        }
+        public IEnumerable<InterviewComments> GetInterviewComments(string idList)
+        {
+            try
+            {
+                var query = "select InterviewId, InterviewStatus, MeetingStatus, OfferStatus, JoiningStatus, IsSelected, IsApproved from InterviewComments  where InterviewId in (" + idList +")";
+                
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<InterviewComments>(query);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
 
 

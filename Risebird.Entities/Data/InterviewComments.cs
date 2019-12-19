@@ -67,14 +67,14 @@ namespace Risebird.Entities.Data
 
         [Display(Name = "Upload Video")]
         public IFormFile VideoFile { get; set; }
-
         public int? FinalInterviewMeetingStatus { get; set; }
-
         public int? OfferStatus { get; set; }
         public int? PreparationStatus { get; set; }
         public int? JoiningStatus { get; set; }
         public int? L2InterviewStatus { get; set; }
         public int? ClientInterviewStatus { get; set; }
+        public int? IsSelected { get; set; }
+        public int? IsApproved { get; set; }
 
 
     }

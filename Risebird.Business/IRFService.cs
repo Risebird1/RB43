@@ -750,8 +750,7 @@ namespace Risebird.Business
                 return false;
             }
         }
-
-
+        
         public async Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model)
         {
             try
@@ -765,6 +764,86 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public IRFFunnel GetFunnelData(int irfId, string irfName)
+        {
+            try
+            {
+                //total number of candidates
+                int waste = 0;
+                var funnelData = new IRFFunnel();
+                var candidates = _irfRepository.GetIRFCandidates(irfId);
+                var emailList = candidates.Select(x => x.EmailId);
+                funnelData.TotalCandidates = candidates.Count();
+                funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
+                //funnelData.InvitesRate = funnelData.TotalCandidates != 0 ? ((funnelData.TotalInvites * 100 / funnelData.TotalCandidates) ) : 0;
+
+                //get interviewMeetings where candidateEmail and irfName matches
+                var interviewIdList = new List<int>();
+                foreach (var email in emailList)
+                {
+                    var interviewId = _irfRepository.GetInterviewMeetings(irfName, email);
+                    if(interviewId!=0)
+                    {
+                        interviewIdList.Add(interviewId);
+                    }
+                }
+
+                funnelData.TotalConfirmations = interviewIdList.Count();
+                //funnelData.ConfirmationRate = funnelData.TotalInvites != 0 ? ((funnelData.TotalConfirmations * 100 / funnelData.TotalInvites)) : 0;
+
+                string ids = string.Join<int>(",", interviewIdList);
+                var meetingData = _irfRepository.GetInterviewComments(ids);
+                if(meetingData != null)
+                {
+                    var completed = meetingData.Where(x => x.MeetingStatus == 4);
+                    var totalCompleted = completed.Count();
+                    funnelData.TotalCompleted = totalCompleted;
+                    //funnelData.CompletionRate = funnelData.TotalConfirmations != 0 ? ((totalCompleted * 100 / funnelData.TotalConfirmations) ) : 0;
+                    var risebirdSelected = completed.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4));
+                    var totalRisebirdSelected = risebirdSelected.Count();
+                    funnelData.TotalRisebirdSelection = totalRisebirdSelected;
+                    //funnelData.RisebirdSelectionRate = totalCompleted!=0?(totalRisebirdSelected * 100 / totalCompleted) : 0;
+                    var approved = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved == 1);
+                    var totalApproved = approved.Count();
+                    funnelData.TotalApproved = totalApproved;
+                    var approvalFilter = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved > 2);
+                    //var approvalDenominator = totalRisebirdSelected - approvalFilter.Count();
+                    //funnelData.ApprovalRate = approvalDenominator != 0 ? (totalApproved * 100 / approvalDenominator) : 0;
+                    waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
+                    var finalSelected = approved.Where(x => x.IsSelected.HasValue && x.IsSelected == 1);
+                    var totalFinalSelected = finalSelected.Count();
+                    funnelData.TotalFinalSelections = totalFinalSelected;
+                    var finalSelectedDeductions = approved.Where(x => x.IsSelected.HasValue && x.IsSelected != 1 && x.IsSelected != 2 && x.IsSelected != 6).Count();
+                    //var finalSelectionDenominator = totalApproved - finalSelectedDeductions;
+                    //funnelData.FinalSelectionRate = finalSelectionDenominator != 0 ? ((totalFinalSelected * 100 / finalSelectionDenominator) * 100) : 0;
+                    waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
+                    var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
+                    var totalOffered = offered.Count();
+                    funnelData.TotalOffered = totalOffered;
+                    var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
+                    //var offerDenominator = totalFinalSelected - offerDeductions.Count();
+                    //funnelData.OfferRate = offerDenominator != 0 ? ((totalOffered * 100 / offerDenominator) * 100) : 0;
+                    waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
+                    var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
+                    var totalJoined = joined.Count();
+                    funnelData.TotalJoined = totalJoined;
+                    var joinedDeductions = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus > 2);
+                    //var joinedDenominator = totalOffered - joinedDeductions.Count();
+                    //funnelData.JoiningRate = joinedDenominator != 0 ? ((totalJoined * 100 / joinedDenominator) * 100) : 0;
+                    waste = waste + joinedDeductions.Where(x =>x.JoiningStatus.HasValue && x.JoiningStatus >= 5).Count();
+                    funnelData.WasteRate = totalRisebirdSelected!=0?(waste * 100 / totalRisebirdSelected) : 0;
+                }
+
+                return funnelData;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
 
 
     }

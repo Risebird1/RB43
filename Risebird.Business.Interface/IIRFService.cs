@@ -45,5 +45,6 @@ namespace Risebird.Business.Interface
         bool CancelInvite(int irfId, string email);
         InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate);
         IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
+        IRFFunnel GetFunnelData(int irfId, string irfName);
     }
 }
