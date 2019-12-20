@@ -38,13 +38,13 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = "ResumeEvaluator";//HttpContext.Session.GetString("profileName")?.Trim();
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var modelList = _evaluatorService.GetOpenEvaluations("rohan.evans@gmail.com");
+                        var modelList = _evaluatorService.GetOpenEvaluations(emailid);
                         if (TempData["SuccessErrorMessageEvaluator"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
@@ -78,12 +78,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
+                    profileName =profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
-                        var result = _evaluatorService.AssignSelectabilityYourself(id, "rohan.evans@gmail.com");
+                        var result = _evaluatorService.AssignSelectabilityYourself(id, emailid);
                         
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
@@ -115,12 +115,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";// profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "HR")
                     {
-                        var result = _evaluatorService.AssignJoinabilityYourself(id, "hire@risebird.io");
+                        var result = _evaluatorService.AssignJoinabilityYourself(id, emailid);
                         
                         TempData["SuccessErrorMessageEvaluator"] = result;
                         ViewBag.Message = result;
@@ -153,12 +153,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations("rohan.evans@gmail.com");
+                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations(emailid);
                         foreach (var item in myEvaluationList)
                         {
                             if (!string.IsNullOrEmpty(item.ResumeLink))
@@ -214,9 +214,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
-                    var email = HttpContext.Session.GetString("email");
-                    email = email.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
+                   
                     if (profileName == "ResumeEvaluator")
                     {
                         bool result;
@@ -258,11 +257,9 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
+                profileName = profileName.Replace("\"", "");
                 if (profileName == "ResumeEvaluator")
                 {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     return View(model);
@@ -293,7 +290,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
                         
@@ -335,13 +332,13 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var profileName = "HR";//HttpContext.Session.GetString("profileName")?.Trim();
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var modelList = _evaluatorService.GetEvaluationsHR("hire@risebird.io");
+                        var modelList = _evaluatorService.GetEvaluationsHR(emailid);
                         if (TempData["SuccessErrorMessageEvaluator"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
@@ -375,12 +372,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";//profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations("hire@risebird.io");
+                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations(emailid);
                         foreach (var item in myEvaluationList)
                         {
                             if (!string.IsNullOrEmpty(item.ResumeLink))
@@ -436,9 +433,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";// profileName.Replace("\"", "");
-                    var email = HttpContext.Session.GetString("email");
-                    email = email.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
+                    
                     if (profileName == "HR")
                     {
                         bool result;
@@ -480,11 +476,9 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = "HR";//profileName.Replace("\"", "");
+                profileName =profileName.Replace("\"", "");
                 if (profileName == "HR")
                 {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
                     var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     return View(model);
@@ -515,7 +509,7 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = "HR";//profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
 

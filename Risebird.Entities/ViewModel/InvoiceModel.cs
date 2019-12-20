@@ -36,5 +36,11 @@ namespace Risebird.Entities.ViewModel
         public double Discount { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public string ProjectCode { get; set; }
+        public string CurrencyCode { get; set; }
+        public string RequestNumber { get; set; }
+        public bool IsGST { get; set; }
+        public string IGSTSymbol { get; set; }
+
     }
 }
