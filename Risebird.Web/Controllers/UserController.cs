@@ -72,7 +72,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };                   
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate" };                   
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -150,7 +150,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
