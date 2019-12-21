@@ -21,8 +21,9 @@ namespace Risebird.Business
         private readonly INotificationHelper _notificationHelper;
         private IIRFRepository _irfRepository;
         private IUserService _userService;
+        private IEvaluatorRepository _evaluatorRespository;
 
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger)
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -30,6 +31,7 @@ namespace Risebird.Business
             _notificationHelper = notificationHelper;
             _irfRepository = irfRepository;
             _userService = userService;
+            _evaluatorRespository = evaluatorRespository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -550,8 +552,13 @@ namespace Risebird.Business
         {
             try
             {
+                var reportModel = new InterviewReport();
+                var irfName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                var levels = _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
+                var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
+
                 if (!check)
                 {
                     return null;
@@ -561,22 +568,21 @@ namespace Risebird.Business
                 if (interviewReport!=null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
-                    return EditInterviewReport(interviewReport.FirstOrDefault());
+                    reportModel = interviewReport.FirstOrDefault();
+                    EditInterviewReport(reportModel);
                 }
                 else
                 {
                     var model = interviewReport.Count() > 0 ? interviewReport.FirstOrDefault() : new InterviewReport();
                     model.IsEdited = model.InterviewId > 0;
                     //get all values from database
-                    var levels = _meetingRespository.GetLevels();
                     var levelTech = _meetingRespository.GetLevelTech();
                     var skills = _meetingRespository.GetSkills();
-                    var interviewDetails = _meetingRespository.GetInterviewMeetingById(interviewId).Result;
                     //var questionDetails = _meetingRespository.GetTechSkillComments(irfId);
                     var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
                     var skillGeneralDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
-                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
-                    var selectabilityDetails = _meetingRespository.GetTransSelectability(irfId);
+                    //var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    //var selectabilityDetails = _meetingRespository.GetTransSelectability(irfId);
                     var techSkillList = new List<TechSkillReport>();
 
 
@@ -612,45 +618,45 @@ namespace Risebird.Business
 
                     model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)genSkillList;
 
-                    var joinabilityList = new List<JoinabilityReport>();
+                    //var joinabilityList = new List<JoinabilityReport>();
 
 
-                    foreach (var item in joinabilityDetails)
-                    {
-                        JoinabilityReport obj = new JoinabilityReport();
-                        obj.InterviewId = interviewId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.Name = item.Name;
-                        obj.Type = item.Type;
-                        obj.Value = item.Value;
-                        obj.WeightageRequired = item.Weightage;
-                        joinabilityList.Add(obj);
-                    }
-                    model.JoinabilityReportCollection = (IList<JoinabilityReport>)joinabilityList;
+                    //foreach (var item in joinabilityDetails)
+                    //{
+                    //    JoinabilityReport obj = new JoinabilityReport();
+                    //    obj.InterviewId = interviewId;
+                    //    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    //    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    //    obj.Name = item.Name;
+                    //    obj.Type = item.Type;
+                    //    obj.Value = item.Value;
+                    //    obj.WeightageRequired = item.Weightage;
+                    //    joinabilityList.Add(obj);
+                    //}
+                    //model.JoinabilityReportCollection = (IList<JoinabilityReport>)joinabilityList;
 
-                    var selectabilityList = new List<SelectabilityReport>();
-                    foreach (var item in selectabilityDetails)
-                    {
-                        SelectabilityReport obj = new SelectabilityReport();
-                        obj.InterviewId = interviewId;
-                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
-                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
-                        obj.Type = item.Type;
-                        obj.Name = item.Name;
-                        obj.Value = item.Value;
-                        obj.WeightageRequired = item.Weightage;
-                        selectabilityList.Add(obj);
-                    }
+                    //var selectabilityList = new List<SelectabilityReport>();
+                    //foreach (var item in selectabilityDetails)
+                    //{
+                    //    SelectabilityReport obj = new SelectabilityReport();
+                    //    obj.InterviewId = interviewId;
+                    //    obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                    //    obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                    //    obj.Type = item.Type;
+                    //    obj.Name = item.Name;
+                    //    obj.Value = item.Value;
+                    //    obj.WeightageRequired = item.Weightage;
+                    //    selectabilityList.Add(obj);
+                    //}
 
-                    model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
+                    //model.SelectabilityReportCollection = (IList<SelectabilityReport>)selectabilityList;
 
                     model.InterviewId = interviewId;
                     model.CandidateName = interviewDetails.candidateName;
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
-                    model.IRFName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                    model.IRFName = irfName;
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
@@ -660,8 +666,68 @@ namespace Risebird.Business
                     model.IsSelected = interviewDetails.IsSelected;
                     model.FinalComments = interviewDetails.FinalComments;
                     model.ApprovalComments = interviewDetails.ApprovalComments;
-                    return model;
+                    reportModel = model;
                 }
+                // joinability and Selectability
+
+                //get candidateId
+                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfName);
+                reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId);
+                if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
+
+                }
+                else
+                {
+                    var selectabilityDetails = _evaluatorRespository.GetTransSelectability(irfId);
+                    var selectabilityList = new List<SelectabilityEvaluatorReport>();
+                    foreach (var item in selectabilityDetails)
+                    {
+                        SelectabilityEvaluatorReport obj = new SelectabilityEvaluatorReport();
+                        obj.CandidateId = reportModel.CandidateId;
+                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
+                        obj.WeightageRequired = item.Weightage;
+                        selectabilityList.Add(obj);
+                    }
+
+                    reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityList;
+                }
+
+                reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
+                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId);
+                if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                {
+                    reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;
+
+                }
+                else
+                {
+                    var joinabilityDetails = _meetingRespository.GetTransJoinability(irfId);
+                    var joinabilityList = new List<JoinabilityHRReport>();
+                    foreach (var item in joinabilityDetails)
+                    {
+                        JoinabilityHRReport obj = new JoinabilityHRReport();
+                        obj.CandidateId = reportModel.CandidateId;
+                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
+                        obj.WeightageRequired = item.Weightage;
+                        joinabilityList.Add(obj);
+                    }
+
+                    reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
+                }
+
+
+                return reportModel;
             }
 
             catch (Exception e)
@@ -703,8 +769,8 @@ namespace Risebird.Business
                 model.TechSkillReportCollection = techReportCollection;
             }
 
-            model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
-            model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
+            //model.JoinabilityReportCollection = (IList<JoinabilityReport>)(_meetingRespository.GetJoinabilityReport(model.InterviewId));
+            //model.SelectabilityReportCollection = (IList<SelectabilityReport>)(_meetingRespository.GetSelectabilityReport(model.InterviewId));
             model.QuestionsCollection = (IList<QuestionsDiscussed>)(_meetingRespository.GetQuestionsDiscussed(model.InterviewId));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             model.SkillGeneralReportCollection = (IList<SkillGeneralReport>)(_meetingRespository.GetSkillGeneralReport(model.InterviewId));

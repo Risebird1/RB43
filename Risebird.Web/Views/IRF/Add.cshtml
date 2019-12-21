@@ -753,6 +753,93 @@
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Resume Evaluator</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
+
+                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
+
+                                                        <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Risebird HR</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="HRTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control" })
+                                                    </td>
+
+                                                    <td>
+                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
+
+                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
+
+                                                        <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+
+                                    </div>
+                                </div>
+                            </div>
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
@@ -1537,6 +1624,109 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
+    function AddRowResumeEvaluator() {
+        document.getElementById("btnUpload").disabled = false;
+
+        var table = document.getElementById("ResumeEvaluatorTable");
+        var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
+
+        var $ttc = $("#ResumeEvaluatorTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#ResumeEvaluatorTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#ResumeEvaluatorTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
+
+    }
+
+    //HRTable
+
+    function AddRowHR() {
+        document.getElementById("btnUpload").disabled = false;
+
+        var table = document.getElementById("HRTable");
+        var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
+
+        var $ttc = $("#HRTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#HRTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#HRTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
+
+    }
 
 
     function AddRowQualityController() {
@@ -1913,7 +2103,6 @@
 
 
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
-        
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -1941,9 +2130,12 @@
                     elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
                     //name="ClientCollection[3].ClientUserId"
                     elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
-                    elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
-                    elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
-                    elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    if (tdTwo != null && tdTwo != "") {
+                        elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+                    }
+                    
 
                 }
 

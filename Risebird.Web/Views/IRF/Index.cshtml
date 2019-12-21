@@ -337,7 +337,7 @@
                                     </button>
                                     //location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'
                                 }
-                                <button type="button" onclick="javascript:GetCandidateList('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
                                 </button>
                                 <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
@@ -422,6 +422,81 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                    SR Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                    PO Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                    Request Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                    Project Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                    Currency Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
+                                    Apply GST
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
+                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
                     <div class="">
                         <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
@@ -595,10 +670,10 @@
         var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
-    //GetCandidateList
-    function GetCandidateList(id, IRFid) {
+    //Candidates
+    function Candidates(id, IRFid) {
 
-        var url = '/IRF/GetCandidateList?id=' + id + '&irfName=' + IRFid;
+        var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
         window.location.href = url;
     };
     function EditIRF(id) {
@@ -726,25 +801,41 @@
         var sDate=  $("#stDateInvoice").val();
         //var stDate = document.getElementById("stDateInvoice").value;
         var endDate = document.getElementById("EndDateInvoice").value;
-        if (sDate == null || sDate == "") {
-            document.getElementById("stDate_Error").innerHTML = "Kindly enter Start Date";
-        }
-        else {
-            document.getElementById("stDate_Error").innerHTML = "";                        
+        //if (sDate == null || sDate == "") {
+        //    document.getElementById("stDate_Error").innerHTML = "Kindly enter Start Date";
+        //}
+        //else {
+        //    document.getElementById("stDate_Error").innerHTML = "";                        
 
-        }
-        if (endDate == null || endDate == "") {
-            document.getElementById("endDate_Error").innerHTML = "Kindly enter End Date";
-        }
-        else {
-            document.getElementById("stDate_Error").innerHTML = "";                      
+        //}
+        //if (endDate == null || endDate == "") {
+        //    document.getElementById("endDate_Error").innerHTML = "Kindly enter End Date";
+        //}
+        //else {
+        //    document.getElementById("stDate_Error").innerHTML = "";                      
 
-        }
-        if (sDate == "" || endDate == "") {
+        //}
+        //if (sDate == "" || endDate == "") {
+        //    return;
+        //}
+
+        var srNumber = $("#srNumberId").val();
+        var poNumber = $("#poNumberId").val();
+        var reqNumber = $("#requestNumberId").val();
+        var currencyCode = $("#currencyCodeId").val();
+        var projectCode = $("#projectCodeId").val();
+        var isGST = document.getElementById("gstCheckId").checked
+        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "") {
+            document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
             return;
         }
+        else {
+            document.getElementById("popUp_Error").innerHTML = "";
 
-        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName+ '&startDate=' + sDate+ '&endDate=' + endDate ;
+        }
+
+
+        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST;
         window.location.href = url;
     }
 

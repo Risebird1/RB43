@@ -286,5 +286,27 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<int> GetIRFIdList(int id)
+        {
+            try
+            {
+                
+                var query = "select IRFId from ProjectIRFMapping where ProjectId=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }

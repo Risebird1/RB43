@@ -6,6 +6,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -40,6 +41,23 @@
                             @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                         </div>
                         <div class="row">
+                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                                <div class="card card-chart">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Conversion Analysis</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
+
+                                        @*<canvas id="myFunnelChart" style="display: block;height: 350px;width: 100%;"></canvas>*@
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
@@ -117,7 +135,7 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
 
                 </div>
@@ -160,7 +178,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-           
+
             var aData = chData;
             var aLabels = aData[0];
             var aDatasets1 = aData[1];
@@ -200,7 +218,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-            
+
             var aData = chData;
             var aLabels = aData[0];
             var aDatasets1 = aData[1];
@@ -232,14 +250,14 @@
             });
         }
     });
-    
+
     $.ajax({
         url: '/IRF/NewChartClientMeetingData',
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
 
-            
+
             var xAxisData = [];
             var yData1 = [];
             var yData2 = [];
@@ -252,17 +270,17 @@
                 yData2.push(chData[i].scheduledCount);
                 yData3.push(chData[i].droppedCount);
                 yData4.push(chData[i].completedCount);
-              
+
             }
 
             var yDataSets = [{
                 label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }, {
-                    label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                    label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }
             ]
             var chart = new Chart(clientIndiv, {
@@ -284,13 +302,13 @@
                         // place legend on the right side of chart
                     },
                     scales: {
-                        xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked:true, scaleLabel: { display: false, labelString: '' } }],
+                        xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: false }, stacked: true, scaleLabel: { display: false, labelString: '' } }],
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
                 }
             });
-            
-            
+
+
         }
     });
 
@@ -299,8 +317,8 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-            
-           
+
+
             var xAxisData = [];
             var yData1 = [];
             var yData2 = [];
@@ -319,11 +337,11 @@
             var yDataSets = [{
                 label: 'Proxy', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
             }, {
-                    label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
             }, {
-                    label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
             }, {
-                    label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
             }
             ]
             var chart = new Chart(clientIndivFeedback, {
@@ -345,7 +363,8 @@
                     },
                     scales: {
                         xAxes: [{
-                            gridLines: { display: false }, display: true, ticks: { autoSkip: false}, stacked: true, scaleLabel: { display: false, labelString: '' }}],                                                           
+                            gridLines: { display: false }, display: true, ticks: { autoSkip: false }, stacked: true, scaleLabel: { display: false, labelString: '' }
+                        }],
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
                 }
@@ -360,7 +379,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-          
+
             var xData = [];
             var yData = [];
             var backgroundColor = [];
@@ -403,6 +422,56 @@
             });
         }
     });
+    $.ajax({
+        url: '/IRF/FunnelChart',
+        //contentType: "application/json",
+        //dataType: "json",
+        success: function (chData) {
+            //myFunnelChart
+            console.log(chData);
+            var chart = new CanvasJS.Chart("myFunnelChart", {
+                animationEnabled: true,
+                title: {
+                    text: "Conversion Analysis"
+                },
+                data: [{
+                    type: "funnel",
+                    reversed: true,
+                    indexLabel: "{label} - {y}",
+                    toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
+                    neckWidth: 20,
+                    neckHeight: 0,
+                    valueRepresents: "area",
+                    dataPoints: [
+                        { y: chData.totalCandidates, label: "Total Candidates" },
+                        { y: chData.totalInvites, label: "Total Invites" },
+                        { y: chData.totalConfirmations, label: "Total Confirmations" },
+                        { y: chData.totalCompleted, label: "Completed" },
+                        { y: chData.totalRisebirdSelection, label: "Total Risebird Selections" },
+                        { y: chData.totalApproved, label: "Total Approved" },
+                        { y: chData.totalFinalSelections, label: "Final Selections" },
+                        { y: chData.totalOffered, label: "Total Offers released" },
+                        { y: chData.totalJoined, label: "Total Joined" }
+                    ]
+                }]
+            });
+            calculatePercentage();
+            chart.render();
+
+            function calculatePercentage() {
+                var dataPoint = chart.options.data[0].dataPoints;
+                var total = dataPoint[0].y;
+                for (var i = 0; i < dataPoint.length; i++) {
+                    if (i == 0) {
+                        chart.options.data[0].dataPoints[i].percentage = 100;
+                    } else {
+                        chart.options.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
+                    }
+                }
+            }
+        }
+    });
+
 
 
     $(document).ready(function () {
@@ -411,3 +480,4 @@
 
     });
 </script>
+

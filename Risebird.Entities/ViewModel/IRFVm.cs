@@ -85,6 +85,8 @@ namespace Risebird.Entities.ViewModel
         public IList<TransQualityController> QualityController { get; set; }
         public IList<TransInterviewer> InterviewerCollection { get; set; }
         public IList<TransEmergencyInterviewer> EmergencyInterviewerCollection { get; set; }
+        public IList<TransResumeEvaluator> ResumeEvaluatorCollection { get; set; }
+        public IList<TransHR> HRCollection { get; set; }
 
         public string ClientCompName { get; set; }
 

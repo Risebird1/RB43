@@ -1,0 +1,546 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Risebird.Business.Interface;
+using Risebird.CommonHelper.Interface;
+using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
+
+namespace Risebird.Web.Controllers
+{
+    public class EvaluatorController : Controller
+    {
+        private IEvaluatorService _evaluatorService;
+        private IApplicationErrorLogger _applicationErrorLogger;
+       
+        public EvaluatorController(IEvaluatorService evaluatorService, IApplicationErrorLogger applicationErrorLogger)
+        {
+            _evaluatorService = evaluatorService;
+            _applicationErrorLogger = applicationErrorLogger;
+           
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OpenEvaluatorEvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var modelList = _evaluatorService.GetOpenEvaluations(emailid);
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> AssignSelectabilityYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName =profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        var result = _evaluatorService.AssignSelectabilityYourself(id, emailid);
+                        
+                        TempData["SuccessErrorMessageEvaluator"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("OpenEvaluatorEvaluations");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("OpenEvaluatorEvaluations");
+            }
+        }
+        [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> AssignJoinabilityYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var result = _evaluatorService.AssignJoinabilityYourself(id, emailid);
+                        
+                        TempData["SuccessErrorMessageEvaluator"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("OpenHREvaluations");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("OpenHREvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyEvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations(emailid);
+                        foreach (var item in myEvaluationList)
+                        {
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    item.ResumeLink = new Uri(item.ResumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.ResumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.ResumeLink = "";
+                            }
+
+                            
+                        }
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+
+                        return View(myEvaluationList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnassignYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                   
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        bool result;
+                        result = _evaluatorService.UnAssignSelectability(id);
+                        if (result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Unassigned successfully.";
+                            return Json(new { url = Url.Action("MyEvaluations", "Evaluator") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                            return Json(new { url = Url.Action("MyEvaluations", "Evaluator") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult SelectabilityReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "ResumeEvaluator")
+                {
+                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SelectabilityReport(EvaluatorReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator")
+                    {
+                        
+
+                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            return RedirectToAction("MyEvaluations");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                            return RedirectToAction("MyEvaluations");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OpenHREvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var modelList = _evaluatorService.GetEvaluationsHR(emailid);
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+                        return View(modelList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyHREvaluations()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations(emailid);
+                        foreach (var item in myEvaluationList)
+                        {
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    item.ResumeLink = new Uri(item.ResumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.ResumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.ResumeLink = "";
+                            }
+
+
+                        }
+                        if (TempData["SuccessErrorMessageEvaluator"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
+                            TempData.Remove("SuccessErrorMessageEvaluator");
+                        }
+
+                        return View(myEvaluationList);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnassignHRJoinability(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    
+                    if (profileName == "HR")
+                    {
+                        bool result;
+                        result = _evaluatorService.UnAssignJoinability(id);
+                        if (result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Unassigned successfully.";
+                            return Json(new { url = Url.Action("MyHREvaluations", "Evaluator") });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                            return Json(new { url = Url.Action("MyHREvaluations", "Evaluator") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not unassign!";
+                return RedirectToAction("MyHREvaluations");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult JoinabilityReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName =profileName.Replace("\"", "");
+                if (profileName == "HR")
+                {
+                    var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> JoinabilityReport(HRReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "HR")
+                    {
+
+
+                        if (_evaluatorService.AddJoinabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            return RedirectToAction("MyHREvaluations");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                            return RedirectToAction("MyHREvaluations");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                return RedirectToAction("MyHREvaluations");
+            }
+        }
+    }
+}

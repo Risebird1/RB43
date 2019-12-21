@@ -20,6 +20,8 @@ CREATE TABLE [dbo].[Candidate](
 	[CurrentSalary] [decimal](10, 2) NULL,
 	[ExpectedSalary] [decimal](10, 2) NULL,
 	[Notice] [decimal](10, 2) NULL,
+	[SelectabilityComments] [varchar](max) NULL,
+	[JoinabilityComments] [varchar](max) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
@@ -97,6 +99,24 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add CurrentEmployer VARCHAR(200)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SelectabilityComments')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add SelectabilityComments VARCHAR(max)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'JoinabilityComments')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add JoinabilityComments VARCHAR(max)
 END
 
 IF NOT EXISTS(

@@ -347,9 +347,11 @@
             <i class="now-ui-icons fa fa-check"></i>
         </button>*@
 
-                                    <button type="button" onclick="javascript:stats('@item.id','@item.Name');" rel="tooltip" class="btn btn-success btn-icon btn-sm " data-original-title="" title="stats">
+                                    <button type="button" onclick="javascript:stats('@item.id','@item.Name');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
                                     </button>
+
+                                   
                                     @if (!@item.IsClientUser)
                                     {
                                         if (!item.IsDeleted)

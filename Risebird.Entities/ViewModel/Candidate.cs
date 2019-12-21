@@ -67,7 +67,8 @@ namespace Risebird.Entities.ViewModel
         public string ClientCompName { get; set; }
         public string JDTiltle { get; set; }
         public string JDLink { get; set; }
-        
+        public string JoinabilityComments { get; set; }
+        public string SelectabilityComments { get; set; }
 
     }
 }

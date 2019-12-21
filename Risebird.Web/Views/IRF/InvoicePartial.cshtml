@@ -162,11 +162,19 @@
 
                                             </tr>
                                             <tr>
-                                                <td style="font-size:22px;font-family:Roboto">PO Number: 100040074112</td>
+                                                <td style="font-size:22px;font-family:Roboto">PO Number: @Model.PONumber</td>
 
                                             </tr>
                                             <tr>
-                                                <td style="font-size:22px;font-family:Roboto">SR Number: 16391</td>
+                                                <td style="font-size:22px;font-family:Roboto">SR Number: @Model.SRNumber</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Roboto">Request Number: @Model.RequestNumber</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:22px;font-family:Roboto">Project Code: @Model.ProjectCode</td>
 
                                             </tr>
 
@@ -215,10 +223,10 @@
                                         <tr style="height:100px">
                                             <th>Total Number of interviews- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy"))</th>
                                             <th>Number of Interviews for Partial invoice- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")) </th>
-                                            <th>Actual Price Per Interview- INR</th>
+                                            <th>Actual Price Per Interview- @Model.CurrencyCode</th>
                                             <th>Discount offered</th>
                                             <th>Discounted Price per Interview</th>
-                                            <th>Partial Payable- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")) - INR</th>
+                                            <th>Partial Payable- (@Model.StartDate.ToString("dd MMM yyyy") - @Model.EndDate.ToString("dd MMM yyyy")) - @Model.CurrencyCode</th>
 
                                         </tr>
                                     </thead>
@@ -237,7 +245,7 @@
                                         <tr style="height:35px">
                                             <td></td>
                                             <td colspan="4">
-                                                Billable Amount- INR
+                                                Billable Amount- @Model.CurrencyCode
                                             </td>
                                             <td>
                                                 @Model.PartialPayable
@@ -247,7 +255,7 @@
                                         <tr style="height:35px">
                                             <td></td>
                                             <td colspan="4">
-                                                IGST-18%
+                                                IGST- @Model.IGSTSymbol
                                             </td>
                                             <td>
                                                 @Model.IGST
@@ -256,7 +264,7 @@
                                         </tr>
                                         <tr style="font-size:24px;font-family:Merriweather; background-color:lightgray; height:60px">
                                             <td colspan="5" style="text-align:center;">
-                                                <b>Net Payable- INR</b>
+                                                <b>Net Payable- @Model.CurrencyCode</b>
                                             </td>
                                             <td><b>@Model.Netpayable@*2,24,672*@</b></td>
                                         </tr>
