@@ -160,11 +160,6 @@ C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\FIles\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
@@ -184,6 +179,11 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Riseb
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
+C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

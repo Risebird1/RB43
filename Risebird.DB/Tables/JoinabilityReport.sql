@@ -13,9 +13,11 @@ CREATE TABLE [dbo].[JoinabilityReport](
 	[WeightageActual] [int] NOT NULL,
 	[Value] [varchar](500) NULL,
 	[CandidateId] [int] NULL,
+	[IRFId] [int] NULL,
 	CONSTRAINT [FK_CandidateId] FOREIGN KEY (CandidateId) REFERENCES CandidatesMaster(id),
 	FOREIGN KEY([ActualLevelId]) REFERENCES [dbo].[Level] ([id]),
 	FOREIGN KEY([RequiredLevelId]) REFERENCES [dbo].[Level] ([id]),
+	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 
  CONSTRAINT [PK_JoinabilityReport] PRIMARY KEY CLUSTERED 
 (

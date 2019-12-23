@@ -13,9 +13,12 @@ CREATE TABLE [dbo].[SelectabilityReport](
 	[WeightageActual] [int] NOT NULL,
 	[Value] [varchar](500) NULL,
 	[CandidateId] [int] NULL,
+	[IRFId] [int] NULL,
 	CONSTRAINT [FK_CandidateId_1] FOREIGN KEY (CandidateId) REFERENCES CandidatesMaster(id),
 	FOREIGN KEY([ActualLevelId]) REFERENCES [dbo].[Level] ([id]),
 	FOREIGN KEY([RequiredLevelId]) REFERENCES [dbo].[Level] ([id]),
+	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
+
  CONSTRAINT [PK_SelectabilityReport] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

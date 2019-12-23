@@ -31,6 +31,9 @@ namespace Risebird.Business.Interface
         QCInterviewerVM GetQCInterviewer(int id);
         bool UpdateQCInterviewer(QCInterviewerVM qcInterviewer);
         bool DeleteQCInterviewer(int id);
-
+        List<ResumeEvaluator> GetResumeEvaluators();
+        bool AddResumeEvaluator(ResumeEvaluator resumeEvaluator);
+        ResumeEvaluator GetResumeEvaluator(int id);
+        bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
     }
 }

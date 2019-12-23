@@ -7,6 +7,8 @@ namespace Risebird.Entities.ViewModel
     public class JoinabilityHRReport
     {
         public int id { get; set; }
+        public int IRFId { get; set; }
+
         public int CandidateId { get; set; }
         public string RequiredLevel { get; set; }
         public int RequiredLevelId { get; set; }

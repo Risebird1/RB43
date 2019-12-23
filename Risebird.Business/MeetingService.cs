@@ -673,7 +673,7 @@ namespace Risebird.Business
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfName);
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId);
+                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
                 if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.SelectabilityEvaluatorReportCollection = (IList<SelectabilityEvaluatorReport>)selectabilityReport;
@@ -700,7 +700,7 @@ namespace Risebird.Business
                 }
 
                 reportModel.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, interviewDetails.candidateEmail);
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId);
+                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(reportModel.CandidateId, irfId);
                 if (joinabilityReport != null && joinabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityReport;

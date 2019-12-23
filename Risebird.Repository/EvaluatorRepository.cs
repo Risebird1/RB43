@@ -246,13 +246,14 @@ namespace Risebird.Repository
             }
         }
 
-        public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id)
+        public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId)
         {
             try
             {
-                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where CandidateId = @id";
+                var query = "select SelectabilityReport.*,SelectabilityReport.Type as Name, [Level].[Name] as RequiredLevel from SelectabilityReport inner join [Level] on SelectabilityReport.RequiredLevelId=[Level].id where CandidateId = @id and SelectabilityReport.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<SelectabilityEvaluatorReport>(query, dynamicParameters);
@@ -267,13 +268,14 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id)
+        public IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id, int irfId)
         {
             try
             {
-                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where CandidateId = @id";
+                var query = "select JoinabilityReport.*,JoinabilityReport.Type as Name, [Level].[Name] as RequiredLevel from JoinabilityReport inner join [Level] on JoinabilityReport.RequiredLevelId=[Level].id where CandidateId = @id and JoinabilityReport.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
+                dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<JoinabilityHRReport>(query, dynamicParameters);
@@ -303,12 +305,13 @@ namespace Risebird.Repository
                             //update Selectability Report table
                             foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
                             {
-                                string sqlSelectableReport = "update SelectabilityReport set ActualLevelId=@ActualLevelId, WeightageActual = @WeightageActual where CandidateId = @CandidateId";
+                                string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
                                 var result3 = con.Execute(sqlSelectableReport, new
                                 {
                                     CandidateId = reportDetails.CandidateId,
                                     ActualLevelId = item.ActualLevelId,
                                     WeightageActual = item.WeightageActual,
+                                    IRFId = reportDetails.IRFId
                                 });
                             }
                             result = true;
@@ -316,30 +319,27 @@ namespace Risebird.Repository
 
 
                     }
-                    else
+                    if (reportDetails.SelectabilityEvaluatorReportCollection != null)
                     {
-                        //add to interviewReport table
-                        if (reportDetails.SelectabilityEvaluatorReportCollection != null)
+                        //update Selectability Report table
+                        foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
                         {
-                            //update Selectability Report table
-                            foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
+                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
+                            var result3 = con.Execute(sqlSelectableReport, new
                             {
-                                string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                                var result3 = con.Execute(sqlSelectableReport, new
-                                {
-                                    CandidateId = reportDetails.CandidateId,
-                                    RequiredLevelId = item.RequiredLevelId,
-                                    Type = item.Name,
-                                    Value = item.Value,
-                                    ActualLevelId = item.ActualLevelId,
-                                    WeightageRequired = item.WeightageRequired,
-                                    WeightageActual = item.WeightageActual,
-                                });
-                            }
-                            result = true;
+                                CandidateId = reportDetails.CandidateId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Name,
+                                Value = item.Value,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual,
+                                IRFId = reportDetails.IRFId
+                            });
                         }
-
+                        result = true;
                     }
+                    
                     var query = "Update Candidate set SelectabilityComments = @SelectabilityComments where IRFId =@IRFId and EmailId=@EmailId ";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
@@ -459,12 +459,11 @@ namespace Risebird.Repository
                             //update Selectability Report table
                             foreach (var item in reportDetails.JoinabilityHRReportCollection)
                             {
-                                string sqlSelectableReport = "update JoinabilityReport set ActualLevelId=@ActualLevelId, WeightageActual = @WeightageActual where CandidateId = @CandidateId";
+                                string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
                                 var result3 = con.Execute(sqlSelectableReport, new
                                 {
                                     CandidateId = reportDetails.CandidateId,
-                                    ActualLevelId = item.ActualLevelId,
-                                    WeightageActual = item.WeightageActual,
+                                    IRFId = reportDetails.IRFId
                                 });
                             }
                             result = true;
@@ -472,30 +471,27 @@ namespace Risebird.Repository
 
 
                     }
-                    else
+                    if (reportDetails.JoinabilityHRReportCollection != null)
                     {
-                        //add to interviewReport table
-                        if (reportDetails.JoinabilityHRReportCollection != null)
+                        //update Selectability Report table
+                        foreach (var item in reportDetails.JoinabilityHRReportCollection)
                         {
-                            //update Selectability Report table
-                            foreach (var item in reportDetails.JoinabilityHRReportCollection)
+                            string sqlSelectableReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
+                            var result3 = con.Execute(sqlSelectableReport, new
                             {
-                                string sqlSelectableReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                                var result3 = con.Execute(sqlSelectableReport, new
-                                {
-                                    CandidateId = reportDetails.CandidateId,
-                                    RequiredLevelId = item.RequiredLevelId,
-                                    Type = item.Name,
-                                    Value = item.Value,
-                                    ActualLevelId = item.ActualLevelId,
-                                    WeightageRequired = item.WeightageRequired,
-                                    WeightageActual = item.WeightageActual,
-                                });
-                            }
-                            result = true;
+                                CandidateId = reportDetails.CandidateId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Name,
+                                Value = item.Value,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual,
+                                IRFId = reportDetails.IRFId
+                            });
                         }
-
+                        result = true;
                     }
+                    
                     var query = "Update Candidate set JoinabilityComments = @JoinabilityComments where IRFId =@IRFId and EmailId=@EmailId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);

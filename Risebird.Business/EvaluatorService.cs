@@ -107,7 +107,7 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(candidateId);
+                var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(candidateId, irfId);
 
                 var model = new EvaluatorReport();
                 var levels = _meetingRespository.GetLevels();
@@ -233,7 +233,7 @@ namespace Risebird.Business
                 //    return null;
                 //}
                 // check whether a feedback for the interviewId has already been submitted
-                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(candidateId);
+                var joinabilityReport = _evaluatorRespository.GetJoinabilityReport(candidateId, irfId);
 
                 var model = new HRReport();
                 var levels = _meetingRespository.GetLevels();

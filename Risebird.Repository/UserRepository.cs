@@ -700,6 +700,103 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<ResumeEvaluator> GetResumeEvaluators()
+        {
+            try
+            {
+                var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ResumeEvaluator>(query);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AddResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@FirstName", resumeEvaluator.FirstName);
+                parameters.Add("@LastName", resumeEvaluator.LastName);
+                parameters.Add("@EmailId", resumeEvaluator.EmailId);
+                parameters.Add("@MobileNumber", resumeEvaluator.MobileNumber);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddResumeEvaluator", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public ResumeEvaluator GetResumeEvaluator(int id)
+        {
+            try
+            {
+                var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId= ul.id where re.id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<ResumeEvaluator>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                var query = "update UserList set FirstName= @FirstName, LastName = @LastName , EmailId= @EmailId , MobileNumber = @MobileNumber where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", resumeEvaluator.UserId);
+                dynamicParameters.Add("@FirstName", resumeEvaluator.FirstName);
+                dynamicParameters.Add("@LastName", resumeEvaluator.LastName);
+                dynamicParameters.Add("@EmailId", resumeEvaluator.EmailId);
+                dynamicParameters.Add("@MobileNumber", resumeEvaluator.MobileNumber);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<int>(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+
+
 
     }
 }
