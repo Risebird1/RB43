@@ -49,6 +49,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }
         public EvaluatorReport EvaluatorReport { get; set; }
+        public double JoinabilityScore { get; set; }
 
     }
 }

@@ -16,6 +16,9 @@ namespace Risebird.Entities.Data
         public string IRFName { get; set; }
         public string JDLink { get; set; }
         public string RisebirdHR { get; set; }
+        public string Phone { get; set; }
 
+        public double JoinabilityScore { get; set; }
+        public double SelectabilityScore { get; set; }
     }
 }

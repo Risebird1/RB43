@@ -62,6 +62,7 @@ namespace Risebird.Entities.ViewModel
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }
         public HRReport HRReport { get; set; }
+        public double SelectabilityScore { get; set; }
       
     }
 }

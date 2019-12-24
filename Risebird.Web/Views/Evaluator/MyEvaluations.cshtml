@@ -55,6 +55,8 @@
     }
 </style>
 
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -108,7 +110,10 @@
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th class="disabled-sorting text-center">Actions</th>
+                                                <th style="text-align:center">Call</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -118,12 +123,41 @@
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th class="disabled-sorting text-center">Actions</th>
+                                                <th style="text-align:center">Call</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
+                                                string joinabilityColor;
+                                                string selectabilityColor;
+                                                if (item.JoinabilityScore > 70)
+                                                {
+                                                    joinabilityColor = "green";
+                                                }
+                                                else if (item.JoinabilityScore > 40 && item.JoinabilityScore <= 70)
+                                                {
+                                                    joinabilityColor = "yellow";
+                                                }
+                                                else
+                                                {
+                                                    joinabilityColor = "red";
+                                                }
+                                                if (item.SelectabilityScore > 70)
+                                                {
+                                                    selectabilityColor = "green";
+                                                }
+                                                else if (item.SelectabilityScore > 40 && item.SelectabilityScore <= 70)
+                                                {
+                                                    selectabilityColor = "yellow";
+                                                }
+                                                else
+                                                {
+                                                    selectabilityColor = "red";
+                                                }
                                                 <tr id="@item.id">
                                                     <td> @item.CandidateName</td>
                                                     <td> @item.IRFName</td>
@@ -146,9 +180,22 @@
                                                     }
 
                                                     <td> @item.RisebirdHR</td>
+                                                    <td style="color:@joinabilityColor">
+                                                        @item.JoinabilityScore
+                                                    </td>
+                                                    <td style="color:@selectabilityColor">
+                                                        @item.SelectabilityScore
+                                                    </td>
                                                     <td class="text-center">
-                                                        <span  onclick="javascript:UnAssignYourself('@item.id');" title="Unassign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                                        <span onclick="javascript:UnAssignYourself('@item.id');" title="Unassign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                                         <span onclick="location.href = '@Url.Action("SelectabilityReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Selectability Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+
+                                                    </td>
+                                                    <td>
+                                                        @if (item.Phone != null && item.Phone != string.Empty)
+                                                        {
+                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.Phone','@item.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                        }
 
                                                     </td>
                                                 </tr>
@@ -166,6 +213,41 @@
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
+        </div>
+        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <!-- Modal content -->
+            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+                    <span class="close" id="callPopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+                </div>
+            </div>
+
         </div>
         <!-- end row -->
     </div>
@@ -355,4 +437,68 @@
 
 </script>
 
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function ModalButtonClick(mobileNumber, candidateName) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
 <!-- PAGE CONTENT WRAPPER -->
