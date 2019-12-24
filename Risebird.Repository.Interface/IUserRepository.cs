@@ -34,5 +34,9 @@ namespace Risebird.Repository.Interface
         IEnumerable<string> GetAllHrsEmailld();
 
         Task<bool> DeleteQCInterviewer(int id);
+        IEnumerable<ResumeEvaluator> GetResumeEvaluators();
+        Task<bool> AddResumeEvaluator(ResumeEvaluator resumeEvaluator);
+        ResumeEvaluator GetResumeEvaluator(int id);
+        bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
     }
 }

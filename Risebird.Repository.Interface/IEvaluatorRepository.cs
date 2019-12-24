@@ -15,16 +15,17 @@ namespace Risebird.Repository.Interface
         bool UnAssignSelectability(int id);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
         Candidate GetCandidate(int id);
-        IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id);
+        //IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id);
         Task<bool> AddSelectabilityReport(EvaluatorReport reportDetails);
         Task<IEnumerable<CandidateHREvaluation>> GetEvaluationsHR(string emailID);
         string AssignYourselfJoinability(int id, string mailId);
         Task<IEnumerable<CandidateHREvaluation>> GetAssignedJoinabilityEvaluations(string emailID);
         bool UnAssignJoinability(int id);
-        IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id);
+        IEnumerable<JoinabilityHRReport> GetJoinabilityReport(int id, int irfId);
         Task<bool> AddJoinabilityReport(HRReport reportDetails);
         string GetSelectabilityComments(int irfId, string emailId);
         string GetJoinabilityComments(int irfId, string emailId);
-        
+        IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId);
+
     }
 }

@@ -72,7 +72,7 @@ namespace Risebird.Web.Controllers
                     var model = new UserList();
                     List<Profile> profiles = _profileService.GetProfile();
 
-                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };                   
+                    List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate" };                   
                     profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                     model.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -150,7 +150,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer" };
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -1031,5 +1031,146 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+
+        #region Resume Evaluator functions
+
+        public IActionResult ResumeEvaluators()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (TempData["SuccessErrorMessageEvaluate"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageEvaluate"].ToString();
+                        TempData.Remove("SuccessErrorMessageEvaluate");
+
+                    }
+
+                    return View(_userService.GetResumeEvaluators());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddResumeEvaluator()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var model = new ResumeEvaluator();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("ResumeEvaluators");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_userService.AddResumeEvaluator(resumeEvaluator))
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator is added successfully.";
+                        return RedirectToAction("ResumeEvaluators");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not add Resume Evaluator!";
+                        return RedirectToAction("ResumeEvaluators");
+                    }
+                   
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not add Resume Evaluator!";
+                return RedirectToAction("ResumeEvaluators");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditResumeEvaluator(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var resumeEvaluator = _userService.GetResumeEvaluator(id);
+                    return View(resumeEvaluator);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("ResumeEvaluators");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_userService.EditResumeEvaluator(resumeEvaluator))
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator updated successfully.";
+                        return RedirectToAction("ResumeEvaluators");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not update Resume Evaluator!";
+                        return RedirectToAction("ResumeEvaluators");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not update Resume Evaluator!";
+                return RedirectToAction("ResumeEvaluators");
+            }
+        }
+        #endregion
+
     }
 }

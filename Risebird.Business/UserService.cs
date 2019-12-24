@@ -354,5 +354,60 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public List<ResumeEvaluator> GetResumeEvaluators()
+        {
+            try
+            {
+                return _userRepository.GetResumeEvaluators().ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        public bool AddResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                return _userRepository.AddResumeEvaluator(resumeEvaluator).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public ResumeEvaluator GetResumeEvaluator(int id)
+        {
+            try
+            {
+                return _userRepository.GetResumeEvaluator(id);               
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator)
+        {
+            try
+            {
+                return _userRepository.EditResumeEvaluator(resumeEvaluator);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
+
     }
 }
