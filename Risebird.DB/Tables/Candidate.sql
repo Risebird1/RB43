@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[Candidate](
 	[Notice] [decimal](10, 2) NULL,
 	[SelectabilityComments] [varchar](max) NULL,
 	[JoinabilityComments] [varchar](max) NULL,
+	[JoinabilityScore] [decimal](10, 2) NULL,
+	[SelectabilityScore] [decimal](10, 2) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
@@ -164,6 +166,25 @@ BEGIN
     ALTER TABLE Candidate
     Add Notice decimal (10,2)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'JoinabilityScore')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add JoinabilityScore decimal (10,2)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SelectabilityScore')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add SelectabilityScore decimal (10,2)
+END
+
 End
 
 GO

@@ -340,11 +340,12 @@ namespace Risebird.Repository
                         result = true;
                     }
                     
-                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments where IRFId =@IRFId and EmailId=@EmailId ";
+                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore where IRFId =@IRFId and EmailId=@EmailId ";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
                     dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
                     dynamicParameters.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
+                    dynamicParameters.Add("@SelectabilityScore", reportDetails.SelectabilityScore);
                     try
                     {
                         con.Query<int>(query, dynamicParameters);
@@ -492,10 +493,12 @@ namespace Risebird.Repository
                         result = true;
                     }
                     
-                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments where IRFId =@IRFId and EmailId=@EmailId";
+                    var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId =@IRFId and EmailId=@EmailId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
-                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId); dynamicParameters.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+                    dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
+                    dynamicParameters.Add("@JoinabilityComments", reportDetails.JoinabilityComments);
+                    dynamicParameters.Add("@JoinabilityScore", reportDetails.JoinabilityScore);
 
                     try
                     {

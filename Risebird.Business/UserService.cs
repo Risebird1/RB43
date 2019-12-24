@@ -406,6 +406,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public bool DeleteResumeEvaluator(int userId)
+        {
+            try
+            {
+                return _userRepository.DeleteResumeEvaluator(userId).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
 
 

@@ -10,11 +10,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_MyHREvaluations] 
+create PROCEDURE [dbo].[usp_MyHREvaluations] 
    @emailID varchar(200)     
 AS
 BEGIN
-select IRF.IRFId as IRFName, IRF.JDLink,thr.*,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,cm.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR  
+select IRF.IRFId as IRFName, IRF.JDLink,thr.*,ul.EmailId, tim.id,tim.HREmailId, tim.CandidateId,cm.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ca.Phone    
 from TransHR thr join HR  on HR.id=thr.HRId 
 join UserList ul on ul.id = HR.UserId join TransHREvaluatorIRF tim on tim.IRFId = thr.IRFId 
 join CandidatesMaster cm on tim.CandidateId = cm.id 

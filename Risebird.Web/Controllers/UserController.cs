@@ -1170,6 +1170,38 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("ResumeEvaluators");
             }
         }
+
+        public async Task<IActionResult> DeleteResumeEvaluator(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteResumeEvaluator(id))
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator deleted successfully.";
+                        return Json(new { url = Url.Action("ResumeEvaluators", "User") });
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
+                        return Json(new { url = Url.Action("ResumeEvaluators", "User") });
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
+                return RedirectToAction("ResumeEvaluators");
+            }
+        }
+
         #endregion
 
     }
