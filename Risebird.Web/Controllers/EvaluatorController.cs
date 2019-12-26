@@ -39,12 +39,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName = "ResumeEvaluator";//profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var modelList = _evaluatorService.GetOpenEvaluations(emailid);
+                        var modelList = _evaluatorService.GetOpenEvaluations("rohan.evans@gmail.com");
                         if (TempData["SuccessErrorMessageEvaluator"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
@@ -153,12 +153,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName =  "ResumeEvaluator";// profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator" || profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations(emailid);
+                        var myEvaluationList = _evaluatorService.GetAssignedSelectabilityEvaluations("rohan.evans@gmail.com");
                         foreach (var item in myEvaluationList)
                         {
                             if (!string.IsNullOrEmpty(item.ResumeLink))
@@ -257,8 +257,8 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "ResumeEvaluator")
+                profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
+                if (profileName == "ResumeEvaluator" || profileName == "HR")
                 {
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
@@ -290,11 +290,10 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator")
+                    profileName = "ResumeEvaluator";// profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator" || profileName == "HR")
                     {
                         
-
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
@@ -333,7 +332,7 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName = "HR";// profileName.Replace("\"", "");
                     if (profileName == "HR")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -372,12 +371,12 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
+                    profileName = "HR";//profileName.Replace("\"", "");
                     if (profileName == "HR" || profileName == "ResumeEvaluator")
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations(emailid);
+                        var myEvaluationList = _evaluatorService.GetAssignedJoinabilityEvaluations("hire@risebird.io");
                         foreach (var item in myEvaluationList)
                         {
                             if (!string.IsNullOrEmpty(item.ResumeLink))
@@ -476,8 +475,8 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName =profileName.Replace("\"", "");
-                if (profileName == "HR")
+                profileName = "HR";// profileName.Replace("\"", "");
+                if (profileName == "HR" || profileName == "ResumeEvaluator")
                 {
                     var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
@@ -509,11 +508,9 @@ namespace Risebird.Web.Controllers
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName = profileName.Replace("\"", "");
-                    if (profileName == "HR")
+                    profileName = "HR";//profileName.Replace("\"", "");
+                    if (profileName == "HR" || profileName == "ResumeEvaluator")
                     {
-
-
                         if (_evaluatorService.AddJoinabilityReport(model).Result)
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";

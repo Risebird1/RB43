@@ -169,9 +169,21 @@ namespace Risebird.Business
         public async Task<bool> AddSelectabilityReport(EvaluatorReport reportModel)
         {
             try
-            {               
-                var result = await _evaluatorRespository.AddSelectabilityReport(reportModel);
-                return result;
+            {
+                //bool joinResult = false;
+                reportModel.HRReport.CandidateEmailId = reportModel.CandidateEmailId;
+                reportModel.HRReport.CandidateId = reportModel.CandidateId;
+                reportModel.HRReport.IRFId = reportModel.IRFId;
+                var joinResult = _evaluatorRespository.AddJoinabilityReport(reportModel.HRReport).Result;
+                
+                var selecResult = _evaluatorRespository.AddSelectabilityReport(reportModel).Result;
+                if (joinResult && selecResult)
+                {
+                    return true;
+                }
+                else
+
+                    return false; 
             }
 
             catch (Exception e)

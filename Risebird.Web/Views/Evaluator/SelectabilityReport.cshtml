@@ -124,6 +124,23 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.SelectabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.SelectabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.HRReport.JoinabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.HRReport.JoinabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
                                 <div class="row">
 
                                     <div class="col-md-6 col-sm-6">
@@ -151,11 +168,11 @@
                                     </div>
 
                                     <div class="col-md-6 col-sm-6">
-                                        <div class="col-md-6 col-sm-6">
+                                        @*<div class="col-md-6 col-sm-6">
                                             <div>
                                                 @Html.TextBoxFor(m => m.SelectabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                             </div>
-                                        </div>
+                                        </div>*@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
@@ -208,7 +225,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value,'SelectabilityEvaluatorReportCollection')" })
 
                                                                 </td>
                                                                 <td>
@@ -282,7 +299,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.HRReport.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value,'HRReport_JoinabilityHRReportCollection')" })
 
                                                                 </td>
                                                                 <td>
@@ -306,7 +323,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.HRReport.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextAreaFor(m => m.HRReport.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                @Html.TextAreaFor(m => m.HRReport.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                             </div>
 
 
@@ -337,9 +354,9 @@
                                             }
 
                                             @*@if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
-                                                {
+                    {
 
-                                                }*@
+                    }*@
 
                                         </div>
                                     </div>
@@ -442,10 +459,11 @@
 
 
 
-    function CalculateOverAll(id, value) {
+    function CalculateOverAll(id, value, skillName) {
+        debugger;
         value = parseInt(value);
         var index = id.charAt(39);
-        var skillName = "SelectabilityEvaluatorReportCollection";
+        //var skillName = "SelectabilityEvaluatorReportCollection";
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
         if (required <= value) {
@@ -516,6 +534,7 @@
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
         arr.push(objJoin);
+        document.getElementById("HRReport_JoinabilityScore").value = joinabilityTotal;
 
         //Selectability actual weightage total
         var objSelect = { y: "", legendText: "", label: "" }
