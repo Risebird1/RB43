@@ -134,11 +134,11 @@
                                             {
                                                 string joinabilityColor;
                                                 string selectabilityColor;
-                                                if (item.JoinabilityScore > 70)
+                                                if (item.JoinabilityScore >= 70)
                                                 {
                                                     joinabilityColor = "green";
                                                 }
-                                                else if (item.JoinabilityScore > 40 && item.JoinabilityScore <= 70)
+                                                else if (item.JoinabilityScore >= 40 && item.JoinabilityScore < 70)
                                                 {
                                                     joinabilityColor = "yellow";
                                                 }
@@ -146,11 +146,11 @@
                                                 {
                                                     joinabilityColor = "red";
                                                 }
-                                                if (item.SelectabilityScore > 70)
+                                                if (item.SelectabilityScore >= 70)
                                                 {
                                                     selectabilityColor = "green";
                                                 }
-                                                else if (item.SelectabilityScore > 40 && item.SelectabilityScore <= 70)
+                                                else if (item.SelectabilityScore >= 40 && item.SelectabilityScore < 70)
                                                 {
                                                     selectabilityColor = "yellow";
                                                 }
