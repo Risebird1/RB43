@@ -181,14 +181,14 @@
 
                                                     <td> @item.RisebirdHR</td>
                                                     <td style="color:@joinabilityColor">
-                                                        @item.JoinabilityScore
+                                                        <b>@item.JoinabilityScore</b>
                                                     </td>
                                                     <td style="color:@selectabilityColor">
-                                                        @item.SelectabilityScore
+                                                        <b>@item.SelectabilityScore</b>
                                                     </td>
                                                     <td class="text-center">
                                                         <span onclick="javascript:UnassignHRJoinability('@item.id');" title="Unassign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("JoinabilityReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Joinability Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("JoinabilityReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
                                                     </td>
                                                     <td>

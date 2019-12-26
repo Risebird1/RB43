@@ -21,6 +21,9 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         [Required]
         public string CandidateName { get; set; }
+
+        [DisplayName("Candidate EmailId")]
+
         public string CandidateEmailId { get; set; }
         public string JDLink { get; set; }
 
@@ -62,6 +65,9 @@ namespace Risebird.Entities.ViewModel
         public SelectList Level { get; set; }
         //public SelectList LevelTech { get; set; }
         public HRReport HRReport { get; set; }
+
+        [DisplayName("Selectability Score")]
+
         public double SelectabilityScore { get; set; }
       
     }

@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "ResumeEvaluator")
+                if (profileName == "ResumeEvaluator" || profileName == "HR")
                 {
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
@@ -291,10 +291,9 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "ResumeEvaluator")
+                    if (profileName == "ResumeEvaluator" || profileName == "HR")
                     {
                         
-
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
@@ -476,8 +475,8 @@ namespace Risebird.Web.Controllers
             {
 
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName =profileName.Replace("\"", "");
-                if (profileName == "HR")
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "HR" || profileName == "ResumeEvaluator")
                 {
                     var model = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
@@ -510,10 +509,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "HR")
+                    if (profileName == "HR" || profileName == "ResumeEvaluator")
                     {
-
-
                         if (_evaluatorService.AddJoinabilityReport(model).Result)
                         {
                             TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";

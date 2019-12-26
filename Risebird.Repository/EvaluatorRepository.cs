@@ -298,34 +298,27 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
-                    if (reportDetails.IsEdited)
-                    {
-                        if (reportDetails.SelectabilityEvaluatorReportCollection != null)
-                        {
-                            //update Selectability Report table
-                            foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
-                            {
-                                string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
-                                var result3 = con.Execute(sqlSelectableReport, new
-                                {
-                                    CandidateId = reportDetails.CandidateId,
-                                    ActualLevelId = item.ActualLevelId,
-                                    WeightageActual = item.WeightageActual,
-                                    IRFId = reportDetails.IRFId
-                                });
-                            }
-                            result = true;
-                        }
-
-
-                    }
+                    
                     if (reportDetails.SelectabilityEvaluatorReportCollection != null)
                     {
                         //update Selectability Report table
+                        //foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
+                        //{
+                           
+                        //}
+                        //result = true;
+
+                        string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
+                        var result3 = con.Execute(sqlSelectableReport, new
+                        {
+                            CandidateId = reportDetails.CandidateId,                            
+                            IRFId = reportDetails.IRFId
+                        });
+
                         foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
                         {
-                            string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result3 = con.Execute(sqlSelectableReport, new
+                            string sqlReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
+                            var result4 = con.Execute(sqlReport, new
                             {
                                 CandidateId = reportDetails.CandidateId,
                                 RequiredLevelId = item.RequiredLevelId,
@@ -339,6 +332,7 @@ namespace Risebird.Repository
                         }
                         result = true;
                     }
+                    
                     
                     var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore where IRFId =@IRFId and EmailId=@EmailId ";
                     var dynamicParameters = new DynamicParameters();
@@ -453,32 +447,30 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //check if the data is edited
-                    if (reportDetails.IsEdited)
-                    {
-                        if (reportDetails.JoinabilityHRReportCollection != null)
-                        {
-                            //update Selectability Report table
-                            foreach (var item in reportDetails.JoinabilityHRReportCollection)
-                            {
-                                string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
-                                var result3 = con.Execute(sqlSelectableReport, new
-                                {
-                                    CandidateId = reportDetails.CandidateId,
-                                    IRFId = reportDetails.IRFId
-                                });
-                            }
-                            result = true;
-                        }
+                    //if (reportDetails.IsEdited)
+                    //{
 
 
-                    }
+                    //}
+
                     if (reportDetails.JoinabilityHRReportCollection != null)
                     {
                         //update Selectability Report table
+                        //foreach (var item in reportDetails.JoinabilityHRReportCollection)
+                        //{
+                           
+                        //}
+                        string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
+                        var result3 = con.Execute(sqlSelectableReport, new
+                        {
+                            CandidateId = reportDetails.CandidateId,
+                            IRFId = reportDetails.IRFId
+                        });
+
                         foreach (var item in reportDetails.JoinabilityHRReportCollection)
                         {
-                            string sqlSelectableReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
-                            var result3 = con.Execute(sqlSelectableReport, new
+                            string sqlReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, IRFId) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @IRFId);";
+                            var result4 = con.Execute(sqlReport, new
                             {
                                 CandidateId = reportDetails.CandidateId,
                                 RequiredLevelId = item.RequiredLevelId,
@@ -492,6 +484,7 @@ namespace Risebird.Repository
                         }
                         result = true;
                     }
+                   
                     
                     var query = "Update Candidate set JoinabilityComments = @JoinabilityComments, JoinabilityScore = @JoinabilityScore where IRFId =@IRFId and EmailId=@EmailId";
                     var dynamicParameters = new DynamicParameters();
