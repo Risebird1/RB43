@@ -208,8 +208,9 @@
                                                 <th>Resume</th>
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th> Actions </th>
-
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
@@ -221,8 +222,7 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
-                                                <th>Joinability Score</th>
-                                                <th>Selectability Score</th>
+
                                                 <th style="text-align:center">Call</th>
 
                                             </tr>
@@ -235,8 +235,9 @@
                                                 <th>Resume</th>
                                                 <th>Invite Sent</th>
                                                 <th>Invite Confirmation</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th> Actions </th>
-
                                                 <th>Type</th>
                                                 <th>Location(Applied for)</th>
                                                 <th>Skill</th>
@@ -248,8 +249,7 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
-                                                <th>Joinability Score</th>
-                                                <th>Selectability Score</th>
+
                                                 <th style="text-align:center">Call</th>
 
                                             </tr>
@@ -298,6 +298,12 @@
                                                 }
                                                 <td>@item.TotalInvites</td>
                                                 <td>@item.InviteConfirmation</td>
+                                                <td style="color:@joinabilityColor">
+                                                    <b>@item.JoinabilityScore</b>
+                                                </td>
+                                                <td style="color:@selectabilityColor">
+                                                    <b>@item.SelectabilityScore</b>
+                                                </td>
                                                 <td class="text-right">
                                                     <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
 
@@ -318,12 +324,7 @@
                                                 <td>@item.CurrentSalary</td>
                                                 <td>@item.ExpectedSalary</td>
                                                 <td>@item.Notice</td>
-                                                <td style="color:@joinabilityColor">
-                                                    <b>@item.JoinabilityScore</b>
-                                                </td>
-                                                <td style="color:@selectabilityColor">
-                                                    <b>@item.SelectabilityScore</b>
-                                                </td>                                                
+
                                                 <td>
                                                     @if (item.Phone != null && item.Phone != string.Empty)
                                                     {
