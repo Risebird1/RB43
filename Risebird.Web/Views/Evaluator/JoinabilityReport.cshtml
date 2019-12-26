@@ -2,7 +2,7 @@
 
 
 @{
-    ViewData["Title"] = "Joinability Evaluation";
+    ViewData["Title"] = "Resume Evaluation";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -64,7 +64,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand">
-                    Joinability Evaluation
+                    Resume Evaluation
                 </a>
             </div>
 
@@ -125,6 +125,22 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.JoinabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.JoinabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EvaluatorReport.SelectabilityScore, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => m.EvaluatorReport.SelectabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
 
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
@@ -149,14 +165,8 @@
                                             <h2>Report Details</h2>
                                         </div><!--end of multiple location-->
                                     </div>
-                                    
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="col-md-6 col-sm-6">
-                                            <div >
 
-                                                @Html.TextBoxFor(m => m.JoinabilityScore, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                        </div>
+                                    <div class="col-md-6 col-sm-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
@@ -209,7 +219,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value, 'JoinabilityHRReportCollection')" })
 
                                                                 </td>
                                                                 <td>
@@ -282,7 +292,7 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.EvaluatorReport.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+                                                                    @Html.DropDownListFor(m => m.EvaluatorReport.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value, 'EvaluatorReport_SelectabilityEvaluatorReportCollection')" })
 
                                                                 </td>
                                                                 <td>
@@ -306,7 +316,7 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.EvaluatorReport.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextAreaFor(m => m.EvaluatorReport.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                @Html.TextAreaFor(m => m.EvaluatorReport.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
                                             </div>
 
 
@@ -337,9 +347,9 @@
                                             }
 
                                             @*@if (!(ViewBag.IsClient || ViewBag.IsClientSelected))
-                                                {
+                    {
 
-                                                }*@
+                    }*@
 
                                         </div>
                                     </div>
@@ -442,11 +452,16 @@
 
 
 
-    function CalculateOverAll(id, value) {
-
+    function CalculateOverAll(id, value, skillName) {
+        debugger;
         value = parseInt(value);
-        var index = id.charAt(30);
-        var skillName = "JoinabilityHRReportCollection";
+        if (skillName == "JoinabilityHRReportCollection") {
+            var index = id.charAt(30);
+        }
+        else
+            var index = id.charAt(55);
+        
+        //var skillName = "JoinabilityHRReportCollection";
         var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
         var required = $("#" + reqLevelId).val();
         if (required <= value) {
@@ -537,6 +552,7 @@
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect);
+        document.getElementById("EvaluatorReport_SelectabilityScore").value = selectabilityTotal;
 
         var chart = new CanvasJS.Chart("scoreChart", {
             theme: "light2", // "light1", "light2", "dark1", "dark2"

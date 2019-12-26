@@ -221,6 +221,8 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th style="text-align:center">Call</th>
 
                                             </tr>
@@ -246,6 +248,8 @@
                                                 <th>Current Salary</th>
                                                 <th>Expected Salary</th>
                                                 <th>Notice</th>
+                                                <th>Joinability Score</th>
+                                                <th>Selectability Score</th>
                                                 <th style="text-align:center">Call</th>
 
                                             </tr>
@@ -254,50 +258,80 @@
                                             @foreach (var item in Model)
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                                string joinabilityColor;
+                                                string selectabilityColor;
+                                                if (item.JoinabilityScore > 70)
+                                                {
+                                                    joinabilityColor = "green";
+                                                }
+                                                else if (item.JoinabilityScore > 40 && item.JoinabilityScore <= 70)
+                                                {
+                                                    joinabilityColor = "yellow";
+                                                }
+                                                else
+                                                {
+                                                    joinabilityColor = "red";
+                                                }
+                                                if (item.SelectabilityScore > 70)
+                                                {
+                                                    selectabilityColor = "green";
+                                                }
+                                                else if (item.SelectabilityScore > 40 && item.SelectabilityScore <= 70)
+                                                {
+                                                    selectabilityColor = "yellow";
+                                                }
+                                                else
+                                                {
+                                                    selectabilityColor = "red";
+                                                }
+                                            <tr id=@item.id>
 
-                                                <tr id=@item.id>
+                                                <td> @item.Name</td>
+                                                <td> @item.EmailId</td>
+                                                @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                <td>@item.TotalInvites</td>
+                                                <td>@item.InviteConfirmation</td>
+                                                <td class="text-right">
+                                                    <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
 
-                                                    <td> @item.Name</td>
-                                                    <td> @item.EmailId</td>
-                                                    @if (item.ResumeLink != null && item.ResumeLink != "")
+                                                    <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-times"></i></span>
+
+                                                </td>
+
+                                                <td>@item.Type</td>
+                                                <td>@item.Location</td>
+                                                <td>@item.Skill</td>
+                                                <td>@item.WorkAuth</td>
+                                                <td>@item.CurrentLocation</td>
+                                                <td>@item.CurrentEmployer</td>
+                                                @*<td>@item.Phone</td>*@
+                                                <td>@item.TotalExperience</td>
+                                                <td>@item.CurrentSalary</td>
+                                                <td>@item.ExpectedSalary</td>
+                                                <td>@item.Notice</td>
+                                                <td style="color:@joinabilityColor">
+                                                    <b>@item.JoinabilityScore</b>
+                                                </td>
+                                                <td style="color:@selectabilityColor">
+                                                    <b>@item.SelectabilityScore</b>
+                                                </td>                                                
+                                                <td>
+                                                    @if (item.Phone != null && item.Phone != string.Empty)
                                                     {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a> </td>
+                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                     }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    <td>@item.TotalInvites</td>
-                                                    <td>@item.InviteConfirmation</td>
-                                                    <td class="text-right">
-                                                        <span onclick="location.href = '@Url.Action("SendInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId, endDate=item.EndDate})'" title="Send Invite" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-envelope"></i></span>
 
-                                                        <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                        <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("CancelInvite", "IRF", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId= item.EmailId})'" title="Cancel Invite" class="btn btn-round btn-danger btn-icon btn-sm like"><i class="fa fa-times"></i></span>
-
-                                                    </td>
-
-                                                    <td>@item.Type</td>
-                                                    <td>@item.Location</td>
-                                                    <td>@item.Skill</td>
-                                                    <td>@item.WorkAuth</td>
-                                                    <td>@item.CurrentLocation</td>
-                                                    <td>@item.CurrentEmployer</td>
-                                                    @*<td>@item.Phone</td>*@
-                                                    <td>@item.TotalExperience</td>
-                                                    <td>@item.CurrentSalary</td>
-                                                    <td>@item.ExpectedSalary</td>
-                                                    <td>@item.Notice</td>
-
-                                                    <td>
-                                                        @if (item.Phone != null && item.Phone != string.Empty)
-                                                        {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
-                                                        }
-
-                                                    </td>
-                                                </tr>
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
