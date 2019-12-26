@@ -787,11 +787,23 @@ namespace Risebird.Business
             {
                 //total number of candidates
                 int waste = 0;
+                var emailList = new List<string>();
                 var funnelData = new IRFFunnel();
                 var candidates = _irfRepository.GetIRFCandidates(irfId);
-                var emailList = candidates.Select(x => x.EmailId);
-                funnelData.TotalCandidates = candidates.Count();
-                funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
+                if(candidates.Count()==0)
+                {
+                    //get candidates from Meeting table by passing IRFId
+                    emailList  = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
+                    funnelData.TotalCandidates = emailList.Count();
+                    funnelData.TotalInvites = emailList.Count(); 
+                }
+                else
+                {
+                    emailList = candidates.Select(x => x.EmailId).ToList();
+                    funnelData.TotalCandidates = candidates.Count();
+                    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
+                }
+               
                 //funnelData.InvitesRate = funnelData.TotalCandidates != 0 ? ((funnelData.TotalInvites * 100 / funnelData.TotalCandidates) ) : 0;
 
                 //get interviewMeetings where candidateEmail and irfName matches

@@ -1497,6 +1497,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public IEnumerable<string> GetIRFCandidatesEmail(string irfName)
+        {
+            try
+            {
+                var query = "select candidateEmail from InterviewMeetings where IRFId =@IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfName);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
         //GetCandidateIRFInvites
         public IEnumerable<Candidate> GetCandidateIRFInvites(string emailId)
         {
