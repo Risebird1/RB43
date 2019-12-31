@@ -512,7 +512,7 @@ namespace Risebird.Business
             }
 
         }
-        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST)
+        public InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST,string discount, string clientAddress)
         {
             try
             {
@@ -523,9 +523,9 @@ namespace Risebird.Business
                 if(irfDetails!=null && invoiceModel!=null)
                 {
                     //var address = irfDetails.ClientAddress;
-                    var address = "Bagmane World Technology Center, Marathalli Ring Road, Doddanakhundi Village,Bangalore 560048";
+                    //var address = "Bagmane World Technology Center, Marathalli Ring Road, Doddanakhundi Village,Bangalore 560048";
                     var strb = new StringBuilder();
-                    var addressArray = address.Split(",");
+                    var addressArray = clientAddress.Split(",");
                     for (int i=1; i <= addressArray.Length; i++)
                     {
                         if(i!= addressArray.Length)
@@ -569,8 +569,8 @@ namespace Risebird.Business
                     invoiceModel.RisebirdIFSC = _configuration["RisebirdDetails:IFSC"];
                     invoiceModel.RisebirdICICIBankSwiftCode = _configuration["RisebirdDetails:ICICIBankSWIFTCode"];
                     invoiceModel.PartialInterviewCount = invoiceModel.InterviewCount;
-                    invoiceModel.Discount = irfDetails.Discount;
-                    invoiceModel.DiscountedPricePerInterview = (1 - (irfDetails.Discount / 100)) * irfDetails.PerMintuteRate;
+                    invoiceModel.Discount = Convert.ToDouble(discount);//irfDetails.Discount;
+                    invoiceModel.DiscountedPricePerInterview = (1 - (invoiceModel.Discount / 100)) * irfDetails.PerMintuteRate;
                     invoiceModel.PartialPayable = invoiceModel.PartialInterviewCount * invoiceModel.DiscountedPricePerInterview;
                     if(isGST)
                     {

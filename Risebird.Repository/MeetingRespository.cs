@@ -831,6 +831,26 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public async Task<IEnumerable<MeetingVM>> GetClientHRContactList()
+        {
+            try
+            {
+                var query = "select im.ClientHrContact, im.id as imid, IRF.ClientId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = await con.QueryAsync<MeetingVM>(query);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
             try

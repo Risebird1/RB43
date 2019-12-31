@@ -474,6 +474,30 @@
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
                             <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                    Client Address
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                    Discount 
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="discountId" name="discountId" type="text" class="form-control">
+                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
                                     Currency Code
                                 </label>
@@ -824,8 +848,10 @@
         var reqNumber = $("#requestNumberId").val();
         var currencyCode = $("#currencyCodeId").val();
         var projectCode = $("#projectCodeId").val();
+        var discount = $("#discountId").val();
+        var clientAddress = $("#clientAddressId").val();
         var isGST = document.getElementById("gstCheckId").checked
-        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "") {
+        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress=="") {
             document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
             return;
         }
@@ -835,7 +861,7 @@
         }
 
 
-        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST;
+        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
         window.location.href = url;
     }
 

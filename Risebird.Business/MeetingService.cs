@@ -90,6 +90,42 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public List<string> GetClientHRContactList(string emailId)
+        {
+            try
+            {
+                var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
+                //Get client user details
+                var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
+                clientHrList = clientHrList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                var finalList = clientHrList.Select(x => x.ClientHrContact).ToList();
+                foreach (var item in finalList)
+                {
+                    item.Replace("\n", "");
+                }
+                finalList = finalList.Distinct().ToList();
+                //if (clientDetails.RoleId == 1)
+                //{
+                //    meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
+                //}
+
+                //else if (clientDetails.RoleId == 4)
+                //{
+                //    meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
+                //}
+                //else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
+                //{
+                //    meetings = meetings.Where(x => x.ClientId == clientDetails.ClientId).ToList();
+                //}
+                return finalList;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
 
         public bool AddMeeting(MeetingVM meeting)
         {

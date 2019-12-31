@@ -491,6 +491,8 @@ namespace Risebird.Web.Controllers
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        //ViewBag.ClientHRList = meetings.Select(x => x.ClientHrContact).Distinct().ToList();
+
                         foreach (var meeting in meetings)
                         {
                             if (meeting.InterviewStatus != null)
@@ -542,11 +544,11 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsSelected.HasValue)
+                            if (m.IsSelected.HasValue && m.IsSelected != -1)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
@@ -3194,6 +3196,7 @@ namespace Risebird.Web.Controllers
 
                         var selectedMeeting = new List<MeetingVM>();
                         var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid);
                         meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         foreach (var meeting in meetings)
                         {
@@ -3247,11 +3250,11 @@ namespace Risebird.Web.Controllers
                             {
                                 m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
                             }
-                            if (m.IsApproved.HasValue)
+                            if (m.IsApproved.HasValue && m.IsApproved != -1)
                             {
                                 m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
                             }
-                            if (m.IsSelected.HasValue)
+                            if (m.IsSelected.HasValue && m.IsSelected != -1)
                             {
                                 m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
                             }
