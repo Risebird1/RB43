@@ -19,14 +19,14 @@
     string[] SelectionStatus = new string[] { };
     string[] JoiningStatus = new string[] { };
     string[] OfferStatus = new string[] { };
-    string[] Interviewer = new string[] { };
+    //string[] Interviewer = new string[] { };
     string[] ClientName = new string[] { };
 
 
 }
-@if (HttpContextAccessor.HttpContext.Session.GetString("ClientMeetingsfilters") != null)
+@if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("ClientMeetingsfilters"));
+    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
@@ -39,7 +39,7 @@
     SelectionStatus = filter.SelectionStatus != null ? filter.SelectionStatus : new string[] { };
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
-    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    //Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
 
 }
@@ -174,7 +174,7 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDate">
                                                                 End Date
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
@@ -206,11 +206,24 @@
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                     {
-                                                                        @if (item != null && item != "")
+                                                                        foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        foreach (var item in ViewBag.ClientHRList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
                                                                     }
                                                                 </select>
@@ -233,33 +246,32 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
-                                                                Interviewer
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
+                                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                     {
-                                                                        @if (item != null && item != "")
+                                                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        foreach (var item in ViewBag.IRFList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    }
+
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -279,22 +291,36 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
+                                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                                                                     {
-                                                                        @if (item != null && item != "")
+                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        foreach (var item in ViewBag.ClientNameList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
                                                                     }
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
                                                                 Interview Status
@@ -659,7 +685,7 @@
             var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
             var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
             var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-            var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+            @*//var interviewer =  @Html.Raw(Json.Serialize(Interviewer));*@
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -669,11 +695,11 @@
             $("#ConfirmationStatus").val(confirmationStatus);
             $("#MeetingStatus").val(meetingStatus);
             $("#InterviewStatus").val(interviewStatus);
-            $("#Interviewer").val(interviewer);
+            //$("#Interviewer").val(interviewer);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
-            url: "/Interview/ClientMeetings",
+                 url: "/Interview/AllPriorityClientMeetings",
             data: form,
                  success: function (data) {
                  }

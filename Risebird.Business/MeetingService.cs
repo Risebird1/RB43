@@ -90,33 +90,64 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<string> GetClientHRContactList(string emailId)
+        public List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList)
         {
             try
             {
-                var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
+                //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
                 //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                clientHrList = clientHrList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
-                var finalList = clientHrList.Select(x => x.ClientHrContact).ToList();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                var finalList = meetingList.Select(x => x.ClientHrContact).ToList();
+
                 foreach (var item in finalList)
                 {
                     item.Replace("\n", "");
                 }
                 finalList = finalList.Distinct().ToList();
-                //if (clientDetails.RoleId == 1)
-                //{
-                //    meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
-                //}
+                
+                return finalList;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
-                //else if (clientDetails.RoleId == 4)
-                //{
-                //    meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
-                //}
-                //else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
-                //{
-                //    meetings = meetings.Where(x => x.ClientId == clientDetails.ClientId).ToList();
-                //}
+        public List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList)
+        {
+            try
+            {
+                //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
+                //Get client user details
+                var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                var finalList = meetingList.Select(x => x.ClientName).ToList();
+                foreach (var item in finalList)
+                {
+                    item.Replace("\n", "");
+                }
+                finalList = finalList.Distinct().ToList();
+
+                return finalList;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<string> GetIRFList(string emailId, List<MeetingVM> meetingList)
+        {
+            try
+            {
+                //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
+                //Get client user details
+                var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                var finalList = meetingList.Select(x => x.IRFId).ToList();
+                finalList = finalList.Distinct().ToList();
                 return finalList;
             }
             catch (Exception ex)
