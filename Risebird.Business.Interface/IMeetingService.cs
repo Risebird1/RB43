@@ -39,5 +39,6 @@ namespace Risebird.Business.Interface
         bool QCUnassignYourself(int meetingid, string email);
         List<Meeting> GetCandidateInterviews(string emailID);
         bool CancelInterview(int meetingid, string interviewDate, string candidateEmail);
+        List<string> GetClientHRContactList(string emailId);
     }
 }

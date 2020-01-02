@@ -251,13 +251,27 @@
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                                                                     {
-                                                                        @if (item != null && item != "")
+                                                                        foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
                                                                     }
+                                                                    else
+                                                                    {
+                                                                        foreach (var item in ViewBag.ClientHRList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    }
+
                                                                 </select>
                                                             </div>
                                                         </div>
