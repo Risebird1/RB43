@@ -301,7 +301,6 @@ namespace Risebird.Business
                 var emergencyMeetings = _meetingRespository.GetAllEmergencyOpenInterviews(emailId).Result.ToList();
                 if(emergencyMeetings!=null)
                 {
-                    var date = DateTime.Now;
                     foreach (var item in emergencyMeetings)
                     {
                         openMeeting.Add(item);
@@ -489,9 +488,9 @@ namespace Risebird.Business
                 if (meeting != null && meeting.Result != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
-                    var timeDiff = meeting.Result.interviewDate.Hour - DateTime.Now.Hour;
+                    TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
                     var interviwers = new List<string>();
-                    if (timeDiff <= 6)
+                    if (timeSpan.TotalHours <= 6)
                     {
                         //update flag for Emergency Interview
                         _irfRepository.UpdateEmergencyFlag(meetingid, email);

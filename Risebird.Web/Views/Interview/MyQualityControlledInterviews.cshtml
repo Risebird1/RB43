@@ -378,7 +378,7 @@
                                                         <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                                         <span title="QC Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
                                                         @*<span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>*@
-                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
 
                                                     </td>
                                                     @*<td>
