@@ -168,7 +168,7 @@
                                 <button type="button" onclick="window.open('@item.zoomLink')" class="btn btn-warning btn-icon btn-sm" title="Join Meeting">
                                     <i class="now-ui-icons fa fa-meetup"></i>
                                 </button>
-                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) >= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                 {
                                     <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
                                         <i class="now-ui-icons fa fa-phone"></i>
