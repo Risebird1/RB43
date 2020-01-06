@@ -122,7 +122,7 @@ namespace Risebird.Business
                 //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
                 //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId /*&& x.ClientHrContact != string.Empty*/).ToList();
                 var finalList = meetingList.Select(x => x.ClientName).ToList();
                 foreach (var item in finalList)
                 {
@@ -145,7 +145,7 @@ namespace Risebird.Business
                 //var clientHrList = _meetingRespository.GetClientHRContactList().Result.ToList();
                 //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId && x.ClientHrContact != string.Empty).ToList();
+                meetingList = meetingList.Where(x => x.ClientId == clientDetails.ClientId /*&& x.ClientHrContact != string.Empty*/).ToList();
                 var finalList = meetingList.Select(x => x.IRFId).ToList();
                 finalList = finalList.Distinct().ToList();
                 return finalList;

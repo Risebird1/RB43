@@ -45,9 +45,15 @@ namespace Risebird.Entities.ViewModel
         //public string expectedPerHourRate { get; set; }
         
         public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
-        
+        public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
+        public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }
+
         [DisplayName("Selectability Comments")]
         public string SelectabilityComments { get; set; }
+
+        [DisplayName("Tech Skill Comments")]
+        public string TechSkillComments { get; set; }
+        public string SkillGeneralComments { get; set; }
         public bool IsEdited { get; set; }
 
         public int JobLevel { get; set; }
@@ -69,6 +75,11 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Selectability Score")]
 
         public double SelectabilityScore { get; set; }
-      
+        [DisplayName("Tech Skills Score")]
+        public double TechSkillScore { get; set; }
+        [DisplayName("General Skills Score")]
+        public double SkillGeneralScore { get; set; }
+        public SelectList LevelTech { get; set; }
+
     }
 }
