@@ -246,6 +246,66 @@ namespace Risebird.Repository
             }
         }
 
+        public string GetTechComments(int irfId, string emailId)
+        {
+            try
+            {
+                var query = "select TechSkillComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string GetGeneralSkillComments(int irfId, string emailId)
+        {
+            try
+            {
+                var query = "select SkillGeneralComments from Candidate where IRFId= @IRFId and EmailId=@EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@EmailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                var query = "select * from LevelTech";
+               
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<LevelTech>(query);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         public IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId)
         {
             try
@@ -279,6 +339,50 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<JoinabilityHRReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<TechSkillEvaluatorReport> GetTechReport(int candidateId, int irfId)
+        {
+            try
+            {
+                var query = "select a.*, Skill.[Name] as SkillName from (select TechSkillEvaluatorReport.*, [LevelTech].[Name] as RequiredLevel from TechSkillEvaluatorReport inner join [LevelTech] on TechSkillEvaluatorReport.RequiredLevelId=[LevelTech].id) as a inner join Skill on a.SkillId = Skill.id where CandidateId = @CandidateId and IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", candidateId);
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TechSkillEvaluatorReport>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<SkillGeneralEvaluatorReport> GetSkillGeneralReport(int candidateId, int irfId)
+        {
+            try
+            {
+                var query = "select SkillGeneralEvaluatorReport.*,SkillGeneralEvaluatorReport.[Type] as [Name], [Level].[Name] as RequiredLevel from SkillGeneralEvaluatorReport inner join [Level] on SkillGeneralEvaluatorReport.RequiredLevelId=[Level].id where CandidateId = @CandidateId and IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", candidateId);
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<SkillGeneralEvaluatorReport>(query, dynamicParameters);
                     return results;
                 }
 
@@ -334,12 +438,16 @@ namespace Risebird.Repository
                     }
                     
                     
-                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore where IRFId =@IRFId and EmailId=@EmailId ";
+                    var query = "Update Candidate set SelectabilityComments = @SelectabilityComments, SelectabilityScore =@SelectabilityScore, TechSkillComments = @TechSkillComments, TechSkillScore=@TechSkillScore, SkillGeneralComments=@SkillGeneralComments, SkillGeneralScore=@SkillGeneralScore where IRFId =@IRFId and EmailId=@EmailId ";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", reportDetails.IRFId);
                     dynamicParameters.Add("@EmailId", reportDetails.CandidateEmailId);
                     dynamicParameters.Add("@SelectabilityComments", reportDetails.SelectabilityComments);
                     dynamicParameters.Add("@SelectabilityScore", reportDetails.SelectabilityScore);
+                    dynamicParameters.Add("@TechSkillComments", reportDetails.TechSkillComments);
+                    dynamicParameters.Add("@TechSkillScore", reportDetails.TechSkillScore);
+                    dynamicParameters.Add("@SkillGeneralComments", reportDetails.SkillGeneralComments);
+                    dynamicParameters.Add("@SkillGeneralScore", reportDetails.SkillGeneralScore);
                     try
                     {
                         con.Query<int>(query, dynamicParameters);
@@ -518,6 +626,116 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public async Task<bool> AddTechReport(IList<TechSkillEvaluatorReport> reportDetails, int candidateId, int irfId)
+        {
+            try
+            {
+                bool result = false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    
+
+                    if (reportDetails != null)
+                    {
+                        
+                        string sqlDelete = "delete from TechSkillEvaluatorReport where CandidateId = @CandidateId and IRFId = @IRFId";
+                        var result3 = con.Execute(sqlDelete, new
+                        {
+                            CandidateId = candidateId,
+                            IRFId = irfId
+                        });
+
+                        foreach (var item in reportDetails)
+                        {
+                            string sqlTechReport = "INSERT INTO TechSkillEvaluatorReport (RequiredLevelId ,SkillId, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @SkillId, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
+                            var result1 = con.Execute(sqlTechReport, new
+                            {
+                                CandidateId = candidateId,
+                                IRFId = irfId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                SkillId = item.SkillId,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            });
+                        }
+                        result = true;
+                    }
+
+                    return result;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> AddSkillGeneralReport(IList<SkillGeneralEvaluatorReport> reportDetails, int candidateId, int irfId)
+        {
+            try
+            {
+                bool result = false;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+
+
+                    if (reportDetails != null)
+                    {
+
+                        string sqlDelete = "delete from SkillGeneralEvaluatorReport where CandidateId = @CandidateId and IRFId = @IRFId";
+                        var result3 = con.Execute(sqlDelete, new
+                        {
+                            CandidateId = candidateId,
+                            IRFId = irfId
+                        });
+
+                        foreach (var item in reportDetails)
+                        {
+                            string sqlTechReport = "INSERT INTO SkillGeneralEvaluatorReport (RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual, CandidateId, IRFId) Values (@RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual, @CandidateId, @IRFId);";
+                            var result1 = con.Execute(sqlTechReport, new
+                            {
+                                CandidateId = candidateId,
+                                IRFId = irfId,
+                                RequiredLevelId = item.RequiredLevelId,
+                                Type = item.Name,
+                                Value = item.Value,
+                                ActualLevelId = item.ActualLevelId,
+                                WeightageRequired = item.WeightageRequired,
+                                WeightageActual = item.WeightageActual
+                            });
+                        }
+                        result = true;
+                    }
+
+                    return result;
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+
 
 
     }

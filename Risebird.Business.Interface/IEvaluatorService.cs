@@ -21,6 +21,8 @@ namespace Risebird.Business.Interface
         bool UnAssignJoinability(int id);
         Task<HRReport> GetHRJoinabilityReport(int candidateId, int irfId);
         Task<bool> AddJoinabilityReport(HRReport reportModel);
+        Task<IList<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId);
+        Task<IList<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId);
 
     }
 }

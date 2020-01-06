@@ -26,6 +26,12 @@ namespace Risebird.Repository.Interface
         string GetSelectabilityComments(int irfId, string emailId);
         string GetJoinabilityComments(int irfId, string emailId);
         IEnumerable<SelectabilityEvaluatorReport> GetSelectabilityReport(int id, int irfId);
-
+        IEnumerable<TechSkillEvaluatorReport> GetTechReport(int candidateId, int irfId);
+        string GetTechComments(int irfId, string emailId);
+        string GetGeneralSkillComments(int irfId, string emailId);
+        IEnumerable<LevelTech> GetLevelTech();
+        Task<bool> AddTechReport(IList<TechSkillEvaluatorReport> reportDetails, int candidateId, int irfId);
+        IEnumerable<SkillGeneralEvaluatorReport> GetSkillGeneralReport(int candidateId, int irfId);
+        Task<bool> AddSkillGeneralReport(IList<SkillGeneralEvaluatorReport> reportDetails, int candidateId, int irfId);
     }
 }

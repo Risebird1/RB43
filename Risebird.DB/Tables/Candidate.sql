@@ -24,6 +24,10 @@ CREATE TABLE [dbo].[Candidate](
 	[JoinabilityComments] [varchar](max) NULL,
 	[JoinabilityScore] [decimal](10, 2) NULL,
 	[SelectabilityScore] [decimal](10, 2) NULL,
+	[TechSkillComments] [varchar](max) NULL,
+	[SkillGeneralComments] [varchar](max) NULL,
+	[TechSkillScore] [decimal](10, 2) NULL,
+	[SkillGeneralScore] [decimal](10, 2) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
 (
@@ -120,6 +124,35 @@ BEGIN
     ALTER TABLE Candidate
     Add JoinabilityComments VARCHAR(max)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'JoinabilityComments')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add JoinabilityComments VARCHAR(max)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TechSkillComments')
+      AND Object_ID = OBJECT_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    ADD TechSkillComments VARCHAR(MAX)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillGeneralComments')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add SkillGeneralComments VARCHAR(max)
+END
+
 
 IF NOT EXISTS(
     SELECT *
@@ -184,6 +217,27 @@ BEGIN
     ALTER TABLE Candidate
     Add SelectabilityScore decimal (10,2)
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TechSkillScore')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add TechSkillScore decimal (10,2)
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SkillGeneralScore')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add SkillGeneralScore decimal (10,2)
+END
+
 
 End
 

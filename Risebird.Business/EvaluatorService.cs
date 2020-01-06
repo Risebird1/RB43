@@ -154,7 +154,10 @@ namespace Risebird.Business
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
                 model.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, candidateDetails.EmailId);
-                model.Level =new SelectList(levels, "id", "Name");
+                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateDetails.EmailId);
+                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateDetails.EmailId);
+                model.Level = new SelectList(levels, "id", "Name");
+                model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
                 return model;
                 
             }
@@ -165,6 +168,96 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<IList<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId)
+        {
+            try
+            {
+                
+                // check whether a feedback for the interviewId has already been submitted
+                var techReport = (IList<TechSkillEvaluatorReport>)_evaluatorRespository.GetTechReport(candidateId, irfId);
+
+                if (techReport == null || techReport.Count() == 0)
+                {
+                    var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(irfId);
+                    var techSkillList = new List<TechSkillEvaluatorReport>();
+                    var levelTech = _meetingRespository.GetLevelTech();
+                    var skills = _meetingRespository.GetSkills();
+
+                    //assign values to model
+                    foreach (var item in techSkillsDetails)
+                    {
+                        TechSkillEvaluatorReport obj = new TechSkillEvaluatorReport();
+                        obj.CandidateId = candidateId;
+                        obj.IRFId = irfId;
+                        obj.RequiredLevel = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levelTech.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.SkillName = skills.Where(x => x.id == item.SkillId).FirstOrDefault().Name;
+                        obj.SkillId = skills.Where(x => x.id == item.SkillId).FirstOrDefault().id;
+                        obj.WeightageRequired = item.Weightage;
+
+                        techSkillList.Add(obj);
+                    }
+                    techReport = (IList<TechSkillEvaluatorReport>)techSkillList;
+                }
+
+                return techReport;
+                //get all values from database
+                
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IList<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId)
+        {
+            try
+            {
+                
+                // check whether a feedback for the interviewId has already been submitted
+                var skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)_evaluatorRespository.GetSkillGeneralReport(candidateId, irfId);
+                
+                if (skillGeneralReport == null || skillGeneralReport.Count() == 0)
+                {
+                    var genSkillsDetails = _meetingRespository.GetSkillsGeneralbyIRFid(irfId);
+                    var genSkillList = new List<SkillGeneralEvaluatorReport>();
+                    var levels = _meetingRespository.GetLevels();
+
+                    //assign values to model
+                    foreach (var item in genSkillsDetails)
+                    {
+                        SkillGeneralEvaluatorReport obj = new SkillGeneralEvaluatorReport();
+                        obj.CandidateId = candidateId;
+                        obj.IRFId = irfId;
+                        obj.RequiredLevel = levels.Where(x => x.id == item.LevelId).FirstOrDefault().Name;
+                        obj.RequiredLevelId = levels.Where(x => x.id == item.LevelId).FirstOrDefault().id;
+                        obj.Type = item.Type;
+                        obj.Name = item.Name;
+                        obj.Value = item.Value;
+                        obj.WeightageRequired = item.Weightage;
+                        genSkillList.Add(obj);
+                    }
+                    skillGeneralReport = (IList<SkillGeneralEvaluatorReport>)genSkillList;
+                }
+
+                return skillGeneralReport;
+                //get all values from database
+
+
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
 
         public async Task<bool> AddSelectabilityReport(EvaluatorReport reportModel)
         {
@@ -178,7 +271,9 @@ namespace Risebird.Business
                 var joinResult = _evaluatorRespository.AddJoinabilityReport(reportModel.HRReport).Result;
                 
                 var selecResult = _evaluatorRespository.AddSelectabilityReport(reportModel).Result;
-                if (joinResult && selecResult)
+                var techResult = _evaluatorRespository.AddTechReport(reportModel.TechSkillEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
+                var genSkillResult = _evaluatorRespository.AddSkillGeneralReport(reportModel.SkillGeneralEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
+                if (joinResult && selecResult && techResult && genSkillResult)
                 {
                     return true;
                 }

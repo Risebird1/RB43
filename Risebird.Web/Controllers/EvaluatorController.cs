@@ -262,6 +262,8 @@ namespace Risebird.Web.Controllers
                 {
                     var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
+                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
                     return View(model);
                 }
                 else
