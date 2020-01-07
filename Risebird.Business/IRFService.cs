@@ -552,7 +552,7 @@ namespace Risebird.Business
                     invoiceModel.StartDate = startDate;
                     invoiceModel.EndDate = endDate;
                     invoiceModel.InvoiceNumber= generator.Next(0, 999999).ToString("D6");
-                    invoiceModel.InvoiceReferenceCode = "RB" + irfDetails.ClientCompName.Substring(0, 2).ToUpper() + irfDetails.JDTiltle.Split("|")[0].Substring(0, 2).ToUpper() + currentMonth.ToString().Substring(0, 2).ToUpper();
+                    invoiceModel.InvoiceReferenceCode = "RB" + irfDetails.ClientCompName.Substring(0, 2).ToUpper() + irfDetails.JDTiltle.Split("|")[0].Substring(0, 2).ToUpper() + invoiceModel.CurrentMonth.ToString().Substring(0, 2).ToUpper();
                     invoiceModel.InterviewCount = interviewDetails.Count();
                     invoiceModel.ClientAddress = strb.ToString();//irfDetails.ClientAddress;
                     invoiceModel.ClientGSTIN = irfDetails.ClientGST;

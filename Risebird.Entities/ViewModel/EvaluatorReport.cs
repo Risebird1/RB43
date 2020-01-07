@@ -53,6 +53,7 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Tech Skill Comments")]
         public string TechSkillComments { get; set; }
+        [DisplayName("General Skills Comments")]
         public string SkillGeneralComments { get; set; }
         public bool IsEdited { get; set; }
 

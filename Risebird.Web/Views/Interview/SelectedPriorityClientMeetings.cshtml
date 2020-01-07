@@ -752,6 +752,11 @@
                 var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
                 var interviewDate =  @Html.Raw(Json.Serialize(InterviewDate));
                 var clientName =  @Html.Raw(Json.Serialize(ClientName));
+                var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
+                var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+                var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+                var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+
 
                 $('input[name=StartDate]').val(strtDte);
                 $('input[name=EndDate]').val(endDte);
@@ -760,6 +765,11 @@
                 $("#ClientHR").val(clientHR);
                 $("#InterviewDate").val(interviewDate);
                 $("#ClientName").val(clientName);
+                $("#SelectionStatus").val(selectionStatus);
+                $("#ApprovalStatus").val(approvalStatus);
+                $("#JoiningStatus").val(joiningStatus);
+                $("#OfferStatus").val(offerStatus);
+
                 var form = $("#form").serialize();
                 $.ajax({
                     type: "POST",

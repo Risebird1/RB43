@@ -679,6 +679,11 @@
             var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
             var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
             var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
+            var selectionStatus = @Html.Raw(Json.Serialize(SelectionStatus));
+            var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+            var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+            var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+            var clientName = @Html.Raw(Json.Serialize(ClientName));
             @*//var interviewer =  @Html.Raw(Json.Serialize(Interviewer));*@
 
             $('input[name=StartDate]').val(strtDte);
@@ -689,6 +694,11 @@
             $("#ConfirmationStatus").val(confirmationStatus);
             $("#MeetingStatus").val(meetingStatus);
             $("#InterviewStatus").val(interviewStatus);
+            $("#ClientName").val(clientName);
+            $("#SelectionStatus").val(selectionStatus);
+            $("#ApprovalStatus").val(approvalStatus);
+            $("#JoiningStatus").val(joiningStatus);
+            $("#OfferStatus").val(offerStatus);
             //$("#Interviewer").val(interviewer);
             var form = $("#form").serialize();
              $.ajax({

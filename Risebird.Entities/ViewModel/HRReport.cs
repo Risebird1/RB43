@@ -30,9 +30,15 @@ namespace Risebird.Entities.ViewModel
         public string currentEmployerName { get; set; }
         
         public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
+        public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
+        public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }
 
         [DisplayName("Joinability Comments")]
         public string JoinabilityComments { get; set; }
+        [DisplayName("Tech Skill Comments")]
+        public string TechSkillComments { get; set; }
+        [DisplayName("General Skills Comments")]
+        public string SkillGeneralComments { get; set; }
         public bool IsEdited { get; set; }
 
         public int JobLevel { get; set; }
@@ -54,6 +60,11 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Joinability Score")]
         public double JoinabilityScore { get; set; }
+        [DisplayName("Tech Skills Score")]
+        public double TechSkillScore { get; set; }
+        [DisplayName("General Skills Score")]
+        public double SkillGeneralScore { get; set; }
+        public SelectList LevelTech { get; set; }
 
     }
 }
