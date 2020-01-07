@@ -386,7 +386,11 @@ namespace Risebird.Business
                 model.PreferredLocation = candidateDetails.Location;
                 model.CandidateEmailId = candidateDetails.EmailId;
                 model.JoinabilityComments = _evaluatorRespository.GetJoinabilityComments(irfId, candidateDetails.EmailId);
+                model.TechSkillComments = _evaluatorRespository.GetTechComments(irfId, candidateDetails.EmailId);
+                model.SkillGeneralComments = _evaluatorRespository.GetGeneralSkillComments(irfId, candidateDetails.EmailId);
                 model.Level = new SelectList(levels, "id", "Name");
+                model.LevelTech = new SelectList(_evaluatorRespository.GetLevelTech(), "id", "Name");
+
                 return model;
 
             }
@@ -405,10 +409,15 @@ namespace Risebird.Business
                 reportModel.EvaluatorReport.CandidateEmailId = reportModel.CandidateEmailId;
                 reportModel.EvaluatorReport.CandidateId = reportModel.CandidateId;
                 reportModel.EvaluatorReport.IRFId = reportModel.IRFId;
-
+                reportModel.EvaluatorReport.TechSkillComments = reportModel.TechSkillComments;
+                reportModel.EvaluatorReport.TechSkillScore = reportModel.TechSkillScore;
+                reportModel.EvaluatorReport.SkillGeneralComments = reportModel.SkillGeneralComments;
+                reportModel.EvaluatorReport.SkillGeneralScore = reportModel.SkillGeneralScore;
                 var selecResult = _evaluatorRespository.AddSelectabilityReport(reportModel.EvaluatorReport).Result;
                 var joinResult =  _evaluatorRespository.AddJoinabilityReport(reportModel).Result;
-                if (joinResult && selecResult)
+                var techResult = _evaluatorRespository.AddTechReport(reportModel.TechSkillEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
+                var genSkillResult = _evaluatorRespository.AddSkillGeneralReport(reportModel.SkillGeneralEvaluatorReportCollection, reportModel.CandidateId, reportModel.IRFId).Result;
+                if (joinResult && selecResult && techResult && genSkillResult)
                 {
                     return true;
                 }

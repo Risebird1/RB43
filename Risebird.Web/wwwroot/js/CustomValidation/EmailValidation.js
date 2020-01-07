@@ -1,5 +1,5 @@
 ﻿function validateEmail() {
-    debugger;
+   
     //var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     //emailIds[i].match(mailformat)
     //to.match(mailformat)
@@ -20,7 +20,7 @@
 
             document.getElementById("checkTo").innerHTML = "Kindly check the EmailId(s) entered. Use \";\" to add multiple recipients.";
 
-            alert("No!");
+          
             return false;
         }
     }
@@ -31,6 +31,6 @@
 }
 
 function emailIsValid(email) {
-    debugger;
+   
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

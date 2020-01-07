@@ -47,7 +47,7 @@
 
 <script>
     $(document).ready(function () {
-        debugger;
+       
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
