@@ -622,7 +622,7 @@ namespace Risebird.Business
             }
 
         }
-        public async Task<string> AddCandidate(Candidate obj)
+        public async Task<string> AddCandidate(Candidate obj, string emailId, string profile)
         {
             try
             {
@@ -632,6 +632,8 @@ namespace Risebird.Business
                 {
                     return "Sorry! Candidate already exists for the IRF.";
                 }
+                var userId = _irfRepository.GetUserId(emailId, profile);
+                obj.AddedByUserId = userId;
                 var result = _irfRepository.AddCandidate(obj).Result;
                 if (result.Contains("successfully"))
                 {
@@ -873,7 +875,21 @@ namespace Risebird.Business
 
         }
 
+        public int GetUserId(string emailId, string profile)
+        {
+            int result = 0;
+            try
+            {
+               result= _irfRepository.GetUserId(emailId, profile);
+                return result;
+            }
 
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return result;
+            }
+        }
 
     }
 }

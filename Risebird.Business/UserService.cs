@@ -363,6 +363,7 @@ namespace Risebird.Business
             }
             catch (Exception e)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -419,6 +420,76 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+
+        public List<Recruiter> GetRecruiters()
+        {
+            try
+            {
+                return _userRepository.GetRecruiters().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public bool AddRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                return _userRepository.AddRecruiter(recruiter).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public Recruiter GetRecruiter(int id)
+        {
+            try
+            {
+                return _userRepository.GetRecruiter(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool EditRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                return _userRepository.EditRecruiter(recruiter).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool DeleteRecruiter(int userId)
+        {
+            try
+            {
+                return _userRepository.DeleteRecruiter(userId).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
 
 
 

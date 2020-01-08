@@ -36,5 +36,10 @@ namespace Risebird.Business.Interface
         ResumeEvaluator GetResumeEvaluator(int id);
         bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
         bool DeleteResumeEvaluator(int userId);
+        List<Recruiter> GetRecruiters();
+        bool AddRecruiter(Recruiter recruiter);
+        bool EditRecruiter(Recruiter recruiter);
+        Recruiter GetRecruiter(int id);
+        bool DeleteRecruiter(int userId);
     }
 }

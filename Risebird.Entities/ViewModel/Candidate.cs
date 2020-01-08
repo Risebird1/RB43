@@ -71,5 +71,6 @@ namespace Risebird.Entities.ViewModel
         public string SelectabilityComments { get; set; }
         public double SelectabilityScore { get; set; }
         public double JoinabilityScore { get; set; }
+        public int AddedByUserId { get; set; }
     }
 }

@@ -39,5 +39,10 @@ namespace Risebird.Repository.Interface
         ResumeEvaluator GetResumeEvaluator(int id);
         bool EditResumeEvaluator(ResumeEvaluator resumeEvaluator);
         Task<bool> DeleteResumeEvaluator(int userId);
+        IEnumerable<Recruiter> GetRecruiters();
+        Task<bool> AddRecruiter(Recruiter recruiter);
+        Task<bool> EditRecruiter(Recruiter recruiter);
+        Recruiter GetRecruiter(int id);
+        Task<bool> DeleteRecruiter(int userId);
     }
 }

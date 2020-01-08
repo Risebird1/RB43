@@ -68,5 +68,6 @@ namespace Risebird.Repository.Interface
         int GetInterviewMeetings(string irfName, string candidateEmail);
         IEnumerable<InterviewComments> GetInterviewComments(string idList);
         IEnumerable<string> GetIRFCandidatesEmail(string irfName);
+        int GetUserId(string emailId, string profile);
     }
 }

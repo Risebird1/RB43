@@ -1609,8 +1609,7 @@ namespace Risebird.Repository
         {
             try
             {
-
-
+                
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
                 parameters.Add("@Name", obj.Name );
@@ -1627,6 +1626,7 @@ namespace Risebird.Repository
                 parameters.Add("@CurrentSalary", obj.CurrentSalary);
                 parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                 parameters.Add("@Notice", obj.Notice );
+                parameters.Add("@AddedByUserId", obj.AddedByUserId );
 
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1899,6 +1899,35 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
+            }
+        }
+
+        public int GetUserId(string emailId, string profile)
+        {
+            int result=0;
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profile);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    result = SqlMapper.QuerySingle<int>(con, "usp_GetUserId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return result;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return result;
             }
         }
 

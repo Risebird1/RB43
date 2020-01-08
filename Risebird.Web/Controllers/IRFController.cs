@@ -2072,7 +2072,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
-                        var result = _irfService.AddCandidate(model).Result;
+                        var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         //if (result.ToLower().Contains("success"))
