@@ -1,0 +1,172 @@
+﻿@model Risebird.Entities.Data.Recruiter
+@{
+    ViewData["Title"] = "Update Recruiter";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/User/Recruiters">Recruiter</a>
+                <a class="navbar-brand">Update Recruiter</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Update Recruiter</h4>
+                    </div>
+                    <div class="card-body">
+                        @using (Html.BeginForm("EditRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-horizontal">
+                                        <div class="col-md-6 col-sm-6 pr-1">
+                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                            </div>
+
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+
+                                            </div>
+                                            @Html.HiddenFor(m => m.UserId)
+
+                                        </div>
+                                        <div class="card-footer ">
+                                            <div class="row">
+                                                <label class="col-md-2"></label>
+                                                <div class="col-md-9">
+                                                    @Html.ActionLink("Back to List", "Recruiters", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        }
+                    </div>
+
+
+
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+<style>
+    .fa-spinner {
+        font-size: 18px;
+        position: relative;
+        top: 6px;
+        left: 4px;
+    }
+
+    .webkitEnabled {
+        -webkit-appearance: menulist;
+    }
+
+    .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+        color: #000 !important;
+        text-decoration: none;
+        background-color: #fff !important;
+        outline: 0;
+    }
+</style>
+
+
+
+

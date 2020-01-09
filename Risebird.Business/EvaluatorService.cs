@@ -433,6 +433,19 @@ namespace Risebird.Business
             }
         }
 
+        public List<CandidateRecruiter> GetRecruiterCandidates(string emailId, string profile)
+        {
+            try
+            {
+                var userId = _evaluatorRespository.GetUserId(emailId, profile);
+                return _evaluatorRespository.GetRecruiterCandidates(userId).Result.ToList();                
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
 
     }
 }

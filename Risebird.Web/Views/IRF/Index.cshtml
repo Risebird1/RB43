@@ -151,7 +151,7 @@
                             </div>
                         </div>
                         <div class="col-auto">
-                            @if (ViewBag.IsClientUser == false)
+                            @if (ViewBag.IsClientUser == false && ViewBag.Profile != "Recruiter")
                             {
                                 <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
 
@@ -324,7 +324,7 @@
                         </div>
                         <div class="card-footer ">
                             <div class="stats text-center">
-                                @if (!@item.IsClientUser)
+                                @if (!@item.IsClientUser && ViewBag.Profile != "Recruiter")
                                 {
                                     <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
                                         <i class="now-ui-icons fa fa-edit"></i>
@@ -340,23 +340,28 @@
                                 <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
                                 </button>
-                                <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
-                                    <i class="now-ui-icons fa fa-meetup"></i>
-                                </button>
-                                <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
-                                    <i class="now-ui-icons fa fa-check"></i>
-                                </button>
-                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                    <i class="now-ui-icons  fa fa-calendar"></i>
-                                </button>
-                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                </button>
-                                <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
-                                    <i class="now-ui-icons fa fa-industry"></i>
-                                </button>
 
-                                @if (!@item.IsClientUser)
+                                @if (ViewBag.Profile != "Recruiter")
+                                {
+                                    <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                        <i class="now-ui-icons fa fa-meetup"></i>
+                                    </button>
+                                    <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                                        <i class="now-ui-icons fa fa-check"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                        <i class="now-ui-icons  fa fa-calendar"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                    </button>
+                                    <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
+                                        <i class="now-ui-icons fa fa-industry"></i>
+                                    </button>
+                                }
+
+
+                                @if (!@item.IsClientUser && ViewBag.Profile != "Recruiter")
                                 {
                                     if (!item.IsDeleted)
                                     {

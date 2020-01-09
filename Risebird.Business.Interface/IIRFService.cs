@@ -33,8 +33,8 @@ namespace Risebird.Business.Interface
         string GetClientUserRole(int id);
         IEnumerable<Interviewer> GetInterviewers(string skills);
         IEnumerable<Candidate> GetIRFCandidates(int id);
-        Task<string> AddCandidate(Candidate obj);
-        Task<string> AddMultipleCandidates(List<Candidate> candidateList);
+        Task<string> AddCandidate(Candidate obj, string emailId, string profile);
+        Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
         Task<bool> DeleteCandidate(int id);
         Candidate GetCandidate(int id, int irfId);
         bool UpdateCandidate(Candidate obj);
@@ -46,6 +46,6 @@ namespace Risebird.Business.Interface
         IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
         IRFFunnel GetFunnelData(int irfId, string irfName);
         InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
-
+        int GetUserId(string emailId, string profile);
     }
 }

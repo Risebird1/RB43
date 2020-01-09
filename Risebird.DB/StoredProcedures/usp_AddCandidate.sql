@@ -10,7 +10,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_AddCandidate]
+Create PROCEDURE [dbo].[usp_AddCandidate]
 @IRFId int,
 @Name varchar(200),
 @EmailId varchar(200),
@@ -25,7 +25,8 @@ CREATE PROCEDURE [dbo].[usp_AddCandidate]
 @TotalExperience decimal(10,2),
 @CurrentSalary decimal(10,2),
 @ExpectedSalary decimal(10,2),
-@Notice decimal(10,2)
+@Notice decimal(10,2),
+@AddedByUserId int
 
 AS
 Begin
@@ -109,7 +110,8 @@ insert into Candidate
 [TotalExperience],
 [CurrentSalary],
 [ExpectedSalary],
-[Notice]
+[Notice],
+[AddedByUserId]
 )
 values(@IRFId,
 @Name,
@@ -125,8 +127,8 @@ values(@IRFId,
 @TotalExperience,
 @CurrentSalary,
 @ExpectedSalary,
-@Notice
-
+@Notice,
+@AddedByUserId
 )
 
 insert into TransHREvaluatorIRF (IRFId, CandidateId) values (@IRFId, (select id from CandidatesMaster where EmailId=@EmailId))
@@ -168,7 +170,8 @@ insert into Candidate
 [TotalExperience],
 [CurrentSalary],
 [ExpectedSalary],
-[Notice]
+[Notice],
+[AddedByUserId]
 )
 values(@IRFId,
 @Name,
@@ -184,7 +187,8 @@ values(@IRFId,
 @TotalExperience,
 @CurrentSalary,
 @ExpectedSalary,
-@Notice
+@Notice,
+@AddedByUserId
 
 )
 

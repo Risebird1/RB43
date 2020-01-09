@@ -543,5 +543,140 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyHREvaluations");
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> RecruiterCandidates()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Recruiter" )
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myCandidates = _evaluatorService.GetRecruiterCandidates(emailid, profileName);
+                        foreach (var item in myCandidates)
+                        {
+                            if (!string.IsNullOrEmpty(item.ResumeLink))
+                            {
+                                try
+                                {
+                                    item.ResumeLink = new Uri(item.ResumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.ResumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.ResumeLink = "";
+                            }
+
+
+                        }
+                        if (TempData["SuccessErrorMessageRecruiter"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageRecruiter"].ToString();
+                            TempData.Remove("SuccessErrorMessageRecruiter");
+                        }
+
+                        return View(myCandidates);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public IActionResult RecruiterReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName =  profileName.Replace("\"", "");
+                if (profileName == "Recruiter")
+                {
+                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
+                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("RecruiterCandidates");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecruiterReport(EvaluatorReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Recruiter")
+                    {
+
+                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageRecruiter"] = "Data saved successfully";
+                            return RedirectToAction("RecruiterCandidates");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not save data!";
+                            return RedirectToAction("RecruiterCandidates");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not save data!";
+                return RedirectToAction("RecruiterCandidates");
+            }
+        }
+
     }
 }

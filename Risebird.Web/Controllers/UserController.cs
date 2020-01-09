@@ -150,7 +150,7 @@ namespace Risebird.Web.Controllers
                     {
                         List<Profile> profiles = _profileService.GetProfile();
 
-                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate", "ResumeEvaluator" };
+                        List<String> profilesToExclude = new List<string> { "Interviewer", "Client", "Quality Controller", "Trainer","Candidate", "ResumeEvaluator", "Recruiter" };
                         profiles = profiles.Where(x => !profilesToExclude.Contains(x.Name.ToString())).ToList();
 
                         user.UserProfiles = new SelectList(profiles, "id", "Name");
@@ -1203,6 +1203,179 @@ namespace Risebird.Web.Controllers
         }
 
         #endregion
+
+
+        #region Recruiter functions
+
+        public IActionResult Recruiters()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (TempData["SuccessErrorMessageRecruiter"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageRecruiter"].ToString();
+                        TempData.Remove("SuccessErrorMessageRecruiter");
+
+                    }
+
+                    return View(_userService.GetRecruiters());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddRecruiter()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var model = new Recruiter();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Recruiters");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_userService.AddRecruiter(recruiter))
+                    {
+                        TempData["SuccessErrorMessageRecruiter"] = "Recruiter is added successfully.";
+                        return RedirectToAction("Recruiters");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not add Recruiter!";
+                        return RedirectToAction("Recruiters");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not add Recruiter!";
+                return RedirectToAction("Recruiters");
+            }
+        }
+
+        public async Task<IActionResult> EditRecruiter(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var recruiter = _userService.GetRecruiter(id);
+                    return View(recruiter);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("Recruiters");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditRecruiter(Recruiter recruiter)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_userService.EditRecruiter(recruiter))
+                    {
+                        TempData["SuccessErrorMessageRecruiter"] = "Recruiter updated successfully.";
+                        return RedirectToAction("Recruiters");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not update Recruiter!";
+                        return RedirectToAction("Recruiters");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not update Recruiter!";
+                return RedirectToAction("Recruiters");
+            }
+        }
+
+        public async Task<IActionResult> DeleteRecruiter(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteRecruiter(id))
+                    {
+                        //TempData["SuccessErrorMessageEvaluate"] = "Resume Evaluator deleted successfully.";
+                        return Json(new { url = Url.Action("Recruiters", "User") });
+                    }
+                    else
+                    {
+                        //TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
+                        return Json(new { url = Url.Action("Recruiters", "User") });
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //TempData["SuccessErrorMessageEvaluate"] = "Sorry! Could not delete Resume Evaluator!";
+                return RedirectToAction("Recruiters");
+            }
+        }
+
+        #endregion
+
 
     }
 }

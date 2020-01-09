@@ -46,7 +46,7 @@ namespace Risebird.Repository.Interface
         string GetIRFJDTitleBasedOnId(int irfID);
         IEnumerable<Candidate> GetIRFCandidates(int id);
         Task<string> AddCandidate(Candidate obj);
-        Task<string> AddMultipleCandidates(List<Candidate> candidateList);
+        Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         Task<bool> DeleteCandidate(int id);
         bool UpdateCandidate(Candidate obj);
         IRF GetIRFbyId(int id);
@@ -68,5 +68,6 @@ namespace Risebird.Repository.Interface
         int GetInterviewMeetings(string irfName, string candidateEmail);
         IEnumerable<InterviewComments> GetInterviewComments(string idList);
         IEnumerable<string> GetIRFCandidatesEmail(string irfName);
+        int GetUserId(string emailId, string profile);
     }
 }
