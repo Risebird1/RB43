@@ -7,6 +7,7 @@ namespace Risebird.Entities.Data
     public class CandidateResumeEvaluation
     {
         public int id { get; set; }
+        public int AddedByUserId { get; set; }
         public int CandidateId { get; set; }
         public int IRFId { get; set; }
         public int ResumeEvaluatorId { get; set; }
@@ -17,8 +18,9 @@ namespace Risebird.Entities.Data
         public string JDLink { get; set; }
         public string RisebirdHR { get; set; }
         public string Phone { get; set; }
-
         public double JoinabilityScore { get; set; }
         public double SelectabilityScore { get; set; }
+        public double TechSkillScore { get; set; }
+        public double SkillGeneralScore { get; set; }
     }
 }

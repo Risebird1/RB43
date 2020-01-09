@@ -1679,7 +1679,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList)
+        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId)
         {
             try
             {
@@ -1706,6 +1706,7 @@ namespace Risebird.Repository
                             parameters.Add("@CurrentSalary", obj.CurrentSalary);
                             parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
                             parameters.Add("@Notice", obj.Notice);
+                            parameters.Add("@AddedByUserId", userId);
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
                             
                         }

@@ -33,5 +33,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddTechReport(IList<TechSkillEvaluatorReport> reportDetails, int candidateId, int irfId);
         IEnumerable<SkillGeneralEvaluatorReport> GetSkillGeneralReport(int candidateId, int irfId);
         Task<bool> AddSkillGeneralReport(IList<SkillGeneralEvaluatorReport> reportDetails, int candidateId, int irfId);
+        Task<IEnumerable<CandidateRecruiter>> GetRecruiterCandidates(int userId);
+        int GetUserId(string emailId, string profile);
     }
 }

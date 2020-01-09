@@ -654,7 +654,7 @@ namespace Risebird.Business
                 return "Sorry! Could not add candidate.";
             }
         }
-        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList)
+        public async Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile)
         {
             try
             {
@@ -668,7 +668,8 @@ namespace Risebird.Business
                         return "Sorry! One or more candidates already exist for the IRF.";
                     }
                 }
-                return _irfRepository.AddMultipleCandidates(candidateList).Result;
+                var userId = _irfRepository.GetUserId(emailId, profile);
+                return _irfRepository.AddMultipleCandidates(candidateList, userId).Result;
             }
 
             catch (Exception e)

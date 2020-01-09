@@ -23,6 +23,7 @@ namespace Risebird.Business.Interface
         Task<bool> AddJoinabilityReport(HRReport reportModel);
         Task<IList<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId);
         Task<IList<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId);
+        List<CandidateRecruiter> GetRecruiterCandidates(string emailId, string profile);
 
     }
 }

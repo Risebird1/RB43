@@ -46,7 +46,7 @@ namespace Risebird.Repository.Interface
         string GetIRFJDTitleBasedOnId(int irfID);
         IEnumerable<Candidate> GetIRFCandidates(int id);
         Task<string> AddCandidate(Candidate obj);
-        Task<string> AddMultipleCandidates(List<Candidate> candidateList);
+        Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         Task<bool> DeleteCandidate(int id);
         bool UpdateCandidate(Candidate obj);
         IRF GetIRFbyId(int id);

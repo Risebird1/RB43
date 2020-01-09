@@ -46,7 +46,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
                     foreach (var irf in irfList)
@@ -185,6 +185,7 @@ namespace Risebird.Web.Controllers
 
                     }
                     ViewBag.RoleList = list;
+                    ViewBag.Profile = profileName;
                     return View(irfList);
 
                     //ViewBag.Message = "Failed";
@@ -217,7 +218,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client"||  profileName == "Recruiter")
                 {
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
                     foreach (var irf in irfList)
@@ -332,6 +333,8 @@ namespace Risebird.Web.Controllers
                     }
                     
                     ViewBag.RoleList = list;
+                    ViewBag.Profile = profileName;
+
                     return View(irfList);
 
                     //ViewBag.Message = "Failed";
@@ -1849,13 +1852,21 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName=="Recruiter")
                     {
                         ViewBag.IRFName = irfName;
                         ViewBag.IRFId = id;
+                        ViewBag.Profile = profileName;
+
                         var meetings = _irfService.GetIRFInterviewMeetings(Convert.ToInt16(id), profileName, emailid)?.ToList();
                         var candidateList = _irfService.GetIRFCandidates(Convert.ToInt32(id))?.ToList();
-                        if(candidateList!= null && candidateList.Count>0)
+                        if(profileName=="Recruiter")
+                        {
+                            var userId = _irfService.GetUserId(emailid, profileName);
+                            candidateList = candidateList.Where(x => x.AddedByUserId == userId).ToList();
+                        }
+
+                        if (candidateList!= null && candidateList.Count>0)
                         {
                             
                             candidateList.ForEach(x => x.InviteConfirmation = meetings.Where(y => Convert.ToInt32(y.confirmationStatus) == 1 && y.candidateEmail == x.EmailId).ToList().Count);
@@ -2039,7 +2050,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
                     var model = new Candidate();
                     model.IRFId = Convert.ToInt32(irfId);
@@ -2070,7 +2081,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
@@ -2111,60 +2122,67 @@ namespace Risebird.Web.Controllers
 
             try
             {
-                if (Request != null)
+                if(HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var file = formCollection.Files[0];
-                    var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
-                    if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    
+                    if (Request != null)
                     {
-
-                        string fileName = file.FileName;
-                        string fileContentType = file.ContentType;
-                        byte[] fileBytes = new byte[file.Length];
-                        var data = file.OpenReadStream();
-                        //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
-                        var candidateList = new List<Candidate>();
-                        using (var package = new ExcelPackage(file.OpenReadStream()))
+                        var file = formCollection.Files[0];
+                        var IRFId = Convert.ToInt32((formCollection["IRFId"].ToString()));
+                        if ((file != null) && (file.Length > 0) && !string.IsNullOrEmpty(file.FileName))
                         {
-                            var currentSheet = package.Workbook.Worksheets;
-                            var workSheet = currentSheet.First();
-                            var noOfCol = workSheet.Dimension.End.Column;
-                            var noOfRow = workSheet.Dimension.End.Row;
-                            for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
-                            {
-                                var candidate = new Candidate();
-                                candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
-                                candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
-                                candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
-                                candidate.Type = workSheet.Cells[rowIterator, 4].Value.ToString();
-                                candidate.Location = workSheet.Cells[rowIterator, 5].Value.ToString();
-                                candidate.Skill = workSheet.Cells[rowIterator, 6].Value.ToString();
-                                candidate.WorkAuth = workSheet.Cells[rowIterator, 7].Value.ToString();
-                                candidate.CurrentLocation = workSheet.Cells[rowIterator, 8].Value.ToString();
-                                candidate.CurrentEmployer = workSheet.Cells[rowIterator, 9].Value.ToString();
-                                candidate.Phone = workSheet.Cells[rowIterator, 10].Value.ToString();
-                                candidate.TotalExperience = Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
-                                candidate.CurrentSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
-                                candidate.ExpectedSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
-                                candidate.Notice = Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
 
-                                candidate.IRFId = IRFId;
-                                candidateList.Add(candidate);
+                            string fileName = file.FileName;
+                            string fileContentType = file.ContentType;
+                            byte[] fileBytes = new byte[file.Length];
+                            var data = file.OpenReadStream();
+                            //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
+                            var candidateList = new List<Candidate>();
+                            using (var package = new ExcelPackage(file.OpenReadStream()))
+                            {
+                                var currentSheet = package.Workbook.Worksheets;
+                                var workSheet = currentSheet.First();
+                                var noOfCol = workSheet.Dimension.End.Column;
+                                var noOfRow = workSheet.Dimension.End.Row;
+                                for (int rowIterator = 2; rowIterator <= noOfRow; rowIterator++)
+                                {
+                                    var candidate = new Candidate();
+                                    candidate.Name = workSheet.Cells[rowIterator, 1].Value.ToString();
+                                    candidate.EmailId = workSheet.Cells[rowIterator, 2].Value.ToString();
+                                    candidate.ResumeLink = workSheet.Cells[rowIterator, 3].Value.ToString();
+                                    candidate.Type = workSheet.Cells[rowIterator, 4].Value.ToString();
+                                    candidate.Location = workSheet.Cells[rowIterator, 5].Value.ToString();
+                                    candidate.Skill = workSheet.Cells[rowIterator, 6].Value.ToString();
+                                    candidate.WorkAuth = workSheet.Cells[rowIterator, 7].Value.ToString();
+                                    candidate.CurrentLocation = workSheet.Cells[rowIterator, 8].Value.ToString();
+                                    candidate.CurrentEmployer = workSheet.Cells[rowIterator, 9].Value.ToString();
+                                    candidate.Phone = workSheet.Cells[rowIterator, 10].Value.ToString();
+                                    candidate.TotalExperience = Convert.ToDecimal(workSheet.Cells[rowIterator, 11].Value);
+                                    candidate.CurrentSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 12].Value);
+                                    candidate.ExpectedSalary = Convert.ToDecimal(workSheet.Cells[rowIterator, 13].Value);
+                                    candidate.Notice = Convert.ToDecimal(workSheet.Cells[rowIterator, 14].Value);
+
+                                    candidate.IRFId = IRFId;
+                                    candidateList.Add(candidate);
+                                }
+
                             }
+                            var result = _irfService.AddMultipleCandidates(candidateList, emailid, profileName).Result;
+                            TempData["SuccessErrorMessageCandidate"] = result;
+                            return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
 
                         }
-                        var result = _irfService.AddMultipleCandidates(candidateList).Result;
-                        TempData["SuccessErrorMessageCandidate"] = result;
-                        return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
-                        
-                    }
 
-                    else
-                    {
-                        TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
-                        return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
+                            return RedirectToAction("Candidates", new { id = IRFId, irfName = IRFName });
+                        }
                     }
-
                 }
 
 
