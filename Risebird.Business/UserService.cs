@@ -426,7 +426,10 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.GetRecruiters().ToList();
+                if (_userRepository.GetRecruiters() != null)
+                    return _userRepository.GetRecruiters().ToList();
+                else
+                   return new List<Recruiter>(); 
             }
             catch (Exception e)
             {
