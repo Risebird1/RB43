@@ -47,5 +47,6 @@ namespace Risebird.Business.Interface
         IRFFunnel GetFunnelData(int irfId, string irfName);
         InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
         int GetUserId(string emailId, string profile);
+        string GetRecruiterDomain(int userId);
     }
 }

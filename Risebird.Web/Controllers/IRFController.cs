@@ -391,6 +391,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.ClientUser = new SelectList(_irfRepository.GetCientUsers(), "id", "EmailId");
                 ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                 ViewBag.Interviewers = new SelectList(interviewers, "id", "EmailId");
+                ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                 ViewBag.ResumeEvaluators= new SelectList(_irfRepository.GetResumeEvaluators(), "UserId", "EmailId");
                 ViewBag.HRs = new SelectList(_irfRepository.GetHRs(), "UserId", "EmailId");
                 ViewBag.QualityController = new SelectList(interviewers, "id", "EmailId");
@@ -476,6 +477,12 @@ namespace Risebird.Web.Controllers
             return name;
         }
 
+        [Authorize]
+        public string GetRecruiterDomain(string userId)
+        {
+            return _irfService.GetRecruiterDomain(Convert.ToInt16(userId));
+            
+        }
         [Authorize]
         public SelectList GetInterviewers(string skills)
         {
@@ -1121,6 +1128,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.ClientUser = new SelectList(_irfService.GetClientUser(model.ClientId), "id", "EmailId");
                     ViewBag.ClientRole = new SelectList(_irfRepository.GetClientRoles(), "id", "Name");
                     ViewBag.Interviewers = new SelectList(interviewers, "UserId", "EmailId");
+                    ViewBag.Recruiters = new SelectList(_irfRepository.GetRecruiters(), "UserId", "EmailId");
                     ViewBag.QualityController = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.EmergencyInterviewers = new SelectList(interviewers, "UserId", "EmailId");
                     ViewBag.RiseBirdHR = new SelectList(_irfService.GetRiseBirdHR(), "id", "EmailId");

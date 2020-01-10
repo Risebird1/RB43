@@ -5,10 +5,7 @@
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
-
-
 <div >
-    
     
     <div class="content">
         <div class="row">
@@ -29,7 +26,10 @@
                                 Hang Up
                             </button>
                         </div>
-
+                        <div style="margin-left:250px">
+                            <h3>Recordings</h3>
+                            <ol id="recordingsList"></ol>
+                        </div>
                     </div>
                     <!-- end content-->
                 </div>
@@ -65,9 +65,13 @@
 
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
+        startRecording();
     }
     function hangUp() {
         Twilio.Device.disconnectAll();
+        stopRecording();
     }
 </script>
+<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
 
+<script src="~/js/Recorder/Record.js"></script>

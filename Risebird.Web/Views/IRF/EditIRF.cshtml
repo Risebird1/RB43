@@ -886,6 +886,88 @@
                                     </div>
                                 </div><!--end of col-md-12-->
                             </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Recruiters</h2>
+                                    </div><!--end of multiple location-->
+                                </div><!--end of col-md-12-->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="recruiterTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="table_heading">User</th>
+                                                    <th class="table_heading">Domain</th>
+                                                    <th class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                @if (Model.RecruiterCollection == null || Model.RecruiterCollection.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                        </td>
+
+                                                        <td>
+                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                            @Html.TextBox("RecruiterCollection[0].Domain", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                        </td>
+
+                                                        <td>
+                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
+                                            <span class="glyphicon glyphicon-plus"></span>
+                                        </a>
+
+                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </a>*@
+
+                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm "><i class="far fa  fa-trash"></i></span>
+
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                                else
+                                                {
+                                                    @for (int i = 0; i < Model.RecruiterCollection.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m => m.RecruiterCollection[i].UserId, (SelectList)ViewBag.Recruiters, new { @class = "form-control", @onchange = "RecruiterChanged(this.value, this.id)" })
+                                                            </td>
+
+                                                            <td>
+                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
+                                                                @Html.TextBoxFor(m => m.RecruiterCollection[i].Domain, new { @class = "form-control", @readonly = "readonly" })
+
+                                                            </td>
+
+                                                            <td>
+
+                                                                <div class="form-control">
+                                                                    <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
+                                    </div>
+                                </div><!--end of col-md-12-->
+                            </div>
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
@@ -1704,6 +1786,57 @@
 
     }
 
+    function AddRowRecruiter() {
+        document.getElementById("btnUpload").disabled = false;
+
+        var table = document.getElementById("recruiterTable");
+        var rowCount = table.rows.length;
+        //if (rowCount == 6) {
+        //    alert("Cannot add more than 5 Interviewers.");
+        //    return;
+        //}
+
+        var $ttc = $("#recruiterTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#recruiterTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#recruiterTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        $.validator.unobtrusive.parse(document);
+        //document.getElementById("btnUpload").disabled = false;
+
+    }
+
+
     function AddRowResumeEvaluator() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -1881,6 +2014,21 @@
             }
         });
 
+
+    }
+
+    function RecruiterChanged(val, id) {
+
+        var index = id.charAt(20);
+        var skillElementid = 'RecruiterCollection_' + index + '__Domain';
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetRecruiterDomain",
+            data: { 'userId': val },
+            success: function (data) {
+                $("#" + skillElementid).val(data);
+            }
+        });
 
     }
 
