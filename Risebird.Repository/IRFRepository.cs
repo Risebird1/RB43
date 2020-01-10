@@ -694,6 +694,15 @@ namespace Risebird.Repository
                                 commandType: CommandType.StoredProcedure);
 
                     }
+                    foreach (var item in irfDetails.RecruiterCollection)
+                    {
+                        DynamicParameters param2 = new DynamicParameters();
+                        param2.Add("@IRFId", irfID);
+                        param2.Add("@UserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
+                                commandType: CommandType.StoredProcedure);
+
+                    }
 
 
                     return true;
@@ -885,7 +894,20 @@ namespace Risebird.Repository
 
                         }
                     }
-                    
+
+                    if (irfDetails.RecruiterCollection != null)
+                    {
+                        foreach (var item in irfDetails.RecruiterCollection)
+                        {
+                            DynamicParameters param2 = new DynamicParameters();
+                            param2.Add("@IRFId", irfDetails.id);
+                            param2.Add("@UserId", item.UserId);
+                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransRecruiter", param2,
+                                    commandType: CommandType.StoredProcedure);
+
+                        }
+                    }
+
                     return true;
                 }
 
@@ -1118,6 +1140,29 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public IEnumerable<TransRecruiter> GetTransRecruiter(int id)
+        {
+            try
+            {
+                var query = "select tr.*, re.Domain  from TransRecruiter tr join Recruiter re on tr.UserId = re.UserId where IRFId=@irfId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@irfId", id);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransRecruiter>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
         }
 
 
@@ -1932,6 +1977,46 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<Recruiter> GetRecruiters()
+        {
+            try
+            {
+                var query = "select Recruiter.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from Recruiter join UserList ul on Recruiter.UserId=ul.id";
+                //var dynamicParameters = new DynamicParameters();
+                //dynamicParameters.Add("@id", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Recruiter>(query);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public string GetRecruiterDomain(int userId)
+        {
+            try
+            {
+                var query = "select re.Domain from Recruiter re join UserList ul on re.UserId= ul.id where re.UserId=@UserId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@UserId", userId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<string>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
 
     }

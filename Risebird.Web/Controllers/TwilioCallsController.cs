@@ -21,6 +21,7 @@ using Twilio.TwiML;
 using Twilio.AspNet.Core;
 using Twilio.Jwt;
 using Twilio.Jwt.Client;
+using System.Net.Http.Headers;
 
 namespace Risebird.Web.Controllers
 {
@@ -33,6 +34,13 @@ namespace Risebird.Web.Controllers
         //    return TwiML(response);
 
         //}
+        private IAzureStorageHelper _azureStorageHelper;
+        public TwilioCallsController(IAzureStorageHelper azureStorageHelper)
+        {
+            _azureStorageHelper = azureStorageHelper;
+           
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -57,6 +65,22 @@ namespace Risebird.Web.Controllers
                                                   scopes: scopes);
 
             return capability.ToJwt();
+        }
+
+        [HttpPost]
+        public async Task<bool> UploadAudio()
+        {
+            var file = Request.Form.Files;
+
+            var filename = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).FileName.Trim('"');
+            
+            if (file!=null)
+            {
+                await _azureStorageHelper.InsertBlob(filename, "audios", file[0]);
+
+            }
+
+            return true;
         }
     }
 

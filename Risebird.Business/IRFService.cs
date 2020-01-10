@@ -115,6 +115,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string GetRecruiterDomain(int userId)
+        {
+            try
+            {
+                return _irfRepository.GetRecruiterDomain(userId);
+                
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public IEnumerable<Interviewer> GetInterviewers(string skills)
         {
             try
@@ -338,7 +353,7 @@ namespace Risebird.Business
                 var transEmergencyInterviewer = _irfRepository.GetTransEmergencyInterviewer(id);
                 var transResumeEvaluator = _irfRepository.GetTransResumeEvaluator(id);
                 var transHR = _irfRepository.GetTransHR(id);
-
+                var transRecruiter = _irfRepository.GetTransRecruiter(id);
 
                 //assign values retrieved to the model
                 model.id = IRF.id;
@@ -361,6 +376,7 @@ namespace Risebird.Business
                 model.StartDate = IRF.StartDate;
                 model.ClientCollection= (IList<TransClientUser>)(transClientUser);
                 model.ResumeEvaluatorCollection = (IList<TransResumeEvaluator>)(transResumeEvaluator);
+                model.RecruiterCollection = (IList<TransRecruiter>)(transRecruiter);
                 model.HRCollection = (IList<TransHR>)(transHR);
                 model.ClientId = IRF.ClientId;
                 model.ClientName = IRF.ClientName;
