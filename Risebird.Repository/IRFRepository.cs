@@ -262,6 +262,18 @@ namespace Risebird.Repository
                         return results;
                     }
                 }
+                else if(emailid != string.Empty && profileName == "Recruiter")
+                {
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tr.UserId where ul.EmailId = @emailid Order by EndDate desc";
+                    var dynamicParameters = new DynamicParameters();
+                    //dynamicParameters.Add("@IsDeleted", 0);
+                    dynamicParameters.Add("@emailid", emailid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<IRF>(query, dynamicParameters);
+                        return results;
+                    }
+                }
                 else
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
