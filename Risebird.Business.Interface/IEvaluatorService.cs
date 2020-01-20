@@ -24,6 +24,8 @@ namespace Risebird.Business.Interface
         Task<IList<TechSkillEvaluatorReport>> GetTechReport(int candidateId, int irfId);
         Task<IList<SkillGeneralEvaluatorReport>> GetSkillGeneralReport(int candidateId, int irfId);
         List<CandidateRecruiter> GetRecruiterCandidates(string emailId, string profile);
+        CandidateAudio GetCandidate(int id, int irfId);
+        Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile);
 
     }
 }
