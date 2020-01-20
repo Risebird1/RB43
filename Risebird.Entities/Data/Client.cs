@@ -16,10 +16,10 @@ namespace Risebird.Entities.Data
         [Required(ErrorMessage = "Please Enter Client Description")]
         public string Description { get; set; }
         [Display(Name = "GST")]
-        [Required(ErrorMessage = "Please Enter Client GST")]
+       
         public string GST { get; set; }
         [Display(Name = "OfficeAddress")]
-        [Required(ErrorMessage = "Please Enter Client Address")]
+      
         public string OfficeAddress { get; set; }
     }
 }
