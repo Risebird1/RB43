@@ -47,6 +47,7 @@ namespace Risebird.Entities.ViewModel
         public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
         public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
         public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }
+        public IList<CandidateAudio> CandidateAudioCollection { get; set; }
 
         [DisplayName("Selectability Comments")]
         public string SelectabilityComments { get; set; }

@@ -474,6 +474,20 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<IList<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId)
+        {
+            try
+            {
+                var candidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId);
+                return candidateAudios;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }

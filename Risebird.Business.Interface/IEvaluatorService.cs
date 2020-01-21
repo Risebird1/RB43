@@ -26,6 +26,7 @@ namespace Risebird.Business.Interface
         List<CandidateRecruiter> GetRecruiterCandidates(string emailId, string profile);
         CandidateAudio GetCandidate(int id, int irfId);
         Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile);
+        Task<IList<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId);
 
     }
 }

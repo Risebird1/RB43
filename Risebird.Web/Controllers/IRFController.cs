@@ -2216,7 +2216,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                     {
                         if (_irfService.DeleteCandidate(Convert.ToInt16(id)).Result)
                         {
@@ -2259,7 +2259,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName=="Recruiter")
                 {
                     var model = _irfService.GetCandidate(id, Convert.ToInt32(irfId));
                     model.IRFName = irfName;
@@ -2291,7 +2291,7 @@ namespace Risebird.Web.Controllers
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
 
-                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client")
+                    if(profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName=="Recruiter")
                     {
                         if (_irfService.UpdateCandidate(model))
                         {

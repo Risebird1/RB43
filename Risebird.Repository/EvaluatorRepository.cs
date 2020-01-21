@@ -842,6 +842,28 @@ namespace Risebird.Repository
             }
         }
 
+        public IEnumerable<CandidateAudio> GetCandidateAudios(int candidateId, int irfId)
+        {
+            try
+            {
+                var query = "select * from CandidateAudio where CandidateId = @CandidateId and IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", candidateId);
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateAudio>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
     }
 }
