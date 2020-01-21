@@ -789,6 +789,80 @@ namespace Risebird.Repository
 
         }
 
+        public CandidateAudio GetCandidate(int id, int irfId)
+        {
+            try
+            {
+                var query = "select cm.id as CandidateId,cm.[Name] as CandidateName,IRF.IRFId as IRFName, IRF.id as IRFId from CandidatesMaster cm join Candidate ca on cm.EmailId=ca.EmailId join IRF on ca.IRFId=IRF.id where cm.id = @id and IRF.id=@IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", irfId);
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateAudio>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<bool> AddCandidateAudio(CandidateAudio obj)
+        {
+            try
+            {
+                var query = "insert into CandidateAudio (IRFId, CandidateId, UploadedByUserId, AudioFileLink, PhraseDetail, IsVoiceBiometric ) values (@IRFId, @CandidateId, @UploadedByUserId, @AudioFileLink, @PhraseDetail, @IsVoiceBiometric)";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IRFId", obj.IRFId);
+                dynamicParameters.Add("@CandidateId", obj.CandidateId);
+                dynamicParameters.Add("@UploadedByUserId", obj.UploadedByUserId);
+                dynamicParameters.Add("@AudioFileLink", obj.AudioFileLink);
+                dynamicParameters.Add("@PhraseDetail", obj.PhraseDetail);
+                dynamicParameters.Add("@IsVoiceBiometric", obj.IsVoiceBiometric);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+                
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public IEnumerable<CandidateAudio> GetCandidateAudios(int candidateId, int irfId)
+        {
+            try
+            {
+                var query = "select * from CandidateAudio where CandidateId = @CandidateId and IRFId = @IRFId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CandidateId", candidateId);
+                dynamicParameters.Add("@IRFId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<CandidateAudio>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
 
     }

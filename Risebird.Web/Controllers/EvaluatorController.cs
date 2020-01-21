@@ -16,12 +16,15 @@ namespace Risebird.Web.Controllers
     {
         private IEvaluatorService _evaluatorService;
         private IApplicationErrorLogger _applicationErrorLogger;
-       
-        public EvaluatorController(IEvaluatorService evaluatorService, IApplicationErrorLogger applicationErrorLogger)
+        private IAzureStorageHelper _azureStorageHelper;
+
+        public EvaluatorController(IEvaluatorService evaluatorService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper)
         {
             _evaluatorService = evaluatorService;
             _applicationErrorLogger = applicationErrorLogger;
-           
+            _azureStorageHelper = azureStorageHelper;
+
+
         }
 
         public IActionResult Index()
@@ -264,6 +267,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
                     return View(model);
                 }
                 else
@@ -484,6 +488,7 @@ namespace Risebird.Web.Controllers
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
                     return View(model);
                 }
                 else
@@ -675,6 +680,99 @@ namespace Risebird.Web.Controllers
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageRecruiter"] = "Sorry! Could not save data!";
                 return RedirectToAction("RecruiterCandidates");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult UploadAudio(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = _evaluatorService.GetCandidate(candidateId, irfId);
+                   
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAudio(CandidateAudio model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName =  profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")                        
+                    {                        
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                return View("UploadAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+                        
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+
+                        if (_evaluatorService.AddCandidateAudio(model, emailid,profileName).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Audio uploaded successfully";
+                            return RedirectToAction("MyEvaluations");                            
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
+                            return RedirectToAction("MyEvaluations");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
+                return RedirectToAction("MyEvaluations");
             }
         }
 

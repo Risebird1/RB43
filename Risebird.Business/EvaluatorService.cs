@@ -447,5 +447,47 @@ namespace Risebird.Business
             }
         }
 
+        public CandidateAudio GetCandidate(int id, int irfId)
+        {
+            try
+            {
+                return _evaluatorRespository.GetCandidate(id, irfId);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public async Task<bool> AddCandidateAudio(CandidateAudio obj, string emailId, string profile)
+        {
+            try
+            {
+                obj.UploadedByUserId = _evaluatorRespository.GetUserId(emailId, profile);
+                return _evaluatorRespository.AddCandidateAudio(obj).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<IList<CandidateAudio>> GetCandidateAudios(int candidateId, int irfId)
+        {
+            try
+            {
+                var candidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId);
+                return candidateAudios;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

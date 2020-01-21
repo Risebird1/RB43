@@ -32,6 +32,7 @@ namespace Risebird.Entities.ViewModel
         public IList<JoinabilityHRReport> JoinabilityHRReportCollection { get; set; }
         public IList<TechSkillEvaluatorReport> TechSkillEvaluatorReportCollection { get; set; }
         public IList<SkillGeneralEvaluatorReport> SkillGeneralEvaluatorReportCollection { get; set; }
+        public IList<CandidateAudio> CandidateAudioCollection { get; set; }
 
         [DisplayName("Joinability Comments")]
         public string JoinabilityComments { get; set; }
