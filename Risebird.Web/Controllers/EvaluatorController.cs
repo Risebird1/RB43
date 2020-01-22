@@ -623,6 +623,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
                     return View(model);
                 }
                 else
