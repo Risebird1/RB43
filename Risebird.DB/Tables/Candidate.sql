@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[Candidate](
 	[TechSkillScore] [decimal](10, 2) NULL,
 	[SkillGeneralScore] [decimal](10, 2) NULL,
 	[AddedByUserId] [int] NULL,
+	[VoiceItUserId] [nvarchar](max) NULL,
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([AddedByUserId]) REFERENCES [dbo].[UserList] ([id]),
  CONSTRAINT [PK_Candidate] PRIMARY KEY CLUSTERED 
@@ -249,6 +250,17 @@ BEGIN
     ALTER TABLE Candidate
     Add [AddedByUserId] int
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'VoiceItUserId')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add VoiceItUserId NVARCHAR(max)
+END
+
 
 End
 
