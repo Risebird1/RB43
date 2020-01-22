@@ -188,7 +188,11 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
                             TempData.Remove("SuccessErrorMessageEvaluator");
                         }
-
+                        else if (TempData["SuccessErrorMessageAudio"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageAudio"].ToString();
+                            TempData.Remove("SuccessErrorMessageAudio");
+                        }
                         return View(myEvaluationList);
                     }
                     else
@@ -409,6 +413,11 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageEvaluator"].ToString();
                             TempData.Remove("SuccessErrorMessageEvaluator");
                         }
+                        else if (TempData["SuccessErrorMessageAudio"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageAudio"].ToString();
+                            TempData.Remove("SuccessErrorMessageAudio");
+                        }
 
                         return View(myEvaluationList);
                     }
@@ -590,6 +599,11 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageRecruiter"].ToString();
                             TempData.Remove("SuccessErrorMessageRecruiter");
                         }
+                        else if(TempData["SuccessErrorMessageAudio"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageAudio"].ToString();
+                            TempData.Remove("SuccessErrorMessageAudio");
+                        }
 
                         return View(myCandidates);
                     }
@@ -685,7 +699,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult UploadAudio(int candidateId, int irfId)
+        public IActionResult UploadAudio(int candidateId, int irfId, string actMethod = "")
         {
             try
             {
@@ -695,7 +709,8 @@ namespace Risebird.Web.Controllers
                 if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
-                   
+                    TempData["actMethod"] = actMethod;
+                    ViewBag.BackMethod = actMethod;
                     return View(model);
                 }
                 else
@@ -709,7 +724,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("MyEvaluations");
+                return RedirectToAction(actMethod);
             }
         }
 
@@ -719,6 +734,11 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadAudio(CandidateAudio model)
         {
+            string actMethod = string.Empty; 
+            if ( TempData["actMethod"] !=null)
+            {
+                actMethod = TempData["actMethod"].ToString();
+            }
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
@@ -750,13 +770,13 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddCandidateAudio(model, emailid,profileName).Result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Audio uploaded successfully";
-                            return RedirectToAction("MyEvaluations");                            
+                            TempData["SuccessErrorMessageAudio"] = "Audio uploaded successfully";
+                            return RedirectToAction(actMethod);                            
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
-                            return RedirectToAction("MyEvaluations");
+                            TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                            return RedirectToAction(actMethod);
                         }
                     }
                     else
@@ -772,8 +792,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterview"] = "Audio Upload failed.";
-                return RedirectToAction("MyEvaluations");
+                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                return RedirectToAction(actMethod);
             }
         }
 

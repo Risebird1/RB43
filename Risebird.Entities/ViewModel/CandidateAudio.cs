@@ -29,6 +29,7 @@ namespace Risebird.Entities.ViewModel
         [Required]
         [DisplayName("Audio File")]
         public IFormFile AudioFile { get; set; }
+        public string Description { get; set; }
 
     }
 }
