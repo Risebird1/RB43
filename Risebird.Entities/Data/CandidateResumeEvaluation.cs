@@ -22,5 +22,6 @@ namespace Risebird.Entities.Data
         public double SelectabilityScore { get; set; }
         public double TechSkillScore { get; set; }
         public double SkillGeneralScore { get; set; }
+        public string VoiceItUserId { get; set; }
     }
 }

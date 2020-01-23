@@ -17,7 +17,7 @@ CREATE PROCEDURE [dbo].[usp_MyResumeEvaluations]
    @emailID varchar(200)     
 AS
 BEGIN
-select IRF.IRFId as IRFName, IRF.JDLink,tre.*,ul.EmailId, tim.id,tim.ResumeEvaluatorEmailId, tim.CandidateId,cm.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore , ca.Phone 
+select IRF.IRFId as IRFName, IRF.JDLink,tre.*,ul.EmailId, tim.id,tim.ResumeEvaluatorEmailId, tim.CandidateId,cm.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore , ca.Phone, ca.VoiceItUserId 
 from TransResumeEvaluator tre join ResumeEvaluator re on re.id=tre.ResumeEvaluatorId 
 join UserList ul on ul.id = re.UserId join TransHREvaluatorIRF tim on tim.IRFId = tre.IRFId 
 join CandidatesMaster cm on tim.CandidateId = cm.id 

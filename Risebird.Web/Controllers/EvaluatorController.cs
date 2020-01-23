@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
@@ -711,6 +712,15 @@ namespace Risebird.Web.Controllers
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
                     TempData["actMethod"] = actMethod;
                     ViewBag.BackMethod = actMethod;
+                    var list = new SelectList(new[]
+                    {
+                        new { ID = "Enrollment1", Name = "Enrollment 1"},
+                        new { ID = "Enrollment2", Name = "Enrollment 2"  },
+                        new { ID = "Enrollment3", Name = "Enrollment 3" }
+                    }, "ID", "Name", "Enrollment1");
+                    
+
+                    ViewData["list"] = list;
                     return View(model);
                 }
                 else

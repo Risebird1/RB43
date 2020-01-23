@@ -814,7 +814,6 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "insert into CandidateAudio (IRFId, CandidateId, UploadedByUserId, AudioFileLink, PhraseDetail, IsVoiceBiometric, Description ) values (@IRFId, @CandidateId, @UploadedByUserId, @AudioFileLink, @PhraseDetail, @IsVoiceBiometric, @Description)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", obj.IRFId);
                 dynamicParameters.Add("@CandidateId", obj.CandidateId);
@@ -823,11 +822,24 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@PhraseDetail", obj.PhraseDetail);
                 dynamicParameters.Add("@IsVoiceBiometric", obj.IsVoiceBiometric);
                 dynamicParameters.Add("@Description", obj.Description);
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (!obj.IsVoiceBiometric)
                 {
-                    var results = con.Query(query, dynamicParameters);
-                    return true;
+                    var query = "insert into CandidateAudio (IRFId, CandidateId, UploadedByUserId, AudioFileLink, PhraseDetail, IsVoiceBiometric, Description ) values (@IRFId, @CandidateId, @UploadedByUserId, @AudioFileLink, @PhraseDetail, @IsVoiceBiometric, @Description)";
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var result = con.Query(query, dynamicParameters);
+                        return true;
+                    }
                 }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        SqlMapper.Query(con, "usp_AddUpdateBiometricAudio", dynamicParameters, commandType: CommandType.StoredProcedure);
+                        return true;
+                    }
+                }
+                
                 
             }
             catch (SqlException ex)

@@ -153,6 +153,7 @@ namespace Risebird.Web
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IEvaluatorRepository, EvaluatorRepository>();
             services.AddScoped<IEvaluatorService, EvaluatorService>();
+            services.AddScoped<IVoiceItRepository, VoiceItRepository>();
 
 
         }

@@ -121,10 +121,15 @@
 
                                     </div>
                                     <div class="col-md-6 col-sm-6">
-                                       
-                                        <div class="form-group">
+
+                                        <div class="form-group" id="descText">
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.Description, new { @class = "form-control text-box single-line", @style = "margin-top:10px; height:45px" })
+                                        </div>
+                                        <div class="form-group" id="descDrop" style="display:none">
+                                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.DropDownListFor(m=>m.DropDescription, ViewData["list"] as SelectList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
+
                                         </div>
                                     </div>
 
@@ -244,14 +249,16 @@
 <script>
 
     function checkBiometric() {
-        debugger;
         var val = document.getElementById("IsVoiceBiometric").checked;
         if (val) {
             document.getElementById("idPhrase").style.display = "block";
+            document.getElementById("descDrop").style.display = "block";
+            document.getElementById("descText").style.display = "none";
         }
         else {
             document.getElementById("idPhrase").style.display = "none";
-
+            document.getElementById("descDrop").style.display = "none";
+            document.getElementById("descText").style.display = "block";
         }
 
     }

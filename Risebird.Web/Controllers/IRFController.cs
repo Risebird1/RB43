@@ -24,16 +24,18 @@ namespace Risebird.Web.Controllers
     {
         private IIRFRepository _irfRepository;
         private IIRFService _irfService;
+        private IEvaluatorService _evaluatorService;
         private IAzureStorageHelper _azureStorageHelper;
         private IMeetingService _meetingService;
         private IApplicationErrorLogger _applicationErrorLogger;
-        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper)
+        public IRFController(IIRFRepository iRFRepository, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IMeetingService meetingService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService)
         {
             _irfRepository = iRFRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _irfService = irfService;
             _meetingService = meetingService;
             _azureStorageHelper = azureStorageHelper;
+            _evaluatorService = evaluatorService;
         }
 
         [Authorize]
@@ -2324,6 +2326,82 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult CandidateReport(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                {
+                    var model = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
+                    model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
+                    model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
+                    model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    ViewBag.Profile = profileName;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyEvaluations");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CandidateReport(EvaluatorReport model)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+
+                        if (_evaluatorService.AddSelectabilityReport(model).Result)
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
+                            return RedirectToAction("Candidates");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                            return RedirectToAction("Candidates");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
+                return RedirectToAction("MyEvaluations");
+            }
+        }
         public IActionResult ShowCalendly(string irfName, string calendlyLink)
         {
             ViewBag.IRFName = irfName;
