@@ -16,16 +16,18 @@ namespace Risebird.Business
     public class EvaluatorService : IEvaluatorService
     {
         private IEvaluatorRepository _evaluatorRespository;
+        private IVoiceItRepository _voiceItRepository;
         private IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
         private IMeetingRespository _meetingRespository;
 
-        public EvaluatorService(IEvaluatorRepository evaluatorRespository, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository)
+        public EvaluatorService(IEvaluatorRepository evaluatorRespository, INotificationHelper notificationHelper, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, IVoiceItRepository voiceItRepository)
         {
             _evaluatorRespository = evaluatorRespository;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
             _meetingRespository = meetingRespository;
+            _voiceItRepository = voiceItRepository;
         }
 
         public List<CandidateResumeEvaluation> GetOpenEvaluations(string emailId)
@@ -451,6 +453,8 @@ namespace Risebird.Business
         {
             try
             {
+                //create USer;
+                //_voiceItRepository.CreateUser();
                 return _evaluatorRespository.GetCandidate(id, irfId);
             }
             catch (Exception ex)
@@ -463,6 +467,10 @@ namespace Risebird.Business
         {
             try
             {
+                if(obj.IsVoiceBiometric)
+                {
+                    obj.Description = obj.DropDescription;
+                }
                 obj.UploadedByUserId = _evaluatorRespository.GetUserId(emailId, profile);
                 return _evaluatorRespository.AddCandidateAudio(obj).Result;
             }

@@ -1539,7 +1539,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select Candidate.*,IRF.EndDate from Candidate join IRF on Candidate.IRFId=IRF.id where Candidate.IRFId = @IRFId";
+                var query = "select ca.*,IRF.EndDate, cm.id as CandidateMasterId from Candidate ca join IRF on ca.IRFId=IRF.id join CandidatesMaster cm on ca.EmailId=cm.EmailId where ca.IRFId = @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))

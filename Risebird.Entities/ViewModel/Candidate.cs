@@ -9,6 +9,7 @@ namespace Risebird.Entities.ViewModel
     public class Candidate
     {
         public int id { get; set; }
+        public int CandidateMasterId { get; set; }
         public int IRFId { get; set; }
 
         [Required(ErrorMessage = "Please enter Candidate's Name.")]

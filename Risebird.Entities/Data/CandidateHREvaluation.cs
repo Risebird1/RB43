@@ -19,5 +19,6 @@ namespace Risebird.Entities.Data
         public string RisebirdHR { get; set; }
         public double JoinabilityScore { get; set; }
         public double SelectabilityScore { get; set; }
+        public string VoiceItUserId { get; set; }
     }
 }

@@ -2684,6 +2684,15 @@
           "lib/netstandard1.0/Remotion.Linq.dll": {}
         }
       },
+      "RestSharp/106.3.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/RestSharp.dll": {}
+        }
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
         "type": "package",
         "runtimeTargets": {
@@ -4626,6 +4635,18 @@
         },
         "runtime": {
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
+        }
+      },
+      "VoiceIt/2.5.4": {
+        "type": "package",
+        "dependencies": {
+          "RestSharp": "106.3.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/VoiceIt.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/VoiceIt.dll": {}
         }
       },
       "WindowsAzure.Storage/9.3.3": {
@@ -7758,6 +7779,19 @@
         "lib/portable-net45+win+wpa81+wp80/Remotion.Linq.xml",
         "remotion.linq.2.1.1.nupkg.sha512",
         "remotion.linq.nuspec"
+      ]
+    },
+    "RestSharp/106.3.1": {
+      "sha512": "TmlN7SXjK52zzpQDTuzw7IH3XQ2Svtss/4zvQBKIgf74QIVxvlxoAqQYu1EhNQ1bMSBIQ4aK120BO7W+v8/kiQ==",
+      "type": "package",
+      "path": "restsharp/106.3.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net452/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.dll",
+        "restsharp.106.3.1.nupkg.sha512",
+        "restsharp.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -12816,6 +12850,18 @@
         "system.xml.xpath.xdocument.nuspec"
       ]
     },
+    "VoiceIt/2.5.4": {
+      "sha512": "l+G9hhYIDcXJfiI8E+iYiVzjYYVb0iD1qQNfilAdr8LvPjH2vD1HDx5Ro9wBQO0UCaFiQPbsiPrp4hICC8BELg==",
+      "type": "package",
+      "path": "voiceit/2.5.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/VoiceIt.dll",
+        "voiceit.2.5.4.nupkg.sha512",
+        "voiceit.nuspec"
+      ]
+    },
     "WindowsAzure.Storage/9.3.3": {
       "sha512": "VUV8j6dzkU/7vDgk5k+ob5g7nnch2fNByr0p9aOxMGFGk+tAnTehrZ4qnClF04CVozP1GNN2zrnbsxCmr+iZBg==",
       "type": "package",
@@ -12867,7 +12913,8 @@
       "Risebird.Repository.Interface >= 1.0.0",
       "System.Data.SqlClient >= 4.6.1",
       "System.Runtime >= 4.3.1",
-      "System.ValueTuple >= 4.5.0"
+      "System.ValueTuple >= 4.5.0",
+      "VoiceIt >= 2.5.4"
     ]
   },
   "packageFolders": {
@@ -12950,6 +12997,10 @@
           "System.ValueTuple": {
             "target": "Package",
             "version": "[4.5.0, )"
+          },
+          "VoiceIt": {
+            "target": "Package",
+            "version": "[2.5.4, )"
           }
         },
         "imports": [

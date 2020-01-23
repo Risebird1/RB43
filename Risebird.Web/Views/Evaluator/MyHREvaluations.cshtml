@@ -190,6 +190,7 @@
                                                         <span onclick="javascript:UnassignHRJoinability('@item.id');" title="Unassign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
                                                         <span onclick="location.href = '@Url.Action("JoinabilityReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
                                                         <span onclick="location.href = '@Url.Action("UploadAudio", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId, actMethod ="MyHREvaluations"})'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+                                                        @*<span onclick="location.href = '@Url.Action("CreateVoiceItUser", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId, actMethod ="MyHREvaluations"})'" title="Create User for Biometric verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>*@
 
                                                     </td>
                                                     <td>

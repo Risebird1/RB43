@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_MyRecruiterEvaluations]
    @userId int     
 AS
 BEGIN
-select IRF.IRFId as IRFName, IRF.JDLink, ul.EmailId, cm.id as CandidateId, ca.IRFId, ca.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ca.Phone, ca.AddedByUserId, ca.TechSkillScore, ca.SkillGeneralScore 
+select IRF.IRFId as IRFName, IRF.JDLink, ul.EmailId, cm.id as CandidateId, ca.IRFId, ca.EmailId as CandidateEmailId, ca.[Name] as CandidateName, ca.ResumeLink, ul2.EmailId as RisebirdHR, ca.JoinabilityScore, ca.SelectabilityScore, ca.Phone, ca.AddedByUserId, ca.TechSkillScore, ca.SkillGeneralScore, ca.VoiceItUserId 
 from Candidate ca join UserList ul on ul.id = ca.AddedByUserId
 join CandidatesMaster cm on ca.EmailId = cm.EmailId
 join IRF on ca.IRFId =IRF.id
