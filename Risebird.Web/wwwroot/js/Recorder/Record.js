@@ -86,7 +86,7 @@ function stopRecording() {
 }
 
 function createDownloadLink(blob) {
-    debugger;
+ 
     var url = URL.createObjectURL(blob);
     var au = document.createElement('audio');
     var li = document.createElement('li');
