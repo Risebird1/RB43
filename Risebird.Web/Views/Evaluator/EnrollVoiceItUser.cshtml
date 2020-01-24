@@ -1,0 +1,229 @@
+﻿@model IList<Risebird.Entities.ViewModel.CandidateAudio>
+
+
+@{
+    ViewData["Title"] = "Enroll Candidate Voice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+
+    .table-responsive {
+        overflow: hidden;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #013855;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 45px;
+    }
+
+
+    .glyphicon {
+        top: -1px;
+        right: -2px;
+        vertical-align: middle;
+        line-height: 0;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+
+<div class="main-panel" id="main-panel">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Enroll Candidate Voice
+                </a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/Evaluator/EnrollVoiceItUser" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                            @Html.AntiForgeryToken()
+                            <div class="canvas_div_pdf">
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Candidate Details</h2>
+                                        </div><!--end of multiple location-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => Model[0].CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => Model[0].CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="form-group">
+                                            @Html.LabelFor(m => Model[0].IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.TextBoxFor(m => Model[0].IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Uploaded Audios</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="10%">File</th>
+                                                        <th width="15%">Phrase</th>
+                                                        <th width="20%">Enrollment Status</th>
+                                                        <th width="35%">Result</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model != null)
+                                                    {
+                                                        @for (int i = 0; i < Model.Count(); i++)
+                                                        {
+                                                            <tr>
+
+                                                                <td>
+                                                                    <a href='@Model[i].AudioFileLink' download>
+                                                                        @Model[i].AudioFileLink.Split('/').Last()
+                                                                    </a>
+                                                                </td>
+                                                                <td>@Model[i].PhraseDetail</td>
+                                                                @if (Model[i].IsEnrolled)
+                                                                {
+                                                                    <td>Yes</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No</td>
+
+                                                                }
+                                                                @if (Model[i].EnrollmentMessage != null)
+                                                                {
+                                                                    <td>@Model[i].EnrollmentMessage</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>NA</td>
+
+                                                                }
+                                                                @Html.HiddenFor(m => Model[i].id)
+                                                                @Html.HiddenFor(m => Model[i].IRFId)
+                                                                @Html.HiddenFor(m => Model[i].CandidateId)
+                                                                @Html.HiddenFor(m => Model[i].IsEnrolled)
+                                                                @if (Model[i].VoiceItUserId != null)
+                                                                {
+                                                                    @Html.HiddenFor(m => Model[i].VoiceItUserId)
+                                                                }
+
+                                                            </tr>
+
+                                                        }
+
+                                                    }
+
+                                                </tbody>
+                                            </table>
+
+
+                                        </div>
+                                    </div><!--end of col-md-12-->
+
+                                </div>
+
+                                <div class="card-footer ">
+                                    <div class="row">
+                                        <label class="col-md-2"></label>
+                                        <div class="col-md-9">
+
+                                            @Html.ActionLink("Back to List", (string)ViewBag.BackMethod, "Evaluator", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+

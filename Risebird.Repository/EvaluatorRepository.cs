@@ -122,7 +122,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var parameters = new DynamicParameters();
-                    parameters.Add("emailID", emailID);
+                    parameters.Add("@emailID", emailID);
                     return await SqlMapper.QueryAsync<CandidateResumeEvaluation>(con, "usp_MyResumeEvaluations", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
@@ -859,7 +859,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select * from CandidateAudio where CandidateId = @CandidateId and IRFId = @IRFId";
+                var query = "select cau.*, ca.[Name] as CandidateName, ca.VoiceItUserId, irf.IRFId as IRFName from CandidateAudio cau join CandidatesMaster cm on cau.CandidateId= cm.id join Candidate ca on cm.EmailId = ca.EmailId join irf on irf.id=cau.IRFId where cau.CandidateId = @CandidateId and cau.IRFId =@IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@CandidateId", candidateId);
                 dynamicParameters.Add("@IRFId", irfId);
@@ -875,6 +875,55 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public bool UpdateCandidateVoiceUserId(string userId, int candidateMasterId, int irfId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@IRFId", irfId);
+                    parameters.Add("@CandidateId", candidateMasterId);
+                    parameters.Add("@VoiceItUserId", userId);
+                    var result =  SqlMapper.Query(con, "usp_UpdateCandidateVoiceUserId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false; ;
+
+        }
+        public bool UpdateEnrollmentStatus(int id, bool isEnrolled, string message)
+        {
+            try
+            {
+                var query = "update CandidateAudio set IsEnrolled=@IsEnrolled, EnrollmentMessage=@EnrollmentMessage where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsEnrolled", isEnrolled);
+                dynamicParameters.Add("@EnrollmentMessage", message);
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
 
 
