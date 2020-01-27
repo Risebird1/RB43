@@ -861,9 +861,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
                     {
-                        
-                        var emailid = HttpContext.Session.GetString("email")?.Trim();
-                        emailid = emailid.Replace("\"", "");
+                       
                         var result =_evaluatorService.EnrollCandidate(model);
                         TempData["SuccessErrorMessageEnroll"] = result;
                         return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId, actMethod = actionMethod });

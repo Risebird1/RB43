@@ -189,7 +189,7 @@
                                                     <td class="text-center">
                                                         <span onclick="location.href = '@Url.Action("RecruiterReport", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
                                                         <span onclick="location.href = '@Url.Action("UploadAudio", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId, actMethod="RecruiterCandidates"})'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
-
+                                                        <span onclick="location.href = '@Url.Action("EnrollVoiceItUser", "Evaluator", new { candidateId = item.CandidateId, irfId= item.IRFId, actMethod ="RecruiterCandidates"})'" title="Enroll User for Biometric verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-sign-in"></i></span>
                                                     </td>
                                                     <td>
                                                         @if (item.Phone != null && item.Phone != string.Empty)

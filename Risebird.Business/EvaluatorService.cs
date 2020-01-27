@@ -508,9 +508,10 @@ namespace Risebird.Business
                 {
                     //create user
                     var result = _voiceItRepository.CreateUser();
-                    if(result.message.Contains("Success"))
+                    if(result.responseCode.Contains("SUCC"))
                     {
                         //save userID to database
+                        voiceItUserId = result.userId;
                         _evaluatorRespository.UpdateCandidateVoiceUserId(result.userId, candidateList.First().CandidateId, candidateList.First().IRFId);
                     }
                     else

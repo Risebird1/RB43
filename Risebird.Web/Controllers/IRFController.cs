@@ -2376,13 +2376,13 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
-                            return RedirectToAction("Candidates");
+                            TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
-                            return RedirectToAction("Candidates");
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                     }
                     else
@@ -2398,8 +2398,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
-                return RedirectToAction("MyEvaluations");
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
             }
         }
         public IActionResult ShowCalendly(string irfName, string calendlyLink)
@@ -2804,6 +2804,189 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+        [HttpGet]
+        public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = _evaluatorService.GetCandidate(candidateId, irfId);
+                    //TempData["actMethod"] = actMethod;
+                    //ViewBag.BackMethod = actMethod;
+                    var list = new SelectList(new[]
+                    {
+                        new { ID = "Enrollment1", Name = "Enrollment 1"},
+                        new { ID = "Enrollment2", Name = "Enrollment 2"  },
+                        new { ID = "Enrollment3", Name = "Enrollment 3" }
+                    }, "ID", "Name", "Enrollment1");
+
+
+                    ViewData["list"] = list;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName});
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAudio(CandidateAudio model)
+        {
+            //string actMethod = string.Empty;
+            //if (TempData["actMethod"] != null)
+            //{
+            //    actMethod = TempData["actMethod"].ToString();
+            //}
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                return View("UploadAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+
+                        if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Audio uploaded successfully";
+                            return RedirectToAction("Candidates", new {id=model.IRFId, irfName=model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EnrollVoiceItUser(int candidateId, int irfId, string irfName)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    //TempData["actMethod"] = actMethod;
+                    //ViewBag.BackMethod = actMethod;
+                    if (TempData["SuccessErrorMessageEnroll"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageEnroll"].ToString();
+                        TempData.Remove("SuccessErrorMessageEnroll");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Candidates", new {id = irfId, irfName = irfName});
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
+        {
+            //string actionMethod = string.Empty;
+            //if (TempData["actMethod"] != null)
+            //{
+            //    actionMethod = TempData["actMethod"].ToString();
+            //}
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName =  profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                        var result = _evaluatorService.EnrollCandidate(model);
+                        TempData["SuccessErrorMessageEnroll"] = result;
+                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId});
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEnrollment"] = "Failed!";
+                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId });
+            }
         }
     }
 }
