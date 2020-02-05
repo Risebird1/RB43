@@ -76,6 +76,8 @@ namespace Risebird.Entities.Data
         public bool ProctoringReportFilled { get; set; }
         public bool IsEmergency { get; set; }
 
+        public int CandidateMasterId { get; set; }
+
 
 
     }

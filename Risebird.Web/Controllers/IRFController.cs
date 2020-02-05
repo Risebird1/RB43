@@ -2340,7 +2340,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x=> !x.IsVoiceBiometric).ToList();
                     ViewBag.Profile = profileName;
                     return View(model);
                 }
@@ -2923,8 +2923,6 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
-                    //TempData["actMethod"] = actMethod;
-                    //ViewBag.BackMethod = actMethod;
                     if (TempData["SuccessErrorMessageEnroll"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageEnroll"].ToString();

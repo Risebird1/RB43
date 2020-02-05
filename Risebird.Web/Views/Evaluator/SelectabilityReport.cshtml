@@ -507,10 +507,8 @@
                                             <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%">File</th>
-                                                        <th width="20%">Used for Voice Biometric</th>
-                                                        <th width="35%">Phrase</th>
-                                                        <th width="15%">Play</th>
+                                                        <th width="30%">File</th>
+                                                        <th width="35%">Play</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -525,25 +523,7 @@
                                                                 @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
                                                             </a>
                                                         </td>
-                                                        @if (@Model.CandidateAudioCollection[i].IsVoiceBiometric)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-
-                                                        }
-                                                        @if (@Model.CandidateAudioCollection[i].IsVoiceBiometric)
-                                                        {
-                                                            <td>@Model.CandidateAudioCollection[i].PhraseDetail</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>NA</td>
-
-                                                        }
-                                                        
+                                                                                                            
                                                         <td>
                                                             <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
                                                         </td>

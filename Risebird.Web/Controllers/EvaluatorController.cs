@@ -272,7 +272,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -498,7 +498,7 @@ namespace Risebird.Web.Controllers
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -638,7 +638,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
