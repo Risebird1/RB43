@@ -102,6 +102,7 @@ namespace Risebird.Business
 
                 foreach (var item in finalList)
                 {
+                    if(item!= null)
                     item.Replace("\n", "");
                 }
                 finalList = finalList.Distinct().ToList();
