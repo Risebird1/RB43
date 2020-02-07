@@ -134,6 +134,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalBudget { get; set; }
         public string BudgetConsumed { get; set; }
         public int SelectedMeetings { get; set; }
+        public int UnAssignedMeeting { get; set; }
         public int ScheduleMeetings { get; set; }
         public string CalendlyLink { get; set; }
         public int TotalInvites { get; set; }

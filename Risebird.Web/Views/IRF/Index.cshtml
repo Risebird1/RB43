@@ -311,6 +311,15 @@
                                                 <span>Total Interviews:</span> <p style="color: blue;">@item.TotalMeetings</p>
                                                 <span>Total Invites:</span> <p style="color: blue;">@item.TotalInvites</p>
                                                 <span>Scheduled Interviews:</span> <p style="color: blue;">@item.ScheduleMeetings</p>
+                                                @if (@item.UnAssignedMeeting > 0)
+                                                {
+                                                    <span>UnAssigned Interviews:</span> <p style="color: red;">@item.UnAssignedMeeting</p>
+                                                }
+                                                else
+                                                {
+                                                <span>UnAssigned Interviews:</span> <p style="color: blue;">@item.UnAssignedMeeting</p>
+                                                }
+
                                                 <span>Selected Interviews:</span> <p style="color: blue;">@item.SelectedMeetings</p>
                                                 <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
 
