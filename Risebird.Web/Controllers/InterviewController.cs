@@ -60,7 +60,7 @@ namespace Risebird.Web.Controllers
                         var modelList = _meetingService.GetMeetingList();
                         modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
 
-                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                        modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                         if (HttpContext.Session.GetString("Interviewfilters") != null)
                         {
@@ -75,7 +75,7 @@ namespace Risebird.Web.Controllers
                                 x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                                 x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                                 x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                                x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x;
+                                x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x;
                             }).ToList();
                             modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
@@ -136,7 +136,7 @@ namespace Risebird.Web.Controllers
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
                 var modelList = _meetingService.GetMeetingList();
-                modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+                modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
                 if (HttpContext.Session.GetString("Interviewfilters") != null)
                 {
@@ -151,7 +151,7 @@ namespace Risebird.Web.Controllers
                         x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription();
                         x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
                         x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
-                        x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x;
+                        x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x;
                     }).ToList();
                     modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
 
@@ -192,32 +192,33 @@ namespace Risebird.Web.Controllers
                 }
                 Sheet.Cells[1, 1].Value = "IRF ID";
                 Sheet.Cells[1, 2].Value = "Interview Date";
-                Sheet.Cells[1, 3].Value = "Candidate Name";
-                Sheet.Cells[1, 4].Value = "Candidate Email";
-                Sheet.Cells[1, 5].Value = "Primary Skill";
-                Sheet.Cells[1, 6].Value = "Interviewer";
-                Sheet.Cells[1,7].Value = "Confirmation Status";
-                Sheet.Cells[1,8].Value = "Meeting Status";
-                Sheet.Cells[1,9].Value = "Interview Status";
-                Sheet.Cells[1,10].Value = "Resume";
-                Sheet.Cells[1,11].Value = "JD Link";
-                Sheet.Cells[1,12].Value = "Zoom Link";
-                Sheet.Cells[1,13].Value = "Risebird HR";
-                Sheet.Cells[1,14].Value = "Candidate Contact";
-                Sheet.Cells[1,15].Value = "Client HR";
-                Sheet.Cells[1, 16].Value = "End Client Name";
-                Sheet.Cells[1, 17].Value = "Video Link";
-                Sheet.Cells[1, 18].Value = "Interviewer Comment";
-                Sheet.Cells[1,19].Value = "Staffing Agency";
-                Sheet.Cells[1,20].Value = "Interview Duration";
-                Sheet.Cells[1,21].Value = "Expected Joining Time";
-                Sheet.Cells[1,22].Value = "Preferred Location";
-                Sheet.Cells[1,23].Value = "Expected Per Hour Rate";
-                Sheet.Cells[1,24].Value = "Current Employer";
-                Sheet.Cells[1,25].Value = "Approval Status";
-                Sheet.Cells[1,26].Value = "Approval Comments";
-                Sheet.Cells[1,27].Value = "Final Selection Status";
-                Sheet.Cells[1,28].Value = "Final Selection Comments";
+                Sheet.Cells[1, 3].Value = "Interview Slot";
+                Sheet.Cells[1, 4].Value = "Candidate Name";
+                Sheet.Cells[1, 5].Value = "Candidate Email";
+                Sheet.Cells[1, 6].Value = "Primary Skill";
+                Sheet.Cells[1, 7].Value = "Interviewer";
+                Sheet.Cells[1,8].Value = "Confirmation Status";
+                Sheet.Cells[1,9].Value = "Meeting Status";
+                Sheet.Cells[1,10].Value = "Interview Status";
+                Sheet.Cells[1,11].Value = "Resume";
+                Sheet.Cells[1,12].Value = "JD Link";
+                Sheet.Cells[1,13].Value = "Zoom Link";
+                Sheet.Cells[1,14].Value = "Risebird HR";
+                Sheet.Cells[1,15].Value = "Candidate Contact";
+                Sheet.Cells[1,16].Value = "Client HR";
+                Sheet.Cells[1,17].Value = "End Client Name";
+                Sheet.Cells[1, 18].Value = "Video Link";
+                Sheet.Cells[1, 19].Value = "Interviewer Comment";
+                Sheet.Cells[1,20].Value = "Staffing Agency";
+                Sheet.Cells[1,21].Value = "Interview Duration";
+                Sheet.Cells[1,22].Value = "Expected Joining Time";
+                Sheet.Cells[1,23].Value = "Preferred Location";
+                Sheet.Cells[1,24].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1,25].Value = "Current Employer";
+                Sheet.Cells[1,26].Value = "Approval Status";
+                Sheet.Cells[1,27].Value = "Approval Comments";
+                Sheet.Cells[1,28].Value = "Final Selection Status";
+                Sheet.Cells[1,29].Value = "Final Selection Comments";
                 
                 //ExcelHyperLink excelHyperLink = new ExcelHyperLink();
                 int i = 2;
@@ -229,60 +230,43 @@ namespace Risebird.Web.Controllers
                     {
                         Sheet.Cells[i, 1].Value = item.IRFId;
                         Sheet.Cells[i, 2].Value = item.interviewDate.ToString("MM/dd/yyyy HH:mm");
-                        Sheet.Cells[i, 3].Value = item.candidateName;
-                        Sheet.Cells[i, 4].Value = item.candidateEmail;
-                        Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
-                        Sheet.Cells[i, 6].Value = item.interviewer;
-                        Sheet.Cells[i, 7].Value = item.confirmationStatus;
-                        Sheet.Cells[i, 8].Value = item.MeetingStatusStatusDesc;
-                        Sheet.Cells[i, 9].Value = item.intervieweStatusStatDesc;
+                        Sheet.Cells[i, 3].Value = item.interviewSlot;
+                        Sheet.Cells[i, 4].Value = item.candidateName;
+                        Sheet.Cells[i, 5].Value = item.candidateEmail;
+                        Sheet.Cells[i, 6].Value = item.JDTiltle.Split("|")[0];
+                        Sheet.Cells[i, 7].Value = item.interviewer;
+                        Sheet.Cells[i, 8].Value = item.confirmationStatus;
+                        Sheet.Cells[i, 9].Value = item.MeetingStatusStatusDesc;
+                        Sheet.Cells[i, 10].Value = item.intervieweStatusStatDesc;
 
                         if (!string.IsNullOrEmpty(item.resumeLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 10].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
-                                Sheet.Cells[i, 10].Value = "Resume";
-                                Sheet.Cells[i, 10].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 10].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.resumeLink, UriKind.Absolute);
+                                Sheet.Cells[i, 11].Value = "Resume";
+                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                Sheet.Cells[i, 10].Value = "No Resume";
+                                Sheet.Cells[i, 11].Value = "No Resume";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 10].Value = "No Resume";
+                            Sheet.Cells[i, 11].Value = "No Resume";
                         }
                         if (!string.IsNullOrEmpty(item.JDLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 11].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
-                                Sheet.Cells[i, 11].Value = "JD Link";
-                                Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
-                            }
-                            catch (Exception e)
-                            {
-                                Sheet.Cells[i, 11].Value = "No Link";
-                            }
-                        }
-                        else
-                        {
-                            Sheet.Cells[i, 11].Value = "No Link";
-                        }
-                        if (!string.IsNullOrEmpty(item.zoomLink))
-                        {
-                            try
-                            {
-                                Sheet.Cells[i, 12].Hyperlink = new Uri(item.zoomLink, UriKind.Absolute);
-                                Sheet.Cells[i, 12].Value = "Zoom Link";
+                                Sheet.Cells[i, 12].Hyperlink = new Uri(item.JDLink, UriKind.Absolute);
+                                Sheet.Cells[i, 12].Value = "JD Link";
                                 Sheet.Cells[i, 12].Style.Font.UnderLine = true;
                                 Sheet.Cells[i, 12].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception )
                             {
                                 Sheet.Cells[i, 12].Value = "No Link";
                             }
@@ -291,39 +275,57 @@ namespace Risebird.Web.Controllers
                         {
                             Sheet.Cells[i, 12].Value = "No Link";
                         }
-                        Sheet.Cells[i, 13].Value = item.risebirdHR;
-                        Sheet.Cells[i, 14].Value = item.MobileNumber;
-                        Sheet.Cells[i, 15].Value = item.ClientHrContact;
-                        Sheet.Cells[i, 16].Value = item.ClientName;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        if (!string.IsNullOrEmpty(item.zoomLink))
                         {
                             try
                             {
-                                Sheet.Cells[i, 17].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
-                                Sheet.Cells[i, 17].Value = "Video Link";
-                                Sheet.Cells[i, 17].Style.Font.UnderLine = true;
-                                Sheet.Cells[i, 17].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                                Sheet.Cells[i, 13].Hyperlink = new Uri(item.zoomLink, UriKind.Absolute);
+                                Sheet.Cells[i, 13].Value = "Zoom Link";
+                                Sheet.Cells[i, 13].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 13].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                Sheet.Cells[i, 17].Value = "No Video";
+                                Sheet.Cells[i, 13].Value = "No Link";
                             }
                         }
                         else
                         {
-                            Sheet.Cells[i, 17].Value = "No Video";
+                            Sheet.Cells[i, 13].Value = "No Link";
                         }
-                        Sheet.Cells[i, 18].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 19].Value = item.staffingAgency;
-                        Sheet.Cells[i, 20].Value = item.interviewDuration;
-                        Sheet.Cells[i, 21].Value = item.joiningTime;
-                        Sheet.Cells[i, 22].Value = item.preferredLocation;
-                        Sheet.Cells[i, 23].Value = item.expectedPerHourRate;
-                        Sheet.Cells[i, 24].Value = item.currentEmployerName;
-                        Sheet.Cells[i, 25].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "";
-                        Sheet.Cells[i, 26].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
-                        Sheet.Cells[i, 27].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
-                        Sheet.Cells[i, 28].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 14].Value = item.risebirdHR;
+                        Sheet.Cells[i, 15].Value = item.MobileNumber;
+                        Sheet.Cells[i, 16].Value = item.ClientHrContact;
+                        Sheet.Cells[i, 17].Value = item.ClientName;
+                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        {
+                            try
+                            {
+                                Sheet.Cells[i, 18].Hyperlink = new Uri(item.VideoLink, UriKind.Absolute);
+                                Sheet.Cells[i, 18].Value = "Video Link";
+                                Sheet.Cells[i, 18].Style.Font.UnderLine = true;
+                                Sheet.Cells[i, 18].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                            }
+                            catch (Exception )
+                            {
+                                Sheet.Cells[i, 18].Value = "No Video";
+                            }
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 18].Value = "No Video";
+                        }
+                        Sheet.Cells[i, 19].Value = item.InterviewerComment;
+                        Sheet.Cells[i, 20].Value = item.staffingAgency;
+                        Sheet.Cells[i, 21].Value = item.interviewDuration;
+                        Sheet.Cells[i, 22].Value = item.joiningTime;
+                        Sheet.Cells[i, 23].Value = item.preferredLocation;
+                        Sheet.Cells[i, 24].Value = item.expectedPerHourRate;
+                        Sheet.Cells[i, 25].Value = item.currentEmployerName;
+                        Sheet.Cells[i, 26].Value = item.NextLevelApprovalStat != null ? item.NextLevelApprovalStat : "";
+                        Sheet.Cells[i, 27].Value = item.ApprovalComments != null ? item.ApprovalComments : "Comments not submitted.";
+                        Sheet.Cells[i, 28].Value = item.FinalSelectionStat != null ? item.FinalSelectionStat : "";
+                        Sheet.Cells[i, 29].Value = item.FinalComments != null ? item.FinalComments : "Comments not submitted.";
                         
                         i++;
                     }

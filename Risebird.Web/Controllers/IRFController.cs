@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
-                    var irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted);
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -74,6 +74,21 @@ namespace Risebird.Web.Controllers
                         {
                             selectedMeeting = meetings.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus.Value == 2 || x.InterviewStatus.Value == 4)).ToList();//new List<MeetingVM>();
                             irf.ScheduleMeetings = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1").Count();
+
+                            var mrngInterview= meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.interviewDate <= DateTime.Now.AddDays(1) && x.confirmationStatus == "1" && Convert.ToInt32(x.interviewSlot) == 1).Count();
+                            var eveningInterview = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.interviewDate <= DateTime.Now.AddDays(1) && x.confirmationStatus == "1" && Convert.ToInt32(x.interviewSlot) == 2).Count();
+                            irf.TodayMeeting = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.interviewDate <= DateTime.Now.AddDays(1) && x.confirmationStatus == "1").Count();
+                            irf.TodayMeetingDsr = mrngInterview + " / " + eveningInterview;
+
+                            var nextdayInterview = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now.AddDays(1) && x.interviewDate <= DateTime.Now.AddDays(2) && x.confirmationStatus == "1" && Convert.ToInt32(x.interviewSlot) == 1).Count();
+                            var eveningnxtdayInterview = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now.AddDays(1) && x.interviewDate <= DateTime.Now.AddDays(2) && x.confirmationStatus == "1" && Convert.ToInt32(x.interviewSlot) == 2).Count();
+                            irf.TomorrowMeeting = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now.AddDays(1) && x.interviewDate <= DateTime.Now.AddDays(2) && x.confirmationStatus == "1").Count();
+                            irf.TomorrowMeetingDsr = nextdayInterview + " / " + eveningnxtdayInterview;
+
+                            var morningUnassinged = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && string.IsNullOrEmpty(x.interviewer) && Convert.ToInt32(x.interviewSlot) == 1).Count();
+                            var eveningUnassinged = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && string.IsNullOrEmpty(x.interviewer) && Convert.ToInt32(x.interviewSlot) == 2).Count();
+                            irf.UnAssignedMeeting = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && string.IsNullOrEmpty(x.interviewer)).Count();
+                            irf.UnAssignedMeetingDsr = morningUnassinged+ " / "+ eveningUnassinged;
                         }
                       
                         irf.SelectedMeetings = selectedMeeting != null ? selectedMeeting.Count() : 0;
