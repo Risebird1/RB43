@@ -106,6 +106,9 @@ namespace Risebird.Entities.ViewModel
         public string ArchiveStatus { get; set; }
         public string[] ClientRole { get; set; }
         public string LoggedEmail { get; set; }
+
+        [DisplayName("Enable Voice Biometric")]
+        public bool IsBiometricEnabled { get; set; }
     }
 
     public class IRF
@@ -149,6 +152,7 @@ namespace Risebird.Entities.ViewModel
         public string ClientAddress { get; set; }
         public string[] ClientRole { get; set; }
         public double Discount { get; set; }
-        
+        public bool IsBiometricEnabled { get; set; }
+
     }
 }

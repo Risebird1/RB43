@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[IRF](
 			[TotalBudget] [int] NULL,
 			[CreatedOn][DATETIME] NULL,
 			[Discount] [real] NOT NULL,
+			[IsBiometricEnabled] [bit] NOT NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -69,7 +70,15 @@ BEGIN
     ALTER TABLE IRF
     Add CreatedOn Date
 END
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsBiometricEnabled')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsBiometricEnabled BIT NOT NULL DEFAULT 0
+END
 IF NOT EXISTS(
     SELECT *
     FROM sys.columns

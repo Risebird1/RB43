@@ -5482,6 +5482,35 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult VerifyAudio(int candidateId, int irfId)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    //var model = _evaluatorService.GetCandidate(candidateId, irfId);
+
+                    //return View(model);
+                    return null;
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
     }
 
 }

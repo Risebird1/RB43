@@ -487,7 +487,12 @@
                                                         <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                         <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        @if (item.IsBiometricEnabled)
+                                                        {
+                                                            <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+                                                            <span onclick="location.href = '@Url.Action("EnrolledAudios", "Interview", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Enrollment status" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-sign-in"></i></span>
 
+                                                        }
                                                     </td>
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)

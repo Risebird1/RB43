@@ -386,7 +386,7 @@ namespace Risebird.Business
                 model.CalendlyLink = IRF.CalendlyLink;
                 model.TotalInvites = IRF.TotalInvites;
                 model.TotalBudget = IRF.TotalBudget;
-
+                model.IsBiometricEnabled = IRF.IsBiometricEnabled;
                 var skillCount = transTechSkills.Count();
                 return model;
 

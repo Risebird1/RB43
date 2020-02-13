@@ -10,9 +10,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 
 @IRFId nvarchar(200),
@@ -32,6 +29,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @PerMintuteRate real,
 @CalendlyLink varchar(500),
 @TotalBudget int,
+@IsBiometricEnabled bit,
 @idIrf int output
 
 AS
@@ -53,6 +51,7 @@ set
            ,[PerMintuteRate]=@PerMintuteRate
 		   ,[CalendlyLink] =@CalendlyLink
 		   ,[TotalBudget]=@TotalBudget
+		   ,[IsBiometricEnabled]=@IsBiometricEnabled
 Where id =@id
 
 delete from TransClientUser where IRFId=@id
@@ -69,11 +68,9 @@ delete from TransSelectability where IRFId=@id
 delete from TransEmergencyInterviewer where IRFId=@id
 delete from TransResumeEvaluator where IRFId=@id
 delete from TransHR where IRFId=@id
-DELETE from TransRecruiter where IRFId=@id
-
+delete from TransRecruiter where IRFId=@id
 
 End
 
 GO
-
 
