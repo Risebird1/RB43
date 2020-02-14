@@ -76,5 +76,24 @@ namespace Risebird.Repository
 
         }
 
+        public VoiceItResponse VerifyUser(string userId, string fileUrl, string phrase)
+        {
+            //var result = string.Empty;
+            try
+            {
+                VoiceIt2 myVoiceIt = new VoiceIt2(voiceItApiKey, voiceItApiToken);
+                var response = myVoiceIt.VoiceVerificationByUrl(userId, voiceItLanguage, phrase, fileUrl);
+                var outPut = JsonConvert.DeserializeObject<VoiceItResponse>(response);
+                return outPut;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+
+        }
+
     }
 }

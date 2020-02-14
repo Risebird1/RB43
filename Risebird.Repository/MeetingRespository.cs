@@ -1529,5 +1529,26 @@ namespace Risebird.Repository
             }
         }
 
+        public bool UpdateInterviewVerificationScore(int meetingId, double confidence)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set InterviewBiometryScore = @InterviewBiometryScore where id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewBiometryScore", confidence);
+                dynamicParameters.Add("@id", meetingId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

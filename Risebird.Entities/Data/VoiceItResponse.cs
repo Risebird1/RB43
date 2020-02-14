@@ -15,6 +15,6 @@ namespace Risebird.Entities.Data
         public string contentLanguage { get; set; }
         public string text { get; set; }
         public string textConfidence { get; set; }
-
+        public double confidence { get; set; }
     }
 }

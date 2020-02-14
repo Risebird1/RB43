@@ -9,5 +9,6 @@ namespace Risebird.Repository.Interface
     {
         VoiceItResponse CreateUser();
         string EnrollUser(string userId, string fileUrl, string phrase);
+        VoiceItResponse VerifyUser(string userId, string fileUrl, string phrase);
     }
 }

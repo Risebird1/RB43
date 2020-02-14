@@ -22,8 +22,8 @@ namespace Risebird.Business
         private IIRFRepository _irfRepository;
         private IUserService _userService;
         private IEvaluatorRepository _evaluatorRespository;
-
-        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository)
+        private IVoiceItRepository _voiceItRepository;
+        public MeetingService(IMeetingRespository meetingRespository, IIRFService irfFService, IUserService userService, INotificationHelper notificationHelper, IIRFRepository irfRepository, IApplicationErrorLogger applicationErrorLogger, IEvaluatorRepository evaluatorRespository, IVoiceItRepository voiceItRepository)
         {
             _meetingRespository = meetingRespository;
             _applicationErrorLogger = applicationErrorLogger;
@@ -32,6 +32,7 @@ namespace Risebird.Business
             _irfRepository = irfRepository;
             _userService = userService;
             _evaluatorRespository = evaluatorRespository;
+            _voiceItRepository = voiceItRepository;
         }
 
         public List<MeetingVM> GetMeetingList()
@@ -919,6 +920,67 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public VerifyCandidateAudio GetCandidateAudios(int candidateId, int irfId)
+        {
+            try
+            {
+                var model = new VerifyCandidateAudio();
+                model.CandidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId).Where(x => x.IsVoiceBiometric == true).ToList();
+                model.CandidateId = candidateId;
+                model.CandidateName = model.CandidateAudios.First().CandidateName;
+                model.IRFId = irfId;
+                model.IRFName = model.CandidateAudios.First().IRFName;
+                model.VoiceItUserId = model.CandidateAudios.First().VoiceItUserId;
+                model.PhraseDetail = model.CandidateAudios.First().PhraseDetail;
+                return model;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId)
+        {
+            try
+            {
+                string finalStatus = string.Empty ;
+
+                // verify the audio
+                var verificationResult = _voiceItRepository.VerifyUser(userId,fileUrl,phrase);
+
+                if(verificationResult.status=="200")
+                {
+                    if(verificationResult.responseCode== "SUCC")
+                    {
+                        finalStatus = verificationResult.message + " with confidence " + verificationResult.confidence;
+                        _meetingRespository.UpdateInterviewVerificationScore(meetingId, verificationResult.confidence);
+                    }
+                    else
+                    {
+                        finalStatus = verificationResult.message;//"User could not be verified!";
+                    }
+                }
+                else
+                {
+                    finalStatus = "Verification operation failed!";
+                }
+                //update verification score in the meeting table
+                
+
+                return finalStatus;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
 

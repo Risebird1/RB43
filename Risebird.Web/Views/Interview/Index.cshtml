@@ -489,8 +489,7 @@
                                                         <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
                                                         @if (item.IsBiometricEnabled)
                                                         {
-                                                            <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
-                                                            <span onclick="location.href = '@Url.Action("EnrolledAudios", "Interview", new { candidateId = item.CandidateId, irfId= item.IRFId})'" title="Enrollment status" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-sign-in"></i></span>
+                                                            <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
 
                                                         }
                                                     </td>

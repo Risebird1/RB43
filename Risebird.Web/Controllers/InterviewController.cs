@@ -5483,7 +5483,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyAudio(int candidateId, int irfId)
+        public IActionResult VerifyAudio(int candidateId, int irfId, int meetingId)
         {
             try
             {
@@ -5492,10 +5492,10 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR")
                 {
-                    //var model = _evaluatorService.GetCandidate(candidateId, irfId);
-
-                    //return View(model);
-                    return null;
+                    var model = _meetingService.GetCandidateAudios(candidateId, irfId);
+                    model.MeetingId = meetingId;
+                    return View(model);
+                    
                 }
                 else
                 {
@@ -5508,6 +5508,61 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyAudio(VerifyCandidateAudio model)
+        {
+            
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(String.Empty, "Audio Upload failed.");
+                                return View("VerifyAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+                        var result = _meetingService.VerifyCandidateVoice(model.VoiceItUserId, model.AudioFileLink, model.PhraseDetail, model.MeetingId);
+                        TempData["SuccessErrorMessageInterview"] = result;
+                        return RedirectToAction("Index");
+                       
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageAudio"] = "Audio verification failed.";
                 return RedirectToAction("Index");
             }
         }
