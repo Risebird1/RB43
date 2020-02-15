@@ -153,6 +153,7 @@
                         <div class="col-auto">
                             @if (ViewBag.IsClientUser == false && ViewBag.Profile != "Recruiter")
                             {
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>
                                 <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"> Add IRF</span></button>
 
                             }
@@ -312,23 +313,7 @@
                                                 <span>Total Invites:</span> <p style="color: blue;">@item.TotalInvites</p>
                                                 @if (!@item.IsClientUser && ViewBag.Profile != "Recruiter")
                                                 {
-                                                    <span>Scheduled Interviews:</span> <p style="color: blue;">@item.ScheduleMeetings</p>
-                                                    @if (@item.UnAssignedMeeting > 0)
-                                                    {
-                                                        <span>UnAssigned Interviews:</span> <p style="color: red;" title="Morning/Evening">@item.UnAssignedMeetingDsr</p>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>UnAssigned Interviews:</span> <p style="color: blue;" title="Morning/Evening">@item.UnAssignedMeeting</p>
-                                                    }
-
-                                                    @if (@item.TodayMeeting > 0)
-                                                    {
-                                                        <span>Upcoming Interviews:</span> <p style="color: blue;" title="Today - Tomorrow Morning/Evening">@item.TodayMeetingDsr - @item.TomorrowMeetingDsr </p>
-                                                       
-                                                    }
-
-
+                                                    <span>Scheduled Interviews:</span> <p style="color: blue;">@item.ScheduleMeetings</p> 
                                                 }
 
                                                 <span>Selected Interviews:</span> <p style="color: blue;">@item.SelectedMeetings</p>

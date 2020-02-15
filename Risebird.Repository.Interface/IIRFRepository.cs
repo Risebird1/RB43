@@ -72,5 +72,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Recruiter> GetRecruiters();
         string GetRecruiterDomain(int userId);
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
+        IEnumerable<InterviewVM> GetUpComingInterviewList();
+        IEnumerable<IRFVm> GetUpComingIRFList();
     }
 }

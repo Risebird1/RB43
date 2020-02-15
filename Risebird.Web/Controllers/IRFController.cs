@@ -219,6 +219,285 @@ namespace Risebird.Web.Controllers
         }
 
 
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult InterviewDashboard()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        var iRFVms = _irfService.GetUpComingIRFList();
+                        var  interviewVMs= _irfService.GetUpComingInterviewList();
+                        var datamodel = new List<IRFInterviewVM>();
+
+                        foreach (var item in iRFVms)
+                        {
+                            var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId &&( x.interviewDate > DateTime.Now.AddDays(-1) && x.interviewDate < DateTime.Now.AddDays(1)));
+                            if (interviews!= null && interviews.Count() > 0)
+                            {
+                                var data = new IRFInterviewVM();
+                                data.IRFId = item.IRFId;
+                                data.PrimarySkill = item.JDTiltle;
+                                data.ClientName = item.ClientName;
+                                data.EndClientName = item.ClientCompName;
+                                var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                var selectedInterview = interviews.Where(x => x.interviewStatus == 2).Count();
+                                var rejectedInterview = interviews.Where(x => x.interviewStatus == 3).Count();
+                                var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
+                                var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
+                                data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
+                                data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
+                                data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                datamodel.Add(data);
+                            }
+                        }
+                        var dayDate = DateTime.Now;
+                        var list = new SelectList(new[]
+                        {
+                            new { ID = "Yesterday", Name = dayDate.AddDays(-1).DayOfWeek.ToString()+"( "+dayDate.AddDays(-1).ToString("dd-MM-yyyy") +" )" },
+                            new { ID = "Today", Name = dayDate.DayOfWeek.ToString()+"( "+dayDate.ToString("dd-MM-yyyy") +" )" },
+                            new { ID = "Tomorrow", Name = dayDate.AddDays(1).DayOfWeek.ToString() +"( "+dayDate.AddDays(1).ToString("dd-MM-yyyy") +" )" },
+                            new { ID = "1DayTomorrow", Name = dayDate.AddDays(2).DayOfWeek.ToString()+"( "+dayDate.AddDays(2).ToString("dd-MM-yyyy") +" )" },
+                            new { ID = "2DayTomorrow", Name = dayDate.AddDays(3).DayOfWeek.ToString()+"( "+dayDate.AddDays(3).ToString("dd-MM-yyyy") +" )" },
+                            new { ID = "3DayTomorrow", Name = dayDate.AddDays(4).DayOfWeek.ToString()+"( "+dayDate.AddDays(4).ToString("dd-MM-yyyy") +" )" },
+                             new { ID = "3DayTomorrow", Name = dayDate.AddDays(5).DayOfWeek.ToString() +"( "+dayDate.AddDays(5).ToString("dd-MM-yyyy") +" )" },
+                        },
+                        "ID", "Name", "Today");
+
+                        ViewData["list"] = list;
+
+                        return View(datamodel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult FilteredInterviewDashboard(string filterValue)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" )
+                    {
+                        var iRFVms = _irfService.GetUpComingIRFList();
+                        var interviewVMs = _irfService.GetUpComingInterviewList();
+                        var datamodel = new List<IRFInterviewVM>();
+
+                        
+
+                        if (filterValue == "Today")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(-1) && x.interviewDate < DateTime.Now.AddDays(1)));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview +" " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview +" " + "Evening: " + eveningunInterview;
+                                    var selectedInterview = interviews.Where(x => x.interviewStatus == 2).Count();
+                                    var rejectedInterview = interviews.Where(x => x.interviewStatus == 3).Count();
+                                    var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
+                                    var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
+                                    data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
+                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
+                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+                        else if (filterValue == "Yesterday")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(-2) && x.interviewDate < DateTime.Now));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                    var selectedInterview = interviews.Where(x => x.interviewStatus == 2).Count();
+                                    var rejectedInterview = interviews.Where(x => x.interviewStatus == 3).Count();
+                                    var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
+                                    var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
+                                    data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
+                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
+                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+                        else if (filterValue == "Tomorrow")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now && x.interviewDate < DateTime.Now.AddDays(1)));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                    
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+                        else if (filterValue == "1DayTomorrow")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(1) && x.interviewDate < DateTime.Now.AddDays(2)));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                   
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+                        else if (filterValue == "2DayTomorrow")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(2) && x.interviewDate < DateTime.Now.AddDays(3)));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                    
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+                        else if (filterValue == "3DayTomorrow")
+                        {
+                            foreach (var item in iRFVms)
+                            {
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(3) && x.interviewDate < DateTime.Now.AddDays(4)));
+                                if (interviews != null && interviews.Count() > 0)
+                                {
+                                    var data = new IRFInterviewVM();
+                                    data.IRFId = item.IRFId;
+                                    data.PrimarySkill = item.JDTiltle;
+                                    data.ClientName = item.ClientName;
+                                    data.EndClientName = item.ClientCompName;
+                                    var mrngInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1).Count();
+                                    var eveningInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2).Count();
+                                    data.InterviewCount = "Morning: " + mrngInterview + " " + "Evening: " + eveningInterview;
+                                    var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
+                                    var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
+                                    data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
+                                    
+                                    datamodel.Add(data);
+                                }
+                            }
+
+                        }
+
+
+
+                        return PartialView("FilteredInterviewDashboard", datamodel);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+
+        }
+
+
         [Authorize]
         [HttpPost]
         public IActionResult Index(IRFFilter filter)

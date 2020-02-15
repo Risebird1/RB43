@@ -334,42 +334,8 @@
     </footer>
 </div>
 
-@*<script>
-    $(document).ready(function () {
-        $('#meeting').DataTable({
-            "pagingType": "full_numbers",
-            "lengthMenu": [
-                [10, 25, 50, -1],
-                [10, 25, 50, "All"]
-            ],
-            responsive: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search records",
-            }
 
-        });
-        var table = $('#meeting').DataTable();
-    });
-</script>*@
 
-@*<script type="text/javascript">
-
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
 
 <script type="text/javascript">
     //// script for loader starts here
@@ -398,72 +364,6 @@
     //// script for loader ends here
 </script>
 
-@*<script>
-    function FilterInterviews(filterValue) {
-
-        var id = '@ViewBag.IRFintId';
-        var irfId ='@ViewBag.IRF'
-        $.ajax({
-            type: "GET",
-            url: "/IRF/GetFilteredInterviewMeetings",
-            data: { 'filterValue': filterValue, 'id': id, 'irfId': irfId},
-            success: function (data) {
-                if (data == '' && filterValue == 'seven') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for the next seven days.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '' && filterValue == 'all') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                if (data == '') {
-                    $('#tableID').html('');
-                    $('#tableID').html('No interviews for ' + filterValue + '.');
-                    $('#tableID').css("margin-left", "452px");
-                    return;
-                }
-                $('#tableID').css("margin-left", "");
-                $('#tableID').html('');
-                $('#tableID').html(data);
-
-                $('#meeting').DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [
-                        [10, 25, 50, -1],
-                        [10, 25, 50, "All"]
-                    ],
-                    responsive: true,
-                    language: {
-                        search: "_INPUT_",
-                        searchPlaceholder: "Search records",
-                    }
-
-                });
-                var table = $('#meeting').DataTable();
-
-
-
-            },
-            error: function (err) {
-                alert(err.responseText);
-            }
-        });
-    }
-</script>*@
-<!-- Keep the Page Content Here.-->
-@*<script type="text/javascript">
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $(".datatable").show();
-            }, 2000);
-        };
-    </script>*@
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->

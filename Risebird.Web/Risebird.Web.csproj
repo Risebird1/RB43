@@ -178,6 +178,9 @@
     <Content Update="Views\Interview\InterviewComments.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\IRF\FilteredInterviewDashboard.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\IRF\SelectedInterviewMeetings.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

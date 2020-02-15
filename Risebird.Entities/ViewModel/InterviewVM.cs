@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Risebird.Entities.ViewModel
+{
+    public class InterviewVM
+    {
+        public string IRFID { get; set; }
+        public DateTime interviewDate { get; set; }
+        public int interviewSlot { get; set; }
+        public string interviewer { get; set; }
+        public int interviewStatus { get; set; }
+        public string InterviewerComment { get; set; }
+        public string VideoLink { get; set; }
+        public int QCInterview { get; set; }
+
+    }
+}
