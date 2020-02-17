@@ -2030,6 +2030,52 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<IRFVm> GetUpComingIRFList()
+        {         
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {                   
+                    var result = SqlMapper.Query<IRFVm>(con, "usp_ComingDaysIRF", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<InterviewVM> GetUpComingInterviewList()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<InterviewVM>(con, "usp_ComingDaysInterview", null,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+            }
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
     }
 }

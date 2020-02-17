@@ -908,5 +908,33 @@ namespace Risebird.Business
             }
         }
 
-    }
+        public List<InterviewVM> GetUpComingInterviewList()
+        {           
+            try
+            {
+                return _irfRepository.GetUpComingInterviewList()?.ToList()?? new List<InterviewVM>();
+               
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<InterviewVM>();
+            }
+        }
+
+        public List<IRFVm> GetUpComingIRFList()
+        {
+            try
+            {
+                return _irfRepository.GetUpComingIRFList()?.ToList() ?? new List<IRFVm>();
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return new List<IRFVm>();
+            }
+        }
+
+        }
 }

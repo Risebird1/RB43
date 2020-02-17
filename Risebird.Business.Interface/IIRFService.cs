@@ -48,5 +48,7 @@ namespace Risebird.Business.Interface
         InvoiceModel GetInvoiceModel(int irfId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
         int GetUserId(string emailId, string profile);
         string GetRecruiterDomain(int userId);
+        List<InterviewVM> GetUpComingInterviewList();
+        List<IRFVm> GetUpComingIRFList();
     }
 }
