@@ -573,7 +573,6 @@ namespace Risebird.Repository
             try
             {
                
-
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
                 parameters.Add("@CreatedOn", irfDetails.CreatedOn);
                 //parameters.Add("@id", irfDetails.id);
@@ -1343,7 +1342,8 @@ namespace Risebird.Repository
             parameters.Add("@PerMintuteRate", entity.PerMintuteRate);
             parameters.Add("@JobLevel", entity.JobLevel);
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
-            parameters.Add("@TotalBudget", entity.TotalBudget);            
+            parameters.Add("@TotalBudget", entity.TotalBudget);
+            parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

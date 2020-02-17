@@ -18,6 +18,7 @@ namespace Risebird.Repository
         private readonly string connectionString;
         private readonly string voiceItApiKey;
         private readonly string voiceItApiToken;
+        private readonly string voiceItLanguage;
         private IApplicationErrorLogger _applicationErrorLogger;
         public VoiceItRepository(IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger)
         {
@@ -26,29 +27,73 @@ namespace Risebird.Repository
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             voiceItApiKey = _configuration["VoiceIt:ApiKey"];
             voiceItApiToken = _configuration["VoiceIt:ApiToken"];
+            voiceItLanguage = _configuration["VoiceIt:Language"];
         }
 
-        public string CreateUser()
+        public VoiceItResponse CreateUser()
         {
-            var result = string.Empty;
+            //var result = string.Empty;
             try
             {
                 VoiceIt2 myVoiceIt = new VoiceIt2(voiceItApiKey, voiceItApiToken);
                 var response = myVoiceIt.CreateUser();
                 var outPut = JsonConvert.DeserializeObject<VoiceItResponse>(response);
-                if (response != null)
-                {
-                    result = "success";
-                }
-                return result;
+                //if (response != null)
+                //{
+                //    result = "success";
+                //}
+                return outPut;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+           
+
+        }
+
+        public string EnrollUser(string userId, string fileUrl, string phrase)
+        {
+            //var result = string.Empty;
+            try
+            {
+                VoiceIt2 myVoiceIt = new VoiceIt2(voiceItApiKey, voiceItApiToken);
+                var response = myVoiceIt.CreateVoiceEnrollmentByUrl(userId, voiceItLanguage, phrase, fileUrl);
+                var outPut = JsonConvert.DeserializeObject<VoiceItResponse>(response);
+                //if (outPut != null)
+                //{
+                //    return outPut.message;
+                //}
+                return outPut.message;
             }
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed";
             }
-           
+
 
         }
+
+        public VoiceItResponse VerifyUser(string userId, string fileUrl, string phrase)
+        {
+            //var result = string.Empty;
+            try
+            {
+                VoiceIt2 myVoiceIt = new VoiceIt2(voiceItApiKey, voiceItApiToken);
+                var response = myVoiceIt.VoiceVerificationByUrl(userId, voiceItLanguage, phrase, fileUrl);
+                var outPut = JsonConvert.DeserializeObject<VoiceItResponse>(response);
+                return outPut;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+
+        }
+
     }
 }

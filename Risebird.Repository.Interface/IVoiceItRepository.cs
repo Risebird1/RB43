@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Risebird.Entities.Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,8 @@ namespace Risebird.Repository.Interface
 {
     public interface IVoiceItRepository
     {
-        string CreateUser();
+        VoiceItResponse CreateUser();
+        string EnrollUser(string userId, string fileUrl, string phrase);
+        VoiceItResponse VerifyUser(string userId, string fileUrl, string phrase);
     }
 }

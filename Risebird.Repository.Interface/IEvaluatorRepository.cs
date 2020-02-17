@@ -38,5 +38,7 @@ namespace Risebird.Repository.Interface
         CandidateAudio GetCandidate(int id, int irfId);
         Task<bool> AddCandidateAudio(CandidateAudio obj);
         IEnumerable<CandidateAudio> GetCandidateAudios(int candidateId, int irfId);
+        bool UpdateCandidateVoiceUserId(string userId, int candidateMasterId, int irfId);
+        bool UpdateEnrollmentStatus(int id, bool isEnrolled, string message);
     }
 }

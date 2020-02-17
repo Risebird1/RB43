@@ -237,12 +237,16 @@ namespace Risebird.Web.Controllers
                         var iRFVms = _irfService.GetUpComingIRFList();
                         var  interviewVMs= _irfService.GetUpComingInterviewList();
                         var datamodel = new List<IRFInterviewVM>();
-
+                        DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
+                        DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
                         foreach (var item in iRFVms)
                         {
-                            var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId &&( x.interviewDate > DateTime.Now.AddDays(-1) && x.interviewDate < DateTime.Now.AddDays(1)));
+                           // var lastDay = DateTime.Now.AddDays(-1);
+                           
+                            var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId &&( x.interviewDate > startDate && x.interviewDate < endDate));
                             if (interviews!= null && interviews.Count() > 0)
                             {
+                               
                                 var data = new IRFInterviewVM();
                                 data.IRFId = item.IRFId;
                                 data.PrimarySkill = item.JDTiltle;
@@ -259,8 +263,19 @@ namespace Risebird.Web.Controllers
                                 var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
                                 var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
                                 data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
-                                data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
-                                data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count().ToString();
+                                data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count().ToString();
+                                var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                       .Select(g => new { Value = g.Key, Count = g.Count() })
+                                      .OrderByDescending(x => x.Count);
+                                var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                if (concurrentInterview.Count() > 0)
+                                {
+                                    foreach (var conInterview in concurrentInterview)
+                                    {
+                                        data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                    }
+                                }
                                 datamodel.Add(data);
                             }
                         }
@@ -320,9 +335,11 @@ namespace Risebird.Web.Controllers
 
                         if (filterValue == "Today")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59);
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(-1) && x.interviewDate < DateTime.Now.AddDays(1)));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -341,8 +358,19 @@ namespace Risebird.Web.Controllers
                                     var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
                                     var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
                                     data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
-                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
-                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count().ToString();
+                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count().ToString();
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                      .Select(g => new { Value = g.Key, Count = g.Count() })
+                                     .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
@@ -350,9 +378,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filterValue == "Yesterday")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.AddDays(-1).Year, DateTime.Now.AddDays(-1).Month, DateTime.Now.AddDays(-1).Day, 23, 59, 59);
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(-2) && x.interviewDate < DateTime.Now));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -371,8 +401,19 @@ namespace Risebird.Web.Controllers
                                     var borderLineInterview = interviews.Where(x => x.interviewStatus == 4).Count();
                                     var proxyInterview = interviews.Where(x => x.interviewStatus == 1).Count();
                                     data.SelectionCount = "Selected: " + selectedInterview + " " + "Borderline: " + borderLineInterview + " " + "Rejected: " + rejectedInterview + " " + "Proxy: " + proxyInterview;
-                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count();
-                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count();
+                                    data.InterviewsReportCount = interviews.Where(x => x.InterviewerComment == null).Count().ToString();
+                                    data.QualityCheck = interviews.Where(x => x.QCInterview == 0).Count().ToString();
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                      .Select(g => new { Value = g.Key, Count = g.Count() })
+                                     .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
@@ -380,9 +421,12 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filterValue == "Tomorrow")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.AddDays(1).Year, DateTime.Now.AddDays(1).Month, DateTime.Now.AddDays(1).Day, 23, 59, 59);
+
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now && x.interviewDate < DateTime.Now.AddDays(1)));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -396,7 +440,17 @@ namespace Risebird.Web.Controllers
                                     var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
                                     var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
                                     data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
-                                    
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                      .Select(g => new { Value = g.Key, Count = g.Count() })
+                                     .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
@@ -404,9 +458,12 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filterValue == "1DayTomorrow")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.AddDays(2).Year, DateTime.Now.AddDays(2).Month, DateTime.Now.AddDays(2).Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.AddDays(2).Year, DateTime.Now.AddDays(2).Month, DateTime.Now.AddDays(2).Day, 23, 59, 59);
+
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(1) && x.interviewDate < DateTime.Now.AddDays(2)));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate ));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -420,7 +477,17 @@ namespace Risebird.Web.Controllers
                                     var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
                                     var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
                                     data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
-                                   
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                       .Select(g => new { Value = g.Key, Count = g.Count() })
+                                      .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
@@ -428,9 +495,12 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filterValue == "2DayTomorrow")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.AddDays(3).Year, DateTime.Now.AddDays(3).Month, DateTime.Now.AddDays(3).Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.AddDays(3).Year, DateTime.Now.AddDays(3).Month, DateTime.Now.AddDays(3).Day, 23, 59, 59);
+
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(2) && x.interviewDate < DateTime.Now.AddDays(3)));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -444,7 +514,17 @@ namespace Risebird.Web.Controllers
                                     var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
                                     var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
                                     data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
-                                    
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                      .Select(g => new { Value = g.Key, Count = g.Count() })
+                                     .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
@@ -452,9 +532,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (filterValue == "3DayTomorrow")
                         {
+                            DateTime startDate = new DateTime(DateTime.Now.AddDays(4).Year, DateTime.Now.AddDays(4).Month, DateTime.Now.AddDays(4).Day, 00, 00, 00);
+                            DateTime endDate = new DateTime(DateTime.Now.AddDays(4).Year, DateTime.Now.AddDays(4).Month, DateTime.Now.AddDays(4).Day, 23, 59, 59);
                             foreach (var item in iRFVms)
                             {
-                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > DateTime.Now.AddDays(3) && x.interviewDate < DateTime.Now.AddDays(4)));
+                                var interviews = interviewVMs.Where(x => x.IRFID == item.IRFId && (x.interviewDate > startDate && x.interviewDate < endDate));
                                 if (interviews != null && interviews.Count() > 0)
                                 {
                                     var data = new IRFInterviewVM();
@@ -468,15 +550,22 @@ namespace Risebird.Web.Controllers
                                     var mrngunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 1 && x.interviewer == null).Count();
                                     var eveningunInterview = interviews.Where(x => Convert.ToInt32(x.interviewSlot) == 2 && x.interviewer == null).Count();
                                     data.UnassignedInterviewCount = "Morning: " + mrngunInterview + " " + "Evening: " + eveningunInterview;
-                                    
+                                    var concurrentCollection = interviews.GroupBy(x => x.interviewDate)
+                                      .Select(g => new { Value = g.Key, Count = g.Count() })
+                                     .OrderByDescending(x => x.Count);
+                                    var concurrentInterview = concurrentCollection.Where(x => x.Count > 2).ToList();
+                                    if (concurrentInterview.Count() > 0)
+                                    {
+                                        foreach (var conInterview in concurrentInterview)
+                                        {
+                                            data.ConcurrentInterview += conInterview.Value + " : " + conInterview.Count + " ";
+                                        }
+                                    }
                                     datamodel.Add(data);
                                 }
                             }
 
                         }
-
-
-
                         return PartialView("FilteredInterviewDashboard", datamodel);
                     }
                     else
@@ -2634,7 +2723,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x=> !x.IsVoiceBiometric).ToList();
                     ViewBag.Profile = profileName;
                     return View(model);
                 }
@@ -2670,13 +2759,13 @@ namespace Risebird.Web.Controllers
 
                         if (_evaluatorService.AddSelectabilityReport(model).Result)
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Data saved successfully";
-                            return RedirectToAction("Candidates");
+                            TempData["SuccessErrorMessageCandidate"] = "Data saved successfully";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
-                            return RedirectToAction("Candidates");
+                            TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
                         }
                     }
                     else
@@ -2692,8 +2781,8 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageEvaluator"] = "Sorry! Could not save data!";
-                return RedirectToAction("MyEvaluations");
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not save data!";
+                return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
             }
         }
         public IActionResult ShowCalendly(string irfName, string calendlyLink)
@@ -3098,6 +3187,190 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+        [HttpGet]
+        public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = _evaluatorService.GetCandidate(candidateId, irfId);
+                    //TempData["actMethod"] = actMethod;
+                    //ViewBag.BackMethod = actMethod;
+                    var list = new SelectList(new[]
+                    {
+                        new { ID = "Enrollment1", Name = "Enrollment 1"},
+                        new { ID = "Enrollment2", Name = "Enrollment 2"  },
+                        new { ID = "Enrollment3", Name = "Enrollment 3" }
+                    }, "ID", "Name", "Enrollment1");
+
+
+                    ViewData["list"] = list;
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Candidates", new { id = irfId.ToString(), irfName = rfName});
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [DisableRequestSizeLimit]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadAudio(CandidateAudio model)
+        {
+            //string actMethod = string.Empty;
+            //if (TempData["actMethod"] != null)
+            //{
+            //    actMethod = TempData["actMethod"].ToString();
+            //}
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                        if (model.AudioFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(model.AudioFile.FileName, "audios", model.AudioFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("audios");
+                            var blob = containerRef.GetBlockBlobReference(model.AudioFile.FileName);
+                            string uploadedaudioFileURL = blob.Uri.ToString();
+                            if (uploadedaudioFileURL == null)
+                            {
+                                ModelState.AddModelError(string.Empty, "Audio Upload failed.");
+                                return View("UploadAudio", model);
+                            }
+                            else
+                            {
+                                model.AudioFileLink = uploadedaudioFileURL;
+                            }
+                        }
+
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+
+                        if (_evaluatorService.AddCandidateAudio(model, emailid, profileName).Result)
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Audio uploaded successfully";
+                            return RedirectToAction("Candidates", new {id=model.IRFId, irfName=model.IRFName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageCandidate"] = "Audio Upload failed.";
+                            return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageAudio"] = "Audio Upload failed.";
+                return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EnrollVoiceItUser(int candidateId, string candidateEmail, int irfId, string irfName)
+        {
+            try
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    ViewBag.irfName = irfName;
+                    ViewBag.irfId = irfId;
+                    ViewBag.candidateEmail = candidateEmail;
+                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    if (TempData["SuccessErrorMessageEnroll"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageEnroll"].ToString();
+                        TempData.Remove("SuccessErrorMessageEnroll");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Candidates", new {id = irfId, irfName = irfName});
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
+        {
+            //string actionMethod = string.Empty;
+            //if (TempData["actMethod"] != null)
+            //{
+            //    actionMethod = TempData["actMethod"].ToString();
+            //}
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName =  profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                        var result = _evaluatorService.EnrollCandidate(model);
+                        TempData["SuccessErrorMessageEnroll"] = result;
+                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId});
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEnrollment"] = "Failed!";
+                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId });
+            }
         }
     }
 }

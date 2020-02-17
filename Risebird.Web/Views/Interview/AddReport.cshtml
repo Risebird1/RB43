@@ -874,6 +874,69 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
+
+                                @if (Model.IsBiometricEnabled)
+                                {
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Voice Biometric Verification Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="voiceBiometricTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><b>Level</b></th>
+                                                            <th><b>Score</b></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <b>Interview Level</b>
+                                                            </td>
+                                                            <td>
+                                                                @if (Model.InterviewBiometryScore == 0)
+                                                                {
+                                                                    <div>Not yet verified</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Model.InterviewBiometryScore
+
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <b>Joining Level</b>
+                                                            </td>
+                                                            <td>
+                                                                @if (Model.JoiningBiometryScore == 0)
+                                                                {
+                                                                    <div>Not yet verified</div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Model.JoiningBiometryScore
+
+                                                                }
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+                                }
+
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">

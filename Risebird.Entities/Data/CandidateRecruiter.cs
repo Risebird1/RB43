@@ -22,6 +22,7 @@ namespace Risebird.Entities.Data
         public double TechSkillScore { get; set; }
         public double SkillGeneralScore { get; set; }
         public string VoiceItUserId { get; set; }
+        public bool IsBiometricEnabled { get; set; }
 
     }
 }

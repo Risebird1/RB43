@@ -317,7 +317,8 @@
                                                     <span onclick="location.href = '@Url.Action("EditCandidate", "IRF", new { id = item.id, irfName = ViewBag.IRFName, irfId = ViewBag.IRFId })'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
                                                     <span onclick="javascript:DeleteCandidate('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
                                                     <span onclick="location.href = '@Url.Action("CandidateReport", "IRF", new { candidateId = item.CandidateMasterId, irfId= item.IRFId})'" title="Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-
+                                                    <span onclick="location.href = '@Url.Action("UploadAudio", "IRF", new { candidateId = item.CandidateMasterId, irfId= item.IRFId, rfName=ViewBag.IRFName})'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("EnrollVoiceItUser", "IRF", new { candidateId = item.CandidateMasterId,candidateEmail=item.EmailId, irfId= item.IRFId, irfName = ViewBag.IRFName})'" title="Enroll User for Biometric verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-sign-in"></i></span>
 
 
                                                 </td>

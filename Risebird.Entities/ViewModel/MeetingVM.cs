@@ -130,7 +130,6 @@ namespace Risebird.Entities.ViewModel
         public int? IsApproved { get; set; }
         public string NextLevelApprovalStat { get; set; }
         public string ApprovalComments { get; set; }
-
         public int? IsSelected { get; set; }
         public string FinalSelectionStat { get; set; }
         public string FinalComments { get; set; }
@@ -138,7 +137,9 @@ namespace Risebird.Entities.ViewModel
         public int PerMintuteRate { get; set; }
         public int TotalBudget { get; set; }
         public bool IsEmergency { get; set; }
-
-
+        public bool IsBiometricEnabled { get; set; }
+        public int CandidateId { get; set; }
+        public double InterviewBiometryScore { get; set; }
+        public double JoiningBiometryScore { get; set; }
     }
 }

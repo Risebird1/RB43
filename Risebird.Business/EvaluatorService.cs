@@ -497,5 +497,65 @@ namespace Risebird.Business
             }
         }
 
+        public string EnrollCandidate(IList<CandidateAudio> candidateList)
+        {
+            try
+            {
+                string voiceItUserId = string.Empty;
+                string finalStatus = "Successful!";
+                //check if the candidate is a  VoiceIt user already
+                if(candidateList != null && candidateList.First().VoiceItUserId == null)
+                {
+                    //create user
+                    var result = _voiceItRepository.CreateUser();
+                    if(result.responseCode.Contains("SUCC"))
+                    {
+                        //save userID to database
+                        voiceItUserId = result.userId;
+                        _evaluatorRespository.UpdateCandidateVoiceUserId(result.userId, candidateList.First().CandidateId, candidateList.First().IRFId);
+                    }
+                    else
+                    {
+                        return "Failed!";
+                    }
+                }
+                else
+                {
+                    voiceItUserId = candidateList.First().VoiceItUserId;
+                }
+                foreach (var item in candidateList)
+                {
+                    if (!item.IsEnrolled)
+                    {
+                        var enrollmentResult = _voiceItRepository.EnrollUser(voiceItUserId, item.AudioFileLink, item.PhraseDetail);
+                        
+                        if (enrollmentResult.Contains("Success"))
+                        {
+                            item.IsEnrolled = true;
+                        }
+                        else
+                        {
+                            finalStatus = "Failed";
+
+                        }
+                        //update database
+                        _evaluatorRespository.UpdateEnrollmentStatus(item.id, item.IsEnrolled, enrollmentResult);
+
+
+                    }
+
+                }
+
+                return finalStatus;
+            }
+
+            catch (Exception e)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+
     }
 }

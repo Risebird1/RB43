@@ -11,6 +11,8 @@ CREATE TABLE [dbo].[CandidateAudio](
 	[IsVoiceBiometric] [bit] NOT NULL,
 	[AudioFileLink] [nvarchar](max) NULL,
 	[Description] [nvarchar](max) NULL,
+	[IsEnrolled] [bit] NOT NULL,
+	[EnrollmentMessage] [nvarchar](max) NULL,
 	FOREIGN KEY([CandidateId]) REFERENCES [dbo].[CandidatesMaster] ([id]),
 	FOREIGN KEY([IRFId]) REFERENCES [dbo].[IRF] ([id]),
 	FOREIGN KEY([UploadedByUserId]) REFERENCES [dbo].[UserList] ([id]),
@@ -31,6 +33,26 @@ BEGIN
     ALTER TABLE CandidateAudio
     Add [Description] NVARCHAR(max)
 END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsEnrolled')
+      AND Object_ID = Object_ID(N'CandidateAudio'))
+BEGIN
+    ALTER TABLE CandidateAudio
+    Add IsEnrolled BIT NOT NULL DEFAULT 0
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'EnrollmentMessage')
+      AND Object_ID = Object_ID(N'CandidateAudio'))
+BEGIN
+    ALTER TABLE CandidateAudio
+    Add EnrollmentMessage NVARCHAR(max)
+END
+
 
 END
 GO

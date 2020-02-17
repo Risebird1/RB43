@@ -272,7 +272,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -498,7 +498,7 @@ namespace Risebird.Web.Controllers
                     model.EvaluatorReport = _evaluatorService.GetEvaluatorReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -638,7 +638,7 @@ namespace Risebird.Web.Controllers
                     model.HRReport = _evaluatorService.GetHRJoinabilityReport(candidateId, irfId).Result;
                     model.TechSkillEvaluatorReportCollection = _evaluatorService.GetTechReport(candidateId, irfId).Result;
                     model.SkillGeneralEvaluatorReportCollection = _evaluatorService.GetSkillGeneralReport(candidateId, irfId).Result;
-                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result;
+                    model.CandidateAudioCollection = _evaluatorService.GetCandidateAudios(candidateId, irfId).Result.ToList().Where(x => !x.IsVoiceBiometric).ToList();
                     return View(model);
                 }
                 else
@@ -807,5 +807,82 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult EnrollVoiceItUser(int candidateId, int irfId, string actMethod = "")
+        {
+            try
+            {
+
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName =  profileName.Replace("\"", "");
+                if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
+                {
+                    var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x=>x.IsVoiceBiometric==true).ToList();  
+                    TempData["actMethod"] = actMethod;
+                    ViewBag.BackMethod = actMethod;
+                    if (TempData["SuccessErrorMessageEnroll"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageEnroll"].ToString();
+                        TempData.Remove("SuccessErrorMessageEnroll");
+                    }
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction(actMethod);
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
+        {
+            string actionMethod = string.Empty;
+            if (TempData["actMethod"] != null)
+            {
+                actionMethod = TempData["actMethod"].ToString();
+            }
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null &&
+                    HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "ResumeEvaluator" || profileName == "HR" || profileName == "Recruiter")
+                    {
+                       
+                        var result =_evaluatorService.EnrollCandidate(model);
+                        TempData["SuccessErrorMessageEnroll"] = result;
+                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId, actMethod = actionMethod });
+                        
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageEnrollment"] = "Failed!";
+                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId, actMethod = actionMethod });
+            }
+        }
     }
 }

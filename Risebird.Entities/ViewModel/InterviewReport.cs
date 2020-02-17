@@ -116,6 +116,9 @@ namespace Risebird.Entities.ViewModel
         public int? IsSelected { get; set; }
         public string FinalComments { get; set; }
         public bool IsQC { get; set; }
+        public bool IsBiometricEnabled { get; set; }
+        public double InterviewBiometryScore { get; set; }
+        public double JoiningBiometryScore { get; set; }
 
     }
 }

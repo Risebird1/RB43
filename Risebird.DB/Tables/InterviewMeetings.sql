@@ -22,6 +22,8 @@ CREATE TABLE [dbo].[InterviewMeetings](
 	[QCInterviewer][varchar](200) null,
 	[joiningTime][varchar](200) null,
 	[IsEmergency] [bit] NOT NULL,
+	[InterviewBiometryScore] [decimal](10, 2) NULL,
+	[JoiningBiometryScore] [decimal](10, 2) NULL,
 	[sCreatedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sCreatedBy]  DEFAULT ('NA'),	
 	[dtCreatedOn] [DateTime] NOT NULL CONSTRAINT [DF_InterviewMeetings_dtCreatedOn] DEFAULT ('NA'),	
 	[sModifiedBy] [varchar](100) NOT NULL CONSTRAINT [DF_InterviewMeetings_sModifiedBy]  DEFAULT ('NA'),	
@@ -93,7 +95,24 @@ BEGIN
     Add IsEmergency bit not null default 0
 END
 
-
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewBiometryScore')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add InterviewBiometryScore DECIMAL (10,2)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'JoiningBiometryScore')
+      AND Object_ID = Object_ID(N'InterviewMeetings'))
+BEGIN
+    ALTER TABLE InterviewMeetings
+    Add JoiningBiometryScore DECIMAL (10,2)
+END
 END
 GO
 

@@ -31,6 +31,9 @@ namespace Risebird.Entities.ViewModel
         public IFormFile AudioFile { get; set; }
         public string Description { get; set; }
         public string DropDescription { get; set; }
+        public string EnrollmentMessage { get; set; }
+        public string VoiceItUserId { get; set; }       
+        public bool IsEnrolled { get; set; }
 
     }
 }
