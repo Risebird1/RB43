@@ -61,6 +61,7 @@ namespace Risebird.Repository.Interface
         List<string> ListInterviewersMail(string candidateEmail, string interviewDate);
         int GetCandidateId(int id, string irfName);
         bool UpdateInterviewVerificationScore(int meetingId, double confidence);
+        bool UpdateJoiningVerificationScore(int meetingId, double confidence);
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
     }
 }

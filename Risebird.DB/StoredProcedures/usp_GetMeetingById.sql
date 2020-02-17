@@ -39,11 +39,14 @@ SELECT [InterviewMeetings].id as imid
 	 ,joiningTime
 	 ,currentEmployerName
 	 ,MobileNumber
+	 ,JoiningBiometryScore
+	 ,InterviewBiometryScore
 	 ,InterviewComments.ApprovalComments
 	 ,InterviewComments.FinalComments
 	 ,InterviewComments.IsApproved
 	 ,InterviewComments.IsSelected
 	 ,IRF.id as irfIntId
+	 ,IRF.IsBiometricEnabled
 FROM [dbo].[InterviewMeetings]
 inner join 
 IRF on [InterviewMeetings].IRFId = IRF.IRFId
@@ -51,9 +54,6 @@ left join InterviewComments on InterviewMeetings.id=InterviewComments.InterviewI
 WHERE
       [InterviewMeetings].id = @interviewId
 End
-
-
-
 
 GO
 

@@ -43,6 +43,6 @@ namespace Risebird.Business.Interface
         List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList);
         List<string> GetIRFList(string emailId, List<MeetingVM> meetingList);
         VerifyCandidateAudio GetCandidateAudios(int candidateId, int irfId);
-        string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId);
+        string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
     }
 }

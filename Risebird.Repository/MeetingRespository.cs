@@ -816,7 +816,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,ic.ApprovalComments,ic.FinalComments from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
+                var query = "select im.*, im.id as imid, IRF.ClientId,IRF.ClientName,IRF.JDTiltle, IRF.IsBiometricEnabled, IRF.id as irfIntId,ic.MeetingStatus,ic.InterviewStatus,ic.VideoLink, ic.InterviewerComment,ic.OfferStatus,ic.JoiningStatus,ic.IsApproved,ic.IsSelected, ic.OfferComments,ic.JoiningComments,ic.ApprovalComments,ic.FinalComments, cm.id as CandidateId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId left join CandidatesMaster cm on im.candidateEmail = cm.EmailId";
                 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -1549,6 +1549,28 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
+        public bool UpdateJoiningVerificationScore(int meetingId, double confidence)
+        {
+            try
+            {
+                var query = "update InterviewMeetings set JoiningBiometryScore = @JoiningBiometryScore where id =@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@JoiningBiometryScore", confidence);
+                dynamicParameters.Add("@id", meetingId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
 
     }
 }

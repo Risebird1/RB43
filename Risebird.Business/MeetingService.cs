@@ -734,6 +734,9 @@ namespace Risebird.Business
                     model.IsSelected = interviewDetails.IsSelected;
                     model.FinalComments = interviewDetails.FinalComments;
                     model.ApprovalComments = interviewDetails.ApprovalComments;
+                    model.IsBiometricEnabled = interviewDetails.IsBiometricEnabled;
+                    model.JoiningBiometryScore = interviewDetails.JoiningBiometryScore;
+                    model.InterviewBiometryScore = interviewDetails.InterviewBiometryScore;
                     reportModel = model;
                 }
                 // joinability and Selectability
@@ -943,7 +946,7 @@ namespace Risebird.Business
             }
         }
 
-        public string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId)
+        public string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type)
         {
             try
             {
@@ -957,7 +960,15 @@ namespace Risebird.Business
                     if(verificationResult.responseCode== "SUCC")
                     {
                         finalStatus = verificationResult.message + " with confidence " + verificationResult.confidence;
-                        _meetingRespository.UpdateInterviewVerificationScore(meetingId, verificationResult.confidence);
+                        if(type == "interview")
+                        {
+                            _meetingRespository.UpdateInterviewVerificationScore(meetingId, verificationResult.confidence);
+                        }
+                        if(type == "joining")
+                        {
+                            _meetingRespository.UpdateJoiningVerificationScore(meetingId, verificationResult.confidence);
+
+                        }
                     }
                     else
                     {
