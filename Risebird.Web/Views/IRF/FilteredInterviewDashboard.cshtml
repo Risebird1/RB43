@@ -59,6 +59,7 @@
             <th>End Client Name</th>
             <th>Interview</th>
             <th>Unassigned Interview</th>
+            <th>Concurrent Interviews</th>
             <th>Interviews Status</th>
             <th>Not Filled Report</th>
             <th>Quality Check Pending</th>
@@ -72,25 +73,27 @@
             <th>End Client Name</th>
             <th>Interviews</th>
             <th>Unassigned Interviews</th>
+            <th>Concurrent Interviews</th>
             <th>Interview Status</th>
             <th>Not Filled Report</th>
-            <th>>Quality Check Pending</th>
+            <th>Quality Check Pending</th>
         </tr>
     </tfoot>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id=@item.IRFId>
-                <td> @item.IRFId </td>
-                <td> @item.PrimarySkill </td>
-                <td> @item.EndClientName </td>
-                <td> @item.ClientName </td>
-                <td> @item.InterviewCount</td>
-                <td> @item.UnassignedInterviewCount </td>
-                <td> @item.SelectionCount </td>
-                <td> @item.InterviewsReportCount </td>
-                <td> @item.QualityCheck </td>
-            </tr>
+        <tr id=@item.IRFId>
+            <td> @item.IRFId </td>
+            <td> @item.PrimarySkill </td>
+            <td> @item.EndClientName </td>
+            <td> @item.ClientName </td>
+            <td> @item.InterviewCount</td>
+            <td> @item.UnassignedInterviewCount </td>
+            <th>@item.ConcurrentInterview</th>
+            <td> @item.SelectionCount </td>
+            <td> @item.InterviewsReportCount </td>
+            <td> @item.QualityCheck </td>
+        </tr>
         }
     </tbody>
 </table>

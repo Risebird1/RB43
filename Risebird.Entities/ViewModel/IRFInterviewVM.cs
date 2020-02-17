@@ -12,10 +12,11 @@ namespace Risebird.Entities.ViewModel
         public string EndClientName { get; set; }
         public string InterviewCount { get; set; }
         public string UnassignedInterviewCount { get; set; }
+        public string ConcurrentInterview { get; set; }
         public string InterviewStatusCount { get; set; }
-        public int InterviewsReportCount { get; set; }
+        public string InterviewsReportCount { get; set; }
         public string SelectionCount { get; set; }
-        public int QualityCheck { get; set; }
+        public string QualityCheck { get; set; }
 
     }
 }

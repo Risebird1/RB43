@@ -77,15 +77,14 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(m => Model[0].CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => Model[0].CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
+                                            <label>Candidate Name:</label>
+                                            <label>@ViewBag.candidateEmail</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(m => Model[0].IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => Model[0].IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                            <label>IRF Name:</label>
+                                            <label>@ViewBag.irfName</label>
                                         </div>
                                     </div>
 
@@ -174,7 +173,7 @@
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.First().IRFId, irfName = Model.First().IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = @ViewBag.irfName, irfName = @ViewBag.irfName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                             <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>
 
                                         </div>

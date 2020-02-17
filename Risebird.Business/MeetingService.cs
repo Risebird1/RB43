@@ -512,7 +512,8 @@ namespace Risebird.Business
                     var hrs = _userService.GetAllHrsEmailld()?.ToList();
                     if (hrs != null)
                     {
-                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), email);
+                        var candidateEmail = meeting.Result.candidateEmail;                         
+                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail,email);
 
                     }
                     return true;
