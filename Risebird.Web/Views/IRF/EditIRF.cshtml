@@ -117,7 +117,13 @@
 
                                     </div>
                                 </div>
+                                <div class="col-md-3 col-sm-3 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control" })
 
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 col-sm-6">

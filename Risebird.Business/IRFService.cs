@@ -387,6 +387,7 @@ namespace Risebird.Business
                 model.TotalInvites = IRF.TotalInvites;
                 model.TotalBudget = IRF.TotalBudget;
                 model.IsBiometricEnabled = IRF.IsBiometricEnabled;
+                model.PriorityLevel = IRF.PriorityLevel;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -935,6 +936,34 @@ namespace Risebird.Business
                 return new List<IRFVm>();
             }
         }
+        public bool PauseIRF(int irfId, string irfName)
+        {
+            try
+            {
+                //update meeting status
+                var updatedMeetings = _irfRepository.UpdateMeetingStatus(irfName).Result.ToList();
 
+                //send mails
+                if (updatedMeetings != null && updatedMeetings.Count()!=0)
+                {
+                    //get emails
+                    foreach (var item in updatedMeetings)
+                    {
+                        _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
+                        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact,item.interviewDate.ToString("MMMM dd, yyyy"));
+
+                    }
+                    //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
+
+    }
 }

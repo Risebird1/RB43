@@ -363,6 +363,9 @@
                                     <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
                                     </button>
+                                    <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
+                                        <i class="now-ui-icons fa fa-pause"></i>
+                                    </button>
                                 }
 
 
@@ -725,6 +728,56 @@
         var url = '/IRF/UnArchiveIRF?id=' + id;
         window.location.href = url;
     };
+
+    function PauseIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be paused!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused! :)',
+                    'error'
+                )
+            }
+        })
+    }
     //UnArchiveIRF
 </script>
 <script>

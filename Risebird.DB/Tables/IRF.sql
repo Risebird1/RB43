@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[IRF](
 			[CreatedOn][DATETIME] NULL,
 			[Discount] [real] NOT NULL,
 			[IsBiometricEnabled] [bit] NOT NULL,
+			[PriorityLevel] [int] NOT NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -87,6 +88,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add Discount real NOT NULL DEFAULT 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'PriorityLevel')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add PriorityLevel INT NOT NULL DEFAULT 3
 END
 END
 

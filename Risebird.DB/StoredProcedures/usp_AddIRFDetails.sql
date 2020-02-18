@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_AddIRFDetails]
+Create PROCEDURE [dbo].[usp_AddIRFDetails]
 
 @IRFId nvarchar(200),
 @clientName varchar(200),
@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[usp_AddIRFDetails]
 @TotalBudget int,
 @CreatedOn date,
 @IsBiometricEnabled bit,
+@PriorityLevel int,
 @idIrf int output
 
 AS
@@ -55,7 +56,7 @@ INSERT INTO [dbo].[IRF]
 		   ,[CreatedOn]
 		   ,[IsBiometricEnabled]
 		   ,[TotalBudget]
-		   
+		   ,[PriorityLevel]
 		   )
        VALUES
            (@IRFId,
@@ -75,7 +76,8 @@ INSERT INTO [dbo].[IRF]
 @CalendlyLink,
 @CreatedOn,
 @IsBiometricEnabled,
-@TotalBudget)
+@TotalBudget,
+@PriorityLevel)
 
 End
 

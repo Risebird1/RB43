@@ -768,6 +768,9 @@ namespace Risebird.Web.Controllers
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                 model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
 
                 ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
@@ -1530,6 +1533,9 @@ namespace Risebird.Web.Controllers
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                    model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
                     TempData["JDLink"] = model.JDLink;
                     TempData["EditIRFId"] = model.IRFId;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -3371,6 +3377,47 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageEnrollment"] = "Failed!";
                 return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId });
             }
+        }
+
+        [Authorize]
+        public IActionResult PauseIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_irfService.PauseIRF(irfId, irfName))
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF paused Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF pause Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }
