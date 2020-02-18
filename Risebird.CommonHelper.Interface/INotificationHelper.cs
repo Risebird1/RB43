@@ -16,5 +16,7 @@ namespace Risebird.CommonHelper.Interface
         string SendQCInterviewerMail(List<string> interviwers, string meetingDate);
         string SendInterviewCancelledMail(List<string> interviewers, string interviewDate);
         string SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
+        string SendInterviewCancelledMail(string interviewer, string interviewDate);
+        string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate);
     }
 }

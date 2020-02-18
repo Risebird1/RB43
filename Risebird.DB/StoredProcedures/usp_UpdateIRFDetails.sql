@@ -30,6 +30,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @CalendlyLink varchar(500),
 @TotalBudget int,
 @IsBiometricEnabled bit,
+@PriorityLevel int,
 @idIrf int output
 
 AS
@@ -52,6 +53,7 @@ set
 		   ,[CalendlyLink] =@CalendlyLink
 		   ,[TotalBudget]=@TotalBudget
 		   ,[IsBiometricEnabled]=@IsBiometricEnabled
+		   ,[PriorityLevel]=@PriorityLevel
 Where id =@id
 
 delete from TransClientUser where IRFId=@id

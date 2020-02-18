@@ -1344,6 +1344,7 @@ namespace Risebird.Repository
             parameters.Add("@CalendlyLink", entity.CalendlyLink);
             parameters.Add("@TotalBudget", entity.TotalBudget);
             parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
+            parameters.Add("@PriorityLevel", entity.PriorityLevel);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;
@@ -2075,6 +2076,34 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        
+        public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var dynamicParameters = new DynamicParameters();
+                    dynamicParameters.Add("@IRFId", IRFId);
+                    dynamicParameters.Add("@date", DateTime.Now);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_UpdateMeetingStatus", dynamicParameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
 
 
     }
