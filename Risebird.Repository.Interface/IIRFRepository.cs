@@ -75,5 +75,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewVM> GetUpComingInterviewList();
         IEnumerable<IRFVm> GetUpComingIRFList();
         Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId);
+        IEnumerable<TransClientUser> GetTransClientUserRole(int id);
+        IEnumerable<MeetingVM> GetIRFInterviewMeetingsCountData(int id);
+        bool AddPausedMeetings(int irfId, int meetingId);
     }
 }

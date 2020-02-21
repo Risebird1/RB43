@@ -142,8 +142,6 @@ namespace Risebird.Business
                 {
                     foreach (var skill in skillList)
                     {
-                        if (skill == "")
-                            continue;
                         var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
                         if(item.PrimarySkill.Contains(skillName))
                         {
@@ -295,7 +293,7 @@ namespace Risebird.Business
                 
                 if(email != string.Empty && profileName == "Client")
                 {
-                    var clients = _irfRepository.GetTransClientUser(id);
+                    var clients = _irfRepository.GetTransClientUserRole(id);
                     foreach (var item in clients)
                     {
                         if (item.EmailId == email)
@@ -334,6 +332,56 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public List<MeetingVM> GetIRFInterviewMeetingsCountData(int id, string profileName, string email)
+        {
+            try
+            {
+                int role = 0;
+                var result = _irfRepository.GetIRFInterviewMeetingsCountData(id).OrderBy(x => x.interviewDate).ToList();
+
+                if (email != string.Empty && profileName == "Client")
+                {
+                    var clients = _irfRepository.GetTransClientUserRole(id);
+                    foreach (var item in clients)
+                    {
+                        if (item.EmailId == email)
+                        {
+                            role = item.ClientRoleId;
+                            break;
+                        }
+                    }
+                    if (role == 0)
+                    {
+                        return new List<MeetingVM>();
+                    }
+                    if (role == 1)
+                    {
+                        result = result.Where(m => m.ClientHrContact == email).ToList();
+                        return result;
+                    }
+                    else if (role == 4)
+                    {
+                        result = result.Where(m => m.staffingAgency == email).ToList();
+                        return result;
+                    }
+                    else
+                        return result;
+                }
+                else
+                {
+                    return result;
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public async Task<IRFVm> GetEditIRF(int id)
         {
@@ -940,20 +988,23 @@ namespace Risebird.Business
         {
             try
             {
-                //update meeting status
+
+                //update meeting status and IsPaused flag in IRF
                 var updatedMeetings = _irfRepository.UpdateMeetingStatus(irfName).Result.ToList();
 
                 //send mails
                 if (updatedMeetings != null && updatedMeetings.Count()!=0)
                 {
-                    //get emails
                     foreach (var item in updatedMeetings)
                     {
+                        //insert meeting in PausedIRF
+                        _irfRepository.AddPausedMeetings(irfId, item.imid);
+
+                        //send mails
                         _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
                         _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact,item.interviewDate.ToString("MMMM dd, yyyy"));
 
                     }
-                    //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
 
                 }
                 return true;

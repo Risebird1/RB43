@@ -67,7 +67,7 @@ namespace Risebird.Web.Controllers
                             if (list != null && !list.Contains(role))
                                 list.Add(role);
                         }
-                        var meetings= _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                        var meetings= _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
                         var selectedMeeting = new List<MeetingVM>();
                         irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                         if(meetings !=null)
@@ -162,7 +162,7 @@ namespace Risebird.Web.Controllers
                                     tempList.Add(item.Role);
                                 }
                                 irf.ClientRole = tempList.ToArray();
-                                var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                                var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
                                 var selectedMeeting = new List<MeetingVM>();
                                 irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                                 if (meetings != null)
@@ -622,7 +622,7 @@ namespace Risebird.Web.Controllers
                             if (list != null && !list.Contains(role))
                                 list.Add(role);
                         }
-                        var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                        var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
                         var selectedMeeting = new List<MeetingVM>();
                         irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                         if (meetings != null)
@@ -685,7 +685,7 @@ namespace Risebird.Web.Controllers
                                 tempList.Add(item.Role);
                             }
                             irf.ClientRole = tempList.ToArray();
-                            var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
+                            var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
                             var selectedMeeting = new List<MeetingVM>();
                             irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                             if (meetings != null)
@@ -1504,10 +1504,11 @@ namespace Risebird.Web.Controllers
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     string skills = string.Empty;
-                    foreach (var item in model.SkillCollection)
-                    {
-                        skills = skills + "," + item.SkillId;
-                    }
+                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
+                    //foreach (var item in model.SkillCollection)
+                    //{
+                    //    skills = skills + "," + item.SkillId;
+                    //}
                     var interviewers = _irfService.GetInterviewers(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
