@@ -340,7 +340,9 @@
                                     <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
                                         <i class="now-ui-icons fa fa-money"></i>
                                     </button>
-                                    //location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'
+                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                    </button>
                                 }
                                 <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
@@ -357,15 +359,13 @@
                                     <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                         <i class="now-ui-icons  fa fa-calendar"></i>
                                     </button>
-                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                    </button>
+
                                     <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
                                     </button>
                                     @*<button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
-                                        <i class="now-ui-icons fa fa-pause"></i>
-                                    </button>*@
+                <i class="now-ui-icons fa fa-pause"></i>
+            </button>*@
                                 }
 
 
