@@ -2177,14 +2177,60 @@ namespace Risebird.Repository
 
         }
 
-        public bool AddPausedMeetings(int irfId, int meetingId)
+        //public bool AddPausedMeetings(int irfId, int meetingId)
+        //{
+        //    try
+        //    {
+        //        var query = "Insert into PausedIRFMeetings values (@IRFId, @MeetingId)";
+        //        var dynamicParameters = new DynamicParameters();
+        //        dynamicParameters.Add("@IRFId", irfId);
+        //        dynamicParameters.Add("@MeetingId", meetingId);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var result = con.Query(query, dynamicParameters);
+        //        }
+        //        return true;
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return false;
+        //}
+
+        //public async Task<IEnumerable<MeetingVM>> PlayIRF(string IRFId)
+        //{
+        //    try
+        //    {
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var dynamicParameters = new DynamicParameters();
+        //            dynamicParameters.Add("@IRFId", IRFId);
+        //            dynamicParameters.Add("@date", DateTime.Now);
+        //            return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_UpdateIRFPauseStatus", dynamicParameters,
+        //                 commandType: CommandType.StoredProcedure);
+        //        }
+
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return null;
+
+        //}
+        public bool PlayIRF(string IRFId)
         {
             try
             {
-                var query = "Insert into PausedIRFMeetings values (@IRFId, @MeetingId)";
+                var query = "update IRF set IsPaused = 0 where IRFId=@IRFId";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@IRFId", irfId);
-                dynamicParameters.Add("@MeetingId", meetingId);
+                dynamicParameters.Add("@IRFId", IRFId);
+                //dynamicParameters.Add("@MeetingId", meetingId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query(query, dynamicParameters);
@@ -2196,8 +2242,48 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return false;
-        }
 
+        }
+        //public bool UpdatePausedMeetingstoPlay(string meetingIds)
+        //{
+        //    try
+        //    {
+        //        var query = "Update InterviewMeetings set confirmationStatus=1 where id in (" + meetingIds + ")";
+        //        //var dynamicParameters = new DynamicParameters();
+        //        //dynamicParameters.Add("@IRFId", irfId);
+        //        //dynamicParameters.Add("@MeetingId", meetingId);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var result = con.Query(query);
+        //        }
+        //        return true;
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return false;
+        //}
+        //public bool DeletePlayedMeetings(string meetingIds)
+        //{
+        //    try
+        //    {
+        //        var query = "Delete from PausedIRFMeetings where MeetingId in (" + meetingIds + ")";
+        //        //var dynamicParameters = new DynamicParameters();
+        //        //dynamicParameters.Add("@IRFId", irfId);
+        //        //dynamicParameters.Add("@MeetingId", meetingId);
+        //        using (SqlConnection con = new SqlConnection(connectionString))
+        //        {
+        //            var result = con.Query(query);
+        //        }
+        //        return true;
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //    }
+        //    return false;
+        //}
 
     }
 }
