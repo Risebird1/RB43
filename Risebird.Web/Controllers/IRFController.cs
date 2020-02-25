@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
-                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted);
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted && x.EndDate >= DateTime.Now);
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -67,7 +67,7 @@ namespace Risebird.Web.Controllers
                             if (list != null && !list.Contains(role))
                                 list.Add(role);
                         }
-                        var meetings= _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
+                        var meetings= _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
                         var selectedMeeting = new List<MeetingVM>();
                         irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                         if(meetings !=null)
@@ -162,7 +162,7 @@ namespace Risebird.Web.Controllers
                                     tempList.Add(item.Role);
                                 }
                                 irf.ClientRole = tempList.ToArray();
-                                var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
+                                var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
                                 var selectedMeeting = new List<MeetingVM>();
                                 irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                                 if (meetings != null)
@@ -622,7 +622,7 @@ namespace Risebird.Web.Controllers
                             if (list != null && !list.Contains(role))
                                 list.Add(role);
                         }
-                        var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
+                        var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
                         var selectedMeeting = new List<MeetingVM>();
                         irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                         if (meetings != null)
@@ -685,7 +685,7 @@ namespace Risebird.Web.Controllers
                                 tempList.Add(item.Role);
                             }
                             irf.ClientRole = tempList.ToArray();
-                            var meetings = _irfService.GetIRFInterviewMeetingsCountData(irf.id, profileName, emailid).ToList();
+                            var meetings = _irfService.GetIRFInterviewMeetings(irf.id, profileName, emailid).ToList();
                             var selectedMeeting = new List<MeetingVM>();
                             irf.TotalMeetings = (meetings != null ? meetings.Count() : 0);
                             if (meetings != null)
@@ -1504,11 +1504,10 @@ namespace Risebird.Web.Controllers
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     string skills = string.Empty;
-                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
-                    //foreach (var item in model.SkillCollection)
-                    //{
-                    //    skills = skills + "," + item.SkillId;
-                    //}
+                    foreach (var item in model.SkillCollection)
+                    {
+                        skills = skills + "," + item.SkillId;
+                    }
                     var interviewers = _irfService.GetInterviewers(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
@@ -2027,24 +2026,13 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartData();
                             obj.Name = item;
-                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact == item  || x.staffingAgency == item)).Count();
-                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); 
-                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact?.Trim() == item  || x.staffingAgency?.Trim() == item)).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count(); 
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
                             chartData.Add(obj);
-                            //check for this if condition
-                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
-                            //{
-                                
-                            //}
-                            
                         }
-                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
-                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
-                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
-                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
-
-
+                       
 
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -2102,22 +2090,12 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartFeedbackData();
                             obj.Name = item;
-                            obj.ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); ;
-                            obj.RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
+                            obj.ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count(); ;
+                            obj.RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
                             chartData.Add(obj);
-                            //check for this if condition
-                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
-                            //{
-
-                            //}
                         }
-                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
-                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
-                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
-                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
-
 
 
                         ViewBag.IRF = irfId;
@@ -3433,12 +3411,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.PlayIRF(irfId, irfName))
                         {
-                            TempData["SuccessErrorMessage"] = "IRF played Successfully";
+                            TempData["SuccessErrorMessage"] = "IRF enabled Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "IRF play Failed";
+                            TempData["SuccessErrorMessage"] = "IRF enable Failed";
                             return RedirectToAction("Index");
                         }
                     }

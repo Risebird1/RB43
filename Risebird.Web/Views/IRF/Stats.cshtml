@@ -43,18 +43,14 @@
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Conversion Analysis</h4>
+                                        <h4 class="card-title">Interview Analysis</h4>
                                     </div>
                                     <div class="card-body">
                                         <div id="myFunnelChart" style="height: 300px; width: 100%;"></div>
 
                                         @*<canvas id="myFunnelChart" style="display: block;height: 350px;width: 100%;"></canvas>*@
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                             <div class="col-md-5 ml-auto">
@@ -65,11 +61,7 @@
                                     <div class="card-body">
                                         <canvas id="myChart"></canvas>
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                             <div class="col-md-5 mr-auto">
@@ -80,11 +72,7 @@
                                     <div class="card-body">
                                         <canvas id="myChartselected"></canvas>
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
 
@@ -96,11 +84,7 @@
                                     <div class="card-body">
                                         <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
@@ -111,11 +95,7 @@
                                     <div class="card-body">
                                         <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
@@ -126,11 +106,7 @@
                                     <div class="card-body">
                                         <canvas id="myCostChart" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                    <div class="card-footer">
-                                        <div class="stats">
-                                            <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -431,7 +407,7 @@
             var chart = new CanvasJS.Chart("myFunnelChart", {
                 animationEnabled: true,
                 title: {
-                    text: "Conversion Analysis"
+                    text: "Interview Analysis"
                 },
                 data: [{
                     type: "funnel",
