@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
-                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted);
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted && x.EndDate >= DateTime.Now);
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -3393,7 +3393,47 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "IRF delete Failed";
+                TempData["SuccessErrorMessage"] = "IRF pause Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
+        [Authorize]
+        public IActionResult PlayIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_irfService.PlayIRF(irfId, irfName))
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF enabled Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF enable Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF play Failed";
                 return RedirectToAction("Index");
             }
 

@@ -940,8 +940,12 @@ namespace Risebird.Business
                 {
                     //get emails
                     foreach (var item in updatedMeetings)
-                    {
-                        _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
+                    { 
+                   _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
+//insert meeting in PausedIRF
+                       // _irfRepository.AddPausedMeetings(irfId, item.imid);
+
+
                         _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact,item.interviewDate.ToString("MMMM dd, yyyy"));
 
                     }
@@ -957,5 +961,30 @@ namespace Risebird.Business
             }
         }
 
+        public bool PlayIRF(int irfId, string irfName)
+        {
+            try
+            {
+
+                //update meeting status and IsPaused flag in IRF
+                var updatedMeetings = _irfRepository.PlayIRF(irfName);
+
+                //if(updatedMeetings!=null && updatedMeetings.Count()>0)
+                //{
+                //    var meetingIds = string.Join(",", from item in updatedMeetings select item.imid);
+                //    var result = _irfRepository.UpdatePausedMeetingstoPlay(meetingIds);
+                //    _irfRepository.DeletePlayedMeetings(meetingIds);
+                //    return result;
+                //}
+                //send mails
+                
+                return updatedMeetings;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
     }
 }

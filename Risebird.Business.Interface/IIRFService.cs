@@ -51,6 +51,7 @@ namespace Risebird.Business.Interface
         List<InterviewVM> GetUpComingInterviewList();
         List<IRFVm> GetUpComingIRFList();
         bool PauseIRF(int irfId, string irfName);
+        bool PlayIRF(int irfId, string irfName);
 
     }
 }
