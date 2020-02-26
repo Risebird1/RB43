@@ -96,7 +96,7 @@ namespace Risebird.Business
             try
             {
                 var interviewers = _irfRepository.GetInterviewerSkills();
-                string Name = String.Empty;
+                string Name = string.Empty;
                 foreach (var item in interviewers)
                 {
                     if (item.UserId == id)
@@ -134,17 +134,26 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                var interviewers = _irfRepository.GetIRFInterviewerSkills();
                 var skillList = skills.Split(",");
+                var skillNameList = new List<string>();
+                foreach (var skill in skillList)
+                {
+                    var skillName = _irfRepository.GetSkillById(Convert.ToInt16(skill)).Name;
+                    skillNameList.Add(skillName);
+                }
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();
+
+
                 foreach (var item in interviewers)
                 {
-                    foreach (var skill in skillList)
+                    foreach (var skillName in skillNameList)
                     {
-                        if (skill == "")
-                            continue;
-                        var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
+                        //if (skill == "")
+                        //    continue;
+                        //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
                         if(item.PrimarySkill.Contains(skillName))
                         {
                             list.Add(item);
@@ -152,7 +161,7 @@ namespace Risebird.Business
                         }
                     }
                 }
-                list.Distinct();
+                list = list.Distinct().ToList();
                 
                 return list;
             }
