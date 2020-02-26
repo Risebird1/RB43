@@ -94,7 +94,7 @@ namespace Risebird.Entities.Enum
     public enum JoiningStatus
     {
         [Description("None")]
-        None=-1,
+        None = -1,
         [Description("Joined")]
         Joining = 1,
         [Description("Not Joined")]
@@ -150,7 +150,7 @@ namespace Risebird.Entities.Enum
         Completed = 1,
         [Description("Not Completed")]
         NotCompleted = 2
-        
+
     }
     public enum L2InterviewStatus
     {
@@ -202,10 +202,12 @@ namespace Risebird.Entities.Enum
         Average = 2,
         [Description("Above Average")]
         AboveAverage = 3,
+        [Description("Good")]
+        Good = 4,
         [Description("Excellent")]
-        Excellent = 4,
+        Excellent = 5,
         [Description("Outstanding")]
-        Outstanding = 5
+        Outstanding = 6
     }
 
     public enum ConfirmationStatus
@@ -215,7 +217,7 @@ namespace Risebird.Entities.Enum
         Selected = 1,
         [Description("Rejected")]
         Rejected = 2
-        
+
     }
     //public enum JoinabilityType
     //{
@@ -228,7 +230,7 @@ namespace Risebird.Entities.Enum
     //    ApprovedVisaType = 3,
     //    [Description("Max Notice period (Days)")]
     //    MaxNoticeperiodDays = 4,
-        
+
     //}
 
     //public enum SelectabilityType

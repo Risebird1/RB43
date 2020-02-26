@@ -395,13 +395,14 @@
                                                     }
                                                     <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                    
-                                                  @{ 
-                                                        <span onclick="location.href = '@Url.Action("UploadAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, rfName = item.IRFID })'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+
+                                                    @{
+                                                        @*<span onclick="location.href = '@Url.Action("UploadAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, rfName = item.IRFID })'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>*@
+                                                        <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId= item.irfIntId, meetingId = item.id})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
                                                     }
                                                 </td>
                                                 <td>
-                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) >= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                     {
                                                         <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                     }

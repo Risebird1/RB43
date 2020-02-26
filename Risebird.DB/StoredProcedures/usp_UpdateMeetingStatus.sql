@@ -10,16 +10,19 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE PROCEDURE [dbo].[usp_UpdateMeetingStatus]
+Create PROCEDURE [dbo].[usp_UpdateMeetingStatus]
 @IRFId nvarchar(100),
 @date DateTime
 
 AS
 Begin
+update IRF
+set IsPaused = 1 
+where IRFId=@IRFId
 
 UPDATE InterviewMeetings
 SET confirmationStatus = 2
-OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate
+OUTPUT inserted.interviewer, inserted.candidateEmail, inserted.candidateName, inserted.ClientHrContact, inserted.interviewDate, inserted.id as imid
 WHERE IRFId = @IRFId and interviewDate >= @date
 
 End

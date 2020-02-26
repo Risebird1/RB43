@@ -859,9 +859,9 @@ namespace Risebird.Web.Controllers
 
         
         [Authorize]
-        public string GetInterviewerSkills(string id)
+        public string GetInterviewerSkills(int id)
         {
-            var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
+            var name = _irfService.GetInterviewerSkills(id);
             return name;
         }
 
@@ -1504,10 +1504,7 @@ namespace Risebird.Web.Controllers
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     string skills = string.Empty;
-                    foreach (var item in model.SkillCollection)
-                    {
-                        skills = skills + "," + item.SkillId;
-                    }
+                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
                     var interviewers = _irfService.GetInterviewers(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");

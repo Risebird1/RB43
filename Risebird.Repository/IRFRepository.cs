@@ -196,7 +196,24 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<Interviewer> GetIRFInterviewerSkills()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Interviewer>(
+                        con, "select inv.UserId, inv.PrimarySkill, UserList.[EmailId] from Interviewer inv inner join UserList on inv.UserId = UserList.id where inv.IsApproved=1", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -244,6 +261,27 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public Skill GetSkillById(int id)
+        {
+            try
+            {
+                var query = "select id, [Name] from Skill where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Skill>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
 
         public IEnumerable<IRF> GetAllIRF(string emailid, string profileName)
         {
