@@ -140,6 +140,10 @@ namespace Risebird.Business
                 var skillNameList = new List<string>();
                 foreach (var skill in skillList)
                 {
+                    if(skill == "")
+                    {
+                        continue;
+                    }
                     var skillName = _irfRepository.GetSkillById(Convert.ToInt16(skill)).Name;
                     skillNameList.Add(skillName);
                 }

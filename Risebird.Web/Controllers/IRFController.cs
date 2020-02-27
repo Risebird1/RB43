@@ -197,9 +197,7 @@ namespace Risebird.Web.Controllers
                             irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
 
                         }
-
-
-
+                        
                     }
                     ViewBag.RoleList = list;
                     ViewBag.Profile = profileName;
@@ -606,6 +604,14 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client"||  profileName == "Recruiter")
                 {
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                    }
+                    else
+                    {
+                        irfList = irfList.Where(x => x.EndDate > DateTime.Now);
+                    }
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -654,10 +660,10 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                    }
+                    //if (filter.StartDate != null && filter.EndDate != null)
+                    //{
+                    //    irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                    //}
                     
                     filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -851,7 +857,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Adding IRF has failed";
                 return RedirectToAction("Index");
             }
