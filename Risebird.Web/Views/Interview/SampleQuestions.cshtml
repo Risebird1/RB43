@@ -102,10 +102,6 @@
 
                                                     </td>
 
-                                                    @*<td>
-                                                        <input class="form-control text-box single-line" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" type="text" value="">
-                                                    </td>*@
-
                                                     <td>
 
                                                         <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -252,23 +248,7 @@
 
     }
 
-    //$(document).on('click', '.delete-comment', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
+   
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
         
         if ($(element).parents('tbody').find('tr').length === 1) {

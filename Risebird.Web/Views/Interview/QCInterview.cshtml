@@ -237,35 +237,11 @@
 </script>
 
 
-@*<script type="text/javascript">
 
-    $(".dataloading").hide();
-    $(".datatable").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-</script>*@
 
 <!-- Keep the Page Content Here.-->
 
-@*<script type="text/javascript">
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $(".datatable").show();
-        }, 2000);
-    };
-</script>*@
+
 <loading></loading>
 @if (ViewBag.Message != null && ViewBag.Message.Contains("successfully"))
 {

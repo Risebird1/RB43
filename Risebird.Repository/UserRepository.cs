@@ -46,11 +46,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -199,11 +199,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -359,11 +359,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -511,11 +511,11 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                // _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -705,8 +705,6 @@ namespace Risebird.Repository
             try
             {
                 var query = "select re.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from ResumeEvaluator re join UserList ul on re.UserId=ul.id";
-                //var dynamicParameters = new DynamicParameters();
-                //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<ResumeEvaluator>(query);
@@ -830,8 +828,6 @@ namespace Risebird.Repository
             try
             {
                 var query = "select Recruiter.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from Recruiter join UserList ul on Recruiter.UserId=ul.id";
-                //var dynamicParameters = new DynamicParameters();
-                //dynamicParameters.Add("@id", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<Recruiter>(query);

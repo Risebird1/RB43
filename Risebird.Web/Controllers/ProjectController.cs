@@ -574,7 +574,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetProjectInterviewMeetings(int id)
+        public IActionResult ProjectInterviewMeetings(int id)
         {
             try
             {
@@ -672,7 +672,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetSelectedInterviewMeetings(int id)
+        public IActionResult SelectedInterviewMeetings(int id)
         {
             try
             {

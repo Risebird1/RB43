@@ -173,11 +173,6 @@
                             <div class="toolbar">
                                 <div class="row">
 
-                                    @*<div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
-                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
-                                        </div>
-                                    </div>*@
                                     <div class="col-auto">
                                         @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                     </div>
@@ -305,7 +300,6 @@
                                                 {
                                                     <td class="text-right">
                                                         <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                        @*<span title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-check-circle-o"></i></span>*@
                                                     </td>
                                                 }
                                             </tr>
@@ -348,7 +342,6 @@
                                 <label>Approval Comments</label>
                                 <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
 
-                                @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
 
@@ -367,7 +360,6 @@
 
                                 <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
 
-                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
                     </div>
@@ -385,7 +377,6 @@
                                 <label>Offer Comments</label>
                                 <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
 
-                                @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
                     </div>
@@ -403,7 +394,6 @@
                                 <label>Joining Comments</label>
                                 <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
 
-                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
                     </div>
@@ -498,13 +488,7 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-
-        // Get the button that opens the modal
-        var btn = document.getElementById("myBtn_" + item.imid);
-
-        // Get the <span> element that closes the modal
-        //var span = document.getElementById("feedbackPopUp");
-
+        
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -598,32 +582,12 @@
 
             }
         });
-
-
-
-        //if (item.ApprovalComments != 'Approved') {
-        //    comm = item.ApprovalComments;
-        //}
-        //else {
-        //    comm = '';
-        //}
-        //if (item.IsApproved) {
-        //    //var commentId = 'approvalComments';
-        //    document.getElementById('approvalComments').style.display = "none";
-        //}
-        //else {
-        //    document.getElementById('approvalComments').style.display = "block";
-
-        //}
-        //var commentId = 'approvalComments';
-
+        
     }
 
     function ApprovalChanged() {
         var commentId = 'approvalComments';
         document.getElementById("appComments").value = comm;
-
-        //var checkElem = document.getElementById("checkBoxDiv_" + imid);
 
         var isChecked = document.getElementById("IsApproved").checked;
 
@@ -664,114 +628,6 @@
     }
 
 </script>
-
-@*<script>
-        var imidSelect = "";
-        var spanSelect = document.getElementsByClassName("close")[1];
-        var commSelect = '';
-        // When the user clicks on <span> (x), close the modal
-        spanSelect.onclick = function () {
-            var modal = document.getElementById("mySelectionModal");
-            modal.style.display = "none";
-        }
-
-        // When the user clicks anywhere outside of the modal, close it
-        //window.onclick = function (event) {
-        //    var modal = document.getElementById("myModal");
-        //    if (event.target == modal) {
-        //        modal.style.display = "none";
-        //    }
-        //}
-    </script>
-
-    <script>
-        function ModalSelectionButtonClick(item) {
-
-            imidSelect = item.imid;
-
-            // Get the modal
-            var modal = document.getElementById("mySelectionModal");
-
-            // Get the button that opens the modal
-            //var btn = document.getElementById("myBtn_" + item.imid);
-
-            //// Get the <span> element that closes the modal
-            //var span = document.getElementsByClassName("close")[0];
-
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-
-            //document.getElementById("IsSelected").checked = item.IsSelected;
-            document.getElementById("selecComments").value = item.FinalComments;
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/getSelectionStatusList",
-                data: "{}",
-                success: function (data) {
-                    var s = '<option value="-1">Please Select a Status</option>';
-                    for (var i = 0; i < data.length; i++) {
-                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                    }
-                    $("#selectionDropdown").html(s);
-                    $("#selectionDropdown").val(item.IsSelected);
-                }
-            });
-
-            if (item.FinalComments != 'Selected') {
-                commSelect = item.FinalComments;
-            }
-            else {
-                commSelect = '';
-            }
-            //if (item.IsSelected) {
-            //    //var commentId = 'selectionComments';
-            //    document.getElementById('selectionComments').style.display = "none";
-            //}
-            //else {
-            //    //var commentId = 'selectionComments';
-            //    document.getElementById('selectionComments').style.display = "block";
-            //}
-
-
-        }
-
-        function SelectionChanged() {
-            var commentId = 'selectionComments';
-            document.getElementById("selecComments").value = commSelect;
-
-            //var checkElem = document.getElementById("checkBoxDiv_" + imid);
-
-            var isChecked = document.getElementById("IsSelected").checked;
-
-            if (isChecked == false) {
-
-                document.getElementById(commentId).style.display = "block";
-            }
-            else {
-                document.getElementById(commentId).style.display = "none";
-            }
-        }
-
-        function SaveSelecPopUp() {
-            var comment = document.getElementById("selecComments").value;
-            var isSelected = document.getElementById("selectionDropdown").value;
-            var id = imidSelect;
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/ChangeSelection",
-                data: { 'imid': id, 'value': isSelected, 'comment': comment },
-                success: function (data) {
-
-                    location.reload(true);
-
-                }
-            });
-        }
-
-    </script>*@
-
 
 <script type="text/javascript">
     //// script for loader starts here
@@ -856,34 +712,9 @@
     }
 </script>
 
-@*<script type="text/javascript">
-
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
 
 <!-- Keep the Page Content Here.-->
-@*<script type="text/javascript">
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $(".datatable").show();
-            }, 2000);
-        };
-    </script>*@
+
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->

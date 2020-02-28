@@ -350,7 +350,7 @@
 
                                 @if (ViewBag.Profile != "Recruiter")
                                 {
-                                    <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                    <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
                                         <i class="now-ui-icons fa fa-meetup"></i>
                                     </button>
                                     <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
@@ -713,9 +713,9 @@
         var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
-    function GetInterviewMeetings(id, IRFid) {
+    function InterviewMeetings(id, IRFid) {
 
-        var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
     //Candidates
@@ -950,24 +950,7 @@
         var sDate=  $("#stDateInvoice").val();
         //var stDate = document.getElementById("stDateInvoice").value;
         var endDate = document.getElementById("EndDateInvoice").value;
-        //if (sDate == null || sDate == "") {
-        //    document.getElementById("stDate_Error").innerHTML = "Kindly enter Start Date";
-        //}
-        //else {
-        //    document.getElementById("stDate_Error").innerHTML = "";                        
-
-        //}
-        //if (endDate == null || endDate == "") {
-        //    document.getElementById("endDate_Error").innerHTML = "Kindly enter End Date";
-        //}
-        //else {
-        //    document.getElementById("stDate_Error").innerHTML = "";                      
-
-        //}
-        //if (sDate == "" || endDate == "") {
-        //    return;
-        //}
-
+    
         var srNumber = $("#srNumberId").val();
         var poNumber = $("#poNumberId").val();
         var reqNumber = $("#requestNumberId").val();

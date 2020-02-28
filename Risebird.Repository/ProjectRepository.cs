@@ -73,22 +73,7 @@ namespace Risebird.Repository
         {
             try
             {
-                //if (emailid != string.Empty && profileName == "Client")
-                //{
-                //    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid";
-                //    var dynamicParameters = new DynamicParameters();
-                //    dynamicParameters.Add("@IsDeleted", 0);
-                //    dynamicParameters.Add("@emailid", emailid);
-                //    using (SqlConnection con = new SqlConnection(connectionString))
-                //    {
-                //        var results = con.Query<IRF>(query, dynamicParameters);
-                //        return results;
-                //    }
-                //}
-                //else
-                //{
-                   
-                //}
+                
                 var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsDeleted", 0);
@@ -281,7 +266,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }

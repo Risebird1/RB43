@@ -1679,61 +1679,7 @@ namespace Risebird.Web.Controllers
                            && (filter.CandidateName.Count() > 0 ? filter.CandidateName.Contains(c.candidateName) : c.candidateName == null)
                            && (filter.RisebirdHR.Count() > 0 ? filter.RisebirdHR.Contains(c.risebirdHR) : c.risebirdHR == null)).ToList();
 
-                            //if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate != null)
-                            //{
-                            //    myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                            //    foreach (var item in myInterview)
-                            //    {
-                            //        if (item.InterviewStatus.HasValue)
-                            //        {
-                            //            item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (item.MeetingStatus.HasValue)
-                            //        {
-                            //            item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
-                            //        }
-                            //    }
-                            //    myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            //}
-                            //else if (myInterview.Count == 0 && filter.StartDate != null && filter.EndDate == null)
-                            //{
-                            //    filter.EndDate = filter.StartDate;
-                            //    myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                            //    foreach (var item in myInterview)
-                            //    {
-                            //        if (item.InterviewStatus.HasValue)
-                            //        {
-                            //            item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (item.MeetingStatus.HasValue)
-                            //        {
-                            //            item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
-                            //        }
-                            //    }
-                            //    myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-
-                            //}
-                            //else if (myInterview.Count == 0 && filter.StartDate == null && filter.EndDate != null)
-                            //{
-                            //    filter.StartDate = filter.EndDate;
-                            //    myInterview = _meetingService.GetAllAssignedInterviews(emailid);
-                            //    foreach (var item in myInterview)
-                            //    {
-                            //        if (item.InterviewStatus.HasValue)
-                            //        {
-                            //            item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (item.MeetingStatus.HasValue)
-                            //        {
-                            //            item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
-
-                            //        }
-                            //    }
-                            //    myInterview = myInterview.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-
-                            //}
+                            
                         }
                         if (HttpContext.Session.GetString("MyInterviewfilters") == null )
                         {
