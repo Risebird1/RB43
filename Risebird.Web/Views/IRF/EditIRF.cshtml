@@ -100,9 +100,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-3 px-1">
                                     <div class="form-group">
-                                        @*@Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })*@
                                         <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" for="Name">Client Name</label>
-                                        @*@Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control" })*@
                                         @Html.TextBoxFor(m => m.ClientCompName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
 
@@ -150,19 +148,13 @@
 
                                         @Html.DropDownListFor(m => m.CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control" })
 
-                                        @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
-                        <option value="Product">Product</option>
-                        <option value="Service">Service</option>
-                    </select>*@
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
-                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="ClientId">End Client Name</label>*@
                                         @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
 
-                                        @*<input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">*@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.JobCountry, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
@@ -288,7 +280,6 @@
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
-                                                            @*<input class="form-control text-box single-line" id="@("SkillCollection_"+i+"__Weightage")" name="SkillCollection[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                         </td>
 
                                                         <td>
@@ -345,31 +336,18 @@
                                                         </td>
                                                         <td>
                                                             @Html.DropDownListFor(m => m.Joinability[i].Type, (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
-                                                            @*<select class="form-control" id="@("Joinability_"+i+"__Type")" name="Joinability[@i].Type">
-                                            <option value="Job Location">Job Location</option>
-                                            <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
-                                            <option value="Approved Visa Type">Approved Visa Type</option>
-                                            <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                                        </select>*@
+                                                          
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Joinability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
 
-                                                            @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Value")" name="Joinability[@i].Value" type="number" value="100">*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Joinability[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
-                                                            @*<input class="form-control text-box single-line" id="@("Joinability_"+i+"__Weightage")" name="Joinability[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                         </td>
                                                         <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
+                                                          
                                                             <div class="form-control">
                                                                 <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
@@ -421,16 +399,6 @@
                                                         <td>
                                                             @Html.DropDownListFor(m => m.Selectability[i].Type, (SelectList)Model.SelectabilityTypeList, new { @class = "form-control" })
 
-
-                                                            @*<select class="form-control" id="@("Selectability_"+i+"__Type")" name="Selectability[@i].Type">
-                                            <option value="Technology Stack">Technology Stack</option>
-                                            <option value="Career Progression">Career Progression</option>
-                                            <option value="Industry">Industry</option>
-                                            <option value="Domain">Domain</option>
-                                            <option value="Project">Project</option>
-                                            <option value="Previous Employers">Previous Employers</option>
-                                            <option value="Academics">Academics</option>
-                                        </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.Selectability[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -488,23 +456,15 @@
                                                         <td>
                                                             @Html.DropDownListFor(m => m.SkillGeneral[i].Type, (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control" })
 
-
-                                                            @*<select class="form-control" id="@("SkillGeneral_"+i+"__Type")" name="SkillGeneral[@i].Type">
-                                            <option value="Logical">Logical</option>
-                                            <option value="Analytical">Analytical</option>
-                                            <option value="Communication">Communication</option>
-                                        </select>*@
                                                         </td>
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillGeneral[i].Value, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
 
-                                                            @*<input class="form-control text-box single-line" id="@("SkillGeneral_"+i+"__Value")" name="SkillGeneral[@i].Value" type="number" value="100">*@
                                                         </td>
 
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillGeneral[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
 
-                                                            @*<input class="form-control text-box single-line" id="@("SkillGeneral_"+i+"__Weightage")" name="SkillGeneral[@i].Weightage" type="number" max="100" min="1" value="100">*@
                                                         </td>
 
                                                         <td>
@@ -552,7 +512,6 @@
                                                             @Html.DropDownListFor(m => m.ClientCollection[i].ClientUserId, (SelectList)ViewBag.ClientUser, new { @class = "form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
                                                         </td>
                                                         <td>
-                                                            @*@Html.DropDownListFor(m => m.ClientCollection[i].ClientRoleId, (SelectList)ViewBag.ClientRole, new { @class = "form-control" })*@
 
                                                             @Html.TextBoxFor(m => m.ClientCollection[i].Role, new { @class = "form-control", @readonly = "readonly" })
 
@@ -600,7 +559,6 @@
                                                         </td>
 
                                                         <td>
-                                                            @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                             @Html.TextBoxFor(m => m.InterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                         </td>
@@ -613,7 +571,6 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
                                                 }
 
 
@@ -672,7 +629,6 @@
                                                             </td>
 
                                                             <td>
-                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                                 @Html.TextBoxFor(m => m.QualityController[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
@@ -725,13 +681,7 @@
                                                         </td>
 
                                                         <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
+                                                         
 
                                                             <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
@@ -750,7 +700,6 @@
                                                             </td>
 
                                                             <td>
-                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                                 @Html.TextBoxFor(m => m.EmergencyInterviewerCollection[i].PrimarySkill, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
@@ -763,7 +712,6 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
                                                     }
                                                 }
 
@@ -825,7 +773,6 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
                                                     }
                                                 }
 
@@ -887,7 +834,6 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
                                                     }
                                                 }
 
@@ -931,13 +877,7 @@
                                                         </td>
 
                                                         <td>
-                                                            @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
+                                                         
 
                                                             <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm "><i class="far fa  fa-trash"></i></span>
@@ -956,7 +896,6 @@
                                                             </td>
 
                                                             <td>
-                                                                @*@Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })*@
                                                                 @Html.TextBoxFor(m => m.RecruiterCollection[i].Domain, new { @class = "form-control", @readonly = "readonly" })
 
                                                             </td>
@@ -969,7 +908,6 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        @*@Html.HiddenFor(m => m.InterviewerCollection[i].UserId)*@
                                                     }
                                                 }
 
@@ -1062,33 +1000,7 @@
         //    return;
         //}
         var element = document.getElementById("btnUploadSaveAs");
-        //var uniqueRes = true;
-        //$.ajax({
-        //    type: "GET",
-        //    url: "/IRF/CheckUniqueness",
-        //    data: { 'value': name },
-        //    success: function (response) {
-        //        if (response == false) {
-        //            if (element != null) {
-        //                element.disabled = true;
-        //            }
-        //            document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
-        //            document.getElementById("IRFId").focus();
-        //            uniqueRes = false;
-        //        }
-        //        else {
-        //            document.getElementById("uniqueMsg").innerHTML = "";
-        //            if (element != null) {
-        //                element.disabled = false;
-        //            }
-
-        //        }
-
-        //    }
-        //});
-        //if (!uniqueRes) {
-        //    return;
-        //}
+        
         if (name != irfName) {
             document.getElementById("btnUpload").disabled = true;
             if (element != null) {
@@ -1103,33 +1015,7 @@
             }
         }
     }
-    //function checkUniqueness(val) {
-    //    var element = document.getElementById("btnUploadSaveAs");
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/IRF/CheckUniqueness",
-    //        data: { 'value': val },
-    //        success: function (response) {
-    //            if (response == false) {
-    //                if (element != null) {
-    //                    element.disabled = true;
-    //                }
-    //                document.getElementById("uniqueMsg").innerHTML = "This IRFId already exists. Kindly enter a different IRFId.";
-    //                document.getElementById("IRFId").focus();
-    //                return false;
-    //            }
-    //            else {
-    //                document.getElementById("uniqueMsg").innerHTML = "";
-    //                if (element != null) {
-    //                    element.disabled = false;
-    //                }
-    //                return true;
-    //            }
-
-    //        }
-    //    });
-
-    //}
+    
 </script>
 <script>
     $(document).ready(function () {
@@ -1280,9 +1166,7 @@
                 for (i = 0; i < drpdownsQC.length; i++) {
                     $("#" + drpdownsQC[i].id + " option").remove();
                 }
-                //var drpdwnId = $("#InterviewerCollection_" + index + "__InterviewerId");
-                ////drpdwnId.options.length = 0;
-                //$("#InterviewerCollection_" + index + "__InterviewerId option").remove();
+                
 
                 if (data.length > 0) {
 
@@ -1692,7 +1576,6 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-        // document.getElementById("btnUpload").disabled = false;
 
     }
 
@@ -2253,150 +2136,5 @@
 
 
     }
-
-
-    //$(document).on('click', '.delete-row', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Skill');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-joinability', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-skillgeneral', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-client', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-interviewer', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Interviewers');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-selectability', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Selectability Criteria');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-qualityController', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Quality Controller');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-controller', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Quality Controller');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
+    
 </script>

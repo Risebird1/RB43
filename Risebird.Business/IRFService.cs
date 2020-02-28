@@ -841,7 +841,7 @@ namespace Risebird.Business
                 var interviewIdList = new List<int>();
                 foreach (var email in emailList)
                 {
-                    var interviewId = _irfRepository.GetInterviewMeetings(irfName, email);
+                    var interviewId = _irfRepository.InterviewMeetings(irfName, email);
                     if(interviewId!=0)
                     {
                         interviewIdList.Add(interviewId);

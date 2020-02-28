@@ -126,22 +126,12 @@ namespace Risebird.Web.Controllers
                         {
                             irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
-                        //var sorted = new SortedList<string>();
-                        //var list = new List<string>();
-                        //foreach (var irf in irfList)
-                        //{
-                        //    foreach (var role in irf.ClientRole.ToList())
-                        //    {
-                        //        if(list!=null && !list.Contains(role))
-                        //        list.Add(role);
-                        //    }
-                        //}
+                        
                         filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                         filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
-                        //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
 
                         irfList = irfList.Where(c => filter.ClientRole.Intersect(c.ClientRole).Any()
                         && filter.RFID.Contains(c.IRFId)
@@ -183,17 +173,12 @@ namespace Risebird.Web.Controllers
                                 {
                                     irf.BudgetConsumed = "Not Defined";
                                 }
-                                //irf.BudgetConsumed = consumedBudget + "%";
                             }
                             if (profileName != null && profileName.Contains("Client"))
                             {
-                                //ViewBag.IsClientUser = true;
                                 irfList.ToList().ForEach(c => c.IsClientUser = true);
                             }
-                            //else
-                            //{
-                            //    ViewBag.IsClientUser = false;
-                            //}
+                            
                             irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
 
                         }
@@ -203,7 +188,6 @@ namespace Risebird.Web.Controllers
                     ViewBag.Profile = profileName;
                     return View(irfList);
 
-                    //ViewBag.Message = "Failed";
                 }
                 else
                 {
@@ -660,10 +644,6 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     
-                    //if (filter.StartDate != null && filter.EndDate != null)
-                    //{
-                    //    irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                    //}
                     
                     filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -712,7 +692,6 @@ namespace Risebird.Web.Controllers
                             {
                                 irf.BudgetConsumed = "Not Defined";
                             }
-                            //irf.BudgetConsumed = consumedBudget + "%";
                         }
                         if (profileName != null && profileName.Contains("Client"))
                         {
@@ -728,7 +707,6 @@ namespace Risebird.Web.Controllers
 
                     return View(irfList);
 
-                    //ViewBag.Message = "Failed";
                 }
                 else
                 {
@@ -1294,7 +1272,8 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetInterviewMeetings(string id, string irfId)
+        [ActionName("InterviewMeetings")]
+        public IActionResult InterviewMeetings(string id, string irfId)
         {
             try
             {
@@ -1639,7 +1618,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF edits were not saved";
                 return RedirectToAction("Index");
             }
@@ -2160,12 +2139,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-
-
-
-                        //ViewBag.IRF = irfId;
-                        //ViewBag.IRFintId = id;
-
+                        
                         return Json(chartData);
                     }
                     else
@@ -2260,7 +2234,6 @@ namespace Risebird.Web.Controllers
                         }
                         return View(candidateList);
 
-                        //return View();
                     }
                     else
                     {
@@ -2395,7 +2368,6 @@ namespace Risebird.Web.Controllers
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -2467,16 +2439,7 @@ namespace Risebird.Web.Controllers
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //if (result.ToLower().Contains("success"))
-                        //{
-                        //    TempData["SuccessErrorMessageCandidate"] = result;
-                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //}
-                        //else
-                        //{
-                        //    TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //}
+                      
                     }
                     else
                     {
@@ -2521,7 +2484,6 @@ namespace Risebird.Web.Controllers
                             string fileContentType = file.ContentType;
                             byte[] fileBytes = new byte[file.Length];
                             var data = file.OpenReadStream();
-                            //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
                             var candidateList = new List<Candidate>();
                             using (var package = new ExcelPackage(file.OpenReadStream()))
                             {
@@ -2574,7 +2536,6 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
                 return RedirectToAction("Index");
             }
-            //return View("Index");
             return null;
         }
 
@@ -2810,7 +2771,6 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -2857,7 +2817,6 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -3022,16 +2981,12 @@ namespace Risebird.Web.Controllers
                             planner.ConfirmationProcessingTime = 2;
                             planner.InviteProcessingTime = 2;
                         }
-                        //if (planner != null)
-                        //{
-                        //    return View(new InterviewPlanner());
-                        //}
+                        
                         planner.IRFId = irfId;
                         planner.IRFName = irfName;
                         planner.OverAllProcessingTime = (planner.JoiningProcessingTime+planner.OfferProcessingTime+ planner.FinalSelectionProcessingTime+ planner.ApprovalProcessingTime
                             +planner.RisebirdSelectionProcessingTime+planner.CompletionProcessingTime+planner.ConfirmationProcessingTime+planner.InviteProcessingTime);
 
-                        //ViewBag.JoiningDaysDate = planner.IRFCreatedOn.AddDays(planner.OverAllProcessingTime - planner.JoiningProcessingTime);
 
 
                         return View(planner);
@@ -3112,7 +3067,6 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Interview Planner updated Successfully";
                             return RedirectToAction("Index");
 
-                            //return RedirectToAction("Candidates", new { irfId = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
@@ -3157,7 +3111,6 @@ namespace Risebird.Web.Controllers
                         
                         return View(irfList);
 
-                        //return View();
                     }
                     else
                     {
@@ -3187,8 +3140,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
-                    //TempData["actMethod"] = actMethod;
-                    //ViewBag.BackMethod = actMethod;
+                   
                     var list = new SelectList(new[]
                     {
                         new { ID = "Enrollment1", Name = "Enrollment 1"},
@@ -3221,11 +3173,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadAudio(CandidateAudio model)
         {
-            //string actMethod = string.Empty;
-            //if (TempData["actMethod"] != null)
-            //{
-            //    actMethod = TempData["actMethod"].ToString();
-            //}
+            
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
@@ -3324,11 +3272,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
         {
-            //string actionMethod = string.Empty;
-            //if (TempData["actMethod"] != null)
-            //{
-            //    actionMethod = TempData["actMethod"].ToString();
-            //}
+           
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&

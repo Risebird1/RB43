@@ -370,7 +370,6 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <button class="btn default" onclick="location.href='@Url.Action("DownloadTemplate", "IRF")'">Download Template</button>
-                        @*<a id="reportId" target="_blank" title="Report Link" href='@Url.Action("DownloadTemplate", "IRF")'>Download Template</a>*@
                     </div>
 
                     @using (Html.BeginForm("ImportCandidates", "IRF", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -386,7 +385,6 @@
                         <input type="hidden" id="IRFId" name="IRFId" value='@ViewBag.IRFId'>
                         <input type="hidden" id="IRFName" name="IRFName" value='@ViewBag.IRFName'>
 
-                        @*@Html.HiddenFor(Model => Model.FirstOrDefault().IRFId)*@
                     }
 
 

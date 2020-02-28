@@ -157,10 +157,7 @@
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
                                         @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
 
-                                        @*<select class="form-control text-box single-line" id="CompanyType" name="CompanyType" type="select" value="">
-                            <option value="Product">Product</option>
-                            <option value="Service">Service</option>
-                        </select>*@
+                                        
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
 
 
@@ -170,9 +167,6 @@
                                         @Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
 
-                                        @*<label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ClientId">End Client Name</label>
-
-                        <input class="form-control text-box single-line" id="ClientName" name="ClientName" type="text" value="">*@
 
                                     </div>
                                     <div class="form-group">
@@ -230,13 +224,7 @@
                                         @*<input class="form-control text-box single-line" id="NoOfIntterview" name="NoOfIntterview" type="number" value="">*@
 
                                     </div>
-                                    @*<div class="form-group">
-                    <label class="control-label col-md-4 col-sm-2 desp-label" for="ClientHrContact">No Of Interviews</label>
-                    <label class="control-label col-md-4 col-sm-2 desp-label" for="RisebirdHr">Risebird Hr</label>
-                    <div class="col-md-6 col-sm-6">
-                        @* @Html.DropDownList("RisebirdHr", new SelectList(ViewBag.RisebirdHr, "id", "Name"), new { @class = "form-control" })*@
-                                    @*</div>
-                    </div>*@
+
                                 </div>
                                 <div class="col-md-4 col-sm-4 pl-1">
 
@@ -337,13 +325,7 @@
                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRow()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-row" id="btnMinus" onclick="DeleteRow(0)" >
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
+                                                        
 
                                                         <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
@@ -391,12 +373,7 @@
                                                     <td>
                                                         @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
 
-                                                        @*<select class="form-control" id="Joinability_0__Type" name="Joinability[0].Type">
-                                            <option value="Job Location">Job Location</option>
-                                            <option value="Approved Per Hour Rate">Approved Per Hour Rate</option>
-                                            <option value="Approved Visa Type">Approved Visa Type</option>
-                                            <option value="Max Notice period (Days)">Max Notice period (Days)</option>
-                                        </select>*@
+                                                       
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
@@ -406,14 +383,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                        
                                                         <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
 
@@ -457,15 +427,6 @@
                                                     <td>
                                                         @Html.DropDownList("Selectability[0].Type", (SelectList)Model.SelectabilityTypeList, new { @class = "form-control" })
 
-                                                        @*<select class="form-control" id="Selectability_0__Type" name="Selectability[0].Type">
-                                            <option value="Technology Stack">Technology Stack</option>
-                                            <option value="Career Progression">Career Progression</option>
-                                            <option value="Industry">Industry</option>
-                                            <option value="Domain">Domain</option>
-                                            <option value="Project">Project</option>
-                                            <option value="Previous Employers">Previous Employers</option>
-                                            <option value="Academics">Academics</option>
-                                        </select>*@
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Selectability_0__Value" name="Selectability[0].Value" type="text" value="">
@@ -475,14 +436,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddJoinabilityRow()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-joinability" id="btnMinus" onclick="DeleteJoinabilityRow(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                        
                                                         <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
 
@@ -527,11 +481,6 @@
                                                     <td>
                                                         @Html.DropDownList("SkillGeneral[0].Type", (SelectList)Model.SkillGeneralTypeList, new { @class = "form-control" })
 
-                                                        @*<select class="form-control" id="SkillGeneral_0__Type" name="SkillGeneral[0].Type">
-                                            <option value="Logical">Logical</option>
-                                            <option value="Analytical">Analytical</option>
-                                            <option value="Communication">Communication</option>
-                                        </select>*@
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillGeneral_0__Value" name="SkillGeneral[0].Value" type="text" value="">
@@ -542,15 +491,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddSkillGeneralRow()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-skillgeneral" id="btnMinus" onclick="DeleteSkillGeneralRow(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
-
+                                                       
                                                         <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
 
@@ -594,20 +535,9 @@
                                                         @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                     </td>
-                                                    @*<td>
-                                        @Html.DropDownList("ClientCollection[0].ClientRoleId", (SelectList)ViewBag.ClientRole, new { @class = "form-control" })
-                                    </td>*@
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowClient()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-client" id="btnMinus" onclick="DeleteRowClient()">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
-
+                                                        
                                                         <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
 
@@ -652,14 +582,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                       
                                                         <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
 
@@ -746,14 +669,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                        
                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
 
@@ -790,14 +706,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                       
                                                         <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
 
@@ -834,13 +743,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
+                                                        
 
                                                         <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
@@ -885,14 +788,7 @@
                                                     </td>
 
                                                     <td>
-                                                        @*<a class="btn btn-primary border-white btn-sm" id="btnPlus" onclick="AddRowInterviewer()">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                        </a>
-
-                                        <a class="btn border-white btn-sm btn-danger delete-interviewer" id="btnMinus" onclick="DeleteRowClient(0)">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>*@
-
+                                                       
                                                         <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm"><i class="far fa  fa-trash"></i></span>
 
@@ -1145,10 +1041,7 @@
                 for (i = 0; i < drpdownsQC.length; i++) {
                     $("#" + drpdownsQC[i].id + " option").remove();
                 }
-                //var drpdwnId = $("#InterviewerCollection_" + index + "UserId");
-                ////drpdwnId.options.length = 0;
-                //$("#InterviewerCollection_" + index + "UserId option").remove();
-                
+               
                 if (data.length > 0) {
 
                     for (i = 0; i < drpdowns.length; i++) {
@@ -1540,12 +1433,7 @@
 
 
     function AddRowClient() {
-        //var table = document.getElementById("ClientTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Clients.");
-        //    return;
-        //}
+        
         document.getElementById("btnUpload").disabled = false;
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
@@ -1594,10 +1482,7 @@
 
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Interviewers.");
-        //    return;
-        //}
+       
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1799,11 +1684,7 @@
 
         var table = document.getElementById("HRTable");
         var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Interviewers.");
-        //    return;
-        //}
-
+        
         var $ttc = $("#HRTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#HRTable tr").length - 1;
@@ -1996,17 +1877,7 @@
 
             }
         });
-        //Get QC Skills
-        //var id = $("#QualityController_0__UserId").val();
-        //$.ajax({
-        //    type: "GET",
-        //    url: "/IRF/GetQCSkills",
-        //    data: { 'id': id },
-        //    success: function (data) {
-        //        $("#QualityController_0__SkillId").val(data);
-        //    }
-        //});
-
+       
         //Get Client Users based on clietn ID
         var clientId = $("#ClientId").val();
         $.ajax({
@@ -2103,144 +1974,7 @@
         document.getElementById("btnUpload").disabled = false;
 
     }
-    //$(document).on('click', '.delete-row', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Skill');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-joinability', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-skillgeneral', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-client', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-    //        debugger;
-    //        var currentvalue = $(this).attr('value');
-    //        var closestRow = $(this).closest('tr');
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-
-    //DeleteRowClient
-
-    //function DeleteRowClient(element, collectionName) {
-    //    debugger;
-    //    if ($(element).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-            
-    //        //var currentvalue = $(this).attr('value');
-    //        var closestRow = $(element).closest('tr');
-    //        var currentIndex = closestRow[0].sectionRowIndex;
-    //        var totalRows = $(element).parents('tbody').find('tr').length;
-    //        var maxIndex = totalRows - 1;
-    //        if (currentIndex == maxIndex) {
-    //            $(element).closest('tr').remove();
-    //        }
-    //        //ClientCollection_1__ClientRoleId
-    //        else {
-    //            $(element).closest('tr').remove();
-    //            var startIndex = currentIndex + 1;
-    //            var endIndex = maxIndex + 1;
-    //            for (i = startIndex; i < endIndex; i++) {
-    //                var elem1 = document.getElementById("ClientCollection_" + i + "__ClientUserId");
-    //                elem1.id = "ClientCollection_" + (i - 1) + "__ClientUserId";
-    //                //name="ClientCollection[3].ClientUserId"
-    //                elem1.name = "ClientCollection[" + (i - 1) + "].ClientUserId";
-    //                elem2 = document.getElementById("ClientCollection_" + i + "__ClientRoleId");
-    //                elem2.id = "ClientCollection_" + (i - 1) + "__ClientRoleId";
-    //                elem2.name = "ClientCollection[" + (i - 1) + "].ClientRoleId";
-                    
-    //            }
-
-    //        }
-
-
-            
-
-    //    }
-
-
-    //}
-
-
-
-    //$(document).on('click', '.delete-interviewer', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Interviewers');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
+    
 
 
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
@@ -2344,58 +2078,6 @@
 
     }
 
-    //$(document).on('click', '.delete-selectability', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Selectability Criteria.');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-qualityController', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Quality Controller');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
-    //$(document).on('click', '.delete-controller', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Quality Controller');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
+    
 
 </script>

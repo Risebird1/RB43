@@ -553,79 +553,7 @@
 
                                 </div>
 
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Joinability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-                    <table class="table table-bordered mbn" id="JoinabilityTable">
-                        <thead>
-                            <tr>
-                                <th width="10%">Required Level</th>
-                                <th width="20%">Type</th>
-                                <th width="35%">Value</th>
-                                <th width="15%">Actual Level</th>
-                                <th width="10%">Required Weightage</th>
-                                <th width="10%">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.JoinabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-                                            @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
-
+                               
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -700,80 +628,6 @@
                                     </div><!--end of col-md-12-->
 
                                 </div>
-
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Selectability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-
-                    <table class="table table-bordered mbn" id="SelectabilityTable">
-                        <thead>
-                            <tr>
-                                <th width="10%">Required Level</th>
-                                <th width="20%">Type</th>
-                                <th width="35%">Value</th>
-                                <th width="15%">Actual Level</th>
-                                <th width="10%">Required Weightage</th>
-                                <th width="10%">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.SelectabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-                                            @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1078,7 +932,7 @@
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "InterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                                 }
 
@@ -1404,13 +1258,7 @@
     });
 
     function AddRow() {
-        //var table = document.getElementById("QuestionsTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Tech Skills.");
-        //    return;
-        //}
-
+        
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#QuestionsTable tr").length - 1;
@@ -1547,13 +1395,7 @@
     }
 
     function AddRowClient() {
-        //var table = document.getElementById("ClientTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Clients.");
-        //    return;
-        //}
-
+        
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#ClientTable tr").length - 1;

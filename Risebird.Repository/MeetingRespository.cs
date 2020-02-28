@@ -420,28 +420,7 @@ namespace Risebird.Repository
             }
         }
 
-        //public string QCAssignYourself(int meetingid, string interviewerMail)
-        //{
-        //    try
-        //    {
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //            SqlMapper.Query<string>(
-        //                con, "update [dbo].[InterviewMeetings] set QCInterviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
-        //            return "Interviewer assigned successfully.";
-        //        }
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return "Failed to assigned interview, Please contact Risebird HR.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return "Failed to assigned interview, Please contact Risebird HR.";
-        //    }
-        //}
+        
         public string QCAssignYourself(int meetingid, string interviewerMail)
         {
             try
@@ -754,7 +733,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -770,7 +749,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -786,7 +765,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -831,25 +810,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        //public async Task<IEnumerable<MeetingVM>> GetClientHRContactList()
-        //{
-        //    try
-        //    {
-        //        var query = "select im.ClientHrContact, im.id as imid, IRF.ClientId from InterviewMeetings im inner join IRF on im.IRFId = IRF.IRFId left join [dbo].[InterviewComments] ic on im.id = ic.InterviewId";
-
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //            var results = await con.QueryAsync<MeetingVM>(query);
-        //            return results;
-        //        }
-
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //    }
-        //    return null;
-        //}
+        
 
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
@@ -943,46 +904,6 @@ namespace Risebird.Repository
                         }
                     }
 
-                    //if(reportDetails.JoinabilityHRReportCollection!=null)
-                    //{
-                    //    //update Joinability Report table
-
-                    //    foreach (var item in reportDetails.JoinabilityHRReportCollection)
-                    //    {
-
-                    //        string sqlJoinReport = "INSERT INTO JoinabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                    //        var result3 = con.Execute(sqlJoinReport, new
-                    //        {
-                    //            CandidateId = reportDetails.CandidateId,
-                    //            RequiredLevelId = item.RequiredLevelId,
-                    //            Type = item.Name,
-                    //            Value= item.Value,
-                    //            ActualLevelId = item.ActualLevelId,
-                    //            WeightageRequired = item.WeightageRequired,
-                    //            WeightageActual = item.WeightageActual
-                    //        });
-                    //    }
-                    //}
-
-                    //if(reportDetails.SelectabilityEvaluatorReportCollection!=null)
-                    //{
-                    //    //update Selectability Report table
-                    //    foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
-                    //    {
-                    //        string sqlSelectableReport = "INSERT INTO SelectabilityReport (CandidateId, RequiredLevelId ,Type,Value, ActualLevelId, WeightageRequired,WeightageActual) Values (@CandidateId, @RequiredLevelId, @Type,@Value, @ActualLevelId, @WeightageRequired, @WeightageActual);";
-                    //        var result3 = con.Execute(sqlSelectableReport, new
-                    //        {
-                    //            CandidateId = reportDetails.CandidateId,
-                    //            RequiredLevelId = item.RequiredLevelId,
-                    //            Type = item.Name,
-                    //            Value = item.Value,
-                    //            ActualLevelId = item.ActualLevelId,
-                    //            WeightageRequired = item.WeightageRequired,
-                    //            WeightageActual = item.WeightageActual
-                    //        });
-                    //    }
-                    //}
-                    
                     if(reportDetails.QuestionsCollection !=null)
                     {
                         //update questions discussed table
@@ -1294,7 +1215,6 @@ namespace Risebird.Repository
         {
             try
             {
-                //var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IsApproved", isApproved);
                 dynamicParameters.Add("@ApprovalComments", approvalComment);
@@ -1384,80 +1304,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
-
-        //public bool SaveQCFeedback(int imid, int qcStatus, string comment, bool FraudLipSync, bool QuestionsRelevance, bool HandsOnCoding, bool BiasAndCandidateHandling, bool TechnicalCommunicationSkills, bool ChapteringCompleted, bool QuestionsFilled, bool TechSkillsMetric, bool SelectabilityMetric, bool JoinabilityMetric, bool GeneralSkillMetric, bool CommentsFilled, bool MeaningfulAssessments, bool CorrectEnglishGrammar, bool ProctoringReportFilled)
-        //{
-        //    try
-        //    {
-        //        //var query = "update InterviewMeetings set IsApproved=@IsApproved, ApprovalComments=@ApprovalComments where id=@id";//select * from TransClientUser where IRFId = (select id from IRF where IRFId=@IRFId)";
-        //        var results = new List<int>();
-        //        var query = "select id from QCFeedbackReport where InterviewId = @InterviewId";
-        //        var dynamicParameters = new DynamicParameters();
-        //        dynamicParameters.Add("@InterviewId", imid);
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //             results = con.Query<int>(query, dynamicParameters).ToList();
-
-        //        }
-        //        dynamicParameters.Add("@QCStatus", qcStatus);
-        //        dynamicParameters.Add("@QCComment", comment);
-
-        //        dynamicParameters.Add("@FraudLipSync", FraudLipSync);
-        //        dynamicParameters.Add("@QuestionsRelevance", QuestionsRelevance);
-        //        dynamicParameters.Add("@HandsOnCoding", HandsOnCoding);
-        //        dynamicParameters.Add("@BiasAndCandidateHandling", BiasAndCandidateHandling);
-        //        dynamicParameters.Add("@TechnicalCommunicationSkills", TechnicalCommunicationSkills);
-        //        dynamicParameters.Add("@ChapteringCompleted", ChapteringCompleted);
-        //        dynamicParameters.Add("@QuestionsFilled", QuestionsFilled);
-
-        //        dynamicParameters.Add("@TechSkillsMetric", TechSkillsMetric);
-
-        //        dynamicParameters.Add("@SelectabilityMetric", SelectabilityMetric);
-
-        //        dynamicParameters.Add("@JoinabilityMetric", JoinabilityMetric);
-
-        //        dynamicParameters.Add("@GeneralSkillMetric", GeneralSkillMetric);
-
-        //        dynamicParameters.Add("@CommentsFilled", CommentsFilled);
-
-        //        dynamicParameters.Add("@MeaningfulAssessments", MeaningfulAssessments);
-
-        //        dynamicParameters.Add("@CorrectEnglishGrammar", CorrectEnglishGrammar);
-
-        //        dynamicParameters.Add("@ProctoringReportFilled", ProctoringReportFilled);
-        //        if(results.Count()>0)
-        //        {
-        //            using (SqlConnection con = new SqlConnection(connectionString))
-        //            {
-        //                var result = SqlMapper.Query<int>(con, "usp_SaveQCFeedback", dynamicParameters,
-        //                    commandType: CommandType.StoredProcedure);
-        //                return true;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            using (SqlConnection con = new SqlConnection(connectionString))
-        //            {
-        //                var result = SqlMapper.Query<int>(con, "usp_AddQCFeedback", dynamicParameters,
-        //                    commandType: CommandType.StoredProcedure);
-        //                return true;
-        //            }
-        //        }
-
-
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-
+        
         public bool PostSelectionStatus(int imid, int value, string comment)
         {
             try

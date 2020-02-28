@@ -2005,7 +2005,7 @@ namespace Risebird.Repository
             }
         }
 
-        public int GetInterviewMeetings(string irfName, string candidateEmail)
+        public int InterviewMeetings(string irfName, string candidateEmail)
         {
             int result = 0;
             try

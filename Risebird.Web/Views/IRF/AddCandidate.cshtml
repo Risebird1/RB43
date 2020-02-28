@@ -113,9 +113,7 @@
 
                         @using (Html.BeginForm("AddCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                         {
-                            @*<div class="loader text-center">
-                <img src="~/Newassets/img/lazyload.gif" />
-            </div>*@
+                           
                         <div class="row">
                             <div class="col-md-4 col-sm-4 pr-1">
                                 <div class="form-group">
@@ -284,52 +282,6 @@
 
 
 
-@*@if (ViewBag.Message != null)
-{
-    <script type="text/javascript">
-
-        function my_code() {
-            var msg = '@ViewBag.Message';
-
-
-
-            if (msg.includes("Success")) {
-                swal({
-                    title: 'Successful',
-                    text: '@ViewBag.Message',
-                    type: 'success',
-                    showConfirmButton: true
-
-                },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Project/Index';
-                    }
-                )
-
-            }
-            else {
-                swal({
-                    title: 'Failed',
-                    text: '@ViewBag.Message',
-                    type: 'error',
-                    showConfirmButton: true
-
-                },
-                    function ()
-                    {
-                        window.location.href = '/Project/Index';
-                    }
-                )
-            }
-
-        }
-
-        window.onload = my_code();
-    </script>
-
-}*@
 
 <script>
     function ClientChanged(clientId) {
@@ -354,106 +306,3 @@
     }
 
 </script>
-@*<script>
-        $(document).ready(function () {
-            //FilterInterviews("Today");// on page load default dropdownlist value set
-
-            $('#meeting').DataTable({
-                "pagingType": "full_numbers",
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                responsive: false,
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search records",
-                }
-
-            });
-            var table = $('#meeting').DataTable();
-        });
-    </script>*@
-
-@*<script type="text/javascript">
-        //// script for loader starts here
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meeting").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meeting").show();
-            }, 2000);
-        };
-        //// script for loader ends here
-    </script>*@
-@*<script>
-
-        function FilterInterviews(filterValue) {
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/GetFilteredInterviews",
-                data: { 'filterValue': filterValue },
-                success: function (data) {
-
-                    if (data == '' && filterValue == 'seven') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for the next seven days.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '' && filterValue == 'all') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for ' + filterValue + '.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    $('#tableID').css("margin-left", "");
-                    $('#tableID').html('');
-                    $('#tableID').html(data);
-
-                    $('#meeting').DataTable({
-                        "pagingType": "full_numbers",
-                        "lengthMenu": [
-                            [10, 25, 50, -1],
-                            [10, 25, 50, "All"]
-                        ],
-                        responsive: false,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Search records",
-                        }
-
-                    });
-                    var table = $('#meeting').DataTable();
-
-
-
-                },
-                error: function (err) {
-                    alert(err.responseText);
-                }
-            });
-        }
-    </script>*@

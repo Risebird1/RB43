@@ -97,9 +97,7 @@
 
                                                         </td>
 
-                                                        @*<td>
-                                                            <input class="form-control text-box single-line" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" type="text" value="">
-                                                        </td>*@
+                                                       
 
                                                         <td>
                                                             <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" style="width:100%" class="valid" aria-invalid="false"></textarea>
@@ -249,25 +247,7 @@
         //$.validator.unobtrusive.parse(document);
 
     }
-
-    //$(document).on('click', '.delete-comment', function (event) {
-
-    //    if ($(this).parents('tbody').find('tr').length === 1) {
-
-    //        alert('Must have atleast one Row');
-    //        return false;
-    //    }
-
-    //    else {
-
-    //        var currentvalue = $(this).attr('value');
-
-    //        $(this).closest('tr').remove();
-
-    //    }
-
-    //});
-
+    
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
         
         if ($(element).parents('tbody').find('tr').length === 1) {

@@ -140,13 +140,7 @@
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
             <div class="navbar-wrapper">
-                @*<div class="navbar-toggle">
-                        <button type="button" class="navbar-toggler">
-                            <span class="navbar-toggler-bar bar1"></span>
-                            <span class="navbar-toggler-bar bar2"></span>
-                            <span class="navbar-toggler-bar bar3"></span>
-                        </button>
-                    </div>*@
+                
                 <a class="navbar-brand">
                     Interview Report
                 </a>
@@ -262,9 +256,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @*@Html.TextBoxFor(m => m.MeetingStatus, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
-
-                                            @*<input class="form-control webkitEnabled" id="MeetingStatus" name="MeetingStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ?  Model.MeetingStatusList.Where(x => x.Value == Model.MeetingStatus.ToString()).FirstOrDefault().Text : Model.MeetingStatusList.FirstOrDefault().Text)">*@
+                                            
 
                                             @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
@@ -277,8 +269,7 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @*@Html.TextBoxFor(m => m.Rating, new { @class = "form-control text-box single-line", @readonly = "readonly" })*@
-                                            @*<input class="form-control webkitEnabled" id="Rating" name="Rating" readonly="readonly" type="text" value="@Model.Level.Where(x => x.Value == Model.Rating.ToString()).FirstOrDefault().Text">*@
+                                           
 
                                             @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
@@ -289,7 +280,6 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @*<input class="form-control webkitEnabled" id="InterviewStatus" name="InterviewStatus" readonly="readonly" type="text" value="@(Model.MeetingStatus != null ? Model.InterviewStatusList.Where(x => x.Value == Model.InterviewStatus.ToString()).FirstOrDefault().Text : Model.InterviewStatusList.FirstOrDefault().Text)">*@
 
 
                                             @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled = "disabled" })
@@ -328,10 +318,7 @@
                                             }
                                         }
 
-                                        @*<div class="col-md-6 col-sm-6">
-
-                </div>*@
-
+                                      
                                     </div><!--end of col-md-12-->
 
                                 </div>
@@ -387,9 +374,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 px-1">
-                                        @*<div class="form-group">*@
-                                        @*@Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })*@
-                                        @*@Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav" })*@
+                                        
                                         @{
                                             if (Model.AudioLink != null)
                                             {
@@ -399,25 +384,8 @@
                                         @*</div>*@
                                     </div>
 
-                                    @*<div class="col-md-10">
-                Upload Video
-                <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                Add a link
-                <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-            </div>
-
-            <div class="col-md-6 col-sm-6 px-1" style="display:none" id="linkDiv">
-                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-            </div>*@
-
-
                                     <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
-                                        @*@Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })*@
-                                        @*@Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })*@
-
+                                       
 
                                         <div class="">
                                             @{
@@ -455,7 +423,6 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.FirstOrDefault().Text">*@
 
 
                                                                 @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
@@ -466,7 +433,6 @@
 
                                                             </td>
                                                             <td>
-                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">*@
 
                                                                 @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
 
@@ -602,7 +568,6 @@
                                             @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
 
-                                            @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                         </div>
 
 
@@ -688,81 +653,7 @@
 
                                 </div>
 
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Joinability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-                    <table class="table table-bordered mbn" id="JoinabilityTable">
-                        <thead>
-                            <tr>
-
-                                <th class="table_heading">Required Level</th>
-                                <th class="table_heading">Type</th>
-                                <th class="table_heading">Value</th>
-                                <th class="table_heading">Actual Level</th>
-                                <th class="table_heading">Required Weightage</th>
-                                <th class="table_heading">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.JoinabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-
-
-                                            @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
+                                
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -838,82 +729,7 @@
                                 </div>
 
 
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Selectability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-
-                    <table class="table table-bordered mbn" id="SelectabilityTable">
-                        <thead>
-                            <tr>
-
-                                <th class="table_heading">Required Level</th>
-                                <th class="table_heading">Type</th>
-                                <th class="table_heading">Value</th>
-                                <th class="table_heading">Actual Level</th>
-                                <th class="table_heading">Required Weightage</th>
-                                <th class="table_heading">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.SelectabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-
-
-                                            @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
+                               
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1206,28 +1022,7 @@
                                 @Html.HiddenFor(m => m.IRFId)
                                 @Html.HiddenFor(m => m.InterviewId)
                                 @Html.HiddenFor(m => m.IsEdited)
-                                @*<div class="card-footer ">
-            <div class="row">
-                <label class="col-md-2"></label>
-                <div class="col-md-9">
-
-                    @{
-                        if (ViewBag.IsSelected)
-                        {
-                            @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                        }
-                        else
-                        {
-                            @Html.ActionLink("Back to List", "GetInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                        }
-
-                    }
-                </div>
-            </div>
-        </div>*@
-
+                               
 
 
 
@@ -1307,25 +1102,7 @@
     </div>
     <footer class="footer">
         <div class=" container-fluid ">
-            @*<nav>
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Risebird
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Blog
-                            </a>
-                        </li>
-                    </ul>
-                </nav>*@
+            
             <div class="copyright" id="copyright">
                 &copy;
                 <script>
@@ -1429,13 +1206,7 @@
 
         // Get the modal
         var modal = document.getElementById("mySelectionModal");
-
-        // Get the button that opens the modal
-        //var btn = document.getElementById("myBtn_" + item.imid);
-
-        //// Get the <span> element that closes the modal
-        //var span = document.getElementsByClassName("close")[0];
-
+        
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -1754,12 +1525,7 @@
     });
 
     function AddRow() {
-        //var table = document.getElementById("QuestionsTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Tech Skills.");
-        //    return;
-        //}
+        
 
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1897,12 +1663,7 @@
     }
 
     function AddRowClient() {
-        //var table = document.getElementById("ClientTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Clients.");
-        //    return;
-        //}
+        
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();

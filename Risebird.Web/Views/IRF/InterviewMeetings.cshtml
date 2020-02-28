@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @{
-    ViewData["Title"] = "Project Interview Meetings";
+    ViewData["Title"] = "Interview Meetings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -19,7 +19,6 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
-
     td.wordwrap {
         display: inline-block !important;
         max-width: 250px !important;
@@ -48,7 +47,6 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
-
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
@@ -66,8 +64,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/Project/Index">Projects</a>
-                <a class="navbar-brand">Project Interview Meetings</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
+                <a class="navbar-brand">Interview Meetings</a>
             </div>
 
         </div>
@@ -81,31 +79,31 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">
-                            Interview Meetings list for <b>@ViewBag.ProjectName</b>
+                            Interview Meetings list for <b>@ViewBag.IRF</b>
                         </h4>
                     </div>
                     <div class="card-body">
-
+                        
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
 
-
+                           
                             <div class="toolbar">
 
                                 <div class="row">
 
-                                    @*<div class="col-md-3 ml-md-auto">
+                                    <div class="col-md-3 ml-md-auto">
                                         <div class="form-group">
                                             @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                         </div>
-                                    </div>*@
+                                    </div>
                                     <div class="col-auto">
-                                        @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                     </div>
                                 </div>
-
+                           
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -114,7 +112,6 @@
                                         <thead>
                                             <tr>
                                                 <th>Interview Date</th>
-                                                <th>IRF</th>
                                                 <th>Candidate Name</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
@@ -133,7 +130,6 @@
                                         <tfoot>
                                             <tr>
                                                 <th>Interview Date</th>
-                                                <th>IRF</th>
                                                 <th>Candidate Name</th>
                                                 <th>Report Link</th>
                                                 <th>Resume</th>
@@ -154,9 +150,8 @@
                                             {
                                             <tr id=@item.imid>
                                                 <td> @item.interviewDate </td>
-                                                <td>@item.IRFId</td>
                                                 <td> @item.candidateName </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= item.irfIntId})'>Report</a> </td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -236,7 +231,7 @@
 
 <script>
     $(document).ready(function () {
-        //FilterInterviews("All");// on page load default dropdownlist value set
+        FilterInterviews("All");// on page load default dropdownlist value set
         $('#meeting').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -253,24 +248,6 @@
         var table = $('#meeting').DataTable();
     });
 </script>
-
-@*<script type="text/javascript">
-
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
 
 <script type="text/javascript">
     //// script for loader starts here
@@ -298,6 +275,65 @@
     };
     //// script for loader ends here
 </script>
+
+<script>
+    function FilterInterviews(filterValue) {
+        
+        var id = '@ViewBag.IRFintId';
+        var irfId ='@ViewBag.IRF'
+        $.ajax({
+            type: "GET",
+            url: "/IRF/GetFilteredInterviewMeetings",
+            data: { 'filterValue': filterValue, 'id': id, 'irfId': irfId},
+            success: function (data) {
+                if (data == '' && filterValue == 'seven') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for the next seven days.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '' && filterValue == 'all') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                if (data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No interviews for ' + filterValue + '.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').css("margin-left", "");
+                $('#tableID').html('');
+                $('#tableID').html(data);
+
+                $('#meeting').DataTable({
+                    "pagingType": "full_numbers",
+                    "lengthMenu": [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, "All"]
+                    ],
+                    responsive: true,
+                    language: {
+                        search: "_INPUT_",
+                        searchPlaceholder: "Search records",
+                    }
+
+                });
+                var table = $('#meeting').DataTable();
+
+
+
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
+<!-- Keep the Page Content Here.-->
+
 
 <loading></loading>
 
