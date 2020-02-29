@@ -302,6 +302,7 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 //_errorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
@@ -405,12 +406,7 @@ namespace Risebird.Repository
                     
                     if (reportDetails.SelectabilityEvaluatorReportCollection != null)
                     {
-                        //update Selectability Report table
-                        //foreach (var item in reportDetails.SelectabilityEvaluatorReportCollection)
-                        //{
-                           
-                        //}
-                        //result = true;
+                        
 
                         string sqlSelectableReport = "delete from SelectabilityReport where CandidateId = @CandidateId and IRFId =@IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
@@ -554,20 +550,12 @@ namespace Risebird.Repository
                 bool result = false;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //check if the data is edited
-                    //if (reportDetails.IsEdited)
-                    //{
-
-
-                    //}
+                    
 
                     if (reportDetails.JoinabilityHRReportCollection != null)
                     {
                         //update Selectability Report table
-                        //foreach (var item in reportDetails.JoinabilityHRReportCollection)
-                        //{
-                           
-                        //}
+                        
                         string sqlSelectableReport = "delete from JoinabilityReport where CandidateId = @CandidateId and IRFId = @IRFId";
                         var result3 = con.Execute(sqlSelectableReport, new
                         {

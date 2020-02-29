@@ -415,7 +415,7 @@
                                                 <th>Joining Status</th>
 
                                                 <th>Action</th>
-
+                                                <th>Call</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -438,7 +438,7 @@
                                                 <th>Joining Status</th>
 
                                                 <th>Action</th>
-
+                                                <th>Call</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -480,6 +480,13 @@
                                                             <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
 
                                                         }
+                                                    </td>
+                                                    <td>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                        }
+
                                                     </td>
                                                 </tr>
                                             }
@@ -602,6 +609,43 @@
             </div>
 
         </div>
+
+        <div id="myCallModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <!-- Modal content -->
+            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+                    <span class="close" id="callPopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+                </div>
+            </div>
+
+        </div>
+
         <!-- end row -->
     </div>
     <footer class="footer">
@@ -665,6 +709,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 @if (ViewBag.Message != null)
 {
 
@@ -867,9 +912,7 @@
         // Get the button that opens the modal
         var btn = document.getElementById("myBtn_" + item.imid);
 
-        // Get the <span> element that closes the modal
-        //var span = document.getElementById("feedbackPopUp");
-
+       
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -964,43 +1007,10 @@
             }
         });
 
-
-
-        //if (item.ApprovalComments != 'Approved') {
-        //    comm = item.ApprovalComments;
-        //}
-        //else {
-        //    comm = '';
-        //}
-        //if (item.IsApproved) {
-        //    //var commentId = 'approvalComments';
-        //    document.getElementById('approvalComments').style.display = "none";
-        //}
-        //else {
-        //    document.getElementById('approvalComments').style.display = "block";
-
-        //}
-        //var commentId = 'approvalComments';
-
+        
     }
 
-    //function ApprovalChanged() {
-    //    var commentId = 'approvalComments';
-    //    document.getElementById("appComments").value = comm;
-
-    //    //var checkElem = document.getElementById("checkBoxDiv_" + imid);
-
-    //    var isChecked = document.getElementById("IsApproved").checked;
-
-    //    if (isChecked == false) {
-
-    //        document.getElementById(commentId).style.display = "block";
-    //    }
-    //    else {
-    //        document.getElementById(commentId).style.display = "none";
-    //    }
-    //}
-
+    
     function SavePopUp() {
 
         var approvalComment = document.getElementById("appComments").value;
@@ -1029,24 +1039,7 @@
     }
 
 </script>
-@*
-    <script type="text/javascript">
 
-        $(".dataloading").hide();
-        $(".datatable").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $(".datatable").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-    </script>*@
 
 <script type="text/javascript">
     //// script for loader starts here
@@ -1128,17 +1121,71 @@
         });
     }
 </script>
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function CallButtonClick(candidateName, mobileNumber) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
 <!-- Keep the Page Content Here.-->
-@*
-    <script type="text/javascript">
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $(".datatable").show();
-            }, 2000);
-        };
-    </script>*@
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->

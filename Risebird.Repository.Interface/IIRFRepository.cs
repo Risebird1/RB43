@@ -65,7 +65,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransHR> GetTransHR(int id);
         IEnumerable<string> GetHRsMailIds(int irfId);
         IEnumerable<string> GetResumeEvaluatorsMailIds(int irfId);
-        int GetInterviewMeetings(string irfName, string candidateEmail);
+        int InterviewMeetings(string irfName, string candidateEmail);
         IEnumerable<InterviewComments> GetInterviewComments(string idList);
         IEnumerable<string> GetIRFCandidatesEmail(string irfName);
         int GetUserId(string emailId, string profile);
@@ -74,5 +74,15 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransRecruiter> GetTransRecruiter(int id);
         IEnumerable<InterviewVM> GetUpComingInterviewList();
         IEnumerable<IRFVm> GetUpComingIRFList();
+        Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId);
+        IEnumerable<TransClientUser> GetTransClientUserRole(int id);
+        IEnumerable<MeetingVM> GetIRFInterviewMeetingsCountData(int id);
+        //bool AddPausedMeetings(int irfId, int meetingId);
+        //Task<IEnumerable<MeetingVM>> PlayIRF(string IRFId);
+        bool PlayIRF(string IRFId);
+        IEnumerable<Interviewer> GetIRFInterviewerSkills();
+        Skill GetSkillById(int id);
+        //bool UpdatePausedMeetingstoPlay(string meetingIds);
+        //bool DeletePlayedMeetings(string meetingIds);
     }
 }

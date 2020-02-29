@@ -50,7 +50,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
-                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted);
+                    var irfList = _irfRepository.GetAllIRF(emailid, profileName).Where(x => !x.IsDeleted && x.EndDate >= DateTime.Now);
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -126,22 +126,12 @@ namespace Risebird.Web.Controllers
                         {
                             irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
-                        //var sorted = new SortedList<string>();
-                        //var list = new List<string>();
-                        //foreach (var irf in irfList)
-                        //{
-                        //    foreach (var role in irf.ClientRole.ToList())
-                        //    {
-                        //        if(list!=null && !list.Contains(role))
-                        //        list.Add(role);
-                        //    }
-                        //}
+                        
                         filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                         filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
-                        //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
 
                         irfList = irfList.Where(c => filter.ClientRole.Intersect(c.ClientRole).Any()
                         && filter.RFID.Contains(c.IRFId)
@@ -183,29 +173,21 @@ namespace Risebird.Web.Controllers
                                 {
                                     irf.BudgetConsumed = "Not Defined";
                                 }
-                                //irf.BudgetConsumed = consumedBudget + "%";
                             }
                             if (profileName != null && profileName.Contains("Client"))
                             {
-                                //ViewBag.IsClientUser = true;
                                 irfList.ToList().ForEach(c => c.IsClientUser = true);
                             }
-                            //else
-                            //{
-                            //    ViewBag.IsClientUser = false;
-                            //}
+                            
                             irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
 
                         }
-
-
-
+                        
                     }
                     ViewBag.RoleList = list;
                     ViewBag.Profile = profileName;
                     return View(irfList);
 
-                    //ViewBag.Message = "Failed";
                 }
                 else
                 {
@@ -606,6 +588,14 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client"||  profileName == "Recruiter")
                 {
                     var irfList = _irfRepository.GetAllIRF(emailid, profileName);
+                    if (filter.StartDate != null && filter.EndDate != null)
+                    {
+                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                    }
+                    else
+                    {
+                        irfList = irfList.Where(x => x.EndDate > DateTime.Now);
+                    }
                     foreach (var irf in irfList)
                     {
                         irf.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(irf.IsDeleted)).GetDescription();
@@ -654,10 +644,6 @@ namespace Risebird.Web.Controllers
                         ViewBag.IsClientUser = false;
                     }
                     
-                    if (filter.StartDate != null && filter.EndDate != null)
-                    {
-                        irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
-                    }
                     
                     filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
@@ -706,7 +692,6 @@ namespace Risebird.Web.Controllers
                             {
                                 irf.BudgetConsumed = "Not Defined";
                             }
-                            //irf.BudgetConsumed = consumedBudget + "%";
                         }
                         if (profileName != null && profileName.Contains("Client"))
                         {
@@ -722,7 +707,6 @@ namespace Risebird.Web.Controllers
 
                     return View(irfList);
 
-                    //ViewBag.Message = "Failed";
                 }
                 else
                 {
@@ -768,6 +752,9 @@ namespace Risebird.Web.Controllers
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
                 model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+                model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
 
                 ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                 ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
@@ -848,7 +835,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "Adding IRF has failed";
                 return RedirectToAction("Index");
             }
@@ -856,9 +843,9 @@ namespace Risebird.Web.Controllers
 
         
         [Authorize]
-        public string GetInterviewerSkills(string id)
+        public string GetInterviewerSkills(int id)
         {
-            var name = _irfService.GetInterviewerSkills(Convert.ToInt16(id));
+            var name = _irfService.GetInterviewerSkills(id);
             return name;
         }
 
@@ -1285,7 +1272,8 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetInterviewMeetings(string id, string irfId)
+        [ActionName("InterviewMeetings")]
+        public IActionResult InterviewMeetings(string id, string irfId)
         {
             try
             {
@@ -1501,10 +1489,7 @@ namespace Risebird.Web.Controllers
                     }
                     var model = _irfService.GetEditIRF(Convert.ToInt16(id)).Result;
                     string skills = string.Empty;
-                    foreach (var item in model.SkillCollection)
-                    {
-                        skills = skills + "," + item.SkillId;
-                    }
+                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
                     var interviewers = _irfService.GetInterviewers(skills);
                     ViewBag.Clients = new SelectList(_irfRepository.GetClients(), "id", "Name");
                     ViewBag.Level = new SelectList(_irfRepository.GetLevels(), "id", "Name");
@@ -1530,6 +1515,9 @@ namespace Risebird.Web.Controllers
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
+                                        select new { ID = (int)s, Name = s.GetDescription() };
+                    model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
                     TempData["JDLink"] = model.JDLink;
                     TempData["EditIRFId"] = model.IRFId;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -1630,7 +1618,7 @@ namespace Risebird.Web.Controllers
             }
             catch (Exception ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessage"] = "IRF edits were not saved";
                 return RedirectToAction("Index");
             }
@@ -2020,24 +2008,13 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartData();
                             obj.Name = item;
-                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact == item  || x.staffingAgency == item)).Count();
-                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); 
-                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
+                            obj.NoShowCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 1 && (x.ClientHrContact?.Trim() == item  || x.staffingAgency?.Trim() == item)).Count();
+                            obj.ScheduledCount = meetings.Where(x => !x.MeetingStatus.HasValue && x.interviewDate >= DateTime.Now && x.confirmationStatus == "1" && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count(); 
+                            obj.CompletedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 4 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.DroppedCount = meetings.Where(x => x.MeetingStatus.HasValue && x.MeetingStatus.Value == 3 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
                             chartData.Add(obj);
-                            //check for this if condition
-                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
-                            //{
-                                
-                            //}
-                            
                         }
-                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
-                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
-                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
-                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
-
-
+                       
 
                         ViewBag.IRF = irfId;
                         ViewBag.IRFintId = id;
@@ -2095,22 +2072,12 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new ClientChartFeedbackData();
                             obj.Name = item;
-                            obj.ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact == item || x.staffingAgency == item)).Count(); ;
-                            obj.RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
-                            obj.BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4 && (x.ClientHrContact == item || x.staffingAgency == item)).Count();
+                            obj.ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count(); ;
+                            obj.RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
+                            obj.BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4 && (x.ClientHrContact?.Trim() == item || x.staffingAgency?.Trim() == item)).Count();
                             chartData.Add(obj);
-                            //check for this if condition
-                            //if (meetings.Where(x=> x.ClientHrContact == item).Count()>0)
-                            //{
-
-                            //}
                         }
-                        //var ProxyCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 1).Count();
-                        //var SelectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 2).Count();
-                        //var RejectedCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 3).Count();
-                        //var BorderLineCount = meetings.Where(x => x.InterviewStatus.HasValue && x.InterviewStatus.Value == 4).Count();
-
 
 
                         ViewBag.IRF = irfId;
@@ -2172,12 +2139,7 @@ namespace Risebird.Web.Controllers
 
                         }
 
-
-
-
-                        //ViewBag.IRF = irfId;
-                        //ViewBag.IRFintId = id;
-
+                        
                         return Json(chartData);
                     }
                     else
@@ -2272,7 +2234,6 @@ namespace Risebird.Web.Controllers
                         }
                         return View(candidateList);
 
-                        //return View();
                     }
                     else
                     {
@@ -2407,7 +2368,6 @@ namespace Risebird.Web.Controllers
                             return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -2479,16 +2439,7 @@ namespace Risebird.Web.Controllers
                         var result = _irfService.AddCandidate(model, emailid, profileName).Result;
                         TempData["SuccessErrorMessageCandidate"] = result;
                         return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //if (result.ToLower().Contains("success"))
-                        //{
-                        //    TempData["SuccessErrorMessageCandidate"] = result;
-                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //}
-                        //else
-                        //{
-                        //    TempData["SuccessErrorMessageCandidate"] = "Adding candidate failed.";
-                        //    return RedirectToAction("Candidates", new { id = model.IRFId, irfName = model.IRFName });
-                        //}
+                      
                     }
                     else
                     {
@@ -2533,7 +2484,6 @@ namespace Risebird.Web.Controllers
                             string fileContentType = file.ContentType;
                             byte[] fileBytes = new byte[file.Length];
                             var data = file.OpenReadStream();
-                            //var data = file.InputStream.Read(fileBytes, 0, Convert.ToInt32(file.ContentLength));
                             var candidateList = new List<Candidate>();
                             using (var package = new ExcelPackage(file.OpenReadStream()))
                             {
@@ -2586,7 +2536,6 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageCandidate"] = "Importing candidates failed!";
                 return RedirectToAction("Index");
             }
-            //return View("Index");
             return null;
         }
 
@@ -2822,7 +2771,6 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -2869,7 +2817,6 @@ namespace Risebird.Web.Controllers
                             return RedirectToAction("Candidates", new { id = Convert.ToInt32(irfId), irfName = IRFName });
                         }
 
-                        //return View();
                     }
                     else
                     {
@@ -3034,16 +2981,12 @@ namespace Risebird.Web.Controllers
                             planner.ConfirmationProcessingTime = 2;
                             planner.InviteProcessingTime = 2;
                         }
-                        //if (planner != null)
-                        //{
-                        //    return View(new InterviewPlanner());
-                        //}
+                        
                         planner.IRFId = irfId;
                         planner.IRFName = irfName;
                         planner.OverAllProcessingTime = (planner.JoiningProcessingTime+planner.OfferProcessingTime+ planner.FinalSelectionProcessingTime+ planner.ApprovalProcessingTime
                             +planner.RisebirdSelectionProcessingTime+planner.CompletionProcessingTime+planner.ConfirmationProcessingTime+planner.InviteProcessingTime);
 
-                        //ViewBag.JoiningDaysDate = planner.IRFCreatedOn.AddDays(planner.OverAllProcessingTime - planner.JoiningProcessingTime);
 
 
                         return View(planner);
@@ -3124,7 +3067,6 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessage"] = "Interview Planner updated Successfully";
                             return RedirectToAction("Index");
 
-                            //return RedirectToAction("Candidates", new { irfId = model.IRFId, irfName = model.IRFName });
                         }
                         else
                         {
@@ -3169,7 +3111,6 @@ namespace Risebird.Web.Controllers
                         
                         return View(irfList);
 
-                        //return View();
                     }
                     else
                     {
@@ -3199,8 +3140,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
-                    //TempData["actMethod"] = actMethod;
-                    //ViewBag.BackMethod = actMethod;
+                   
                     var list = new SelectList(new[]
                     {
                         new { ID = "Enrollment1", Name = "Enrollment 1"},
@@ -3233,11 +3173,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UploadAudio(CandidateAudio model)
         {
-            //string actMethod = string.Empty;
-            //if (TempData["actMethod"] != null)
-            //{
-            //    actMethod = TempData["actMethod"].ToString();
-            //}
+            
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
@@ -3336,11 +3272,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
         {
-            //string actionMethod = string.Empty;
-            //if (TempData["actMethod"] != null)
-            //{
-            //    actionMethod = TempData["actMethod"].ToString();
-            //}
+           
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
@@ -3371,6 +3303,87 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageEnrollment"] = "Failed!";
                 return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId });
             }
+        }
+
+        [Authorize]
+        public IActionResult PauseIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_irfService.PauseIRF(irfId, irfName))
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF paused Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF pause Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF pause Failed";
+                return RedirectToAction("Index");
+            }
+
+        }
+        [Authorize]
+        public IActionResult PlayIRF(int irfId, string irfName)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_irfService.PlayIRF(irfId, irfName))
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF enabled Successfully";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessage"] = "IRF enable Failed";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessage"] = "IRF play Failed";
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

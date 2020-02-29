@@ -96,7 +96,7 @@ namespace Risebird.Business
             try
             {
                 var interviewers = _irfRepository.GetInterviewerSkills();
-                string Name = String.Empty;
+                string Name = string.Empty;
                 foreach (var item in interviewers)
                 {
                     if (item.UserId == id)
@@ -134,17 +134,30 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                //var interviewers = _irfRepository.GetInterviewerSkills().Where(x=> x.IsApproved==true);
+                var interviewers = _irfRepository.GetIRFInterviewerSkills();
                 var skillList = skills.Split(",");
+                var skillNameList = new List<string>();
+                foreach (var skill in skillList)
+                {
+                    if(skill == "")
+                    {
+                        continue;
+                    }
+                    var skillName = _irfRepository.GetSkillById(Convert.ToInt16(skill)).Name;
+                    skillNameList.Add(skillName);
+                }
                 //skillList.RemoveAt()
                 var list = new List<Interviewer>();
+
+
                 foreach (var item in interviewers)
                 {
-                    foreach (var skill in skillList)
+                    foreach (var skillName in skillNameList)
                     {
-                        if (skill == "")
-                            continue;
-                        var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
+                        //if (skill == "")
+                        //    continue;
+                        //var skillName = _irfRepository.GetSkills().Where(x=> x.id == Convert.ToInt16(skill)).FirstOrDefault().Name;
                         if(item.PrimarySkill.Contains(skillName))
                         {
                             list.Add(item);
@@ -152,7 +165,7 @@ namespace Risebird.Business
                         }
                     }
                 }
-                list.Distinct();
+                list = list.Distinct().ToList();
                 
                 return list;
             }
@@ -310,12 +323,12 @@ namespace Risebird.Business
                     }
                     if (role == 1)
                     {
-                        result = result.Where(m => m.ClientHrContact == email).ToList();
+                        result = result.Where(m => m.ClientHrContact?.Trim() == email).ToList();
                         return result;
                     }
                     else if (role == 4)
                     {
-                        result = result.Where(m => m.staffingAgency == email).ToList();
+                        result = result.Where(m => m.staffingAgency?.Trim() == email).ToList();
                         return result;
                     }
                     else
@@ -387,6 +400,7 @@ namespace Risebird.Business
                 model.TotalInvites = IRF.TotalInvites;
                 model.TotalBudget = IRF.TotalBudget;
                 model.IsBiometricEnabled = IRF.IsBiometricEnabled;
+                model.PriorityLevel = IRF.PriorityLevel;
                 var skillCount = transTechSkills.Count();
                 return model;
 
@@ -808,28 +822,26 @@ namespace Risebird.Business
                 int waste = 0;
                 var emailList = new List<string>();
                 var funnelData = new IRFFunnel();
-                var candidates = _irfRepository.GetIRFCandidates(irfId);
-                if(candidates.Count()==0)
+                //var candidates = _irfRepository.GetIRFCandidates(irfId);
+                //if(candidates.Count()==0)
                 {
                     //get candidates from Meeting table by passing IRFId
                     emailList  = _irfRepository.GetIRFCandidatesEmail(irfName).ToList();
                     funnelData.TotalCandidates = emailList.Count();
                     funnelData.TotalInvites = emailList.Count(); 
                 }
-                else
-                {
-                    emailList = candidates.Select(x => x.EmailId).ToList();
-                    funnelData.TotalCandidates = candidates.Count();
-                    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
-                }
+                //else
+                //{
+                //    emailList = candidates.Select(x => x.EmailId).ToList();
+                //    funnelData.TotalCandidates = candidates.Count();
+                //    funnelData.TotalInvites = candidates.Where(x => x.TotalInvites > 0).Count();
+                //}
                
-                //funnelData.InvitesRate = funnelData.TotalCandidates != 0 ? ((funnelData.TotalInvites * 100 / funnelData.TotalCandidates) ) : 0;
-
                 //get interviewMeetings where candidateEmail and irfName matches
                 var interviewIdList = new List<int>();
                 foreach (var email in emailList)
                 {
-                    var interviewId = _irfRepository.GetInterviewMeetings(irfName, email);
+                    var interviewId = _irfRepository.InterviewMeetings(irfName, email);
                     if(interviewId!=0)
                     {
                         interviewIdList.Add(interviewId);
@@ -837,40 +849,34 @@ namespace Risebird.Business
                 }
 
                 funnelData.TotalConfirmations = interviewIdList.Count();
-                //funnelData.ConfirmationRate = funnelData.TotalInvites != 0 ? ((funnelData.TotalConfirmations * 100 / funnelData.TotalInvites)) : 0;
+               
 
                 string ids = string.Join<int>(",", interviewIdList);
                 var meetingData = _irfRepository.GetInterviewComments(ids);
                 if(meetingData != null)
                 {
                     var completed = meetingData.Where(x => x.MeetingStatus == 4);
-                    //var totalCompleted = completed.Count();
+                   
                     funnelData.TotalCompleted = completed.Count();
-                    //funnelData.CompletionRate = funnelData.TotalConfirmations != 0 ? ((totalCompleted * 100 / funnelData.TotalConfirmations) ) : 0;
+                   
                     var risebirdSelected = completed.Where(x => x.InterviewStatus.HasValue && (x.InterviewStatus == 2 || x.InterviewStatus == 4));
-                    //var totalRisebirdSelected = risebirdSelected.Count();
+                   
                     funnelData.TotalRisebirdSelection = risebirdSelected.Count();
-                    //funnelData.RisebirdSelectionRate = totalCompleted!=0?(totalRisebirdSelected * 100 / totalCompleted) : 0;
+                    
                     var approved = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved == 1);
-                    //var totalApproved = approved.Count();
+                   
                     funnelData.TotalApproved = approved.Count();
                     var approvalFilter = risebirdSelected.Where(x => x.IsApproved.HasValue && x.IsApproved > 2);
-                    //var approvalDenominator = totalRisebirdSelected - approvalFilter.Count();
-                    //funnelData.ApprovalRate = approvalDenominator != 0 ? (totalApproved * 100 / approvalDenominator) : 0;
-                    waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
+                                waste = waste + approvalFilter.Where(x => x.IsApproved > 3).Count();
                     var finalSelected = approved.Where(x => x.IsSelected.HasValue && x.IsSelected == 1);
-                    //var totalFinalSelected = finalSelected.Count();
+                  
                     funnelData.TotalFinalSelections = finalSelected.Count();
-                    //var finalSelectedDeductions = approved.Where(x => x.IsSelected.HasValue && x.IsSelected != 1 && x.IsSelected != 2 && x.IsSelected != 6).Count();
-                    //var finalSelectionDenominator = totalApproved - finalSelectedDeductions;
-                    //funnelData.FinalSelectionRate = finalSelectionDenominator != 0 ? ((totalFinalSelected * 100 / finalSelectionDenominator) * 100) : 0;
-                    waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
+                                waste = waste + approved.Where(x => x.IsSelected.HasValue && x.IsSelected > 7).Count();
                     var offered = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus == 1);
-                    //var totalOffered = offered.Count();
+                   
                     funnelData.TotalOffered = offered.Count();
                     var offerDeductions = finalSelected.Where(x => x.OfferStatus.HasValue && x.OfferStatus > 3);
-                    //var offerDenominator = totalFinalSelected - offerDeductions.Count();
-                    //funnelData.OfferRate = offerDenominator != 0 ? ((totalOffered * 100 / offerDenominator) * 100) : 0;
+                    
                     waste = waste + offerDeductions.Where(x => x.OfferStatus.HasValue && x.OfferStatus != 4).Count();
                     var joined = offered.Where(x => x.JoiningStatus.HasValue && x.JoiningStatus == 1);
                     //var totalJoined = joined.Count();
@@ -935,6 +941,63 @@ namespace Risebird.Business
                 return new List<IRFVm>();
             }
         }
+        public bool PauseIRF(int irfId, string irfName)
+        {
+            try
+            {
+                //update meeting status
+                var updatedMeetings = _irfRepository.UpdateMeetingStatus(irfName).Result.ToList();
 
+                //send mails
+                if (updatedMeetings != null && updatedMeetings.Count()!=0)
+                {
+                    //get emails
+                    foreach (var item in updatedMeetings)
+                    { 
+                   _notificationHelper.SendInterviewCancelledMail(item.interviewer, item.interviewDate.ToString("MMMM dd, yyyy"));
+//insert meeting in PausedIRF
+                       // _irfRepository.AddPausedMeetings(irfId, item.imid);
+
+
+                        _notificationHelper.SendInterviewCancelledMailtoCandidate(item.candidateEmail, item.ClientHrContact,item.interviewDate.ToString("MMMM dd, yyyy"));
+
+                    }
+                    //_notificationHelper.CancelCandidateInvite(ClientName, irfClientUsers.ToList(), irf.JDTiltle.Split("|")[0], email);
+
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
         }
+
+        public bool PlayIRF(int irfId, string irfName)
+        {
+            try
+            {
+
+                //update meeting status and IsPaused flag in IRF
+                var updatedMeetings = _irfRepository.PlayIRF(irfName);
+
+                //if(updatedMeetings!=null && updatedMeetings.Count()>0)
+                //{
+                //    var meetingIds = string.Join(",", from item in updatedMeetings select item.imid);
+                //    var result = _irfRepository.UpdatePausedMeetingstoPlay(meetingIds);
+                //    _irfRepository.DeletePlayedMeetings(meetingIds);
+                //    return result;
+                //}
+                //send mails
+                
+                return updatedMeetings;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+    }
 }

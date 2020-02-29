@@ -131,11 +131,7 @@
                                             @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
                                         </div>
                                     </div>
-                                    @*<div class="col-sm-9">
-                                    <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"> Add Interview</span></button>
-
-
-                                </div>*@
+                                    
                                     <div>
                                         <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MyInterviewsExporttoExcel", "Interview")'"></i>
 
@@ -269,20 +265,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        @*<div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">Duration</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="InterviewDuration" name="InterviewDuration" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.Select(x => x.interviewDuration).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>*@
+                                                       
                                                         <div class="form-group col-md-12">
                                                             <div class="row">
                                                                 <div class="col-md-6 col-sm-6">
@@ -357,15 +340,7 @@
                                                 <td> @item.JobLevelDesc </td>
                                                 <td> @item.candidateName</td>
                                                 <td> @item.candidateEmail</td>
-                                                @*@if (item.MobileNumber != null)
-        {
-            <td>@item.MobileNumber</td>
-
-        }
-        else
-        {
-            <td>No Contact</td>
-        }*@
+                                                
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -395,13 +370,14 @@
                                                     }
                                                     <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
                                                     <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                    
-                                                  @{ 
-                                                        <span onclick="location.href = '@Url.Action("UploadAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, rfName = item.IRFID })'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+
+                                                    @{
+                                                        @*<span onclick="location.href = '@Url.Action("UploadAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, rfName = item.IRFID })'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>*@
+                                                        <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId= item.irfIntId, meetingId = item.id})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
                                                     }
                                                 </td>
                                                 <td>
-                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) >= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                     {
                                                         <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                     }
@@ -562,15 +538,7 @@
             buttonWidth: '270px',
             maxHeight: 200
         });
-        //$("#InterviewDuration").multiselect({
-        //    includeSelectAllOption: true,
-        //    selectedClass: 'active1',
-        //    buttonWidth: '270px',
-        //    maxHeight: 200
-        //});
-
-        //FilterInterviews("Today");// on page load default dropdownlist value set
-
+        
         $('#MyInterviewList').DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [
@@ -769,26 +737,7 @@
             }
         })
     }
-
-
-
-    //function UnAssignInterviewer(meetingId) {
-
-    //    var confirmMessageBox = confirm('Are you sure you wish to Unassign?');
-    //    if (confirmMessageBox) {
-    //        if (meetingId != '') {
-    //            $.ajax({
-    //                url: '/Interview/UnassignYourself',
-    //                data: { 'id': meetingId },
-    //                type: 'get',
-    //                success: function (data) {
-    //                    window.location = data.url;
-    //                }
-    //            });
-    //        }
-    //    }
-    //}
-
+    
 </script>
 
 <script>

@@ -50,5 +50,8 @@ namespace Risebird.Business.Interface
         string GetRecruiterDomain(int userId);
         List<InterviewVM> GetUpComingInterviewList();
         List<IRFVm> GetUpComingIRFList();
+        bool PauseIRF(int irfId, string irfName);
+        bool PlayIRF(int irfId, string irfName);
+
     }
 }

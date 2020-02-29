@@ -346,11 +346,6 @@
                                                                 @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
 
-                                                                @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
-                                                                @*<input class="form-control text-box single-line" id="QuestionsCollection_0__Comment" name="QuestionsCollection[0].Comment" type="text" value="">*@
-
-
-
                                                             </td>
                                                             <td>
                                                                 @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
@@ -359,20 +354,11 @@
                                                             <td>
                                                                 @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
-
-                                                                @*<select class="form-control" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId">
-                                            <option value="1">Poor</option>
-                                            <option value="2">Average</option>
-                                            <option value="3">Above Average</option>
-                                            <option value="4">Excellent</option>
-                                            <option value="5">Outstanding</option>
-                                        </select>*@
                                                             </td>
 
                                                             <td>
                                                                 <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
 
-                                                                @*@Html.EditorFor(m => m.QuestionsCollection[].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })*@
 
                                                             </td>
 
@@ -392,7 +378,6 @@
                                                                 <td>
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
-                                                                    @*@Html.EditorFor(m => m.QuestionsCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" } })*@
 
                                                                 </td>
                                                                 <td>
@@ -581,79 +566,6 @@
 
                                 </div>
 
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Joinability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-                    <table class="table table-bordered mbn" id="JoinabilityTable">
-                        <thead>
-                            <tr>
-                                <th width="10%">Required Level</th>
-                                <th width="20%">Type</th>
-                                <th width="35%">Value</th>
-                                <th width="15%">Actual Level</th>
-                                <th width="10%">Required Weightage</th>
-                                <th width="10%">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.JoinabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.JoinabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-                                            @Html.DropDownListFor(m => m.JoinabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.JoinabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.JoinabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
-
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -728,79 +640,7 @@
 
                                 </div>
 
-                                @*<div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="multiple_row">
-                    <h2>Selectability Report</h2>
-                </div><!--end of multiple location-->
-            </div><!--end of col-md-12-->
-
-
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="table-responsive">
-
-                    <table class="table table-bordered mbn" id="SelectabilityTable">
-                        <thead>
-                            <tr>
-                                <th width="10%">Required Level</th>
-                                <th width="20%">Type</th>
-                                <th width="35%">Value</th>
-                                <th width="15%">Actual Level</th>
-                                <th width="10%">Required Weightage</th>
-                                <th width="10%">Actual Weightage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.SelectabilityReportCollection != null)
-                            {
-                                @for (int i = 0; i < Model.SelectabilityReportCollection.Count(); i++)
-                                {
-                                    <tr>
-
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        <td>
-                                            @Html.DropDownListFor(m => m.SelectabilityReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
-
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-                                        <td>
-                                            @Html.TextBoxFor(m => m.SelectabilityReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                        </td>
-
-                                        @Html.HiddenFor(m => m.SelectabilityReportCollection[i].RequiredLevelId)
-
-                                    </tr>
-
-                                }
-                            }
-
-
-
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                        @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                    </div>
-
-
-                </div>
-            </div><!--end of col-md-12-->
-
-        </div>*@
+                               
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -1509,12 +1349,7 @@
     });
 
     function AddRow() {
-        //var table = document.getElementById("QuestionsTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Tech Skills.");
-        //    return;
-        //}
+       
 
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1652,13 +1487,7 @@
     }
 
     function AddRowClient() {
-        //var table = document.getElementById("ClientTable");
-        //var rowCount = table.rows.length;
-        //if (rowCount == 6) {
-        //    alert("Cannot add more than 5 Clients.");
-        //    return;
-        //}
-
+      
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#ClientTable tr").length - 1;

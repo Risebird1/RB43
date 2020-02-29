@@ -307,9 +307,7 @@
 
                                             <div class="col-12">
                                                 <div class="group inner list-group-item-text">
-                                                    @*<span>Client Name:</span> <p>@item.ClientCompName</p>*@
-                                                    @*<span>Primary Skill:</span> <p>@item.JDTiltle.Split("|")[0]</p>*@
-
+                                                  
                                                     <span>Total IRFs:</span> <p>@item.TotalIRF</p>
                                                     <span>Client:</span> <p> @item.Client </p>
                                                     <span>End Client:</span> <p> @item.EndClient</p>
@@ -330,22 +328,15 @@
                                         <button type="button" onclick="javascript:EditProject('@item.id');" class="btn btn-primary btn-icon btn-sm " title="Edit">
                                             <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
-                                        @*<button type="button" onclick="javascript:AddComments('@item.id');" rel="tooltip" class="btn btn-warning btn-icon btn-sm " data-original-title="" title="Questions">
-                <i class="now-ui-icons fa fa-comments"></i>
-            </button>*@
+                                       
                                     }
-                                    <button type="button" onclick="location.href='@Url.Action("GetProjectInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Meetings">
+                                    <button type="button" onclick="location.href='@Url.Action("ProjectInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Meetings">
                                         <i class="now-ui-icons fa fa-meetup"></i>
                                     </button>
-                                    <button type="button" onclick="location.href='@Url.Action("GetSelectedInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Selected Meeting">
+                                    <button type="button" onclick="location.href='@Url.Action("SelectedInterviewMeetings", "Project", new {id = item.id})'" class="btn btn-primary btn-icon btn-sm " title="Selected Meeting">
                                         <i class="now-ui-icons fa fa-check"></i>
                                     </button>
-                                    @*<button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Meetings">
-            <i class="now-ui-icons fa fa-meetup"></i>GetSelectedInterviewMeetings
-        </button>*@
-                                    @*<button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" rel="tooltip" class="btn btn-info btn-icon btn-sm " data-original-title="" title="Selected Meeting">
-            <i class="now-ui-icons fa fa-check"></i>
-        </button>*@
+                                    
 
                                     <button type="button" onclick="javascript:stats('@item.id','@item.Name');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
@@ -531,11 +522,7 @@
         var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
-    function GetInterviewMeetings(id, IRFid) {
-
-        var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-        window.location.href = url;
-    };
+   
     function EditProject(id) {
 
         var url = '/Project/Edit?id=' + id;

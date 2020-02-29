@@ -109,6 +109,9 @@ namespace Risebird.Entities.ViewModel
 
         [DisplayName("Enable Voice Biometric")]
         public bool IsBiometricEnabled { get; set; }
+        public bool IsPaused { get; set; }
+        public int? PriorityLevel { get; set; }
+        public SelectList PriorityLevelList { get; set; }
     }
 
     public class IRF
@@ -153,6 +156,9 @@ namespace Risebird.Entities.ViewModel
         public string[] ClientRole { get; set; }
         public double Discount { get; set; }
         public bool IsBiometricEnabled { get; set; }
+        public bool IsPaused { get; set; }
+
+        public int? PriorityLevel { get; set; }
 
     }
 }

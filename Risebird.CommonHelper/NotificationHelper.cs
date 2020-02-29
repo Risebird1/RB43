@@ -298,7 +298,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
-                mailMessage.Subject = "Interview has been Cancelled on date: " + interviewDate;
+                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
 
                 StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
                 msgBody.Append("\n");
@@ -356,6 +356,79 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
+
+        public string SendInterviewCancelledMail(string interviewer, string interviewDate)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                mailMessage.To.Add(new MailAddress(interviewer, "Risebird"));
+                //mailMessage.Bcc.Add(new MailAddress(interviewer, null));
+                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                StringBuilder msgBody = new StringBuilder("Dear Interviewer,");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " .");
+                msgBody.AppendLine(
+                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                mailMessage.Body = msgBody.ToString();
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+        public string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail,string interviewDate)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                mailMessage.To.Add(new MailAddress(candidateMail, "Risebird"));
+                //mailMessage.Bcc.Add(new MailAddress(candidateMail, null));
+                mailMessage.CC.Add(new MailAddress(clientHRMail, null));
+
+                mailMessage.Subject = "Interview has been Cancelled for the date: " + interviewDate;
+
+                StringBuilder msgBody = new StringBuilder("Dear Candidate,");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("You have received this communication as an interview has been cancelled for the date: " + interviewDate + " .");
+                msgBody.AppendLine(
+                    "Thanks for your support, we will keep updating you about future interview based on your matching skill.");
+                msgBody.Append("\n");
+                msgBody.Append("\n");
+                msgBody.AppendLine("Thank You, Team Risebird");
+
+                mailMessage.Body = msgBody.ToString();
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential("azure_9119f7b456399652d5a99faa61a6fbe7@azure.com", "rise_123");
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
 
 
     }

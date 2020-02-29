@@ -340,7 +340,9 @@
                                     <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
                                         <i class="now-ui-icons fa fa-money"></i>
                                     </button>
-                                    //location.href='@Url.Action("Invoice", "IRF", new {irfId = item.id, irfName = item.IRFId})'
+                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                    </button>
                                 }
                                 <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
@@ -348,7 +350,7 @@
 
                                 @if (ViewBag.Profile != "Recruiter")
                                 {
-                                    <button type="button" onclick="javascript:GetInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                    <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
                                         <i class="now-ui-icons fa fa-meetup"></i>
                                     </button>
                                     <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
@@ -357,12 +359,24 @@
                                     <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF", new {irfName = item.IRFId, calendlyLink =item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                         <i class="now-ui-icons  fa fa-calendar"></i>
                                     </button>
-                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new {irfId = item.id, irfName = item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                    </button>
+                                    
                                     <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
                                     </button>
+                                    if (item.IsPaused)
+                                    {
+                                        <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
+                                            <i class="now-ui-icons fa fa-play"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
+                                            <i class="now-ui-icons fa fa-pause"></i>
+                                        </button>
+
+                                    }
+
                                 }
 
 
@@ -699,9 +713,9 @@
         var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
-    function GetInterviewMeetings(id, IRFid) {
+    function InterviewMeetings(id, IRFid) {
 
-        var url = '/IRF/GetInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
         window.location.href = url;
     };
     //Candidates
@@ -725,6 +739,107 @@
         var url = '/IRF/UnArchiveIRF?id=' + id;
         window.location.href = url;
     };
+
+    function PauseIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be paused!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused! :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function PlayIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be enabled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, play it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error playing!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Played!',
+                    type: 'success',
+                    html: '<p>IRF has been enabled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been enabled! :)',
+                    'error'
+                )
+            }
+        })
+    }
+
     //UnArchiveIRF
 </script>
 <script>
@@ -835,24 +950,7 @@
         var sDate=  $("#stDateInvoice").val();
         //var stDate = document.getElementById("stDateInvoice").value;
         var endDate = document.getElementById("EndDateInvoice").value;
-        //if (sDate == null || sDate == "") {
-        //    document.getElementById("stDate_Error").innerHTML = "Kindly enter Start Date";
-        //}
-        //else {
-        //    document.getElementById("stDate_Error").innerHTML = "";                        
-
-        //}
-        //if (endDate == null || endDate == "") {
-        //    document.getElementById("endDate_Error").innerHTML = "Kindly enter End Date";
-        //}
-        //else {
-        //    document.getElementById("stDate_Error").innerHTML = "";                      
-
-        //}
-        //if (sDate == "" || endDate == "") {
-        //    return;
-        //}
-
+    
         var srNumber = $("#srNumberId").val();
         var poNumber = $("#poNumberId").val();
         var reqNumber = $("#requestNumberId").val();
