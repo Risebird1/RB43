@@ -1,0 +1,493 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@{
+    ViewData["Title"] = "RiseTube";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<!-- Custom styles for this template-->
+<link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">RiseTube</a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Risebird RiseTube</h4>
+                    </div>
+                    <div class="card-body">
+
+
+                        <nav class="navbar navbar-expand navbar-light bg-white static-top osahan-nav sticky-top">
+                            &nbsp;&nbsp;
+                            @*<button class="btn btn-link btn-sm text-secondary order-1 order-sm-0" id="sidebarToggle">
+                                    <i class="fas fa-bars"></i>
+                                </button> &nbsp;&nbsp;
+                                <a class="navbar-brand mr-1" href="index.html"><img class="img-fluid" alt="" src="~/RiseTube/img/logo.png"></a>*@
+                            <!-- Navbar Search -->
+                            <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-5 my-2 my-md-0 osahan-navbar-search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search for...">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-light" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- Navbar -->
+                            <ul class="navbar-nav ml-auto ml-md-0 osahan-right-navbar">
+                                <li class="nav-item mx-1">
+                                    <a class="nav-link" href="upload.html">
+                                        <i class="fas fa-plus-circle fa-fw"></i>
+                                        Upload Video
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <div id="wrapper">
+                            <!-- Sidebar -->
+
+                            <div id="content-wrapper">
+                                <div class="container-fluid pb-0">
+                                    <div class="top-mobile-search">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <form class="mobile-search">
+                                                    <div class="input-group">
+                                                        <input type="text" placeholder="Search for..." class="form-control">
+                                                        <div class="input-group-append">
+                                                            <button type="button" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="top-category section-padding mb-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="main-title">
+                                                    <div class="btn-group float-right right-action">
+                                                        <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                                        </div>
+                                                    </div>
+                                                    <h6>Channels Categories</h6>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="owl-carousel owl-carousel-category">
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img src="~/RiseTube/img/Se1.png" />
+                                                                <img class="img-fluid" src="~/RiseTube/img/Se1.png" />
+                                                                <h6>Your Life</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s2.png" alt="">
+                                                                <h6>Unboxing Cool</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s3.png" alt="">
+                                                                <h6>Service Reviewing</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s4.png" alt="">
+                                                                <h6>Gaming <span title="" data-placement="top" data-toggle="tooltip" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span></h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s5.png" alt="">
+                                                                <h6>Technology Tutorials</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s6.png" alt="">
+                                                                <h6>Singing</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s7.png" alt="">
+                                                                <h6>Cooking</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s8.png" alt="">
+                                                                <h6>Traveling</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/Se1.png" alt="">
+                                                                <h6>Education</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s2.png" alt="">
+                                                                <h6>Noodles, Sauces & Instant Food</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s3.png" alt="">
+                                                                <h6>Comedy <span title="" data-placement="top" data-toggle="tooltip" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span></h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="item">
+                                                        <div class="category-item">
+                                                            <a href="#">
+                                                                <img class="img-fluid" src="~/RiseTube/img/s4.png" alt="">
+                                                                <h6>Lifestyle Advice</h6>
+                                                                <p>74,853 views</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="video-block section-padding">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="main-title">
+                                                    <div class="btn-group float-right right-action">
+                                                        <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            Sort by <i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                                        </div>
+                                                    </div>
+                                                    <h6>Featured Videos</h6>
+                                                </div>
+                                            </div>
+                                            @foreach (var item in Model)
+                                            {
+                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+
+
+
+
+
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="~/RiseTube/VideoPage"><i class="fas fa-play-circle"></i></a>
+
+                                                            @if (item.VideoLink != null && item.VideoLink != "")
+                                                            {
+                                                                <iframe src="@item.VideoLink" sandbox="allow-forms allow-scripts" autoplay="0"></iframe>
+                                                                @*<td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>*@
+                                                            }
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">@item.IRFId </a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                @item.candidateName <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                               &nbsp;<i class="fas fa-calendar-alt"></i> @item.interviewDate
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                            }
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v2.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v3.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-danger">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Unverified"><i class="fas fa-frown text-danger"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v4.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v5.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v6.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-danger">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Unverified"><i class="fas fa-frown text-danger"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v7.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-xl-3 col-sm-6 mb-3">
+                                                    <div class="video-card">
+                                                        <div class="video-card-image">
+                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v8.png" alt=""></a>
+                                                            <div class="time">3:50</div>
+                                                        </div>
+                                                        <div class="video-card-body">
+                                                            <div class="video-title">
+                                                                <a href="#">There are many variations of passages of Lorem</a>
+                                                            </div>
+                                                            <div class="video-page text-success">
+                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                            </div>
+                                                            <div class="video-view">
+                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <hr class="mt-0">
+
+                                </div>
+                                <!-- /.container-fluid -->
+
+                            </div>
+                            <!-- /.content-wrapper -->
+                        </div>
+                        <!-- /#wrapper -->
+                        <!-- Scroll to Top Button-->
+                        <a class="scroll-to-top rounded" href="#page-top">
+                            <i class="fas fa-angle-up"></i>
+                        </a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Bootstrap core JavaScript-->
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+@*<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="~/RiseTube/js/custom.js"></script>
+
+
