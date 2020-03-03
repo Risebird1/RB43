@@ -181,9 +181,9 @@ C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\bin\Debug\netcoreapp2.0\Ri
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs

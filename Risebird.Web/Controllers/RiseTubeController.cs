@@ -11,6 +11,8 @@ using Risebird.Repository.Interface;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using X.PagedList;
+using X.PagedList.Mvc.Core;
 
 namespace Risebird.Web.Controllers
 {
@@ -36,7 +38,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index( int? Page)
         {
             try
             {
@@ -55,7 +57,9 @@ namespace Risebird.Web.Controllers
 
                         var modelList = _meetingService.GetMeetingList();
                         //modelList = modelList.Where(x => x.interviewDate.Date == DateTime.Now.Date).ToList();
-                        modelList = modelList.Where(x => x.VideoLink != null).Take(20).ToList();
+
+                       
+                        modelList = modelList.Where(x => x.confirmationStatus == "1" && x.MeetingStatus == 1 && x.VideoLink != null).ToList();
 
                         modelList = modelList.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty; x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty; x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                         modelList.ForEach(x => x.NextLevelApprovalStat = x.IsApproved.HasValue ? ((NextLevelApprovalStatus)x.IsApproved).GetDescription() : string.Empty);
@@ -101,7 +105,7 @@ namespace Risebird.Web.Controllers
 
                             //}
                         }
-                        return View(modelList);
+                        return View(modelList.ToPagedList(Page ?? 1,12));
                     }
                     else
                     {
@@ -121,9 +125,9 @@ namespace Risebird.Web.Controllers
 
         }
 
-        public IActionResult VideoPage()
+        public IActionResult VideoPage(MeetingVM model)
         {
-            return View();
+            return View(model);
         }
     }
 }

@@ -415,92 +415,92 @@
                                                 {
                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                <tr id=@item.imid>
-                                                    <td title=@item.IRFId> @item.IRFId </td>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName</td>
-                                                    <td> @item.candidateEmail</td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> @item.interviewer</td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc</td>
-                                                    <td> @item.intervieweStatusStatDesc</td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.JDLink != null && item.JDLink != "")
-                                                    {
-                                                        <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No JD</td>
-                                                    }
-
-                                                    <td class="wordwrap"> @item.zoomLink</td>
-                                                    <td> @item.risebirdHR</td>
-                                                    @*<td>@item.MobileNumber</td>*@
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-
-                                                    @if (item.VideoLink != null && item.VideoLink != "")
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    <td>@item.interviewSlot</td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td> @item.interviewDuration </td>
-                                                    <td> @item.joiningTime</td>
-                                                    <td> @item.preferredLocation</td>
-                                                    <td> @item.expectedPerHourRate</td>
-                                                    <td> @item.currentEmployerName</td>
-                                                    <td>
-                                                        @item.IsEmergency
-                                                    </td>
-                                                    <td>
-                                                        @item.NextLevelApprovalStat
-                                                    </td>
-                                                    <td>
-                                                        <textarea style="height: 50px; width:100%;">@item.ApprovalComments</textarea>
-                                                    </td>
-                                                    <td></td>
-
-
-                                                    <td>
-                                                        @item.FinalSelectionStat
-                                                    </td>
-                                                    <td>
-                                                        <textarea style="height: 50px; width:100%;">@item.FinalComments</textarea>
-                                                    </td>
-                                                    <td></td>
-                                                    @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
-                                                    <td class="text-right">
-                                                        <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                        @if (item.IsBiometricEnabled)
+                                                    <tr id=@item.imid>
+                                                        <td title=@item.IRFId> @item.IRFId </td>
+                                                        <td> @item.interviewDate </td>
+                                                        <td> @item.candidateName</td>
+                                                        <td> @item.candidateEmail</td>
+                                                        <td> @item.JDTiltle.Split("|")[0] </td>
+                                                        <td> @item.interviewer</td>
+                                                        <td> @item.confirmationStatus</td>
+                                                        <td> @item.MeetingStatusStatusDesc</td>
+                                                        <td> @item.intervieweStatusStatDesc</td>
+                                                        @if (item.resumeLink != null && item.resumeLink != "")
                                                         {
-                                                            <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
-
+                                                            <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                         }
-                                                    </td>
-                                                    <td>
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        else
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            <td>No Resume</td>
+                                                        }
+                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                        {
+                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No JD</td>
                                                         }
 
-                                                    </td>
-                                                </tr>
+                                                        <td class="wordwrap"> @item.zoomLink</td>
+                                                        <td> @item.risebirdHR</td>
+                                                        @*<td>@item.MobileNumber</td>*@
+                                                        <td> @item.ClientHrContact </td>
+                                                        <td> @item.ClientName </td>
+
+                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                            <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td>No Video</td>
+                                                        }
+                                                        <td>@item.interviewSlot</td>
+                                                        <td>@item.staffingAgency</td>
+                                                        <td> @item.interviewDuration </td>
+                                                        <td> @item.joiningTime</td>
+                                                        <td> @item.preferredLocation</td>
+                                                        <td> @item.expectedPerHourRate</td>
+                                                        <td> @item.currentEmployerName</td>
+                                                        <td>
+                                                            @item.IsEmergency
+                                                        </td>
+                                                        <td>
+                                                            @item.NextLevelApprovalStat
+                                                        </td>
+                                                        <td>
+                                                            <textarea style="height: 50px; width:100%;">@item.ApprovalComments</textarea>
+                                                        </td>
+                                                        <td></td>
+
+
+                                                        <td>
+                                                            @item.FinalSelectionStat
+                                                        </td>
+                                                        <td>
+                                                            <textarea style="height: 50px; width:100%;">@item.FinalComments</textarea>
+                                                        </td>
+                                                        <td></td>
+                                                        @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+                                                        <td class="text-right">
+                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                            @if (item.IsBiometricEnabled)
+                                                            {
+                                                                <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                            {
+                                                                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            }
+
+                                                        </td>
+                                                    </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -541,7 +541,7 @@
                         </div>
 
                         <div class="">
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%"class="btn btn-fill btn-danger" value="Hang Up">
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
                         </div>
                     </div>
                     <div class="modal-footer" style="padding: 2px 16px;
@@ -813,7 +813,7 @@
             $("#meeting").show();
         }, 2000);
     };
-        //// script for loader ends here
+    //// script for loader ends here
 </script>
 <script>
     var candidate = "";
@@ -858,13 +858,13 @@
         var appendText = "Call disconnected! ";
         document.getElementById("callingLabel").innerHTML = appendText;
         setTimeout(afterTimeOut, 2000);
-        
+
     });
 
     function ModalButtonClick(candidateObj) {
         candidate = candidateObj.candidateName;
         // Get the modal
-        var modal = document.getElementById("myModal");       
+        var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
         modal.style.display = "block";
         var appendText = "Calling... " + "<b>" + candidate + "</b>";
