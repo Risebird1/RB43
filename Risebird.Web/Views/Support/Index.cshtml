@@ -124,8 +124,8 @@
                                                 <th>Whatsapp Voice Call</th>
                                                 <th>Email Support</th>
                                                 <th>Availability Hours</th>
-                                                <th class="disabled-sorting text-center">Actions</th>
                                                 <th style="text-align:center">Call</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -138,8 +138,8 @@
                                                 <th>Whatsapp Voice Call</th>
                                                 <th>Email Support</th>
                                                 <th>Availability Hours</th>
-                                                <th class="disabled-sorting text-center">Actions</th>
                                                 <th style="text-align:center">Call</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -174,7 +174,7 @@
                                                     <td>Not available</td>
                                                 }
 
-                                                
+
                                                 @if (item.OnVoiceCall)
                                                 {
                                                     <td>Yes</td>
@@ -207,19 +207,20 @@
                                                 {
                                                     <td> </td>
                                                 }
+
+                                                <td>
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                    {
+                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>
+                                                    }
+
+                                                </td>
                                                 <td class="text-center">
                                                     @if (ViewBag.Profile == "Admin")
                                                     {
                                                         <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
                                                         <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
 
-                                                    }
-
-                                                </td>
-                                                <td>
-                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
-                                                    {
-                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>
                                                     }
 
                                                 </td>
