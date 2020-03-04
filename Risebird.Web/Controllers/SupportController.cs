@@ -124,5 +124,114 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if( profileName == "Admin" )
+                    {
+                        var hrSupport = _supportService.GetSupportHR(id);
+                        return View(hrSupport);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Edit(Support hrDetails)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_supportService.UpdateSupportHR(hrDetails))
+                    {
+                        TempData["SuccessErrorMessageSupport"] = "Support HR updated successfully.";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageSupport"] = "Sorry! Could not update Support HR!";
+                        return RedirectToAction("Index");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageSupport"] = "Sorry! Could not update Support HR!";
+                return RedirectToAction("Index");
+            }
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if( profileName == "Admin" )
+                    {
+                        if (_supportService.DeleteSupportHR(id))
+                        {
+                            //TempData["SuccessErrorMessageSupport"] = "Support HR deleted successfully.";
+                            return Json(new { url = Url.Action("Index", "Support") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageSupport"] = "Sorry! Could not delete Support HR!";
+                            return Json(new { url = Url.Action("Index", "Support") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                //TempData["SuccessErrorMessageSupport"] = "Sorry! Could not delete Support HR!";
+                return RedirectToAction("Index");
+            }
+        }
+
     }
 }

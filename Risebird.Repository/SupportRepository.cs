@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -77,7 +78,83 @@ namespace Risebird.Repository
 
             return false;
         }
+        public Support GetSupportHR(int id)
+        {
+            try
+            {
+                var query = "select * from Support where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<Support>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public bool UpdateSupportHR(Support hrDetails)
+        {
+            try
+            {
+                //Set the parameters to be passed to store procedure
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", hrDetails.id);
+                parameters.Add("@Name", hrDetails.Name);
+                parameters.Add("@EmailId", hrDetails.EmailId);
+                parameters.Add("@MobileNumber", hrDetails.MobileNumber);
+                parameters.Add("@WhatsappNumber", hrDetails.WhatsappNumber);
+                parameters.Add("@AvailabilityHours", hrDetails.AvailabilityHours);
+                parameters.Add("@OnVoiceCall", hrDetails.OnVoiceCall);
+                parameters.Add("@OnWhatsapp", hrDetails.OnWhatsapp);
+                parameters.Add("@OnEmail", hrDetails.OnEmail);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.QueryAsync(con, "usp_UpdateSupportHR", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return false;
+        }
+
+        public bool DeleteSupportHR(int id)
+        {
+            try
+            {
+                var query = "delete from Support where id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
 
     }
 }

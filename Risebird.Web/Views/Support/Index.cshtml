@@ -216,13 +216,13 @@
                                                     }
 
                                                 </td>
-                                                @*<td>
-            @if (item.Phone != null && item.Phone != string.Empty)
-            {
-                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@item.Phone','@item.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
-            }
+                                                <td>
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                    {
+                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>
+                                                    }
 
-        </td>*@
+                                                </td>
                                             </tr>
                                             }
                                         </tbody>
@@ -253,7 +253,7 @@
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
                 <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+                    <h5 style="margin-left:40%;font-size:20px">Call HR!</h5>
                     <span class="close" id="callPopUp">&times;</span>
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
@@ -412,7 +412,7 @@
         
         swal.fire({
             title: 'Are you sure?',
-            text: "The support will be permanently deleted!",
+            text: "The support HR will be permanently deleted!",
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -446,7 +446,6 @@
                     allowOutsideClick: false
                 }).then(function () {
                     location.reload(true);
-                    //window.location = "/IRF/Candidates?id=" + irfId + '&irfName=' + irfName;
                 })
             }
             else if (result.dismiss === 'cancel') {
@@ -461,7 +460,7 @@
 </script>
 
 <script>
-    var candidate = "";
+    var name = "";
     var span = document.getElementById("callPopUp");
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
@@ -481,7 +480,7 @@
 
     });
 
-    function callCandidate(phoneNumber) {
+    function callHR(phoneNumber) {
         var params = { "phoneNumber": phoneNumber };
         Twilio.Device.connect(params);
     }
@@ -490,7 +489,7 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        var appendText = "In call with " + "<b>" + name + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
     });
 
@@ -506,15 +505,15 @@
 
     });
 
-    function ModalButtonClick(mobileNumber, candidateName) {
-        candidate = candidateName;
+    function ModalButtonClick(mobileNumber, hrName) {
+        name = hrName;
         // Get the modal
         var modal = document.getElementById("myModal");
         // When the user clicks the button, open the modal
         modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        var appendText = "Calling... " + "<b>" + name + "</b>";
         document.getElementById("callingLabel").innerHTML = appendText;
-        callCandidate(mobileNumber);
+        callHR(mobileNumber);
     }
     function closeCallPopUp() {
         hangUp();

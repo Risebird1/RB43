@@ -49,5 +49,46 @@ namespace Risebird.Business
             }
         }
 
+        public Support GetSupportHR(int id)
+        {
+            try
+            {
+                return _supportRespository.GetSupportHR(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public bool UpdateSupportHR(Support hrDetails)
+        {
+            try
+            {
+                return _supportRespository.UpdateSupportHR(hrDetails);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public bool DeleteSupportHR(int id)
+        {
+            try
+            {
+                return _supportRespository.DeleteSupportHR(id);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

@@ -9,5 +9,8 @@ namespace Risebird.Business.Interface
     {
         List<Support> GetAllSupportHR();
         bool AddSupportHR(Support hrDetails);
+        bool UpdateSupportHR(Support hrDetails);
+        Support GetSupportHR(int id);
+        bool DeleteSupportHR(int id);
     }
 }
