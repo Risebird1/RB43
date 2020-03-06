@@ -1,0 +1,307 @@
+﻿@model Risebird.Entities.Data.Settings
+
+
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<style>
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    .table-responsive {
+        overflow: hidden;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #013855;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 45px;
+    }
+
+    #btnPlus, #btnMinus {
+        padding: 2px;
+    }
+
+    #btnMinus {
+        position: absolute;
+        margin-left: 12px;
+    }
+
+    #btnPlus {
+        background-color: #4a89dc;
+    }
+
+    .glyphicon {
+        top: -1px;
+        right: -2px;
+        vertical-align: middle;
+        line-height: 0;
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Settings
+                </a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/Settings/Edit" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="row">
+
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="settingsTable">
+                                            <thead>
+                                                <tr>
+                                                    <th><b>Parameter</b></th>
+                                                    <th><b>Value(mins.)</b></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <b>Penalty applicable to Interviewer for Unassignment</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewerUnassignedMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Time before auto cancellation mail is sent</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.AutoCancellationMailMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Client Reporting Mail Minutes</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.ClientReportingMailMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Interview Windup Reminder</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewWindupReminderMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Interview Report Reminder</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewReportReminderMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>QC Comment Reminder</b>
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.QCCommentReminderMinutes, new { @class = "form-control text-box single-line", @type = "number", @min = "0" })
+                                                    </td>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div><!--end of col-md-12-->
+
+                            </div>
+
+
+
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class="col-md-9">
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnSave" disabled="disabled" value="Save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+        <!-- end row -->
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true,
+                    closeOnConfirm: true
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Settings/Index';
+
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Settings/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
+<script>
+    $('form').submit(function () {
+        if ($(this).valid()) {
+            $(':submit', this).attr('disabled', 'disabled');
+        }
+    });
+
+
+    $(document).ready(function () {
+        document.addEventListener("input", setEnabled);
+        var arr = [];
+        const inputs = document.querySelectorAll("input");
+        saveCurrent();
+        function saveCurrent() {
+            for (const el of inputs) {
+                arr.push(el.value);
+            }
+                
+        }
+        function setEnabled() {
+            var e = false;
+            var checkEquality = true;
+            var newArr = [];
+            for (const el of inputs) {
+                newArr.push(el.value);
+            }
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] != newArr[i]) {
+                    checkEquality = false;
+                    break;
+                }
+            }
+            if (checkEquality) {
+                e = true;
+            }
+            document.getElementById("btnSave").disabled = e;
+        }
+    });
+
+</script>
+
