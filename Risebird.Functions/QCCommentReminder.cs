@@ -33,9 +33,10 @@ namespace Risebird.Functions
                 }
 
                 //select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im join UserList ul on im.interviewer=ul.EmailId  where @timeNow>interviewDate and @timeNow <DATEADD(MINUTE, interviewDuration,interviewDate)
-                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as QCMobile from InterviewMeetings im left join IRF on IRF.IRFId = im.IRFId left join TransQualityController tqc on IRF.id = tqc.IRFId left join UserList ul on tqc.UserId=ul.id left join InterviewComments ic on im.id = ic.InterviewId  where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE, 330-@qcFeedBackSetting, GETDATE()) and ic.InterviewerComment is not null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
+                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as QCMobile from InterviewMeetings im left join IRF on IRF.IRFId = im.IRFId left join TransQualityController tqc on IRF.id = tqc.IRFId left join UserList ul on tqc.UserId=ul.id left join InterviewComments ic on im.id = ic.InterviewId  where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE, -@qcFeedBackSetting, @timeNow) and ic.InterviewerComment is not null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@qcFeedBackSetting", qcFeedBackSetting);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     interviewList = con.Query<InterviewQCDetails>(query, dynamicParameters).ToList();

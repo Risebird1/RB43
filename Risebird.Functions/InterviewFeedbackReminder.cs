@@ -22,20 +22,21 @@ namespace Risebird.Functions
             try
             {
                 var interviewList = new List<InterviewTimeClass>();
-                int feedbackSetting;
+                int feedbackMinutes;
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
 
                 //get feedback time from settings
                 var querySettings = "select InterviewReportReminderMinutes from Settings";
                 using (SqlConnection con = new SqlConnection(str))
                 {
-                    feedbackSetting = con.Query<int>(querySettings).FirstOrDefault();
+                    feedbackMinutes = con.Query<int>(querySettings).FirstOrDefault();
                 }
 
                 //select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId  where DATEADD(MINUTE, 330-1-@feedbackMinutes, GETDATE())<DATEADD(MINUTE,interviewDuration,interviewDate) and DATEADD(MINUTE, interviewDuration,interviewDate)<DATEADD(MINUTE, 330-@feedbackMinutes, GETDATE()) and ic.InterviewerComment is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)
-                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE, 330-@feedbackMinutes, GETDATE()) and ic.InterviewerComment is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
+                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE,-@feedbackMinutes, @timeNow) and ic.InterviewerComment is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@feedbackMinutes", feedbackSetting);
+                dynamicParameters.Add("@feedbackMinutes", feedbackMinutes);
+                dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     interviewList = con.Query<InterviewTimeClass>(query, dynamicParameters).ToList();
