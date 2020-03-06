@@ -122,6 +122,7 @@ namespace Risebird.Web
         /// <param name="services"></param>
         private static void DependencyMapping(IServiceCollection services)
         {
+            services.AddSingleton<HttpClientHelper>();
             services.AddScoped<INotificationHelper, NotificationHelper>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
