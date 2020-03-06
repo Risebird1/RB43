@@ -17,22 +17,28 @@ namespace Risebird.Functions
     public static class InterviewWindUpCall
     {
         [FunctionName("InterviewWindUpCall")]//25-59/30 * * * *
-        public static void Run([TimerTrigger("25-59/30 * * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 * * * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
             {
                 var interviewList = new List<InterviewTimeClass>();
+                int windUpsetting;
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
                 //select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im join UserList ul on im.interviewer=ul.EmailId  where @timeNow>interviewDate and @timeNow <DATEADD(MINUTE, interviewDuration,interviewDate)
-                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id =ic.InterviewId where im.confirmationStatus=1 and (ic.MeetingStatus=2 or ic.MeetingStatus is null)";
+                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id =ic.InterviewId where im.confirmationStatus=1 and (ic.MeetingStatus is null)";
                 //var dynamicParameters = new DynamicParameters();
                 //dynamicParameters.Add("@timeNow", DateTime.Now);
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     interviewList = con.Query<InterviewTimeClass>(query).ToList();                    
                 }
-                interviewList = interviewList.Where(x =>(x.interviewDate < DateTime.Now) && (x.interviewDate.AddMinutes(x.interviewDuration)>DateTime.Now) && (x.interviewDate.AddMinutes(x.interviewDuration) < DateTime.Now.AddMinutes(30))).ToList();
+                var querySettings = "select InterviewWindupReminderMinutes from Settings";
+                using (SqlConnection con = new SqlConnection(str))
+                {
+                    windUpsetting = con.Query<int>(querySettings).FirstOrDefault();
+                }
+                interviewList = interviewList.Where(x =>(x.interviewDate < DateTime.Now) && (x.interviewDate.AddMinutes(x.interviewDuration)>DateTime.Now) && (DateTime.Now.AddMinutes(windUpsetting-1)<x.interviewDate.AddMinutes(x.interviewDuration)) && (DateTime.Now.AddMinutes(windUpsetting) > x.interviewDate.AddMinutes(x.interviewDuration))).ToList();
                 var phoneNumbers = interviewList.Select(x => x.InterviewerMobile);
                 phoneNumbers = phoneNumbers.Distinct();
                 //var phoneNumbers = new List<string>();
