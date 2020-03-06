@@ -25,15 +25,12 @@ namespace Risebird.Functions
                 int qcFeedBackSetting;
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
 
-                //get feedback time from settings
                 var querySettings = "select QCCommentReminderMinutes from Settings";
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     qcFeedBackSetting = con.Query<int>(querySettings).FirstOrDefault();
                 }
-
-                //select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im join UserList ul on im.interviewer=ul.EmailId  where @timeNow>interviewDate and @timeNow <DATEADD(MINUTE, interviewDuration,interviewDate)
-                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as QCMobile from InterviewMeetings im left join IRF on IRF.IRFId = im.IRFId left join TransQualityController tqc on IRF.id = tqc.IRFId left join UserList ul on tqc.UserId=ul.id left join InterviewComments ic on im.id = ic.InterviewId  where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE, -@qcFeedBackSetting, @timeNow) and ic.InterviewerComment is not null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
+                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as QCMobile from InterviewMeetings im left join IRF on IRF.IRFId = im.IRFId left join TransQualityController tqc on IRF.id = tqc.IRFId left join UserList ul on tqc.UserId=ul.id left join InterviewComments ic on im.id = ic.InterviewId left join QCFeedbackReport qcf on im.id = qcf.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE, -@qcFeedBackSetting, @timeNow) and im.interviewDate <= DATEADD(day, -5, @timeNow) and ic.InterviewerComment is not null and qcf.questionsrelevance is null";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@qcFeedBackSetting", qcFeedBackSetting);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
@@ -41,12 +38,9 @@ namespace Risebird.Functions
                 {
                     interviewList = con.Query<InterviewQCDetails>(query, dynamicParameters).ToList();
                 }
-
-                //interviewList = interviewList.Where(x => (x.interviewDate < DateTime.Now) && (x.interviewDate.AddMinutes(x.interviewDuration) > DateTime.Now) && (DateTime.Now.AddMinutes(windUpsetting - 1) < x.interviewDate.AddMinutes(x.interviewDuration)) && (DateTime.Now.AddMinutes(windUpsetting) > x.interviewDate.AddMinutes(x.interviewDuration))/*(x.interviewDate.AddMinutes(x.interviewDuration) < DateTime.Now.AddMinutes(30))*/).ToList();
                 var phoneNumbers = interviewList.Select(x => x.QCMobile);
                 phoneNumbers = phoneNumbers.Distinct();
-                //var phoneNumbers = new List<string>();
-                //phoneNumbers.Add("+919284487005");
+               
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";

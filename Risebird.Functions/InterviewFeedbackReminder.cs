@@ -32,8 +32,7 @@ namespace Risebird.Functions
                     feedbackMinutes = con.Query<int>(querySettings).FirstOrDefault();
                 }
 
-                //select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId  where DATEADD(MINUTE, 330-1-@feedbackMinutes, GETDATE())<DATEADD(MINUTE,interviewDuration,interviewDate) and DATEADD(MINUTE, interviewDuration,interviewDate)<DATEADD(MINUTE, 330-@feedbackMinutes, GETDATE()) and ic.InterviewerComment is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)
-                var query = "select im.interviewDate, im.interviewDuration, ul.MobileNumber as InterviewerMobile from InterviewMeetings im left join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE,-@feedbackMinutes, @timeNow) and ic.InterviewerComment is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
+                var query = "select ul.MobileNumber as InterviewerMobile from InterviewMeetings im inner join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE,-@feedbackMinutes, @timeNow) and im.confirmationStatus=1 and ic.InterviewerComment is null and ic.InterviewStatus is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@feedbackMinutes", feedbackMinutes);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
@@ -42,11 +41,9 @@ namespace Risebird.Functions
                     interviewList = con.Query<InterviewTimeClass>(query, dynamicParameters).ToList();
                 }
 
-                //interviewList = interviewList.Where(x => (x.interviewDate < DateTime.Now) && (x.interviewDate.AddMinutes(x.interviewDuration) > DateTime.Now) && (DateTime.Now.AddMinutes(windUpsetting - 1) < x.interviewDate.AddMinutes(x.interviewDuration)) && (DateTime.Now.AddMinutes(windUpsetting) > x.interviewDate.AddMinutes(x.interviewDuration))/*(x.interviewDate.AddMinutes(x.interviewDuration) < DateTime.Now.AddMinutes(30))*/).ToList();
                 var phoneNumbers = interviewList.Select(x => x.InterviewerMobile);
                 phoneNumbers = phoneNumbers.Distinct();
-                //var phoneNumbers = new List<string>();
-                //phoneNumbers.Add("+919284487005");
+               
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
