@@ -47,6 +47,19 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public int GetInterviewUnassignedMinutes()
+        {
+            try
+            {
+                return _settingsRespository.GetInterviewUnassignedMinutes();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+        }
+
 
     }
 }

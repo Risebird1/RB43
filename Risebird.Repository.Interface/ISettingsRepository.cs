@@ -9,5 +9,6 @@ namespace Risebird.Repository.Interface
     {
         Settings GetAllSettings();
         bool UpdateSettings(Settings settings);
+        int GetInterviewUnassignedMinutes();
     }
 }

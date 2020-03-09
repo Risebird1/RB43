@@ -23,12 +23,13 @@ namespace Risebird.Web.Controllers
     public class InterviewController : Controller
     {
         private IMeetingService _meetingService;
+        private ISettingsService _settingsService;
         private IApplicationErrorLogger _applicationErrorLogger;
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
         private IIRFService _iRFService;
         private IIRFRepository _iRFRepository;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService)
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -36,6 +37,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
             _iRFRepository = iRFRepository;
             _iRFService = iRFService;
+            _settingsService = settingsService;
         }
 
 
@@ -3149,17 +3151,7 @@ namespace Risebird.Web.Controllers
                             }
                             selectedMeeting.Add(m);
                         }
-//                        var list = new SelectList(new[]
-//{
-//    new { ID = "Today", Name = "Today"},
-//    new { ID = "Tomorrow", Name = "Tomorrow"  },
-//    new { ID = "Yesterday", Name = "Yesterday"  },
-//    new { ID = "Next Seven Days", Name = "Next Seven Days" },
-//    new { ID = "All", Name = "All"},
-//},
-//"ID", "Name", "All");
-
-//                        ViewData["list"] = list;
+                       
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
@@ -3644,7 +3636,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> UnassignYourself(int id)
+        public async Task<IActionResult> UnassignYourself(int id, bool isPenalty)
         {
             try
             {
@@ -3657,7 +3649,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" ||
                         profileName == "Quality Controller")
                     {
-                        if (_meetingService.UnassignYourself(id, email.ToLower()))
+                        if (_meetingService.UnassignYourself(id, email.ToLower(), isPenalty))
                         {
                             TempData["SuccessErrorMessageMyInterview"] = "Unassignment is done Successfully";
                             return Json(new { url = Url.Action("MyInterview", "Interview") });
@@ -5739,6 +5731,26 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("MyInterview");
             }
         }
+
+        public bool GetTimeDifference(string interviewDate, int interviewUnassignedMinutes)
+        {
+            //var date2 = DateTime.Now.AddMinutes(interviewUnassignedMinutes);
+            //var result = DateTime.Compare(date2, Convert.ToDateTime(interviewDate));
+            if ((DateTime.Now.AddMinutes(interviewUnassignedMinutes)) >= Convert.ToDateTime(interviewDate))
+            {
+                return true;
+            }
+            else
+                return false;
+            
+
+        }
+
+        public int GetInterviewUnassignedMinutes()
+        {
+            return _settingsService.GetInterviewUnassignedMinutes();
+        }
+
     }
 
 }

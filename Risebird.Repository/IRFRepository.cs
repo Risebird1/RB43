@@ -1946,7 +1946,7 @@ namespace Risebird.Repository
         }
 
 
-        public bool UpdateEmergencyFlag(int id, string emailId)
+        public bool UpdateEmergencyFlag(int id, string emailId, DateTime interviewDate)
         {
             try
             {
@@ -1963,6 +1963,8 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", id);
                 parameters.Add("@EmailId", emailId);
+                parameters.Add("@interviewDate", interviewDate);
+                parameters.Add("@timeNow", DateTime.Now);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
