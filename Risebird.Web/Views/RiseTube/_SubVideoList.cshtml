@@ -1,0 +1,161 @@
+﻿
+@if (Model.SubVideo_List.Count > 0)
+{
+    <div class="col-md-4">
+        <div class="single-video-right">
+            <div class="row">
+                <div class="col-md-12">
+                    @foreach (var list in Model.SubVideo_List)
+                    {
+                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(list);
+                        <div class="video-card video-card-list">
+                            <div class="video-card-image">                           
+                                <a class="play-icon" onclick="location.href='@(Url.Action("VideoPage","Risetube",new { model = list }))'"></a>
+                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/play.jpg" alt=""></a>
+                                @if (list.VideoLink != null && list.VideoLink != "")
+                                {
+                                    <a id="videoId" target="_blank" title="Resume" href=@list.VideoLink style="height:158px;"></a>
+                                }
+                                else
+                                {
+                                    <span> Video deleted !!!</span>
+                                }
+
+                                @*<div class="time">3:50</div>*@
+                            </div>
+                            <div class="video-card-body">
+
+                                <div class="video-title">
+                                    <a onclick="location.href='@(Url.Action("VideoPage","Risetube",new { model = @list }))'">@list.candidateName </a>
+
+                                    &nbsp; <span style="color: #6c757d;font-weight: 600;">(@list.JDTiltle.Split("|")[0])</span>
+                                </div>
+                                <div class="video-page text-success">
+                                    @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
+                                </div>
+                                <div class="video-view">
+
+                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@list.interviewDate</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+
+                    @* <div class="video-card video-card-list">
+                            <div class="video-card-image">
+                                <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/v4.png" alt=""></a>
+                                <div class="time">3:50</div>
+                            </div>
+                            <div class="video-card-body">
+                                <div class="btn-group float-right right-action">
+                                    <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                    </div>
+                                </div>
+                                <div class="video-title">
+                                    <a href="#">Deserunt mollit anim id est laborum.</a>
+                                </div>
+                                <div class="video-page text-success">
+                                    Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                </div>
+                                <div class="video-view">
+                                    1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-card video-card-list">
+                            <div class="video-card-image">
+                                <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/v5.png" alt=""></a>
+                                <div class="time">3:50</div>
+                            </div>
+                            <div class="video-card-body">
+                                <div class="btn-group float-right right-action">
+                                    <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                    </div>
+                                </div>
+                                <div class="video-title">
+                                    <a href="#">Exercitation ullamco laboris nisi ut.</a>
+                                </div>
+                                <div class="video-page text-success">
+                                    Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                </div>
+                                <div class="video-view">
+                                    1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-card video-card-list">
+                            <div class="video-card-image">
+                                <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/v6.png" alt=""></a>
+                                <div class="time">3:50</div>
+                            </div>
+                            <div class="video-card-body">
+                                <div class="btn-group float-right right-action">
+                                    <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                    </div>
+                                </div>
+                                <div class="video-title">
+                                    <a href="#">There are many variations of passages of Lorem</a>
+                                </div>
+                                <div class="video-page text-success">
+                                    Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                </div>
+                                <div class="video-view">
+                                    1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                </div>
+                            </div>
+                        </div>
+                        <div class="video-card video-card-list">
+                            <div class="video-card-image">
+                                <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/v2.png" alt=""></a>
+                                <div class="time">3:50</div>
+                            </div>
+                            <div class="video-card-body">
+                                <div class="btn-group float-right right-action">
+                                    <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
+                                        <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
+                                    </div>
+                                </div>
+                                <div class="video-title">
+                                    <a href="#">Duis aute irure dolor in reprehenderit in.</a>
+                                </div>
+                                <div class="video-page text-success">
+                                    Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                </div>
+                                <div class="video-view">
+                                    1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+}
