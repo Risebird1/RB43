@@ -57,7 +57,7 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
                         var modelList = _meetingService.GetMeetingList();
-                        modelList = modelList.Where(x => x.confirmationStatus == "1" && x.MeetingStatus == 1 && x.VideoLink != null).OrderByDescending(x => x.interviewDate).ToList();
+                        modelList = modelList.Where(x => x.confirmationStatus == "1" && x.VideoLink != null).OrderByDescending(x => x.interviewDate).ToList();
                         return View(modelList.ToPagedList(Page ?? 1, 12));
                     }
                     else
