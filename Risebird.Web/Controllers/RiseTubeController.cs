@@ -83,7 +83,7 @@ namespace Risebird.Web.Controllers
 
 
             var modelList = _meetingService.GetMeetingList();
-            modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).ToList();
+            modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0]) && c.confirmationStatus == "1" && c.VideoLink != null).OrderByDescending(x => x.interviewDate).ToList();
             var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
             MeetingVM NewModel = new MeetingVM();
             NewModel.SubVideo_List = modelList.Take(50).ToList();
