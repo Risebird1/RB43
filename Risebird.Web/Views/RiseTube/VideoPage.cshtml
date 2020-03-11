@@ -1,0 +1,808 @@
+﻿@model Risebird.Entities.ViewModel.MeetingVM
+
+@{
+    ViewData["Title"] = "RiseTube";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+<style>
+    #list {
+        height: 808px;
+        overflow: scroll;
+    }
+</style>
+
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<!-- Custom styles for this template-->
+<link href="~/RiseTube/css/osahan.css" rel="stylesheet">
+<!-- Owl Carousel -->
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
+<link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">RiseTube</a>
+            </div>
+
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title"></h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="wrapper">
+                            <!-- Sidebar -->
+
+                            <div id="content-wrapper">
+                                <div class="container-fluid pb-0">
+                                    <div class="video-block section-padding">
+                                        <div class="row">
+
+                                            <div class="col-md-8">
+                                                <div class="single-video-left">
+                                                    <div class="single-video">
+                                                        @if (Model.VideoLink != null && Model.VideoLink != "")
+                                                        {
+                                                            @*<div class="iframe-container">
+                                                                    <iframe allow="microphone; camera" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%;" src="@Model.VideoLink?autoplay=true" frameborder="0" ></iframe>
+                                                                </div>*@
+
+                                                            <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span> Video deleted !!!</span>
+                                                        }
+
+                                                    </div>
+                                                    <div class="single-video-title box mb-3">
+                                                        <h2><span style="color: black;font-weight: 600;">@Model.candidateName  &nbsp; <span style="color: #6c757d;">(@Model.JDTiltle.Split("|")[0])</span></span></h2>
+                                                        <p class="mb-0"><i class="fas fa-calendar"></i> @Model.interviewDate</p>
+                                                    </div>
+                                                    @*<div class="single-video-author box mb-3">
+                                                            <div class="float-right"><button class="btn btn-danger" type="button">Subscribe <strong>1.4M</strong></button> <button class="btn btn btn-outline-danger" type="button"><i class="fas fa-bell"></i></button></div>
+                                                            <img class="img-fluid" src="~/RiseTube/img/s4.png" alt="">
+                                                            <p><a href="#"><strong>Osahan Channel</strong></a> <span title="" data-placement="top" data-toggle="tooltip" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></span></p>
+                                                            <small>Published on Aug 10, 2018</small>
+                                                        </div>*@
+                                                    <div class="single-video-info-content box mb-3">
+
+
+                                                        <div class="card-body ">
+                                                            <ul class="nav nav-pills nav-pills-primary" role="tablist">
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist">
+                                                                        Report Details
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link2" role="tablist">
+                                                                        Candidate Details
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link3" role="tablist">
+                                                                        Tech Skill Report
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link4" role="tablist">
+                                                                        Questions Discussed
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item" style="margin-top:27px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link5" role="tablist">
+                                                                        General Skill Report
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item" style="margin-top:27px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link6" role="tablist">
+                                                                        Joinability Report
+                                                                    </a>
+                                                                </li>
+                                                                <li class="nav-item" style="margin-top:27px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link7" role="tablist">
+                                                                        Selectability Report
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                            <hr>
+                                                            <div class="tab-content tab-space">
+                                                                <div class="tab-pane active" id="link1">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="card">
+                                                                                <div class="card-body">
+                                                                                    <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
+                                                                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                                                                        <div id="scoreChart" style="height: 200px; width: 100%;"></div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="card">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                                                    @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%", @readonly = "readonly" })
+
+                                                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                    @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    @Html.ValidationMessageFor(model => model.IreportModel.JobLevelName, "", new { @class = "text-danger" })
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane" id="link2">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.TextBoxFor(m => m.IreportModel.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                @Html.TextBoxFor(m => m.IreportModel.expectedPerHourRate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                @Html.ValidationMessageFor(model => model.IreportModel.OverallScore, "", new { @class = "text-danger" })
+
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                                @Html.TextBoxFor(m => m.IreportModel.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                                                @Html.TextBoxFor(m => m.IreportModel.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                @{
+                                                                                    if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                    {
+                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                                                    }
+                                                                                }
+
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="tab-pane" id="link3">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-bordered mbn" id="SkillTable">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="10%">Required Level</th>
+                                                                                        <th width="40%">Skill Name</th>
+                                                                                        <th width="20%">Actual Level</th>
+                                                                                        <th width="15%">Required Weightage</th>
+                                                                                        <th width="15%">Actual Weightage</th>
+                                                                                    </tr>
+                                                                                </thead>
+
+
+                                                                                <tbody>
+                                                                                    @if (Model.IreportModel.TechSkillReportCollection != null)
+                                                                                    {
+                                                                                        @for (int i = 0; i < Model.IreportModel.TechSkillReportCollection.Count(); i++)
+                                                                                        {
+                                                                                            <tr>
+
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                <td>
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].RequiredLevelId)
+                                                                                                @Html.HiddenFor(m => m.IreportModel.TechSkillReportCollection[i].SkillId)
+
+
+                                                                                            </tr>
+
+                                                                                        }
+                                                                                    }
+
+
+
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            @Html.LabelFor(model => model.IreportModel.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                            @Html.TextAreaFor(m => m.IreportModel.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                                        </div>
+
+
+
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="tab-pane" id="link4">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="50%">Questions</th>
+                                                                                        <th width="20%">SkillName</th>
+                                                                                        <th width="10%">Rating</th>
+                                                                                        <th width="10%">Time(Min)</th>
+                                                                                        <th width="10%">Action</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
+                                                                                    {
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+
+
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+
+                                                                                            </td>
+
+                                                                                            <td>
+                                                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
+
+
+                                                                                            </td>
+
+                                                                                            <td>
+
+                                                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                        {
+                                                                                            <tr>
+                                                                                                <td>
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+
+
+                                                                                                </td>
+
+                                                                                                <td>
+
+                                                                                                    @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+
+                                                                                                </td>
+
+                                                                                                <td>
+
+                                                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                                                                </td>
+                                                                                            </tr>
+
+
+                                                                                        }
+
+                                                                                    }
+
+
+
+
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane" id="link5">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                                                <thead>
+                                                                                    <tr>
+
+                                                                                        <th width="10%">Required Level</th>
+                                                                                        <th width="20%">Type</th>
+                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="15%">Actual Level</th>
+                                                                                        <th width="10%">Required Weightage</th>
+                                                                                        <th width="10%">Actual Weightage</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (Model.IreportModel.SkillGeneralReportCollection != null)
+                                                                                    {
+                                                                                        @for (int i = 0; i < Model.IreportModel.SkillGeneralReportCollection.Count(); i++)
+                                                                                        {
+                                                                                            <tr>
+
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                <td>
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                @Html.HiddenFor(m => m.IreportModel.SkillGeneralReportCollection[i].RequiredLevelId)
+
+
+                                                                                            </tr>
+
+                                                                                        }
+
+                                                                                    }
+
+
+                                                                                </tbody>
+                                                                            </table>
+
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                @Html.TextAreaFor(m => m.IreportModel.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane" id="link6">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="table-responsive">
+
+                                                                            <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="10%">Required Level</th>
+                                                                                        <th width="20%">Type</th>
+                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="15%">Actual Level</th>
+                                                                                        <th width="10%">Required Weightage</th>
+                                                                                        <th width="10%">Actual Weightage</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (Model.IreportModel.JoinabilityHRReportCollection != null)
+                                                                                    {
+                                                                                        @for (int i = 0; i < Model.IreportModel.JoinabilityHRReportCollection.Count(); i++)
+                                                                                        {
+                                                                                            <tr>
+
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                <td>
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                @Html.HiddenFor(m => m.IreportModel.JoinabilityHRReportCollection[i].RequiredLevelId)
+
+                                                                                            </tr>
+
+                                                                                        }
+                                                                                    }
+
+
+
+                                                                                </tbody>
+                                                                            </table>
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="tab-pane" id="link7">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="table-responsive">
+
+                                                                            <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th width="10%">Required Level</th>
+                                                                                        <th width="20%">Type</th>
+                                                                                        <th width="35%">Value</th>
+                                                                                        <th width="15%">Actual Level</th>
+                                                                                        <th width="10%">Required Weightage</th>
+                                                                                        <th width="10%">Actual Weightage</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @if (Model.IreportModel.SelectabilityEvaluatorReportCollection != null)
+                                                                                    {
+                                                                                        @for (int i = 0; i < Model.IreportModel.SelectabilityEvaluatorReportCollection.Count(); i++)
+                                                                                        {
+                                                                                            <tr>
+
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                <td>
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+                                                                                                <td>
+                                                                                                    @Html.TextBoxFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                </td>
+
+                                                                                                @Html.HiddenFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
+
+                                                                                            </tr>
+
+                                                                                        }
+                                                                                    }
+
+
+
+                                                                                </tbody>
+                                                                            </table>
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                                                @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                                            </div>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+
+
+                                                        @*<h6>Cast:</h6>
+                                                            <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
+                                                            <h6>Category :</h6>
+                                                            <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
+                                                            <h6>About :</h6>
+                                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
+                                                            <h6>Tags :</h6>
+                                                            <p class="tags mb-0">
+                                                                <span><a href="#">Uncharted 4</a></span>
+                                                                <span><a href="#">Playstation 4</a></span>
+                                                                <span><a href="#">Gameplay</a></span>
+                                                                <span><a href="#">1080P</a></span>
+                                                                <span><a href="#">ps4Share</a></span>
+                                                                <span><a href="#">+ 6</a></span>
+                                                            </p>*@
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (Model.SubVideo_List.Count > 0)
+                                            {
+                                                <div class="col-md-4">
+                                                    <div class="single-video-right">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div id="list">
+                                                                    @foreach (var videolist in Model.SubVideo_List)
+                                                                    {
+                                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+
+                                                                        <div class="video-card video-card-list">
+                                                                            <div class="video-card-image">
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'"></a>
+                                                                                <a href="#"><img class="img-fluid" src="~/RiseTube/img/video-icon.png" alt=""></a>
+                                                                                @if (videolist.VideoLink != null && videolist.VideoLink != "")
+                                                                                {
+                                                                                    <a id="videoId" target="_blank" title="Resume" href=@videolist.VideoLink style="height:158px;"></a>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <span> Video deleted !!!</span>
+                                                                                }
+
+                                                                                @*<div class="time">3:50</div>*@
+                                                                            </div>
+                                                                            <div class="video-card-body">
+
+                                                                                <div class="video-title">
+                                                                                    <a onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'">@videolist.candidateName </a>
+
+                                                                                    &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                                </div>
+                                                                                <div class="video-page text-success">
+                                                                                    @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
+                                                                                </div>
+                                                                                <div class="video-view">
+                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@videolist.interviewDate</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
+                                            }
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.container-fluid -->
+                            </div>
+                            <!-- /.content-wrapper -->
+                        </div>
+                        <!-- /#wrapper -->
+                        <!-- Scroll to Top Button-->
+                        <a class="scroll-to-top rounded" href="#page-top">
+                            <i class="fas fa-angle-up"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="~/RiseTube/js/custom.js"></script>
+
+
+<script>
+
+    window.onload = function () {
+
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; i++) {
+
+            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+        }
+        obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj);
+
+        //SkillsGeneral actual weightage total
+        var objGen = { y: "", legendText: "", label: "" }
+        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+        var genTotal = 0;
+        for (i = 0; i < genSkillsItems.length; i++) {
+            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+            genTotal = parseInt(genTotal) + parseInt(weightage);
+
+        }
+
+        objGen.y = parseInt(genTotal) / 4;
+        objGen.label = "General Skills Score";
+        objGen.legendText = "General Skills Score";
+        arr.push(objGen);
+
+        //Joinability actual weightage total
+        var objJoin = { y: "", legendText: "", label: "" }
+        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
+        var joinabilityTotal = 0;
+        for (i = 0; i < joinabilityItems.length; i++) {
+
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+        }
+        objJoin.y = parseInt(joinabilityTotal) / 4;
+        objJoin.label = "Joinability Score";
+        objJoin.legendText = "Joinability Score";
+        arr.push(objJoin);
+
+        //Selectability actual weightage total
+        var objSelect = { y: "", legendText: "", label: "" }
+        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+        var selectabilityTotal = 0;
+        for (i = 0; i < selectabilityItems.length; i++) {
+
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+        }
+        objSelect.y = parseInt(selectabilityTotal) / 4;
+        objSelect.label = "Selectability Score";
+        objSelect.legendText = "Selectability Score";
+        arr.push(objSelect);
+
+        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+        document.getElementById("totScore").innerHTML = totalScore;
+
+
+        var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            width: 400,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: {
+                text: "Score Chart"
+            },
+            data: [{
+                type: "column",
+                //startAngle: 60,
+                //innerRadius: 55,
+                indexLabelFontSize: 8,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+                dataPoints: arr
+
+            }]
+        });
+        chart.render();
+
+
+
+    }
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
