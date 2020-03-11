@@ -12,86 +12,19 @@
 }
 
 <style>
+    .pagination-container > ul > li {
+        padding: 5px 12px !important;
+        border-radius: 21px !important;
+        border: 1px solid blanchedalmond !important;
+        background: antiquewhite !important;
+        margin: 2px 4px !important;
+    }
 
     .pagination-container {
-        float: right;
+        float: right !important;
     }
-
-    /*.pagination .page-item.active>.page-link, .pagination .page-item.active>.page-link:focus, .pagination .page-item.active>.page-link:hover {
-        background-color: #f96332;
-        border-color: #f96332;
-        color: #FFFFFF;
-    }*/
-    li.active {
-        color: #FFFFFF;
-        box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
-        background-color: #f96332 !important;
-        border-color: #f96332 !important;
-        color: #FFFFFF;
-        border: 0 !important;
-        border-radius: 30px !important;
-        transition: all .3s !important;
-        padding: 0px 11px !important;
-        margin: 0 3px !important;
-        min-width: 30px !important;
-        text-align: center !important;
-        height: 30px !important;
-        line-height: 30px !important;
-        /*color: #2c2c2c !important;*/
-        cursor: pointer !important;
-        font-size: 14px !important;
-        text-transform: uppercase !important;
-        /*background: transparent !important;*/
-        outline: none !important;
-    }
-
-    ul > li > a {
-        color: #2c2c2c;
-        margin-left: 8px;
-        border: none;
-    }
-
-        ul > li > a:hover {
-            color: #2c2c2c;
-            background-color: rgba(222, 222, 222, 0.3);
-            border: none;
-            border: 0 !important;
-            border-radius: 30px !important;
-            /*transition: all .3s !important;*/
-            padding: 7px 11px !important;
-            margin: 0 8px !important;
-            min-width: 30px !important;
-            text-align: center !important;
-            height: 30px !important;
-            line-height: 30px !important;
-            /*color: #2c2c2c !important;*/
-            cursor: pointer !important;
-            font-size: 14px !important;
-            text-transform: uppercase !important;
-            /*background: transparent !important;*/
-            outline: none !important;
-        }
-    /*.pagination {
-            border: 0 !important;
-            border-radius: 30px !important;
-            transition: all .3s !important;
-            padding: 0px 11px !important;
-            margin: 0 3px !important;
-            min-width: 30px !important;
-            text-align: center !important;
-            height: 30px !important;
-            line-height: 30px !important;
-            color: #2c2c2c !important;
-            cursor: pointer !important;
-            font-size: 14px !important;
-            text-transform: uppercase !important;
-            background: transparent !important;
-            outline: none !important;
-        }*/
-    /* PAGINATION */
-
-    /* END PAGINATION */
 </style>
+
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -113,7 +46,11 @@
                 </div>
                 <a class="navbar-brand">RiseTube</a>
             </div>
-
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -127,117 +64,91 @@
                         @*<h4 class="card-title">RiseTube</h4>*@
                     </div>
                     <div class="card-body">
-                        <div id="wrapper">
-                            <div id="content-wrapper">
-                                <div class="container-fluid pb-0">
-                                    <div class="top-mobile-search">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                @*<form class="mobile-search">
-                                                    <div class="input-group">
-                                                        <input type="text" placeholder="Search for..." class="form-control">
-                                                        <div class="input-group-append">
-                                                            <button type="button" class="btn btn-dark"><i class="fas fa-search"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </form>*@
-                                            </div>
+
+                        <div>
+
+                            <hr>
+                            <div class="video-block section-padding">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="main-title">
+                                            <h6>Featured Videos</h6>
                                         </div>
                                     </div>
-                                    <hr>
-                                    <div class="video-block section-padding">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="main-title">
-                                                    @*<div class="btn-group float-right right-action">
-                                                        <a href="#" class="right-action-link text-gray" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            Sort by <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-star"></i> &nbsp; Top Rated</a>
-                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-signal"></i> &nbsp; Viewed</a>
-                                                            <a class="dropdown-item" href="#"><i class="fas fa-fw fa-times-circle"></i> &nbsp; Close</a>
-                                                        </div>
-                                                    </div>*@
-                                                    <h6>Featured Videos</h6>
+                                    @foreach (var item in Model)
+                                    {
+                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                        <div class="col-xl-3 col-sm-6 mb-3">
+                                            <div class="video-card">
+                                                <div class="video-card-image">
+                                                    @if (item.VideoLink.Contains(".mp4"))
+                                                    {
+                                                        <video width="100%" height="100%" controls>
+                                                            <source src="@item.VideoLink" type="video/mp4">
+                                                        </video>
+                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube",item)'" style=" cursor: pointer;"></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/RiseTube/img/video-icon.png" style="height:163px;" />
+                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube",item)'" style=" cursor: pointer;"></a>
+                                                    }
+
+                                                    @*@if (item.VideoLink != null && item.VideoLink != "")
+                                                        {
+                                                            <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink style="height:158px;"></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span> Video deleted !!!</span>
+                                                        }*@
+                                                </div>
+                                                <div class="video-card-body">
+                                                    <div class="video-title">
+                                                        <a onclick="location.href='@Url.Action("VideoPage", "Risetube",item)'" style=" cursor: pointer;">@item.candidateName </a>
+
+                                                        &nbsp; <span style="color: #6c757d;font-weight: 600;">(@item.JDTiltle.Split("|")[0])</span>
+                                                    </div>
+
+                                                    <div class="video-page text-success">
+                                                        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
+
+                                                    </div>
+                                                    <div class="video-view">
+                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@item.interviewDate</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            @foreach (var item in Model)
-                                            {
-                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                                <div class="col-xl-3 col-sm-6 mb-3">
-                                                    <div class="video-card">
-                                                        <div class="video-card-image" style="height:158px;">
-                                                            <img src="~/RiseTube/img/video-icon.png" style="height:159px;" />
-                                                            <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube",item)'"></a>
-
-                                                            @*@if (item.VideoLink != null && item.VideoLink != "")
-                                                                {
-                                                                    <iframe src="@item.VideoLink" sandbox="allow-forms allow-scripts" autoplay="0"></iframe>
-                                                                }*@
-                                                            @if (item.VideoLink != null && item.VideoLink != "")
-                                                            {
-                                                                <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink style="height:158px;"></a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <span> Video deleted !!!</span>
-                                                            }
-                                                        </div>
-                                                        <div class="video-card-body">
-                                                            <div class="video-title">
-                                                                <a onclick="location.href='@Url.Action("VideoPage", "Risetube",item)'">@item.candidateName </a>
-
-                                                                &nbsp; <span style="color: #6c757d;font-weight: 600;">(@item.JDTiltle.Split("|")[0])</span>
-                                                            </div>
-
-                                                            <div class="video-page text-success">
-                                                                @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
-
-                                                            </div>
-                                                            <div class="video-view">
-                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@item.interviewDate</span>
-                                                            </div>
-                                                        </div>
+                                        </div>
+                                    }
+                                    @*<div class="col-xl-3 col-sm-6 mb-3">
+                                            <div class="video-card">
+                                                <div class="video-card-image">
+                                                    <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
+                                                    <a href="#"><img class="img-fluid" src="~/RiseTube/img/v2.png" alt=""></a>
+                                                    <div class="time">3:50</div>
+                                                </div>
+                                                <div class="video-card-body">
+                                                    <div class="video-title">
+                                                        <a href="#">There are many variations of passages of Lorem</a>
+                                                    </div>
+                                                    <div class="video-page text-success">
+                                                        Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
+                                                    </div>
+                                                    <div class="video-view">
+                                                        1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
                                                     </div>
                                                 </div>
-                                            }
-                                            @*<div class="col-xl-3 col-sm-6 mb-3">
-                                                    <div class="video-card">
-                                                        <div class="video-card-image">
-                                                            <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                                                            <a href="#"><img class="img-fluid" src="~/RiseTube/img/v2.png" alt=""></a>
-                                                            <div class="time">3:50</div>
-                                                        </div>
-                                                        <div class="video-card-body">
-                                                            <div class="video-title">
-                                                                <a href="#">There are many variations of passages of Lorem</a>
-                                                            </div>
-                                                            <div class="video-page text-success">
-                                                                Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
-                                                            </div>
-                                                            <div class="video-view">
-                                                                1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>*@
-                                               
-                                        </div>
-                                    </div>
-                                    <hr class="mt-0">
-                                    @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
+                                            </div>
+                                        </div>*@
+
                                 </div>
-                                <!-- /.container-fluid -->
-
                             </div>
-                            <!-- /.content-wrapper -->
+                            <hr>
+                            @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
                         </div>
-                        <!-- /#wrapper -->
-                        <!-- Scroll to Top Button-->
-                        <a class="scroll-to-top rounded" href="#page-top">
-                            <i class="fas fa-angle-up"></i>
-                        </a>
+
+
 
 
                     </div>
