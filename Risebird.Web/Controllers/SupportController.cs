@@ -24,7 +24,7 @@ namespace Risebird.Web.Controllers
         }
 
         [Authorize]
-        public IActionResult Index()
+        public IActionResult Index(string controllerName = null, string actMethod = null)
         {
             try
             {
@@ -34,7 +34,8 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     //var emailid = HttpContext.Session.GetString("email")?.Trim();
                     //emailid = emailid.Replace("\"", "");
-                    var hrSupportList = _supportService.GetAllSupportHR();
+                    var model = new SupportList();
+                    model.Supports = _supportService.GetAllSupportHR();
                     ViewBag.Profile = profileName;
                     if (TempData["SuccessErrorMessageSupport"] != null)
                     {
@@ -42,7 +43,14 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("SuccessErrorMessageSupport");
                     }
                    
-                    return View(hrSupportList);
+                    if(controllerName != null && actMethod != null)
+                    {
+                        model.BackController = controllerName;
+                        model.BackMethod = actMethod;
+                        //TempData["actMethod"] = actMethod;
+                        //TempData["controllerName"] = controllerName;
+                    }
+                    return View(model);
                     
                 }
                 else

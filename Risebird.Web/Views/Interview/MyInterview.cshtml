@@ -124,9 +124,10 @@
                             <div class="toolbar">
                                 <div class="row">
 
-                                    <div class="col-md-3 ml-md-auto">
+                                    <div class="col-md-3 ml-md-auto" style="margin-right:-140px">
                                         <div class="form-group">
-                                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 0px;float:right;margin-right:0px"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 0px;margin-right:0px"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                            <button type="button" class="btn btn-primary " style="margin-top: -1px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"> Support</span></button>
 
                                             @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
                                         </div>
