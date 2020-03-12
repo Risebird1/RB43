@@ -32,7 +32,7 @@ namespace Risebird.Functions
                     feedbackMinutes = con.Query<int>(querySettings).FirstOrDefault();
                 }
 
-                var query = "select ul.MobileNumber as InterviewerMobile from InterviewMeetings im inner join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE,-@feedbackMinutes, @timeNow) and im.confirmationStatus=1 and ic.InterviewerComment is null and ic.InterviewStatus is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
+                var query = "select ul.MobileNumber as InterviewerMobile from InterviewMeetings im inner join UserList ul on im.interviewer=ul.EmailId left join InterviewComments ic on im.id = ic.InterviewId where DATEADD(MINUTE,interviewDuration,interviewDate) <= DATEADD(MINUTE,-@feedbackMinutes, @timeNow) and DATEADD(HOUR,-48,@timeNow)<im.interviewDate and im.confirmationStatus=1 and ic.InterviewerComment is null and ic.InterviewStatus is null and (ic.MeetingStatus=4 or ic.MeetingStatus is null)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@feedbackMinutes", feedbackMinutes);
                 dynamicParameters.Add("@timeNow", DateTime.Now);
@@ -43,7 +43,7 @@ namespace Risebird.Functions
 
                 var phoneNumbers = interviewList.Select(x => x.InterviewerMobile);
                 phoneNumbers = phoneNumbers.Distinct();
-               
+                
                 if (phoneNumbers != null && phoneNumbers.Count() > 0)
                 {
                     var twilioAuthToken = "3f15940e73243adb8e75f9689adaa0e2";
