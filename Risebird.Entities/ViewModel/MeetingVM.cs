@@ -10,6 +10,14 @@ namespace Risebird.Entities.ViewModel
     [Serializable]
     public class MeetingVM
     {
+
+        public InterviewReport IreportModel { get; set; }
+
+        public MeetingVM()
+        {
+          SubVideo_List = new List<MeetingVM>();
+        }
+        public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
 
         [Display(Name = "IRF ID")]
