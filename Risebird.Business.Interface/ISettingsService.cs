@@ -9,5 +9,6 @@ namespace Risebird.Business.Interface
     {
         Settings GetAllSettings();
         bool UpdateSettings(Settings settings);
+        int GetInterviewUnassignedMinutes();
     }
 }

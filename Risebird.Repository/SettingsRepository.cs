@@ -75,6 +75,25 @@ namespace Risebird.Repository
             return false;
         }
 
+        public int GetInterviewUnassignedMinutes()
+        {
+            try
+            {
+                var query = "Select InterviewerUnassignedMinutes from Settings";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<int>(query);
+                    return results.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return 0;
+            }
+            
+        }
+
 
     }
 }
