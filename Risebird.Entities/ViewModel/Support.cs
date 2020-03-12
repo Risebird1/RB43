@@ -32,4 +32,11 @@ namespace Risebird.Entities.ViewModel
         public bool OnWhatsapp { get;set; }
         public bool OnEmail { get;set; }
     }
+
+    public class SupportList
+    {
+        public List<Support> Supports { get; set; }
+        public string BackMethod { get; set; }
+        public string BackController { get; set; }
+    }
 }

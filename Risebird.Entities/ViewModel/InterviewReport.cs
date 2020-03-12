@@ -18,13 +18,13 @@ namespace Risebird.Entities.ViewModel
         public int InterviewId { get; set; }
 
         [DisplayName("Candidate's Name")]
-        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
-        ErrorMessage = "Please Enter Correct Email Address")]
-        [Required]
+        //[RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        //ErrorMessage = "Please Enter Correct Email Address")]
+        //[Required]
         public string CandidateName { get; set; }
 
         [DisplayName("Confirmation Status")]
-        [Required]
+        //[Required]
         public string confirmationStatus { get; set; }
 
         [DisplayName("Overall Score")]
