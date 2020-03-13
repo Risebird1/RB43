@@ -7,9 +7,10 @@
 
 }
 <style>
-    #list {
-        height: 808px;
-        overflow: scroll;
+    #style-2 {
+        height: 1000px;
+        overflow-x: hidden;
+         overflow-y: scroll;
     }
 </style>
 
@@ -34,7 +35,11 @@
                 </div>
                 <a class="navbar-brand">RiseTube</a>
             </div>
-
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -61,11 +66,17 @@
                                                     <div class="single-video">
                                                         @if (Model.VideoLink != null && Model.VideoLink != "")
                                                         {
-                                                            @*<div class="iframe-container">
-                                                                    <iframe allow="microphone; camera" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%;" src="@Model.VideoLink?autoplay=true" frameborder="0" ></iframe>
-                                                                </div>*@
 
-                                                            <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                            @if (@Model.VideoLink.Contains(".mp4"))
+                                                            {
+                                                                <video width="100%" controls>
+                                                                    <source src="@Model.VideoLink" type="video/mp4">
+                                                                </video>
+                                                            }
+                                                            else
+                                                            {
+                                                                <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                            }
                                                         }
                                                         else
                                                         {
@@ -85,41 +96,71 @@
                                                         </div>*@
                                                     <div class="single-video-info-content box mb-3">
 
+                                                        <style>
+                                                            .nav-pills .nav-item .nav-link {
+                                                                padding: 10px 10px;
+                                                            }
+
+                                                            
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
+    }
+                                                        </style>
 
                                                         <div class="card-body ">
                                                             <ul class="nav nav-pills nav-pills-primary" role="tablist">
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist" style="font-size: 10px;">
                                                                         Report Details
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link2" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link2" role="tablist" style="font-size: 10px;">
                                                                         Candidate Details
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link3" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link3" role="tablist" style="font-size: 10px;">
                                                                         Tech Skill Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link4" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link4" role="tablist" style="font-size: 10px;">
                                                                         Questions Discussed
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top:27px;">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link5" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link5" role="tablist" style="font-size: 10px;">
                                                                         General Skill Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top:27px;">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link6" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link6" role="tablist" style="font-size: 10px;">
                                                                         Joinability Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top:27px;">
-                                                                    <a class="nav-link" data-toggle="tab" href="#link7" role="tablist">
+                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                    <a class="nav-link" data-toggle="tab" href="#link7" role="tablist" style="font-size: 10px;">
                                                                         Selectability Report
                                                                     </a>
                                                                 </li>
@@ -601,30 +642,30 @@
                                                     <div class="single-video-right">
                                                         <div class="row">
                                                             <div class="col-md-12">
-                                                                <div id="list">
+                                                                <div id="style-2">
                                                                     @foreach (var videolist in Model.SubVideo_List)
                                                                     {
                                                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
                                                                         <div class="video-card video-card-list">
                                                                             <div class="video-card-image">
-                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'"></a>
+                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'" style=" cursor: pointer;"></a>
                                                                                 <a href="#"><img class="img-fluid" src="~/RiseTube/img/video-icon.png" alt=""></a>
-                                                                                @if (videolist.VideoLink != null && videolist.VideoLink != "")
-                                                                                {
-                                                                                    <a id="videoId" target="_blank" title="Resume" href=@videolist.VideoLink style="height:158px;"></a>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <span> Video deleted !!!</span>
-                                                                                }
+                                                                                @*@if (videolist.VideoLink != null && videolist.VideoLink != "")
+                                                                                    {
+                                                                                        <a id="videoId" target="_blank" title="Resume" href=@videolist.VideoLink style="height:158px;" style=" cursor: pointer;"></a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span> Video deleted !!!</span>
+                                                                                    }*@
 
                                                                                 @*<div class="time">3:50</div>*@
                                                                             </div>
                                                                             <div class="video-card-body">
 
                                                                                 <div class="video-title">
-                                                                                    <a onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'">@videolist.candidateName </a>
+                                                                                    <a onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
                                                                                     &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
