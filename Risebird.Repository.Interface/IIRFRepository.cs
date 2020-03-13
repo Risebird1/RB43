@@ -1,5 +1,6 @@
 ﻿using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,7 +58,7 @@ namespace Risebird.Repository.Interface
         Task<bool> UnArchiveIRF(int IRFId);
         IEnumerable<TransEmergencyInterviewer> GetTransEmergencyInterviewer(int id);
         Task<IEnumerable<string>> GetEmergencyInterviwerBasedOnIRFId(int irfId);
-        bool UpdateEmergencyFlag(int id, string emailId);
+        bool UpdateEmergencyFlag(int id, string emailId, DateTime interviewDate);
         IEnumerable<Candidate> GetCandidateIRFInvites(string emailId);
         IEnumerable<ResumeEvaluator> GetResumeEvaluators();
         IEnumerable<HR> GetHRs();

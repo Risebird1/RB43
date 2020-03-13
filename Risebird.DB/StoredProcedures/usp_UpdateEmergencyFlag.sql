@@ -12,16 +12,19 @@ GO
 
 CREATE PROCEDURE [dbo].[usp_UpdateEmergencyFlag]
 @id int,
-@EmailId varchar(200)
+@EmailId varchar(200),
+@interviewDate datetime,
+@timeNow datetime
 AS
 Begin
 
  
 update InterviewMeetings set [IsEmergency] = 1 where id=@id
-Insert into UnassignedMeetings values(@id, @EmailId)
+Insert into UnassignedMeetings values(@id, @EmailId, @interviewDate, @timeNow)
 
 	
 End
+
 
 GO
 

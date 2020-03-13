@@ -308,6 +308,7 @@ namespace Risebird.Business
                         openMeeting.Add(item);
                     }
                 }
+                openMeeting = openMeeting.Distinct().ToList();
                 openMeeting = openMeeting.OrderByDescending(x => x.interviewDate).ToList();
                 return openMeeting;
             }
@@ -481,7 +482,7 @@ namespace Risebird.Business
             
         }
 
-        public bool UnassignYourself(int meetingid, string email)
+        public bool UnassignYourself(int meetingid, string email, bool isPenalty)
         {
             try
             {
@@ -490,12 +491,12 @@ namespace Risebird.Business
                 if (meeting != null && meeting.Result != null)
                 {
                     _meetingRespository.UnassignYourself(meetingid);
-                    TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
+                    //TimeSpan timeSpan = meeting.Result.interviewDate - DateTime.Now;
                     var interviwers = new List<string>();
-                    if (timeSpan.TotalHours <= 6)
+                    if (isPenalty)
                     {
                         //update flag for Emergency Interview
-                        _irfRepository.UpdateEmergencyFlag(meetingid, email);
+                        _irfRepository.UpdateEmergencyFlag(meetingid, email, meeting.Result.interviewDate);
                         interviwers = _irfRepository.GetEmergencyInterviwerBasedOnIRFId(meeting.Result.irfIntId).Result.ToList();
                     }
                     else
