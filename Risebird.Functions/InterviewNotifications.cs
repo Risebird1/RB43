@@ -39,10 +39,11 @@ namespace Risebird.Functions
                 foreach (var item in unfilteredCandidate)
                 {
                     int checkScheduleCount = 0;
-                    var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2";
+                    var checkQuery = "select id from InterviewMeetings where interviewDate>DATEADD(HOUR,-48, @timeNow) and IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", item.IRFId);
                     dynamicParameters.Add("@EmailId", item.EmailId);
+                    dynamicParameters.Add("@timeNow", DateTime.Now);
                     using (SqlConnection con = new SqlConnection(str))
                     {
                         var scheduleResult = con.Query<int>(checkQuery, dynamicParameters).ToList();

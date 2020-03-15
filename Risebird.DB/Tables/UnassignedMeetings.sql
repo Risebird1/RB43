@@ -13,7 +13,31 @@ CREATE TABLE [dbo].[UnassignedMeetings](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InterviewDate')
+      AND Object_ID = Object_ID(N'UnassignedMeetings'))
+BEGIN
+    ALTER TABLE UnassignedMeetings
+    Add InterviewDate Datetime
+END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'UnassignedAt')
+      AND Object_ID = Object_ID(N'UnassignedMeetings'))
+BEGIN
+    ALTER TABLE UnassignedMeetings
+    Add UnassignedAt Datetime
+END
+
 End
+
 GO
 
 

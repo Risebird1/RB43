@@ -13,5 +13,6 @@
         public string TenantId { get; set; }
 
         public string CallbackPath { get; set; }
+        public string TenantName { get; set; }
     }
 }

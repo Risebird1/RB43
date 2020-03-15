@@ -124,9 +124,10 @@
                             <div class="toolbar">
                                 <div class="row">
 
-                                    <div class="col-md-3 ml-md-auto">
+                                    <div class="col-md-3 ml-md-auto" style="margin-right:-140px">
                                         <div class="form-group">
-                                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 0px;float:right;margin-right:0px"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 0px;margin-right:0px"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                            <button type="button" class="btn btn-primary " style="margin-top: -1px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyInterview" } )'" data-original-title="Tooltip on top"> Support</span></button>
 
                                             @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
                                         </div>
@@ -365,7 +366,7 @@
                                                 <td class="text-right">
                                                     @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                     {
-                                                        <span onclick="javascript:UnAssignInterviewer('@item.id');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+                                                        <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
 
                                                     }
                                                     <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>
@@ -498,7 +499,17 @@
 </style>
 
 <script>
+    var interviewUnassignedMinutes;
     $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetInterviewUnassignedMinutes",
+            success: function (data) {
+                interviewUnassignedMinutes = data;
+            }
+        });
+
+
         $("#ResetFilter").click(function () {
                 ResetFilter();
             })
@@ -686,12 +697,33 @@
 
 
 <script type="text/javascript">
-    function UnAssignInterviewer(meetingId) {
+
+
+    function CheckTimeDifference(meetingId, interviewDate) {
+        $.ajax({
+            type: "GET",
+            url: "/Interview/GetTimeDifference",
+            data: { 'interviewDate': interviewDate, 'interviewUnassignedMinutes': interviewUnassignedMinutes },
+            success: function (response) {
+                UnAssignInterviewer(meetingId, response)
+            }
+        });
+    }
+    function UnAssignInterviewer(meetingId, isPenalty) {
+      
+        var textMsg; 
+        if (isPenalty) {
+            textMsg = "Unassigning at this hour will lead to a penalty. Note: Update Risebird HR, before unassigning interview."
+        }
+        else {
+            textMsg = "The Interview will be unassigned! Note: Update Risebird HR, before unassigning interview.";
+        }
+          
 
         //var IdIRF = dataID;
         swal.fire({
             title: 'Are you sure?',
-            text: "The Interview will be unassigned! Note: Update Risebird HR, before unassigning interview.",
+            text: textMsg,
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -701,7 +733,7 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Interview/UnassignYourself?id=' + meetingId,
+                        url: '/Interview/UnassignYourself?id=' + meetingId + '&isPenalty=' + isPenalty,
                         success: function (result) {
                             resolve(result)
 

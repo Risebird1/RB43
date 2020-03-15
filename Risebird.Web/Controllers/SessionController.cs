@@ -8,15 +8,20 @@ using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Web.Hepler;
 using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Threading;
 
 namespace Risebird.Web.Controllers
 {
     public class SessionController : Controller
     {
         private IApplicationErrorLogger _applicationErrorLogger;
-        public SessionController(IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger)
+        private readonly HttpClient _httpClient;
+        public SessionController(HttpClientHelper factory, IOptions<AzureAdB2COptions> b2cOptions, IApplicationErrorLogger applicationErrorLogger)
         {
+            _httpClient = factory.GetHttpClient();
             AzureAdB2COptions = b2cOptions.Value;
             _applicationErrorLogger = applicationErrorLogger;
         }
@@ -102,14 +107,20 @@ namespace Risebird.Web.Controllers
         public IActionResult SignOut()
         {
             string userEmailId = string.Empty;
+            CancellationToken ct;
             try
             {
                 if (User.Identity.IsAuthenticated)
                 {
                     var callbackUrl = Url.Action(nameof(SignedOut), "Session", values: null, protocol: Request.Scheme);
                     var token = HttpContext.Session.GetString("Token");
+                    var path = $"https://{AzureAdB2COptions.TenantName}.b2clogin.com/{AzureAdB2COptions.TenantName}.onmicrosoft.com/{AzureAdB2COptions.SignUpSignInPolicyId}/oauth2/v2.0/logout?post_logout_redirect_uri={AzureAdB2COptions.RedirectUri}";
+                    var request = new HttpRequestMessage(HttpMethod.Get, path);
+                    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var response = _httpClient.SendAsync(request, ct).Result;
+
                     if (token != null)
-                    {
+                    {                                 
                         HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
                         HttpContext.Session.Clear();
                         CookieOptions option = new CookieOptions();

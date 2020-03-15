@@ -19,7 +19,7 @@ namespace Risebird.Business.Interface
         List<MeetingVM> GetAllClientInterviews(string emailID);
 
         string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
-        bool UnassignYourself(int meetingid, string email);
+        bool UnassignYourself(int meetingid, string email, bool isPenalty);
         List<Meeting> GetAllAssignedInterviews(string emailID);
         bool UpdateComments(InterviewComments comments);
         InterviewComments GetInterviewComments(int interviewId);

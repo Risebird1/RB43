@@ -122,6 +122,7 @@ namespace Risebird.Web
         /// <param name="services"></param>
         private static void DependencyMapping(IServiceCollection services)
         {
+            services.AddSingleton<HttpClientHelper>();
             services.AddScoped<INotificationHelper, NotificationHelper>();
             services.AddScoped<IAzureStorageHelper, AzureStorageHelper>();
             services.AddScoped<IUserService, UserService>();
@@ -154,8 +155,11 @@ namespace Risebird.Web
             services.AddScoped<IEvaluatorRepository, EvaluatorRepository>();
             services.AddScoped<IEvaluatorService, EvaluatorService>();
             services.AddScoped<IVoiceItRepository, VoiceItRepository>();
-
-
+            services.AddScoped<ISupportRepository, SupportRepository>();
+            services.AddScoped<ISupportService, SupportService>();
+            services.AddScoped<ISettingsRepository, SettingsRepository>();
+            services.AddScoped<ISettingsService, SettingsService>();
+            
         }
     }
      //Global level antiforgery token security to stop malicious scripts

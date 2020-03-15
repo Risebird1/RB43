@@ -15,11 +15,13 @@ namespace Risebird.Web.Controllers
     {
         AzureAdB2COptions AzureAdB2COptions;
         private IUserService _userService;
+        private ISettingsService _settingsService;
         public HomeController(IUserService userService,
-            IOptions<AzureAdB2COptions> azureAdB2COptions)
+            IOptions<AzureAdB2COptions> azureAdB2COptions, ISettingsService settingsService)
         {
             _userService = userService;
             AzureAdB2COptions = azureAdB2COptions.Value;
+            _settingsService = settingsService;
         }
         public IActionResult Index(string url = null)
         {
@@ -31,6 +33,12 @@ namespace Risebird.Web.Controllers
                 // The 'Name' claim can be used for showing the username                
                 string emailId = userClaims?.FindFirst("emails")?.Value;
                 var menus = _userService.GetMenuBasedOnUserEmailld(emailId);
+                var settings = _settingsService.GetAllSettings();
+                if (settings != null)
+                {
+                    HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
+
+                }
                 if (menus != null)
                 {                   
                    HttpContext.Session.SetString("userMenus", JsonConvert.SerializeObject(menus));
