@@ -34,7 +34,8 @@ namespace Risebird.CommonHelper.Interface
         string GetBlobData(string containerName, string fileName);
         void InsertBatchInTable(string tableName, TableBatchOperation tableBatchOperation);
         //string UploadVideo(string filename);
-        Task<string> UploadVideoAsset(string filePath);
-        //string UploadAndPublishVideo(string filePath);
+        //Task<string> UploadVideoAsset(string filePath);
+
+        string UploadAndPublishVideo(string filePath);
     }
 }

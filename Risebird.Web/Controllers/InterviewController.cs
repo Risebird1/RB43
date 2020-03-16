@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using System.IO;
 
 namespace Risebird.Web.Controllers
 {
@@ -3854,7 +3855,8 @@ namespace Risebird.Web.Controllers
                             //var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
                             //string uploadedvideoFileURL = blob.Uri.ToString();
                             string path = @"C:\Users\Admin\Desktop\RBVideoRandom.mp4";
-                            var uploadedvideoFileURL = _azureStorageHelper.UploadVideoAsset(path).Result;
+                            var filePath = Path.GetFullPath(model.VideoFile.FileName);
+                            var uploadedvideoFileURL = _azureStorageHelper.UploadAndPublishVideo(path);
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Video Upload is failed.");
