@@ -1418,6 +1418,25 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<MeetingVM> GetMeetingbyid(int id)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@interviewId", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_GetInterviewMeetingsbyId", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
     }
 }
