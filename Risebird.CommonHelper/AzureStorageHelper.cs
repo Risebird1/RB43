@@ -1010,7 +1010,12 @@ namespace Risebird.CommonHelper
         {
             try
             {
-                AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain, AzureEnvironments.AzureCloudEnvironment);
+                AzureAdTokenCredentials tokenCredentials =
+                new AzureAdTokenCredentials(_AADTenantDomain,
+                    new AzureAdClientSymmetricKey(_AMSClientId, _AMSClientSecret),
+                    AzureEnvironments.AzureCloudEnvironment);
+
+                //AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain, AzureEnvironments.AzureCloudEnvironment);
                 AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
 
                // _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
