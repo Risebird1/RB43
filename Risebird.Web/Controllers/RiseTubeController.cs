@@ -390,7 +390,7 @@ namespace Risebird.Web.Controllers
                         MeetingVM model = _meetingService.GetMeetingbyid(id);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0]) && c.confirmationStatus == "1" && (c.InterviewStatus == 2 || c.InterviewStatus == 4) && c.VideoLink != null).OrderByDescending(x => x.interviewDate).ToList();
-                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                        var IRListModel = _meetingService.GetInteviewReport(model.imid,model.irfIntId).Result;
 
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
