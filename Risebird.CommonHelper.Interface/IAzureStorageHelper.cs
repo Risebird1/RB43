@@ -36,6 +36,6 @@ namespace Risebird.CommonHelper.Interface
         //string UploadVideo(string filename);
         //Task<string> UploadVideoAsset(string filePath);
 
-        string UploadAndPublishVideo(string filePath);
+        //string UploadAndPublishVideo(string filePath);
     }
 }

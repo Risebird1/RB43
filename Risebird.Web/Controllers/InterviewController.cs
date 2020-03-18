@@ -3850,13 +3850,13 @@ namespace Risebird.Web.Controllers
                         {
                             // byte[] videofileData = new byte[model.VideoFile.Length];
                             // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
-                            //await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
-                            //var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
-                            //var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
-                            //string uploadedvideoFileURL = blob.Uri.ToString();
-                            string path = @"C:\Users\Admin\Desktop\RBVideoRandom.mp4";
-                            var filePath = Path.GetFullPath(model.VideoFile.FileName);
-                            var uploadedvideoFileURL = _azureStorageHelper.UploadAndPublishVideo(path);
+                            await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                            var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
+                            string uploadedvideoFileURL = blob.Uri.ToString();
+                            //string path = @"C:\Users\Admin\Desktop\RBVideoRandom.mp4";
+                            //var filePath = Path.GetFullPath(model.VideoFile.FileName);
+                            //var uploadedvideoFileURL = _azureStorageHelper.UploadAndPublishVideo(path);
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Video Upload is failed.");

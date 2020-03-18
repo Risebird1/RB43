@@ -38,9 +38,9 @@ namespace Risebird.CommonHelper
         private readonly string _AMSResourceGroup;
         private readonly string _AMSAccountName;
 
-        private static CloudMediaContext _context = null;
-        private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
-        private const string OutputFolderName = @"Output";
+        //private static CloudMediaContext _context = null;
+        //private const string AdaptiveStreamingTransformName = "MyTransformWithAdaptiveStreamingPreset";
+        //private const string OutputFolderName = @"Output";
 
         private readonly IConfiguration _configuration;
         public AzureStorageHelper(IConfiguration configuration)
@@ -1004,139 +1004,139 @@ namespace Risebird.CommonHelper
 
         //#endregion
 
-        #region  Attempt 3
+        //#region  Attempt 3
 
-        public string UploadAndPublishVideo(string filePath)
-        {
-            try
-            {
-                AzureAdTokenCredentials tokenCredentials =
-                new AzureAdTokenCredentials(_AADTenantDomain,
-                    new AzureAdClientSymmetricKey(_AMSClientId, _AMSClientSecret),
-                    AzureEnvironments.AzureCloudEnvironment);
+        //public string UploadAndPublishVideo(string filePath)
+        //{
+        //    try
+        //    {
+        //        AzureAdTokenCredentials tokenCredentials =
+        //        new AzureAdTokenCredentials(_AADTenantDomain,
+        //            new AzureAdClientSymmetricKey(_AMSClientId, _AMSClientSecret),
+        //            AzureEnvironments.AzureCloudEnvironment);
 
-                //AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain, AzureEnvironments.AzureCloudEnvironment);
-                AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
+        //        //AzureAdTokenCredentials tokenCredentials = new AzureAdTokenCredentials(_AADTenantDomain, AzureEnvironments.AzureCloudEnvironment);
+        //        AzureAdTokenProvider tokenProvider = new AzureAdTokenProvider(tokenCredentials);
 
-               // _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
-                _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
-                IAsset inputAsset =
-                        UploadFile(filePath, AssetCreationOptions.None);
+        //       // _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
+        //        _context = new CloudMediaContext(new Uri(_RESTAPIEndpoint), tokenProvider);
+        //        IAsset inputAsset =
+        //                UploadFile(filePath, AssetCreationOptions.None);
 
-                IAsset encodedAsset =
-                        EncodeToAdaptiveBitrateMP4s(inputAsset, AssetCreationOptions.None);
+        //        IAsset encodedAsset =
+        //                EncodeToAdaptiveBitrateMP4s(inputAsset, AssetCreationOptions.None);
 
-                PublishAssetGetURLs(encodedAsset);
-                return "";
-            }
-            catch (Exception ex)
-            {
+        //        PublishAssetGetURLs(encodedAsset);
+        //        return "";
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-                throw;
-            }
+        //        throw;
+        //    }
 
-        }
+        //}
 
-        static public IAsset UploadFile(string fileName, AssetCreationOptions options)
-        {
-            IAsset inputAsset = _context.Assets.CreateFromFile(
-                fileName,
-                options
-                );
+        //static public IAsset UploadFile(string fileName, AssetCreationOptions options)
+        //{
+        //    IAsset inputAsset = _context.Assets.CreateFromFile(
+        //        fileName,
+        //        options
+        //        );
 
-            //Console.WriteLine("Asset {0} created.", inputAsset.Id);
+        //    //Console.WriteLine("Asset {0} created.", inputAsset.Id);
 
-            return inputAsset;
-        }
+        //    return inputAsset;
+        //}
 
-        static public IAsset EncodeToAdaptiveBitrateMP4s(IAsset asset, AssetCreationOptions options)
-        {
+        //static public IAsset EncodeToAdaptiveBitrateMP4s(IAsset asset, AssetCreationOptions options)
+        //{
 
-            // Prepare a job with a single task to transcode the specified asset
-            // into a multi-bitrate asset.
+        //    // Prepare a job with a single task to transcode the specified asset
+        //    // into a multi-bitrate asset.
 
-            IJob job = _context.Jobs.CreateWithSingleTask(
-                "Media Encoder Standard",
-                "Adaptive Streaming",
-                asset,
-                "Adaptive Bitrate MP4",
-                options);
+        //    IJob job = _context.Jobs.CreateWithSingleTask(
+        //        "Media Encoder Standard",
+        //        "Adaptive Streaming",
+        //        asset,
+        //        "Adaptive Bitrate MP4",
+        //        options);
 
-            //Console.WriteLine("Submitting transcoding job...");
-
-
-            // Submit the job and wait until it is completed.
-            job.Submit();
-
-            job = job.StartExecutionProgressTask(
-                j =>
-                {
-                    //Console.WriteLine("Job state: {0}", j.State);
-                    //Console.WriteLine("Job progress: {0:0.##}%", j.GetOverallProgress());
-                },
-                CancellationToken.None).Result;
-
-            //Console.WriteLine("Transcoding job finished.");
-
-            IAsset outputAsset = job.OutputMediaAssets[0];
-
-            return outputAsset;
-        }
+        //    //Console.WriteLine("Submitting transcoding job...");
 
 
-        static public void PublishAssetGetURLs(IAsset asset, bool onDemaindURL = true, string fileExt = "")
-        {
-            // Publish the output asset by creating an Origin locator for adaptive streaming,
-            // and a SAS locator for progressive download.
+        //    // Submit the job and wait until it is completed.
+        //    job.Submit();
 
-            if (onDemaindURL)
-            {
-                _context.Locators.Create(
-                    LocatorType.OnDemandOrigin,
-                    asset,
-                    AccessPermissions.Read,
-                    TimeSpan.FromDays(30));
+        //    job = job.StartExecutionProgressTask(
+        //        j =>
+        //        {
+        //            //Console.WriteLine("Job state: {0}", j.State);
+        //            //Console.WriteLine("Job progress: {0:0.##}%", j.GetOverallProgress());
+        //        },
+        //        CancellationToken.None).Result;
 
-                // Get the Smooth Streaming, HLS and MPEG-DASH URLs for adaptive streaming,
-                // and the Progressive Download URL.
-                Uri smoothStreamingUri = asset.GetSmoothStreamingUri();
-                Uri hlsUri = asset.GetHlsUri();
-                Uri mpegDashUri = asset.GetMpegDashUri();
+        //    //Console.WriteLine("Transcoding job finished.");
 
-                // Display  the streaming URLs.
-                //Console.WriteLine("Use the following URLs for adaptive streaming: ");
-                //Console.WriteLine(smoothStreamingUri);
-                //Console.WriteLine(hlsUri);
-                //Console.WriteLine(mpegDashUri);
-                //Console.WriteLine();
-            }
-            else
-            {
-                _context.Locators.Create(
-                    LocatorType.Sas,
-                    asset,
-                    AccessPermissions.Read,
-                    TimeSpan.FromDays(30));
+        //    IAsset outputAsset = job.OutputMediaAssets[0];
 
-                IEnumerable<IAssetFile> assetFiles = asset
-                    .AssetFiles
-                    .ToList()
-                    .Where(af => af.Name.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase));
+        //    return outputAsset;
+        //}
 
 
-                // Get the URls for progressive download for each specified file that was generated as a result
-                // of encoding.
+        //static public void PublishAssetGetURLs(IAsset asset, bool onDemaindURL = true, string fileExt = "")
+        //{
+        //    // Publish the output asset by creating an Origin locator for adaptive streaming,
+        //    // and a SAS locator for progressive download.
 
-                List<Uri> sasUris = assetFiles.Select(af => af.GetSasUri()).ToList();
+        //    if (onDemaindURL)
+        //    {
+        //        _context.Locators.Create(
+        //            LocatorType.OnDemandOrigin,
+        //            asset,
+        //            AccessPermissions.Read,
+        //            TimeSpan.FromDays(30));
 
-                // Display the URLs for progressive download.
-                //Console.WriteLine("Use the following URLs for progressive download.");
-                //sasUris.ForEach(uri => Console.WriteLine(uri + "\n"));
-                //Console.WriteLine();
-            }
-        }
+        //        // Get the Smooth Streaming, HLS and MPEG-DASH URLs for adaptive streaming,
+        //        // and the Progressive Download URL.
+        //        Uri smoothStreamingUri = asset.GetSmoothStreamingUri();
+        //        Uri hlsUri = asset.GetHlsUri();
+        //        Uri mpegDashUri = asset.GetMpegDashUri();
 
-        #endregion
+        //        // Display  the streaming URLs.
+        //        //Console.WriteLine("Use the following URLs for adaptive streaming: ");
+        //        //Console.WriteLine(smoothStreamingUri);
+        //        //Console.WriteLine(hlsUri);
+        //        //Console.WriteLine(mpegDashUri);
+        //        //Console.WriteLine();
+        //    }
+        //    else
+        //    {
+        //        _context.Locators.Create(
+        //            LocatorType.Sas,
+        //            asset,
+        //            AccessPermissions.Read,
+        //            TimeSpan.FromDays(30));
+
+        //        IEnumerable<IAssetFile> assetFiles = asset
+        //            .AssetFiles
+        //            .ToList()
+        //            .Where(af => af.Name.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase));
+
+
+        //        // Get the URls for progressive download for each specified file that was generated as a result
+        //        // of encoding.
+
+        //        List<Uri> sasUris = assetFiles.Select(af => af.GetSasUri()).ToList();
+
+        //        // Display the URLs for progressive download.
+        //        //Console.WriteLine("Use the following URLs for progressive download.");
+        //        //sasUris.ForEach(uri => Console.WriteLine(uri + "\n"));
+        //        //Console.WriteLine();
+        //    }
+        //}
+
+        //#endregion
 
     }
 
