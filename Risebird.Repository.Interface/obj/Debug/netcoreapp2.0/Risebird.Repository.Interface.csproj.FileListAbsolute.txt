@@ -117,3 +117,4 @@ C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Repository.Interface\obj\Debug
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\rashmi\source\repos\RisebirdNew\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
