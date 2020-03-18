@@ -290,6 +290,57 @@ namespace Risebird.Repository
                 if (emailid != string.Empty && profileName == "Client")
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by EndDate desc";
+                    var dynamicParameters = new DynamicParameters();
+                    //dynamicParameters.Add("@IsDeleted", 0);
+                    dynamicParameters.Add("@emailid", emailid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<IRF>(query, dynamicParameters);
+                        return results;
+                    }
+                }
+                else if (emailid != string.Empty && profileName == "Recruiter")
+                {
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tr.UserId where ul.EmailId = @emailid Order by EndDate desc";
+                    var dynamicParameters = new DynamicParameters();
+                    //dynamicParameters.Add("@IsDeleted", 0);
+                    dynamicParameters.Add("@emailid", emailid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<IRF>(query, dynamicParameters);
+                        return results;
+                    }
+                }
+                else
+                {
+                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by EndDate desc";
+                    var dynamicParameters = new DynamicParameters();
+                    //dynamicParameters.Add("@IsDeleted", 0);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var results = con.Query<IRF>(query, dynamicParameters);
+                        return results;
+                    }
+                }
+
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<IRF> GetAllIRFNew(string emailid, string profileName)
+        {
+            try
+            {
+                if (emailid != string.Empty && profileName == "Client")
+                {
+                    //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
                     var query = "Select IRF.*, Client.[Name] as ClientCompName, im.id as MeetingId, im.ClientHrContact, im.staffingAgency, im.interviewSlot, im.confirmationStatus, im.interviewDate, im.interviewer, ic.InterviewStatus, ic.MeetingStatus, tc.ClientRoleId from IRF left join InterviewMeetings im on im.IRFId = irf.IRFId join Client on IRF.ClientId = Client.id join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id  join[dbo].[UserList] ul on ul.id = tc.ClientUserId left join InterviewComments ic on ic.InterviewId = im.id where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
@@ -300,7 +351,7 @@ namespace Risebird.Repository
                         return results;
                     }
                 }
-                else if(emailid != string.Empty && profileName == "Recruiter")
+                else if (emailid != string.Empty && profileName == "Recruiter")
                 {
                     var query = "  Select IRF.*, Client.[Name] as ClientCompName, im.id as MeetingId, im.ClientHrContact, im.staffingAgency, im.interviewSlot, im.confirmationStatus, im.interviewDate, im.interviewer, ic.InterviewStatus, ic.MeetingStatus from IRF left join InterviewMeetings im on im.IRFId =irf.IRFId join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id join [dbo].[UserList] ul on ul.id = tr.UserId left join InterviewComments ic on ic.InterviewId = im.id where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
@@ -325,7 +376,7 @@ namespace Risebird.Repository
                     }
                 }
 
-               
+
             }
             catch (SqlException ex)
             {
@@ -333,6 +384,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
 
         public IRF EditIRF(int irfId)
         {
@@ -1159,6 +1211,27 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public IEnumerable<TransClientUser> GetTransClientUserRole()
+        {
+            try
+            {
+                //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
+                var query = "select a.IRFId,a.ClientRoleId, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query);
                     return results;
                 }
 
