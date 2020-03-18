@@ -159,6 +159,16 @@ namespace Risebird.Entities.ViewModel
         public bool IsPaused { get; set; }
 
         public int? PriorityLevel { get; set; }
+        public int? MeetingId { get; set; }
 
+        public string ClientHrContact { get; set; }
+        public string staffingAgency { get; set; }
+        public int interviewSlot { get; set; }
+        public string confirmationStatus { get; set; }
+        public int? InterviewStatus { get; set; }
+        public int? MeetingStatus { get; set; }
+        public int ClientRoleId { get; set; }
+        public DateTime interviewDate { get; set; }
+        public string interviewer { get; set; }
     }
 }

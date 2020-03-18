@@ -290,7 +290,7 @@ namespace Risebird.Repository
                 if (emailid != string.Empty && profileName == "Client")
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where IsDeleted = @IsDeleted and ul.EmailId = @emailid Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tc.ClientUserId where ul.EmailId = @emailid Order by EndDate desc";
+                    var query = "Select IRF.*, Client.[Name] as ClientCompName, im.id as MeetingId, im.ClientHrContact, im.staffingAgency, im.interviewSlot, im.confirmationStatus, im.interviewDate, im.interviewer, ic.InterviewStatus, ic.MeetingStatus, tc.ClientRoleId from IRF left join InterviewMeetings im on im.IRFId = irf.IRFId join Client on IRF.ClientId = Client.id join [dbo].[TransClientUser] tc on tc.IRFId = IRF.id  join[dbo].[UserList] ul on ul.id = tc.ClientUserId left join InterviewComments ic on ic.InterviewId = im.id where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
                     dynamicParameters.Add("@emailid", emailid);
@@ -302,7 +302,7 @@ namespace Risebird.Repository
                 }
                 else if(emailid != string.Empty && profileName == "Recruiter")
                 {
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tr.UserId where ul.EmailId = @emailid Order by EndDate desc";
+                    var query = "  Select IRF.*, Client.[Name] as ClientCompName, im.id as MeetingId, im.ClientHrContact, im.staffingAgency, im.interviewSlot, im.confirmationStatus, im.interviewDate, im.interviewer, ic.InterviewStatus, ic.MeetingStatus from IRF left join InterviewMeetings im on im.IRFId =irf.IRFId join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id join [dbo].[UserList] ul on ul.id = tr.UserId left join InterviewComments ic on ic.InterviewId = im.id where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
                     dynamicParameters.Add("@emailid", emailid);
@@ -315,7 +315,7 @@ namespace Risebird.Repository
                 else
                 {
                     //"Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id where IsDeleted = @IsDeleted Order by StartDate desc"
-                    var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id Order by EndDate desc";
+                    var query = "  Select IRF.*, Client.[Name] as ClientCompName, im.id as MeetingId, im.ClientHrContact, im.staffingAgency, im.interviewSlot, im.confirmationStatus, im.interviewDate, im.interviewer, ic.InterviewStatus, ic.MeetingStatus from IRF left join InterviewMeetings im on im.IRFId = irf.IRFId inner join Client on IRF.ClientId = Client.id left join InterviewComments ic on ic.InterviewId = im.id Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
                     //dynamicParameters.Add("@IsDeleted", 0);
                     using (SqlConnection con = new SqlConnection(connectionString))
