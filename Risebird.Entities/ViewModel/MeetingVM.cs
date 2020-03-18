@@ -149,5 +149,8 @@ namespace Risebird.Entities.ViewModel
         public int CandidateId { get; set; }
         public double InterviewBiometryScore { get; set; }
         public double JoiningBiometryScore { get; set; }
+
+        [Display(Name = "Candidate Visa")]
+        public string CandidateVisa { get; set; }
     }
 }

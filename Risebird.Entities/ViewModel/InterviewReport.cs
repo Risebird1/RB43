@@ -120,5 +120,16 @@ namespace Risebird.Entities.ViewModel
         public double InterviewBiometryScore { get; set; }
         public double JoiningBiometryScore { get; set; }
 
+        [Display(Name = "Candidate Email")]
+        [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
+        ErrorMessage = "Please Enter Correct Email Address")]
+        [Required(ErrorMessage = "Please enter Candidate Email Id.")]
+        public string CandidateEmail { get; set; }
+
+        [Display(Name = "Mobile Number")]
+        public string CandidateMobileNumber { get; set; }
+        [Display(Name = "Candidate Visa")]
+        public string CandidateVisa { get; set; }
+
     }
 }
