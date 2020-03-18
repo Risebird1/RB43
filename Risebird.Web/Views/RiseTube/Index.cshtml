@@ -231,7 +231,7 @@
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
 
-                                                        <div class="form-group">
+                                                        @*<div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
@@ -245,7 +245,7 @@
                                                                     }
                                                                 </select>
                                                             </div>
-                                                        </div>
+                                                        </div>*@
                                                         @*<div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ConfirmationStatus">
                                                                 Confirmation Status
@@ -265,7 +265,7 @@
 
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
-                                                                Interview Status
+                                                                Selection Status
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
@@ -315,14 +315,14 @@
                                                 <div class="video-card-image">
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
-                                                        <video width="100%" height="100%" controls>
+                                                        <video controls style="height: 179px !important; background:black;width:100% ">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
                                                     else
                                                     {
-                                                        <img src="~/RiseTube/img/video-icon.png" style="height:163px;" />
+                                                        <img src="~/RiseTube/img/video-icon.png" style="height: 179px !important;"/>
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
 

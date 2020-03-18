@@ -1160,7 +1160,7 @@
     }
 
     function CalculateOverAll(id, value) {
-
+        debugger;
         value = parseInt(value);
         var index;
         var skillName;
@@ -1264,7 +1264,7 @@
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect);
-
+         debugger;
         //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = average;
 
@@ -1289,7 +1289,7 @@
         });
         chart.render();
 
-
+         debugger;
     }
 
     $(document).ready(function () {
@@ -1848,7 +1848,7 @@
 <script>
 
     window.onload = function () {
-
+     debugger;
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
@@ -1910,7 +1910,7 @@
 
         totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
         document.getElementById("totScore").innerHTML = totalScore;
-
+         debugger;
 
         var chart = new CanvasJS.Chart("scoreChart", {
             theme: "light2", // "light1", "light2", "dark1", "dark2"
@@ -1931,8 +1931,7 @@
 
             }]
         });
-        chart.render();
-
+        chart.render(); debugger;
 
 
     }
