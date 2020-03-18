@@ -42,7 +42,7 @@ namespace Risebird.Web
             services.AddDistributedRedisCache(options =>
             {
                 options.InstanceName = "risebirdportalui";
-                options.Configuration = "risebirdportal.redis.cache.windows.net:6380,password=CZQPNXSRw87bjTASEORqVE58vcDaI562tJcSyt8IJnA=,ssl=True,abortConnect=False";
+                options.Configuration = "risebirdportal2.redis.cache.windows.net:6380,password=D61Xuo4tWZvWAckfOS4dRG+EF8WrmmY+XlxfTDzxZAA=,ssl=True,abortConnect=False";
             });
             services.AddAuthentication(sharedOptions =>
                 {

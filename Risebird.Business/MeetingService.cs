@@ -994,6 +994,26 @@ namespace Risebird.Business
             }
         }
 
+
+        public MeetingVM GetMeetingbyid(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetMeetingbyid(id);
+                if (meeting == null)
+                    return null;
+                else
+                    return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }
 

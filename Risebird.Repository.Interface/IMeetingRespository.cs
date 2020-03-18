@@ -63,5 +63,7 @@ namespace Risebird.Repository.Interface
         bool UpdateInterviewVerificationScore(int meetingId, double confidence);
         bool UpdateJoiningVerificationScore(int meetingId, double confidence);
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
+
+        Task<MeetingVM> GetMeetingbyid(int id);
     }
 }
