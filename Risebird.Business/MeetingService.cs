@@ -49,6 +49,21 @@ namespace Risebird.Business
             }
         }
 
+        public List<MeetingVM> GetRiseTubeMeetings()
+        {
+            try
+            {
+
+                return _meetingRespository.GetRiseTubeMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        
+
         public List<MeetingVM> MultipleCandidateInvites()
         {
             try
@@ -746,6 +761,9 @@ namespace Risebird.Business
                 //get candidateId
                 reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfName);
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
+                reportModel.CandidateEmail = interviewDetails.candidateEmail;
+                reportModel.CandidateVisa = interviewDetails.CandidateVisa;
+                reportModel.CandidateMobileNumber = interviewDetails.MobileNumber;
                 var selectabilityReport = _evaluatorRespository.GetSelectabilityReport(reportModel.CandidateId, irfId);
                 if (selectabilityReport != null && selectabilityReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
