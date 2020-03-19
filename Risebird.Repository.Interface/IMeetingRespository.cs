@@ -65,5 +65,6 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
 
         Task<MeetingVM> GetMeetingbyid(int id);
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings();
     }
 }

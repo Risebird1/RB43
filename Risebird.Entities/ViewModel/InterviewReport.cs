@@ -123,7 +123,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate Email")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
-        [Required(ErrorMessage = "Please enter Candidate Email Id.")]
+      //  [Required(ErrorMessage = "Please enter Candidate Email Id.")]
         public string CandidateEmail { get; set; }
 
         [Display(Name = "Mobile Number")]

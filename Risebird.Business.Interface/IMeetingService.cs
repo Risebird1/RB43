@@ -46,5 +46,6 @@ namespace Risebird.Business.Interface
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
         MeetingVM GetMeetingbyid(int id);
+        List<MeetingVM> GetRiseTubeMeetings();
     }
 }
