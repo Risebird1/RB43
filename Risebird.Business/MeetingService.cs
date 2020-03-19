@@ -49,6 +49,21 @@ namespace Risebird.Business
             }
         }
 
+        public List<MeetingVM> GetRiseTubeMeetings()
+        {
+            try
+            {
+
+                return _meetingRespository.GetRiseTubeMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        
+
         public List<MeetingVM> MultipleCandidateInvites()
         {
             try

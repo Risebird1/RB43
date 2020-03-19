@@ -2064,57 +2064,7 @@ namespace Risebird.Web.Controllers
                             && (filter.JoiningStatus.Count() > 0 ? filter.JoiningStatus.Contains(c.JoiningStatusStatDesc) : c.JoiningStatusStatDesc == string.Empty)).ToList();
 
 
-                            //if (meetings.Count == 0 && filter.StartDate != null && filter.EndDate != null)
-                            //{
-                            //    meetings = _meetingService.GetClientMeetingList(emailid);
-                            //    meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((ReceiveMeetingStatus)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
-
-                            //    foreach (var m in meetings)
-                            //    {
-                            //        if (m.InterviewStatus.HasValue)
-                            //        {
-                            //            m.intervieweStatusStatDesc = ((InterviewStatus)(m.InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (m.L2InterviewStatus.HasValue)
-                            //        {
-                            //            m.L2InterviewStatDesc = ((L2InterviewStatus)(m.L2InterviewStatus)).GetDescription();
-                            //        }
-                            //        if (m.L2InterviewStatus.HasValue)
-                            //        {
-                            //            m.ClientInterviewStatDesc = ((ClientInterviewStatus)(m.ClientInterviewStatus)).GetDescription();
-                            //        }
-                            //        if (m.JoiningStatus.HasValue && m.JoiningStatus != -1)
-                            //        {
-                            //            m.JoiningStatusStatDesc = ((JoiningStatus)(m.JoiningStatus)).GetDescription();
-                            //        }
-                            //        if (m.PreparationStatus.HasValue)
-                            //        {
-                            //            m.PreparationStatusDesc = ((PreparationStatus)(m.PreparationStatus)).GetDescription();
-                            //        }
-                            //        if (m.OfferStatus.HasValue && m.OfferStatus != -1)
-                            //        {
-                            //            m.OfferStatusStatDesc = ((OfferStatus)(m.OfferStatus)).GetDescription();
-                            //        }
-                            //        if (m.MeetingStatus.HasValue)
-                            //        {
-                            //            m.MeetingStatusStatusDesc = ((MeetingStatus)(m.MeetingStatus)).GetDescription();
-                            //        }
-                            //        if (m.QCStatus.HasValue)
-                            //        {
-                            //            m.QCStatusStatusDesc = ((QCStatus)(m.QCStatus)).GetDescription();
-                            //        }
-                            //        if(m.IsApproved.HasValue && m.IsApproved != -1)
-                            //        {
-                            //            m.NextLevelApprovalStat = ((NextLevelApprovalStatus)(m.IsApproved)).GetDescription();
-                            //        }
-                            //        if (m.IsSelected.HasValue && m.IsSelected != -1)
-                            //        {
-                            //            m.FinalSelectionStat = ((FinalSelectionStatus)(m.IsSelected)).GetDescription();
-                            //        }
-                                    
-                            //    }
-                            //    meetings = meetings.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
-                            //}
+                        
                             }
                         ViewBag.ClientHRList = _meetingService.GetClientHRContactList(emailid, meetings);
                         ViewBag.ClientNameList = _meetingService.GetEndClientList(emailid, meetings);

@@ -9,26 +9,28 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
-    string[] primarySkills = new string[] { };
-    string[] RFID = new string[] { };
     string[] ClientHR = new string[] { };
-    string[] ConfirmationStatus = new string[] { };
-    string[] MeetingStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] ApprovalStatus = new string[] { };
+    string[] JoiningStatus = new string[] { };
+    string[] OfferStatus = new string[] { };
     string[] InterviewStatus = new string[] { };
-    string[] Interviewer = new string[] { };
+    string[] CandidateName = new string[] { };
+    string[] CandidateLocation = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
     filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
-    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
-    RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
-    ConfirmationStatus = filter.ConfirmationStatus != null ? filter.ConfirmationStatus : new string[] { };
-    MeetingStatus = filter.MeetingStatus != null ? filter.MeetingStatus : new string[] { };
     InterviewStatus = filter.InterviewStatus != null ? filter.InterviewStatus : new string[] { };
-    Interviewer = filter.Interviewer != null ? filter.Interviewer : new string[] { };
+    CandidateName = filter.CandidateName != null ? filter.CandidateName : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ApprovalStatus = filter.ApprovalStatus != null ? filter.ApprovalStatus : new string[] { };
+    JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
+    OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
+    CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
 }
 <style>
     .canvasjs-chart-credit {
@@ -248,6 +250,161 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
+                                                            Candidate Name
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.candidateName).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateLocation">
+                                                            Candidate Location
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.preferredLocation).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
+                                                            Selection Status
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                            Client HR
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                            Approval Status
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                            Joining Status
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                            Offer Status
+                                                        </label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                @if (HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters") != null)
+                                                                {
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    @*foreach (var item in ViewBag.ClientNameList)
+                            {
+                                @if (item != null && item != "")
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }*@
+                                                                }
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               
+                                                @*<div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
                                                             Client
@@ -267,24 +424,9 @@
                                                     </div>
 
 
-                                                </div>
+                                                </div>*@
                                                 <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
-                                                            Interview Status
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
+
                                                     <div class="form-group col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6">
@@ -1792,7 +1934,7 @@
 <script>
 
     window.onload = function () {
-          debugger;
+        
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
@@ -1904,12 +2046,7 @@
                 });
 
 
-         $("#RFID").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
+     
          $("#ClientHR").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
@@ -1917,19 +2054,7 @@
                     maxHeight: 200
                 });
 
-        $("#ConfirmationStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
-
-         $("#MeetingStatus").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
+      
 
         $("#InterviewStatus").multiselect({
                     includeSelectAllOption: true,
@@ -1937,13 +2062,42 @@
                     buttonWidth: '270px',
                     maxHeight: 200
                 });
-
-        $("#Interviewer").multiselect({
-                    includeSelectAllOption: true,
-                    selectedClass: 'active1',
-                    buttonWidth: '270px',
-                    maxHeight: 200
-                });
+            $("#CandidateName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#ApprovalStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#JoiningStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#OfferStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#CandidateLocation").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
 
     });
     function ResetFilter() {
@@ -1960,31 +2114,25 @@
         function ApplySessionFilter() {
             var strtDte = '@strtDte';
             var endDte = '@endDte';
-            var primarySkillsArr = @Html.Raw(Json.Serialize(primarySkills));
-            var rFID =  @Html.Raw(Json.Serialize(RFID));
-            var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
-            var confirmationStatus =  @Html.Raw(Json.Serialize(ConfirmationStatus));
-            var meetingStatus =  @Html.Raw(Json.Serialize(MeetingStatus));
+           var clientHR =  @Html.Raw(Json.Serialize(ClientHR));
             var interviewStatus =  @Html.Raw(Json.Serialize(InterviewStatus));
-            var interviewer =  @Html.Raw(Json.Serialize(Interviewer));
+            var approvalStatus = @Html.Raw(Json.Serialize(ApprovalStatus));
+            var joiningStatus = @Html.Raw(Json.Serialize(JoiningStatus));
+            var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
+            var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var candidateLocation=  @Html.Raw(Json.Serialize(CandidateLocation));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
-            $("#PrimarySkill").val(primarySkillsArr);
-            $("#RFID").val(rFID);
             $("#ClientHR").val(clientHR);
-            $("#ConfirmationStatus").val(confirmationStatus);
-            $("#MeetingStatus").val(meetingStatus);
             $("#InterviewStatus").val(interviewStatus);
-            $("#Interviewer").val(interviewer);
-            //var form = $("#form").serialize();
-            // $.ajax({
-            //type: "POST",
-            //url: "/risetube/VideoPage",
-            //data: form,
-            //     success: function (data) {
-            //     }
-            //    });
+            $("#ApprovalStatus").val(approvalStatus);
+            $("#JoiningStatus").val(joiningStatus);
+            $("#OfferStatus").val(offerStatus);
+            $("#CandidateName").val(candidateName);
+            $("#ClientName").val(clientName);
+            $("#CandidateLocation").val(candidateLocation);
     }
 
 
