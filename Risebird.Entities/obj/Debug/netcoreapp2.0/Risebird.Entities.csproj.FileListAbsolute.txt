@@ -69,7 +69,6 @@ C:\Users\ankit\source\repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\R
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.deps.json
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csproj.CoreCompileInputs.cache
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
