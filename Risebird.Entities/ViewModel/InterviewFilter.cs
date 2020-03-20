@@ -20,6 +20,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string[] ClientName { get; set; }
-
+        public string[] CandidateName { get; set; }
+        public string [] CandidateLocation { get; set; }
     }
 }
