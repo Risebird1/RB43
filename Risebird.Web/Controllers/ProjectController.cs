@@ -239,7 +239,7 @@ namespace Risebird.Web.Controllers
                 }
                 projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
 
-                ViewBag.Clients = new SelectList(_projectService.GetClients(), "id", "Name");
+                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
                 return View(projectModel);
             }
             else
@@ -291,8 +291,7 @@ namespace Risebird.Web.Controllers
             {
 
                 var projectModel = _projectService.GetProject(id);
-                ViewBag.Clients = new SelectList(_projectService.GetClients(), "id", "Name");
-                ViewBag.id = id;
+                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
                 return View(projectModel);
             }
             else
