@@ -10,6 +10,8 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using X.PagedList;
@@ -61,6 +63,20 @@ namespace Risebird.Web.Controllers
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
                         var modelList = _meetingService.GetRiseTubeMeetings();
+                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                        ViewBag.NextLevelApprovalStatusList =
+                            from NextLevelApprovalStatus s in Enum.GetValues(typeof(NextLevelApprovalStatus))
+                            select (s.GetDescription());
+                        ViewBag.JoiningStatusList =
+                            from JoiningStatus s in Enum.GetValues(typeof(JoiningStatus))
+                            select (s.GetDescription());
+                        ViewBag.OfferStatusList =
+                           from OfferStatus s in Enum.GetValues(typeof(OfferStatus))
+                           select (s.GetDescription());
                         modelList = modelList.Select(x =>
                         {
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
@@ -99,7 +115,11 @@ namespace Risebird.Web.Controllers
                                  && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                                   && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                             && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)).ToList();
-
+                            ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                            ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                            ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                            ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                            ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
 
 
                         }
@@ -182,7 +202,14 @@ namespace Risebird.Web.Controllers
                              && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
                               && (filter.CandidateLocation.Count() > 0 ? filter.CandidateLocation.Contains(c.preferredLocation) : c.preferredLocation == null)
                         && (filter.InterviewStatus.Count() > 0 ? filter.InterviewStatus.Contains(c.intervieweStatusStatDesc) : c.intervieweStatusStatDesc == string.Empty)).ToList();
-
+                        ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
+                        ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
+                        ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
+                        ViewBag.preferredLocationList = modelList.Select(x => x.preferredLocation).Distinct().ToList();
+                        ViewBag.ClientNameList = modelList.Select(x => x.ClientName).Distinct().ToList();
+                        ViewBag.NextLevelApprovalStatusList = modelList.Select(x => x.NextLevelApprovalStat).ToArray();
+                        ViewBag.JoiningStatusList = modelList.Select(x => x.JoiningStatusStatDesc).ToArray();
+                        ViewBag.OfferStatusList = modelList.Select(x => x.OfferStatusStatDesc).ToArray();
                         return View(modelList.ToPagedList(Page ?? 1, 12));
                     }
                     else
@@ -535,7 +562,7 @@ namespace Risebird.Web.Controllers
         }
 
 
-
+    
 
     }
 }
