@@ -28,8 +28,9 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private IIRFService _iRFService;
         private IIRFRepository _iRFRepository;
+        private IUserRepository _userRepository;
 
-        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService)
+        public RiseTubeController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, IUserRepository userRepository)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -37,6 +38,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
             _iRFRepository = iRFRepository;
             _iRFService = iRFService;
+            _userRepository = userRepository;
         }
 
 
@@ -52,17 +54,29 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
+                    bool isClientUser = false;
+                    int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        if(profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            isClientUser = true;
+                        }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
                         var modelList = _meetingService.GetRiseTubeMeetings();
+                        if(isClientUser)
+                        {
+                            modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
+                        }
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
                         ViewBag.PrimarySkillList = modelList.Select(x => x.JDTiltle).Distinct().ToList();
                         ViewBag.ClientHrContactList = modelList.Select(x => x.ClientHrContact).Distinct().ToList();
@@ -156,10 +170,19 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    bool isClientUser = false;
+                    int ClientId =0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        if (profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            isClientUser = true;
+                        }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -170,7 +193,10 @@ namespace Risebird.Web.Controllers
                             HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                         }
                         var modelList = _meetingService.GetRiseTubeMeetings();
-
+                        if (isClientUser)
+                        {
+                            modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
+                        }
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             modelList = modelList.Where(t => t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -266,17 +292,29 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
+                    bool isClientUser = false;
+                    int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        if (profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            isClientUser = true;
+                        }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
                         var modelList1 = _meetingService.GetRiseTubeMeetings();
+                        if (isClientUser)
+                        {
+                            modelList1 = modelList1.Where(x => x.ClientId == ClientId).ToList();
+                        }
                         MeetingVM model = _meetingService.GetMeetingbyid(id);
                       
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
@@ -402,10 +440,19 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    bool isClientUser = false;
+                    int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                     {
+                        if (profileName == "Client")
+                        {
+                            var emailid = HttpContext.Session.GetString("email")?.Trim();
+                            emailid = emailid.Replace("\"", "");
+                            ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
+                            isClientUser = true;
+                        }
                         if (TempData["SuccessErrorMessageInterview"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
@@ -419,6 +466,10 @@ namespace Risebird.Web.Controllers
 
 
                         var modelList = _meetingService.GetRiseTubeMeetings();
+                        if (isClientUser)
+                        {
+                            modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
+                        }
                         MeetingVM model = _meetingService.GetMeetingbyid(id);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();

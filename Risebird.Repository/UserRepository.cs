@@ -208,6 +208,30 @@ namespace Risebird.Repository
             return null;
         }
 
+        public ClientUserVM GetClientUserDetails(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("Email", emailID);
+                    return  SqlMapper.Query<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
+                         commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddClientUser(ClientUserVM client)
         {
             try

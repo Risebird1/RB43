@@ -479,7 +479,7 @@
                                                         <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
                                                         @if (item.IsBiometricEnabled)
                                                         {
-                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
 
                                                         }
                                                     </td>

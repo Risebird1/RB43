@@ -5516,7 +5516,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult VerifyJoiningAudio(int candidateId, int irfId, int meetingId)
+        public IActionResult VerifyJoiningAudio(int candidateId,string CandidateName, int irfId, int meetingId)
         {
             try
             {
