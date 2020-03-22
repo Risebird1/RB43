@@ -99,11 +99,11 @@ namespace Risebird.Repository
                 {
                     
                     
-                    string sqlInsertReport = "INSERT INTO Project (Name,Client, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@Client,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
+                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         Name = projectDetails.Name,
-                        Client=projectDetails.Client,
+                        ClientId = projectDetails.ClientId,
                         EndClient = projectDetails.EndClient,
                         Location = projectDetails.Location,
                         ProjectOwnerId = projectDetails.ProjectOwnerId,
@@ -207,7 +207,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", projectDetails.id);
                 parameters.Add("@Name", projectDetails.Name);
-                parameters.Add("@Client", projectDetails.Client);
+                parameters.Add("@ClientId", projectDetails.ClientId);
                 parameters.Add("@EndClient", projectDetails.EndClient);
                 parameters.Add("@Location", projectDetails.Location);
                 parameters.Add("@ProjectOwnerId", projectDetails.ProjectOwnerId);

@@ -52,6 +52,6 @@ namespace Risebird.Business.Interface
         List<IRFVm> GetUpComingIRFList();
         bool PauseIRF(int irfId, string irfName);
         bool PlayIRF(int irfId, string irfName);
-
+        IEnumerable<IRF> GetAllIRFs(string emailId, string profileName);
     }
 }
