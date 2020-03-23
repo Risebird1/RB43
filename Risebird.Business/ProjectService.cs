@@ -49,6 +49,22 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public IEnumerable<Project> GetProjects(string emailId, string profile)
+        {
+            try
+            {
+                var projects = _projectRepository.GetProjects(emailId, profile).Result;
+                return projects;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public IEnumerable<IRF> GetAllIRF()
         {
             try
@@ -123,6 +139,44 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public Project GetProjectEdit(int id)
+        {
+            try
+            {
+                string irfList = string.Empty;
+                var project = _projectRepository.GetProjectbyId(id);
+                var projectCluster = _projectRepository.GetProjectCluster(id);
+                if (projectCluster != null && projectCluster.Count() != 0)
+                {
+                    foreach (var item in projectCluster)
+                    {
+                        item.PrimarySkills = item.JDTiltle.Split("|")[0];
+                    }
+                    irfList = string.Join(",", from item in projectCluster select item.IRFId);
+                }
+                var remainingIRF = _projectRepository.GetIRFByClient(project.ClientId,irfList);
+                if (remainingIRF !=null&& remainingIRF.Count()!=0)
+                {
+                    foreach (var item in remainingIRF)
+                    {
+                        item.PrimarySkills = item.JDTiltle.Split("|")[0];
+                    }
+                }
+                var objList = new List<ProjectIRFMapping>();
+                objList.AddRange(projectCluster);
+                objList.AddRange(remainingIRF);
+                project.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
+                return project;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
 
         public IEnumerable<ProjectIRFMapping> GetProjectCluster(int id)
         {

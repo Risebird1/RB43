@@ -18,5 +18,8 @@ namespace Risebird.Repository.Interface
         IEnumerable<Client> GetClients();
         Task<bool> UnArchiveProject(int id);
         IEnumerable<int> GetIRFIdList(int id);
+        Task<IEnumerable<Project>> GetProjects(string emailID, string profileName);
+        Project GetProjectbyId(int id);
+        IEnumerable<ProjectIRFMapping> GetIRFByClient(int clientId, string irfIdList);
     }
 }

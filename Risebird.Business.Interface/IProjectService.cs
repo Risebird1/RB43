@@ -10,6 +10,7 @@ namespace Risebird.Business.Interface
     public interface IProjectService
     {
         IEnumerable<Project> GetAllProjects();
+        IEnumerable<Project> GetProjects(string emailId, string profile);
         IEnumerable<IRF> GetAllIRF();
         Task<bool> AddProject(Project projectDetails);
         Task<bool> DeleteProject(int id);
@@ -19,5 +20,6 @@ namespace Risebird.Business.Interface
         IEnumerable<ProjectIRFMapping> GetProjectCluster(int id);
         Task<bool> UnArchiveProject(int id);
         ProjectFunnel GetFunnelData(int id);
+        Project GetProjectEdit(int id);
     }
 }
