@@ -8,7 +8,7 @@ CREATE TABLE [dbo].[Project](
 	[Name] [varchar](100) NULL,
 	[IsDeleted] [bit] NOT NULL DEFAULT '0',
 	[Location] [varchar](100) NULL,
-	[Client] [varchar](100) NULL,
+	[ClientId] [int] NOT NULL DEFAULT '0',
 	[EndClient] [varchar](100) NULL,
 	[ProjectOwnerId] [varchar](100) NULL,
 	[CreatedOn] [date] NULL,
@@ -30,6 +30,17 @@ BEGIN
     ALTER TABLE Project
     Add CreatedOn Date
 END
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientId')
+      AND Object_ID = Object_ID(N'ClientId'))
+BEGIN
+    ALTER TABLE Project
+    Add ClientId INT NOT NULL DEFAULT 0
+END
+
 END
 
 

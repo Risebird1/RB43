@@ -48,21 +48,70 @@ namespace Risebird.Repository
             return null;
         }
 
-        public IEnumerable<ProjectIRFMapping> GetProjectCluster(int projectId)
+        public async Task<IEnumerable<Project>> GetProjects(string emailID, string profileName)
         {
             try
             {
-                var query = "select ProjectIRFMapping.*, Project.[Name] as ProjectName, IRF.IRFId as IRFName, IRF.ClientId, IRF.id as IRFId from ProjectIRFMapping inner join IRF on ProjectIRFMapping.IRFId = IRF.id left join Project on ProjectIRFMapping.ProjectId = Project.id where ProjectIRFMapping.ProjectId = @ProjectId and ProjectIRFMapping.IsAdded = 1";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@ProjectId", projectId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<ProjectIRFMapping>(query, dynamicParameters);
-                    return results;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailID);
+                    parameters.Add("@Profile", profileName);
+                    return await SqlMapper.QueryAsync<Project>(con, "usp_GetAllProjects", parameters,
+                         commandType: CommandType.StoredProcedure);
                 }
 
             }
             catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public Project GetProjectbyId(int id)
+        {
+            try
+            {
+                var query = "select * from Project where id=@id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Project>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<ProjectIRFMapping> GetProjectCluster(int projectId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ProjectId", projectId);
+                    return SqlMapper.Query<ProjectIRFMapping>(con, "usp_GetProjectCluster", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
@@ -91,6 +140,37 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<ProjectIRFMapping> GetIRFByClient(int clientId, string irfIdList)
+        {
+            try
+            {
+                string query = string.Empty;
+                if(!string.IsNullOrEmpty(irfIdList))
+                {
+                    query = "Select IRF.id as IRFId,IRF.IRFId as IRFName, Client.[Name] as Client, irf.JDTiltle, IRF.ClientId from IRF inner join Client on IRF.ClientId = Client.id where irf.ClientId=@ClientId and IsDeleted = @IsDeleted and irf.id not in (" + irfIdList + ")";
+                }
+                else
+                {
+                    query = "Select IRF.id as IRFId,IRF.IRFId as IRFName, Client.[Name] as Client, irf.JDTiltle, IRF.ClientId from IRF inner join Client on IRF.ClientId = Client.id where irf.ClientId=@ClientId and IsDeleted = @IsDeleted";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
+                dynamicParameters.Add("@ClientId", clientId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<ProjectIRFMapping>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
         public async Task<bool> AddProject(Project projectDetails)
         {
             try
@@ -99,11 +179,11 @@ namespace Risebird.Repository
                 {
                     
                     
-                    string sqlInsertReport = "INSERT INTO Project (Name,Client, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@Client,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
+                    string sqlInsertReport = "INSERT INTO Project (Name,ClientId, EndClient, Location, ProjectOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@ProjectOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         Name = projectDetails.Name,
-                        Client=projectDetails.Client,
+                        ClientId = projectDetails.ClientId,
                         EndClient = projectDetails.EndClient,
                         Location = projectDetails.Location,
                         ProjectOwnerId = projectDetails.ProjectOwnerId,
@@ -207,7 +287,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", projectDetails.id);
                 parameters.Add("@Name", projectDetails.Name);
-                parameters.Add("@Client", projectDetails.Client);
+                parameters.Add("@ClientId", projectDetails.ClientId);
                 parameters.Add("@EndClient", projectDetails.EndClient);
                 parameters.Add("@Location", projectDetails.Location);
                 parameters.Add("@ProjectOwnerId", projectDetails.ProjectOwnerId);

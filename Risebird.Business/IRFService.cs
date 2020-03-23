@@ -999,5 +999,34 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public IEnumerable<IRF> GetAllIRFs(string emailId, string profileName)
+        {
+            try
+            {
+                var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.Where(x=> x.EndDate > DateTime.Now).ToList();
+                foreach (var irf in irfList)
+                {
+                    if(irf.TotalBudget!=0)
+                    {
+                        var consumedBudget = (irf.TotalBudgetConsumed / irf.TotalBudget) * (100);
+                        irf.BudgetConsumed = consumedBudget.ToString() + "%";
+                    }
+                    else
+                    {
+                        irf.BudgetConsumed = "Not Defined";
+                    }
+                }
+                return irfList;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

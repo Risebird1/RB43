@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -29,7 +30,11 @@ namespace Risebird.Entities.ViewModel
         public IList<ProjectIRFMapping> ProjectIRFMappings { get; set; }
         public bool IsClientUser { get; set; }
 
+        [Required]
+        [DisplayName("Client")]
+        public int ClientId { get; set; }
         public DateTime CreatedOn { get; set; }
+        public SelectList ClientList { get; set; }
 
     }
 }

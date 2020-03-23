@@ -33,7 +33,7 @@ namespace Risebird.Web.Controllers
             _irfService = irfService;
             _irfRepository = irfRepository;
         }
-
+   
         [Authorize]
         public IActionResult Index()
         {
@@ -45,64 +45,50 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    var projectList = _projectService.GetAllProjects().ToList();
-                    //projectList.Select(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
+                    var model = new ProjectViewModel();
+                    var projectList = _projectService.GetProjects(emailid, profileName).ToList();
                     projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                    //foreach (var item in projectList)
-                    //{
-                    //    item.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(item.IsDeleted)).GetDescription();
-                    //}
-                    if (profileName != null && profileName.Contains("Client"))
+
+                    model.ProjectList = projectList;
+                    
+                    if (TempData["SuccessErrorMessageProject"] != null)
                     {
-                        ViewBag.IsClientUser = true;
-                        projectList.ToList().ForEach(c => c.IsClientUser = true);
-                    }
-                    else
-                    {
-                        ViewBag.IsClientUser = false;
-                    }
-                    if (TempData["SuccessErrorMessage"] != null)
-                    {
-                        ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
-                        TempData.Remove("SuccessErrorMessage");
+                        model.Message = TempData["SuccessErrorMessageProject"].ToString();
+                        TempData.Remove("SuccessErrorMessageProject");
                     }
                     if (HttpContext.Session.GetString("Projectfilters") != null)
                     {
                         var filter = JsonConvert.DeserializeObject<ProjectFilter>(HttpContext.Session.GetString("Projectfilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            projectList = projectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
+                            model.ProjectList = model.ProjectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
                         }
-                        
-                        filter.Location = filter.Location == null ? filter.Location = projectList.Select(x=>x.Location).ToArray() : filter.Location = filter.Location;
-                        filter.ProjectID = filter.ProjectID == null ? filter.ProjectID = projectList.Select(x => x.Name).ToArray() : filter.ProjectID = filter.ProjectID;
-                        filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = projectList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
-                        filter.ClientName = filter.ClientName == null ? filter.ClientName = projectList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
+
+                        filter.Location = filter.Location == null ? filter.Location = model.ProjectList.Select(x => x.Location).ToArray() : filter.Location = filter.Location;
+                        filter.ProjectID = filter.ProjectID == null ? filter.ProjectID = model.ProjectList.Select(x => x.Name).ToArray() : filter.ProjectID = filter.ProjectID;
+                        filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.ProjectList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
+                        filter.ClientName = filter.ClientName == null ? filter.ClientName = model.ProjectList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
 
                         //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
-                        projectList = projectList.Where(c => filter.Location.Contains(c.Location)
+                        model.ProjectList = model.ProjectList.Where(c => filter.Location.Contains(c.Location)
                         && filter.ProjectID.Contains(c.Name)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.EndClient) : c.EndClient == null)).ToList();
-                        
-                        if (projectList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+
+                        if (model.ProjectList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                         {
-                            projectList = _projectService.GetAllProjects().ToList();
-
-                            projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-
-                            if (profileName != null && profileName.Contains("Client"))
-                            {
-                                projectList.ToList().ForEach(c => c.IsClientUser = true);
-                            }
-                            projectList = projectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
-
+                            model.ProjectList = projectList;
+                            model.ProjectList = model.ProjectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
+                            
                         }
 
                     }
-
-
-                    return View(projectList);
+                    
+                    if (profileName != null && profileName.Contains("Client"))
+                    {
+                        model.IsClientUser = true;
+                    }
+                    return View(model);
                 }
                 else
                 {
@@ -114,7 +100,6 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
-
         [Authorize]
         [HttpPost]
         public IActionResult Index(ProjectFilter filter)
@@ -132,55 +117,45 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client")
                 {
-                    var projectList = _projectService.GetAllProjects().ToList();
+                    var model = new ProjectViewModel();
+                    var projectList = _projectService.GetProjects(emailid, profileName).ToList();
                     projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-
-                    if (profileName != null && profileName.Contains("Client"))
-                    {
-                        ViewBag.IsClientUser = true;
-                        projectList.ToList().ForEach(c => c.IsClientUser = true);
-                    }
-                    else
-                    {
-                        ViewBag.IsClientUser = false;
-                    }
+                    model.ProjectList = projectList;
+                    
                     if (TempData["SuccessErrorMessage"] != null)
                     {
-                        ViewBag.Message = TempData["SuccessErrorMessage"].ToString();
+                        model.Message = TempData["SuccessErrorMessage"].ToString();
                         TempData.Remove("SuccessErrorMessage");
                     }
 
                     filter = JsonConvert.DeserializeObject<ProjectFilter>(HttpContext.Session.GetString("Projectfilters"));
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
-                        projectList = projectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
+                        model.ProjectList = model.ProjectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
                     }
 
-                    filter.Location = filter.Location == null ? filter.Location = projectList.Select(x => x.Location).ToArray() : filter.Location = filter.Location;
-                    filter.ProjectID = filter.ProjectID == null ? filter.ProjectID = projectList.Select(x => x.Name).ToArray() : filter.ProjectID = filter.ProjectID;
-                    filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = projectList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
-                    filter.ClientName = filter.ClientName == null ? filter.ClientName = projectList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
+                    filter.Location = filter.Location == null ? filter.Location = model.ProjectList.Select(x => x.Location).ToArray() : filter.Location = filter.Location;
+                    filter.ProjectID = filter.ProjectID == null ? filter.ProjectID = model.ProjectList.Select(x => x.Name).ToArray() : filter.ProjectID = filter.ProjectID;
+                    filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.ProjectList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
+                    filter.ClientName = filter.ClientName == null ? filter.ClientName = model.ProjectList.Select(x => x.EndClient).ToArray() : filter.ClientName = filter.ClientName;
 
                     //irfList = irfList.Where(x => filter.ClientRole.Intersect(x.ClientRole).Any());
-                    projectList = projectList.Where(c => filter.Location.Contains(c.Location)
+                    model.ProjectList = model.ProjectList.Where(c => filter.Location.Contains(c.Location)
                     && filter.ProjectID.Contains(c.Name)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.EndClient) : c.EndClient == null)).ToList();
 
-                    if (projectList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                    if (model.ProjectList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
-                        projectList = _projectService.GetAllProjects().ToList();
-
-                        projectList.ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-
-                        if (profileName != null && profileName.Contains("Client"))
-                        {
-                            projectList.ToList().ForEach(c => c.IsClientUser = true);
-                        }
-                        projectList = projectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
+                        model.ProjectList = projectList;
+                        model.ProjectList = model.ProjectList.Where(t => t.CreatedOn.Date >= filter.StartDate && t.CreatedOn.Date <= filter.EndDate).ToList();
                     }
-                    
-                    return View(projectList);
+                    if (profileName != null && profileName.Contains("Client"))
+                    {
+                        model.IsClientUser = true;
+                    }
+
+                    return View(model);
                 }
                 else
                 {
@@ -192,6 +167,8 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("SignOut", "Session");
             }
         }
+
+        
         public async Task<IActionResult> ResetProjectFilter()
         {
             try
@@ -239,7 +216,7 @@ namespace Risebird.Web.Controllers
                 }
                 projectModel.ProjectIRFMappings = (IList<ProjectIRFMapping>)(objList);
 
-                ViewBag.Clients = new SelectList(_projectService.GetClients(), "id", "Name");
+                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
                 return View(projectModel);
             }
             else
@@ -290,9 +267,8 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null)
             {
 
-                var projectModel = _projectService.GetProject(id);
-                ViewBag.Clients = new SelectList(_projectService.GetClients(), "id", "Name");
-                ViewBag.id = id;
+                var projectModel = _projectService.GetProjectEdit(id);
+                projectModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
                 return View(projectModel);
             }
             else
@@ -309,8 +285,6 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    //profileName = profileName.Replace("\"", "");
                     if (_projectService.UpdateProject(model))
                     {
                         TempData["SuccessErrorMessageProject"] = "Project edited Successfully";

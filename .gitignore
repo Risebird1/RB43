@@ -262,3 +262,4 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Risebird.Web/Output/output-3ba815b9ca2148da8cac3ac9bf502e01

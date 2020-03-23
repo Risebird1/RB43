@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Risebird.CommonHelper.Interface
 {
     public interface IAzureStorageHelper
@@ -32,5 +33,9 @@ namespace Risebird.CommonHelper.Interface
         Task<bool> CheckBlobContainerFile(string vhdName, string containerName);
         string GetBlobData(string containerName, string fileName);
         void InsertBatchInTable(string tableName, TableBatchOperation tableBatchOperation);
+        //string UploadVideo(string filename);
+        //Task<string> UploadVideoAsset(string filePath);
+
+        //string UploadAndPublishVideo(string filePath);
     }
 }

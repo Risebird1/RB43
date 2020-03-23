@@ -300,7 +300,7 @@ namespace Risebird.Repository
                         return results;
                     }
                 }
-                else if(emailid != string.Empty && profileName == "Recruiter")
+                else if (emailid != string.Empty && profileName == "Recruiter")
                 {
                     var query = "Select IRF.*, Client.[Name] as ClientCompName from IRF inner join Client on IRF.ClientId = Client.id inner join [dbo].[TransRecruiter] tr on tr.IRFId = IRF.id inner join[dbo].[UserList] ul on ul.id = tr.UserId where ul.EmailId = @emailid Order by EndDate desc";
                     var dynamicParameters = new DynamicParameters();
@@ -325,11 +325,38 @@ namespace Risebird.Repository
                     }
                 }
 
-               
+
             }
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public async Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailID);
+                    parameters.Add("@Profile", profileName);
+                    parameters.Add("@timeNow", DateTime.Now);
+                    return await SqlMapper.QueryAsync<IRF>(con, "usp_GetAllIRF", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -1159,6 +1186,27 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransClientUser>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+
+        public IEnumerable<TransClientUser> GetTransClientUserRole()
+        {
+            try
+            {
+                //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
+                var query = "select a.IRFId,a.ClientRoleId, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId";
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<TransClientUser>(query);
                     return results;
                 }
 

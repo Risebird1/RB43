@@ -13,6 +13,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsAdded { get; set; }
         public string IRFName { get; set; }
         public string PrimarySkills { get; set; }
+        public string JDTiltle { get; set; }
         public string Client { get; set; }
         public int ClientId { get; set; }
     }

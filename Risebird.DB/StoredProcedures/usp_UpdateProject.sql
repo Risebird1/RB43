@@ -16,7 +16,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateProject]
 @id int,
 @Name varchar(200),
 @Location varchar(200),
-@Client varchar(200),
+@ClientId varchar(200),
 @EndClient varchar(200),
 @ProjectOwnerId varchar(200)
 
@@ -27,7 +27,7 @@ Begin
 update Project set
 [Name]=@Name,
 [Location]=@Location,
-[Client]=@Client,
+[ClientId]=@ClientId,
 [EndClient]=@EndClient,
 [ProjectownerId]=@ProjectOwnerId
 Where id =@id
@@ -36,6 +36,7 @@ delete from ProjectIRFMapping where ProjectId=@id
 
 
 End
+
 
 
 GO
