@@ -11,7 +11,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<UserList> GetRisebirdUsers();
         IEnumerable<InterviewerVM> GetInterviewers();
         IEnumerable<ClientUserVM> GetClientUsers();
-
+        ClientUserVM GetClientUserDetails(string emailID);
         IEnumerable<QCInterviewerVM> GetQCInterviewers();
         Task<bool> AddUser(UserList user);
         Task<bool> DeleteUser(int id);

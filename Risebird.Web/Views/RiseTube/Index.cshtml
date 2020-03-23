@@ -167,12 +167,12 @@
                                                     <div class="col-md-6 col-sm-6">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName">
                                                                 Candidate Name
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.CandidateList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -187,7 +187,7 @@
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
-                                                                    @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.PrimarySkillList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -221,7 +221,7 @@
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.ClientHrContactList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -234,43 +234,21 @@
 
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
-
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
-                                                                Approval Status
-                                                            </label>
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
                                                             <div class="col-md-6 col-sm-6">
-                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.ClientNameList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
                                                                             <option value="@item">@item</option>
                                                                         }
                                                                     }
+
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
-                                                                Joining Status
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6">
-
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
                                                                 Offer Status
@@ -287,34 +265,9 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @if (HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters") != null)
-                                                                    {
-                                                                        @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
-                                                                        {
-                                                                            @if (item != null && item != "")
-                                                                            {
-                                                                                <option value="@item">@item</option>
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @*foreach (var item in ViewBag.ClientNameList)
-                            {
-                                @if (item != null && item != "")
-                                {
-                                    <option value="@item">@item</option>
-                                }
-                            }*@
-                                                                    }
+                                                     
 
-                                                                </select>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
@@ -323,7 +276,7 @@
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="CandidateLocation" name="CandidateLocation" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.preferredLocation).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.preferredLocationList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -333,7 +286,42 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                       
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                Approval Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.NextLevelApprovalStatusList)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                Joining Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in ViewBag.JoiningStatusList)
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
 
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
@@ -411,26 +399,7 @@
                                             </div>
                                         </div>
                                     }
-                                    @*<div class="col-xl-3 col-sm-6 mb-3">
-                                            <div class="video-card">
-                                                <div class="video-card-image">
-                                                    <a class="play-icon" href="#"><i class="fas fa-play-circle"></i></a>
-                                                    <a href="#"><img class="img-fluid" src="~/RiseTube/img/v2.png" alt=""></a>
-                                                    <div class="time">3:50</div>
-                                                </div>
-                                                <div class="video-card-body">
-                                                    <div class="video-title">
-                                                        <a href="#">There are many variations of passages of Lorem</a>
-                                                    </div>
-                                                    <div class="video-page text-success">
-                                                        Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>
-                                                    </div>
-                                                    <div class="video-view">
-                                                        1.8M views &nbsp;<i class="fas fa-calendar-alt"></i> 11 Months ago
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>*@
+                                   
 
                                 </div>
                             </div>

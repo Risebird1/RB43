@@ -951,11 +951,14 @@ namespace Risebird.Business
                 var model = new VerifyCandidateAudio();
                 model.CandidateAudios = (IList<CandidateAudio>)_evaluatorRespository.GetCandidateAudios(candidateId, irfId).Where(x => x.IsVoiceBiometric == true).ToList();
                 model.CandidateId = candidateId;
-                model.CandidateName = model.CandidateAudios.First().CandidateName;
-                model.IRFId = irfId;
-                model.IRFName = model.CandidateAudios.First().IRFName;
-                model.VoiceItUserId = model.CandidateAudios.First().VoiceItUserId;
-                model.PhraseDetail = model.CandidateAudios.First().PhraseDetail;
+                if (model.CandidateAudios.Count() > 0)
+                {
+                    model.CandidateName = model.CandidateAudios.First().CandidateName;
+                    model.IRFId = irfId;
+                    model.IRFName = model.CandidateAudios.First().IRFName;
+                    model.VoiceItUserId = model.CandidateAudios.First().VoiceItUserId;
+                    model.PhraseDetail = model.CandidateAudios.First().PhraseDetail;
+                }
                 return model;
             }
 
