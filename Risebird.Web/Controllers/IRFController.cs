@@ -44,7 +44,6 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
-                //var list = new List<string>();
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
@@ -54,9 +53,8 @@ namespace Risebird.Web.Controllers
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                    model.IRFList = irfList;
+                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
 
-                    //var clientRoles = _irfRepository.GetTransClientUserRole();
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
@@ -69,40 +67,31 @@ namespace Risebird.Web.Controllers
                     }
                     if (HttpContext.Session.GetString("IRFfilters") != null)
                     {
-                        //list.Clear();
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            model.IRFList = model.IRFList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                            model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
-
-                        //filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
+                        else
+                        {
+                            model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
+                        }
                         filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
-                        model.IRFList = model.IRFList.Where(c => /*filter.ClientRole.Intersect(c.ClientRole).Any()*/
-                        /*&& */filter.RFID.Contains(c.IRFId)
+                        model.IRFList = model.IRFList.Where(c => filter.RFID.Contains(c.IRFId)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
 
                         if (model.IRFList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                         {
-                            irfList = _irfService.GetAllIRFs(emailid, profileName);
-
-                            irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                            model.IRFList = irfList;
-                            
+                            model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
 
                     }
-                    //list.Add("IRF Owner");
-                    //list.Add("IRF User");
-                    //list.Add("Restricted IRF owner");
-                    //list.Add("Multiple IRF owner");
-
-                    //model.RoleList = list;
+                    
                     model.Profile = profileName;
                     return View(model);
 
@@ -135,7 +124,6 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
                 {
-                    //var list = new List<string>();
 
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
@@ -144,41 +132,32 @@ namespace Risebird.Web.Controllers
                     {
                         irfList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                     }
-
-                    //var clientRoles = _irfRepository.GetTransClientUserRole();
-
+                    else
+                    {
+                        irfList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
+                    }
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
                     }
                     
-
-                    //filter.ClientRole = filter.ClientRole == null ? filter.ClientRole = list.ToArray() : filter.ClientRole = filter.ClientRole;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                     filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
 
 
-                    irfList = irfList.Where(c => /*filter.ClientRole.Intersect(c.ClientRole).Any()*/
-                    /*&&*/ filter.RFID.Contains(c.IRFId)
+                    irfList = irfList.Where(c => filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
                     
                     if (irfList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                     {
-                        irfList = _irfService.GetAllIRFs(emailid, profileName);
-
+                        irfList = _irfService.GetAllIRFs(emailid, profileName).Where(x=> x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
                         irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
 
                     }
                     model.IRFList = irfList;
 
-                    //list.Add("IRF Owner");
-                    //list.Add("IRF User");
-                    //list.Add("Restricted IRF owner");
-                    //list.Add("Multiple IRF owner");
-
-                    //model.RoleList = list;
                     model.Profile = profileName;
                     return View(model);
 

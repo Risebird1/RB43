@@ -1004,7 +1004,7 @@ namespace Risebird.Business
         {
             try
             {
-                var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.Where(x=> x.EndDate > DateTime.Now).ToList();
+                var irfList = _irfRepository.GetAllIRFs(emailId, profileName).Result.ToList();
                 foreach (var irf in irfList)
                 {
                     if(irf.TotalBudget!=0)
