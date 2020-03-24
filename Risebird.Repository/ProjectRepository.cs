@@ -48,7 +48,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<IEnumerable<Project>> GetProjects(string emailID, string profileName)
+        public async Task<IEnumerable<Project>> GetProjects(string emailID = null, string profileName = null)
         {
             try
             {
@@ -372,6 +372,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
 
     }
 }

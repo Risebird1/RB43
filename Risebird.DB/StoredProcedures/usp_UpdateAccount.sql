@@ -14,7 +14,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateAccount]
 @id int,
 @Name varchar(200),
 @Location varchar(200),
-@Client varchar(200),
+@ClientId varchar(200),
 @EndClient varchar(200),
 @AccountOwnerId varchar(200)
 
@@ -24,7 +24,7 @@ Begin
 update Account set
 [Name]=@Name,
 [Location]=@Location,
-[Client]=@Client,
+[ClientId]=@ClientId,
 [EndClient]=@EndClient,
 [AccountOwnerId]=@AccountOwnerId
 Where id =@id
@@ -32,6 +32,7 @@ Where id =@id
 delete from AccountProjectMapping where AccountId=@id
 
 End
+
 
 GO
 

@@ -8,7 +8,7 @@ CREATE TABLE [dbo].[Account](
 	[Name] [varchar](100) NULL,
 	[IsDeleted] [bit] NOT NULL default 0,
 	[Location] [varchar](100) NULL,
-	[Client] [varchar](100) NULL,
+	[ClientId] [int] NOT NULL DEFAULT 0,
 	[EndClient] [varchar](100) NULL,
 	[AccountOwnerId] [varchar](100) NULL,
 	[CreatedOn] [date] NULL,
@@ -18,7 +18,21 @@ CREATE TABLE [dbo].[Account](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
-End
+END
+ELSE
+BEGIN
+
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ClientId')
+      AND Object_ID = Object_ID(N'ClientId'))
+BEGIN
+    ALTER TABLE Account
+    Add ClientId INT NOT NULL DEFAULT 0
+END
+
+END
 GO
 
 
