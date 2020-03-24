@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Risebird.Entities.ViewModel.Account>
+﻿@model Risebird.Entities.ViewModel.AccountViewModel
 @{
     ViewData["Title"] = "Account";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -127,7 +127,7 @@
                         <h4 class="card-title">Accounts</h4>
                     </div>
                     <div class="row" style="margin-left:1008px">
-                        @if (ViewBag.IsClientUser == false)
+                        @if (Model.IsClientUser == false)
                         {
                             <div class="toolbar">
                                 <!--        Here you can write extra buttons/actions for the toolbar              -->
@@ -137,8 +137,8 @@
                             </div>
                         }
                         @*<div>
-                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                        </div>*@
+                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                            </div>*@
                     </div>
 
 
@@ -180,7 +180,7 @@
                                                     <label class="control-label col-md-6 col-sm-4 desp-label" for="ProjectID">ProjectID</label>
                                                     <div class="col-md-6 col-sm-6">
                                                         <select id="ProjectID" name="ProjectID" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.Select(x => x.Name).Distinct().ToList())
+                                                            @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
                                                                 {
@@ -194,7 +194,7 @@
                                                     <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
                                                     <div class="col-md-6 col-sm-6">
                                                         <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            @foreach (var item in Model.AccountList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
                                                                 {
@@ -209,7 +209,7 @@
                                                     <div class="col-md-6 col-sm-6">
                                                         <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
 
-                                                            @foreach (var item in Model.Select(x => x.Location).Distinct().ToList())
+                                                            @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
                                                                 {
@@ -227,7 +227,7 @@
                                                     <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
                                                     <div class="col-md-6 col-sm-6">
                                                         <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.Select(x => x.EndClient).Distinct().ToList())
+                                                            @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
                                                                 {
@@ -266,9 +266,9 @@
             <!-- end col-md-12 -->
         </div>
         <div class="row">
-            @if (Model != null && Model.Count() != 0)
+            @if (Model != null && Model.AccountList.Count() != 0)
             {
-                @foreach (var item in Model)
+                @foreach (var item in Model.AccountList)
                 {
                     <div class="col-lg-3 col-sm-6">
                         <div class="card card-stats">
@@ -287,8 +287,6 @@
 
                                             <div class="col-12">
                                                 <div class="group inner list-group-item-text">
-                                                    @*<span>Client Name:</span> <p>@item.ClientCompName</p>*@
-                                                    @*<span>Primary Skill:</span> <p>@item.JDTiltle.Split("|")[0]</p>*@
 
                                                     <span>Total Projects:</span> <p>@item.TotalProjects</p>
                                                     <span>Client:</span> <p> @item.Client </p>
@@ -310,9 +308,9 @@
                                         <button type="button" onclick="javascript:EditAccount('@item.id');" class="btn btn-primary btn-icon btn-sm " title="Edit">
                                             <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
-                                        
+
                                     }
-                                   
+
                                     @if (!@item.IsClientUser)
                                     {
                                         if (!item.IsDeleted)
@@ -321,7 +319,7 @@
                                                 <i class="now-ui-icons fa fa-archive"></i>
                                             </button>
                                         }
-                                       
+
 
                                     }
 
@@ -374,19 +372,19 @@
 
 
 
-@if (ViewBag.Message != null)
+@if (Model.Message != null)
 {
     <script type="text/javascript">
 
         function my_code() {
-            var msg = '@ViewBag.Message';
+            var msg = '@Model.Message';
 
 
 
             if (msg.includes("Success")) {
                 swal({
                     title: 'Successful',
-                    text: '@ViewBag.Message',
+                    text: '@Model.Message',
                     type: 'success',
                     showConfirmButton: true
 
@@ -394,7 +392,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Account/Index';
+                        //window.location.href = '/Account/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
 
@@ -402,14 +402,16 @@
             else {
                 swal({
                     title: 'Failed',
-                    text: '@ViewBag.Message',
+                    text: '@Model.Message',
                     type: 'error',
                     showConfirmButton: true
 
                 },
                     function ()
                     {
-                        window.location.href = '/Account/Index';
+                        //window.location.href = '/Account/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
                     }
                 )
             }
@@ -475,17 +477,7 @@
             }
         })
     }
-
-    //function SelectedInterviewMeetings(id, IRFid) {
-
-    //    var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-    //    window.location.href = url;
-    //};
-    //function InterviewMeetings(id, IRFid) {
-
-    //    var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
-    //    window.location.href = url;
-    //};
+    
     function EditAccount(id) {
 
         var url = '/Account/Edit?id=' + id;

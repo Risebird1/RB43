@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,7 +12,6 @@ namespace Risebird.Entities.ViewModel
         public int id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
         public string Client { get; set; }
         [DisplayName("End Client")]
         [Required]
@@ -30,5 +30,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsClientUser { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+        [Required]
+        [DisplayName("Client")]
+        public int ClientId { get; set; }
+        public SelectList ClientList { get; set; }
+
     }
 }

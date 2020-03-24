@@ -136,14 +136,12 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
+                                    @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style = "width:430px" })
+                                    @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
-                                    </div>
                                 </div>
 
                             </div>
@@ -169,15 +167,15 @@
                             </div>
                             <hr />
                             @*<div class="row">
-                                <div class="col-md-3 col-sm-3 px-1">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style = "margin-left:11px" })
+                                    <div class="col-md-3 col-sm-3 px-1">
+                                        <div class="form-group">
+                                            <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                            @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style = "margin-left:11px" })
+                                        </div>
                                     </div>
-                                </div>
-                            </div>*@
+                                </div>*@
                             <div id="tableID">
-                                <table class="table table-bordered mbn" id="IRFList">
+                                <table class="table table-bordered mbn" id="ProjectList">
                                     <thead>
                                         <tr>
                                             @*<th>IRF Id</th>*@
@@ -324,12 +322,12 @@
 }
 
 <script>
-    @*function ClientChanged(clientId) {
-        var projectId = '@ViewBag.id';
+    function ClientChanged(clientId) {
+        var accountId = '@Model.id';
         $.ajax({
             type: "GET",
-            url: "/Project/GetEditFilteredIRF",
-            data: { 'clientId': clientId, 'projectId': projectId },
+            url: "/Account/GetEditFilteredProjects",
+            data: { 'clientId': clientId, 'accountId': accountId },
             success: function (data) {
                 if (data == null || data == '') {
                     $('#tableID').html('');
@@ -346,9 +344,10 @@
             }
         });
 
-    }*@
+    }
 
 </script>
+
 @*<script>
         $(document).ready(function () {
             //FilterInterviews("Today");// on page load default dropdownlist value set

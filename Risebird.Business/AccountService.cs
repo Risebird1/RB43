@@ -1,4 +1,5 @@
-﻿using Risebird.Business.Interface;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
@@ -15,14 +16,16 @@ namespace Risebird.Business
     {
         private IAccountRepository _accountRepository;
         private IProjectRepository _projectRepository;
+        private IProjectService _projectService;
 
         private IApplicationErrorLogger _applicationErrorLogger;
 
-        public AccountService(IAccountRepository accountRepository, IApplicationErrorLogger applicationErrorLogger, IProjectRepository projectRepository)
+        public AccountService(IAccountRepository accountRepository, IApplicationErrorLogger applicationErrorLogger, IProjectRepository projectRepository, IProjectService projectService)
         {
             _accountRepository = accountRepository;
             _applicationErrorLogger = applicationErrorLogger;
             _projectRepository = projectRepository;
+            _projectService = projectService;
         }
 
         public IEnumerable<Account> GetAllAccounts()
@@ -39,12 +42,26 @@ namespace Risebird.Business
             }
         }
 
+        public IEnumerable<Account> GetAccounts(string emailId, string profile)
+        {
+            try
+            {
+                return _accountRepository.GetAccounts(emailId, profile).Result;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public Account GetAccount()
         {
             try
             {
                 var accountModel = new Account();
-                var projectList = _projectRepository.GetAllProjects();
+                var projectList = _projectRepository.GetProjects().Result.ToList();
                 var objList = new List<AccountProjectMapping>();
                 foreach (var item in projectList)
                 {
@@ -52,12 +69,12 @@ namespace Risebird.Business
                     obj.ProjectId = item.id;
                     obj.ProjectName = item.Name;
                     obj.IsAdded = false;
-                    //obj.id = 0;
-                    //obj.ProjectId = 0;
                     obj.Client = item.Client;
                     objList.Add(obj);
                 }
                 accountModel.AccountProjectMappings = (IList<AccountProjectMapping>)(objList);
+                accountModel.ClientList = new SelectList(_projectService.GetClients(), "id", "Name");
+
                 return accountModel;
             }
 
@@ -87,53 +104,19 @@ namespace Risebird.Business
         {
             try
             {
+                string projectList = string.Empty;
                 var account = _accountRepository.GetAccountById(id);
                 var accountCluster = _accountRepository.GetAccountCluster(id);
-                var allProjects = _projectRepository.GetAllProjects();
-                if (accountCluster != null && accountCluster.Count() != 0)
+                if(accountCluster!=null && accountCluster.Count()!=0)
                 {
-                    foreach (var item in accountCluster)
-                    {
-                        //item.PrimarySkills = allIRFs.Where(x => x.id == item.IRFId).FirstOrDefault().JDTiltle.Split("|")[0];
-                        //item.Client = allIRFs.Where(x => x.id == item.IRFId).FirstOrDefault().ClientCompName;
-                        allProjects = allProjects.Where(x => x.id != item.ProjectId);
-                    }
+                    projectList = string.Join(",", from item in accountCluster select item.ProjectId);
                 }
-
-
+                var remainingProjects = _accountRepository.GetProjectByClientId(account.ClientId, projectList);
+                
                 var objList = new List<AccountProjectMapping>();
                 objList.AddRange(accountCluster);
+                objList.AddRange(remainingProjects);
 
-                //if (projectCluster != null && projectCluster.Count() != 0)
-                //{
-                //    foreach (var item in projectCluster)
-                //    {
-                //        var obj = new ProjectIRFMapping();
-                //        obj.IRFId = item.IRFId;
-                //        obj.IRFName = item.IRFName;
-                //        obj.IsAdded = item.IsAdded;
-                //        //obj.id = 0;
-                //        obj.PrimarySkills = item.PrimarySkills;
-                //        //obj.ProjectId = 0;
-                //        obj.Client = item.Client;
-                //        objList.Add(obj);
-                //    }
-
-                //}
-
-                foreach (var item in allProjects)
-                {
-
-                    var obj = new AccountProjectMapping();
-                    obj.ProjectId = item.id;
-                    obj.ProjectName = item.Name;
-                    obj.IsAdded = false;
-                    //obj.id = 0;
-                    //obj.PrimarySkills = item.JDTiltle.Split("|")[0];
-                    //obj.ProjectId = 0;
-                    obj.Client = item.Client;
-                    objList.Add(obj);
-                }
                 account.AccountProjectMappings = (IList<AccountProjectMapping>)(objList);
                 return account;
             }
@@ -182,6 +165,48 @@ namespace Risebird.Business
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
+            }
+        }
+
+        public IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId)
+        {
+            try
+            {
+                return _accountRepository.GetProjectsbyClientId(clientId);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<AccountProjectMapping> GetProjectbyClientId(int clientId, string projectList = null)
+        {
+            try
+            {
+                return _accountRepository.GetProjectByClientId(clientId, projectList);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public IEnumerable<AccountProjectMapping> GetAccountCluster(int accountId)
+        {
+            try
+            {
+                return _accountRepository.GetAccountCluster(accountId);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
             }
         }
 

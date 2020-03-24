@@ -15,5 +15,9 @@ namespace Risebird.Business.Interface
         bool UpdateAccount(Account model);
         Task<bool> ArchiveAccount(int id);
         Task<bool> UnArchiveAccount(int id);
+        IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId);
+        IEnumerable<Account> GetAccounts(string emailId, string profile);
+        IEnumerable<AccountProjectMapping> GetAccountCluster(int accountId);
+        IEnumerable<AccountProjectMapping> GetProjectbyClientId(int clientId, string projectList=null);
     }
 }

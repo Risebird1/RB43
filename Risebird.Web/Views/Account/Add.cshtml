@@ -138,14 +138,12 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Client, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control text-box single-line"@*, @onblur = "checkUniqueness(this.value)"*@ } })
-                                        @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
+                                    @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style = "width:430px" })
+                                    @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
-                                    </div>
                                 </div>
 
 
@@ -171,16 +169,9 @@
                                 </div>
                             </div>
                             <hr />
-                            @*<div class="row">
-                                <div class="col-md-3 col-sm-3 px-1">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style = "margin-left:11px" })
-                                    </div>
-                                </div>
-                            </div>*@
+
                             <div id="tableID">
-                                <table class="table table-bordered mbn" id="IRFList">
+                                <table class="table table-bordered mbn" id="ProjectList">
                                     <thead>
                                         <tr>
                                             @*<th>IRF Id</th>*@
@@ -326,128 +317,27 @@
 }
 
 <script>
-    //function ClientChanged(clientId) {
+    function ClientChanged(clientId) {
 
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/Project/GetFilteredIRF",
-    //        data: { 'clientId': clientId },
-    //        success: function (data) {
-    //            if (data == null || data == '') {
-    //                $('#tableID').html('');
-    //                $('#tableID').html('No data for this Client.');
-    //                $('#tableID').css("margin-left", "452px");
-    //                return;
-    //            }
-    //            $('#tableID').html('');
-    //            $('#tableID').html(data);
-    //            $('#tableID').css("margin-left", "");
-    //        }
-    //    });
+        $.ajax({
+            type: "GET",
+            url: "/Account/GetFilteredProjects",
+            data: { 'clientId': clientId },
+            success: function (data) {
+                if (data == null || data == '') {
+                    $('#tableID').html('');
+                    $('#tableID').html('No data for this Client.');
+                    $('#tableID').css("margin-left", "452px");
+                    return;
+                }
+                $('#tableID').html('');
+                $('#tableID').html(data);
+                $('#tableID').css("margin-left", "");
+            }
+        });
 
-    //}
+    }
 
 </script>
-@*<script>
-        $(document).ready(function () {
-            //FilterInterviews("Today");// on page load default dropdownlist value set
-
-            $('#meeting').DataTable({
-                "pagingType": "full_numbers",
-                "lengthMenu": [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, "All"]
-                ],
-                responsive: false,
-                language: {
-                    search: "_INPUT_",
-                    searchPlaceholder: "Search records",
-                }
-
-            });
-            var table = $('#meeting').DataTable();
-        });
-    </script>*@
-
-@*<script type="text/javascript">
-        //// script for loader starts here
-        $(".dataloading").hide();
-        $("#meeting").hide();
-        var loader;
-        function ShowProgress() {
-            $(".dataloading").hide();
-            $("#meeting").hide();
-            loader = document.getElementsByClassName("loader")[0];
-            loader.style.display = "block";
-            var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-            var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-            loader.style.top = top + "px";
-            loader.style.left = left + "px";
-        };
-        ShowProgress();
-
-        window.onload = function () {
-            setTimeout(function () {
-                loader.style.display = "none";
-                $(".dataloading").show();
-                $("#meeting").show();
-            }, 2000);
-        };
-        //// script for loader ends here
-    </script>*@
-@*<script>
-
-        function FilterInterviews(filterValue) {
-
-            $.ajax({
-                type: "GET",
-                url: "/Interview/GetFilteredInterviews",
-                data: { 'filterValue': filterValue },
-                success: function (data) {
-
-                    if (data == '' && filterValue == 'seven') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for the next seven days.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '' && filterValue == 'all') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    if (data == '') {
-                        $('#tableID').html('');
-                        $('#tableID').html('No interviews for ' + filterValue + '.');
-                        $('#tableID').css("margin-left", "452px");
-                        return;
-                    }
-                    $('#tableID').css("margin-left", "");
-                    $('#tableID').html('');
-                    $('#tableID').html(data);
-
-                    $('#meeting').DataTable({
-                        "pagingType": "full_numbers",
-                        "lengthMenu": [
-                            [10, 25, 50, -1],
-                            [10, 25, 50, "All"]
-                        ],
-                        responsive: false,
-                        language: {
-                            search: "_INPUT_",
-                            searchPlaceholder: "Search records",
-                        }
-
-                    });
-                    var table = $('#meeting').DataTable();
 
 
-
-                },
-                error: function (err) {
-                    alert(err.responseText);
-                }
-            });
-        }
-    </script>*@

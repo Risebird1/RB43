@@ -82,6 +82,7 @@ namespace Risebird.Web.Controllers
                     {
                         if (_settingsService.UpdateSettings(settings))
                         {
+                            HttpContext.Session.Remove("settings");
                             HttpContext.Session.SetString("settings", JsonConvert.SerializeObject(settings));
                             TempData["SuccessErrorMessageSettings"] = "Settings updated successfully.";
                             return RedirectToAction("Index");

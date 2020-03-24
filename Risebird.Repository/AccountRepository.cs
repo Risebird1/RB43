@@ -46,6 +46,32 @@ namespace Risebird.Repository
             }
             return null;
         }
+
+        public async Task<IEnumerable<Account>> GetAccounts(string emailID, string profileName)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@EmailId", emailID);
+                    parameters.Add("@Profile", profileName);
+                    return await SqlMapper.QueryAsync<Account>(con, "usp_GetAccounts", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddAccount(Account accountDetails)
         {
             try
@@ -54,11 +80,11 @@ namespace Risebird.Repository
                 {
 
 
-                    string sqlInsertReport = "INSERT INTO Account (Name,Client, EndClient, Location, AccountOwnerId, IsDeleted, CreatedOn ) Values (@Name,@Client,@EndClient, @Location,@AccountOwnerId, @IsDeleted, @CreatedOn);";
+                    string sqlInsertReport = "INSERT INTO Account (Name,ClientId, EndClient, Location, AccountOwnerId, IsDeleted, CreatedOn ) Values (@Name,@ClientId,@EndClient, @Location,@AccountOwnerId, @IsDeleted, @CreatedOn);";
                     var affectedRows = con.Execute(sqlInsertReport, new
                     {
                         Name = accountDetails.Name,
-                        Client = accountDetails.Client,
+                        ClientId = accountDetails.ClientId,
                         EndClient = accountDetails.EndClient,
                         Location = accountDetails.Location,
                         AccountOwnerId = accountDetails.AccountOwnerId,
@@ -107,17 +133,20 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select AccountProjectMapping.*, Account.[Name] as AccountName, Project.[Name] as ProjectName, Project.id as ProjectId, Project.Client from AccountProjectMapping inner join Project on AccountProjectMapping.ProjectId = Project.id left join Account on AccountProjectMapping.AccountId = Account.id where AccountProjectMapping.AccountId = @AccountId and AccountProjectMapping.IsAdded = 1";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@AccountId", accountId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<AccountProjectMapping>(query, dynamicParameters);
-                    return results;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@AccountId", accountId);
+                    return SqlMapper.Query<AccountProjectMapping>(con, "usp_GetAccountCluster", parameters,
+                         commandType: CommandType.StoredProcedure);
                 }
 
             }
             catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
@@ -153,7 +182,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@id", accountDetails.id);
                 parameters.Add("@Name", accountDetails.Name);
-                parameters.Add("@Client", accountDetails.Client);
+                parameters.Add("@ClientId", accountDetails.ClientId);
                 parameters.Add("@EndClient", accountDetails.EndClient);
                 parameters.Add("@Location", accountDetails.Location);
                 parameters.Add("@AccountOwnerId", accountDetails.AccountOwnerId);
@@ -246,7 +275,59 @@ namespace Risebird.Repository
 
         }
 
+        public IEnumerable<AccountProjectMapping> GetProjectsbyClientId(int clientId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@ClientId", clientId);
+                    return SqlMapper.Query<AccountProjectMapping>(con, "usp_GetProjectbyClientId", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
 
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<AccountProjectMapping> GetProjectByClientId(int clientId, string projectIdList = null)
+        {
+            try
+            {
+                string query = string.Empty;
+                if (!string.IsNullOrEmpty(projectIdList))
+                {
+                    query = "Select Project.id as ProjectId,Project.[Name]as ProjectName, Client.[Name] as Client, Client.id as ClientId from Project inner join Client on Project.ClientId = Client.id where Project.ClientId=@ClientId and IsDeleted = @IsDeleted and Project.id not in (" + projectIdList + ")";
+                }
+                else
+                {
+                    query = "Select Project.id as ProjectId,Project.[Name]as ProjectName, Client.[Name] as Client, Client.id as ClientId from Project inner join Client on Project.ClientId = Client.id where Project.ClientId=@ClientId and IsDeleted = @IsDeleted";
+                }
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
+                dynamicParameters.Add("@ClientId", clientId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<AccountProjectMapping>(query, dynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
     }
 }
