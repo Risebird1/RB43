@@ -323,12 +323,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_projectService.DeleteProject(Convert.ToInt16(id)).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Project deleted Successfully";
+                            //TempData["SuccessErrorMessage"] = "Project deleted Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Project delete Failed";
+                            //TempData["SuccessErrorMessage"] = "Project delete Failed";
                             return RedirectToAction("Index");
                         }
                     }
