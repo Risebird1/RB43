@@ -29,7 +29,7 @@ IF (@Profile = 'Client')
 		select Account.*, a.TotalProjects, cl.[Name] as Client, 1 as IsClientUser from Account 
 		left join Client cl on cl.id = Account.ClientId
 		left join (select Count(AccountId) as TotalProjects, AccountId from AccountProjectMapping group by AccountId) a on Account.id=a.AccountId
-		where Account.IsDeleted=0 and Account.ClientId=@ClientId
+		where Account.ClientId=@ClientId
 	End  
 
 Else
@@ -37,7 +37,6 @@ begin
 		select Account.*, a.TotalProjects, cl.[Name] as Client from Account 
 		left join Client cl on cl.id = Account.ClientId
 		left join (select Count(AccountId) as TotalProjects, AccountId from AccountProjectMapping group by AccountId) a on Account.id=a.AccountId
-		where Account.IsDeleted=0
 
 End
 End

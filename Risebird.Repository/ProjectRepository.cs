@@ -232,43 +232,32 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "update Project set IsDeleted=1 where id=@id";
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@id", id);
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, parameters);
+                    SqlMapper.Query(con, "usp_ArchiveProject", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
-
             }
-
-            catch (SqlException e)
+            catch (SqlException ex)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
         }
+        
         public async Task<bool> UnArchiveProject(int id)
         {
             try
             {
-                var query = "update Project set IsDeleted=0 where id = @id;";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
-
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    SqlMapper.Query(con, "usp_UnArchiveProject", dynamicParameters, commandType: CommandType.StoredProcedure);
                     return true;
                 }
-
             }
             catch (SqlException ex)
             {
@@ -277,6 +266,7 @@ namespace Risebird.Repository
             }
 
         }
+
 
 
         public async Task<bool> UpdateProject(Project projectDetails)
@@ -355,14 +345,12 @@ namespace Risebird.Repository
         {
             try
             {
-                
-                var query = "select IRFId from ProjectIRFMapping where ProjectId=@id";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<int>(query, dynamicParameters);
-                    return results;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@id", id);
+                    return SqlMapper.Query<int>(con, "usp_GetIRFIdList", parameters,
+                         commandType: CommandType.StoredProcedure);
                 }
 
             }
@@ -370,8 +358,13 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
             return null;
         }
+
 
 
     }

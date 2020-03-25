@@ -323,12 +323,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_projectService.DeleteProject(Convert.ToInt16(id)).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Project deleted Successfully";
+                            //TempData["SuccessErrorMessage"] = "Project deleted Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Project delete Failed";
+                            //TempData["SuccessErrorMessage"] = "Project delete Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -364,12 +364,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_projectService.UnArchiveProject(id).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Project restored Successfully";
+                            TempData["SuccessErrorMessageProject"] = "Project restored Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Project restore Failed";
+                            TempData["SuccessErrorMessageProject"] = "Project restore Failed";
                             return RedirectToAction("Index");
                         }
                     }
