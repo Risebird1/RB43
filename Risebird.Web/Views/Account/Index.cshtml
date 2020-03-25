@@ -1,7 +1,28 @@
 ﻿@model Risebird.Entities.ViewModel.AccountViewModel
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Account";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] AccountId = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] Location = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("AccountFilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<AccountFilter>(HttpContextAccessor.HttpContext.Session.GetString("AccountFilters"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    AccountId = filter.AccountId != null ? filter.AccountId : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    Location = filter.Location != null ? filter.Location : new string[] { };
 
 }
 
@@ -136,9 +157,9 @@
                                 </div>
                             </div>
                         }
-                        @*<div>
-                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                            </div>*@
+                        <div>
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>
                     </div>
 
 
@@ -151,7 +172,7 @@
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
-                                <form action="@Url.Action("Index","Project")" method="post" id="form">
+                                <form action="@Url.Action("Index","Account")" method="post" id="form">
 
                                     <div class="modal-body">
                                         <div class="row">
@@ -177,9 +198,9 @@
                                             </div>
                                             <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ProjectID">ProjectID</label>
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="AccountId">AccountId</label>
                                                     <div class="col-md-6 col-sm-6">
-                                                        <select id="ProjectID" name="ProjectID" class="form-control multiselect" multiple="multiple">
+                                                        <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple">
                                                             @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
@@ -204,30 +225,33 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                @if (!Model.IsClientUser)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                }
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
                                                 <div class="form-group">
                                                     <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
                                                     <div class="col-md-6 col-sm-6">
                                                         <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
 
                                                             @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
-                                                            {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                    <option value="@item">@item</option>
-                                                                }
-                                                            }
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
                                                             {
                                                                 @if (item != null && item != "")
                                                                 {
@@ -319,7 +343,12 @@
                                                 <i class="now-ui-icons fa fa-archive"></i>
                                             </button>
                                         }
-
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:UnArchiveAccount('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                <i class="now-ui-icons fa fa-undo"></i>
+                                            </button>
+                                        }
 
                                     }
 
@@ -428,7 +457,6 @@
 <script type="text/javascript">
     function ArchiveAccount(dataID) {
 
-        var IdProject = dataID;
         swal.fire({
             title: 'Are you sure?',
             text: "It will be Archived!",
@@ -477,7 +505,7 @@
             }
         })
     }
-    
+
     function EditAccount(id) {
 
         var url = '/Account/Edit?id=' + id;
@@ -495,7 +523,7 @@
     };
 </script>
 <script>
-    @*$(document).ready(function () {
+    $(document).ready(function () {
 
         $("#ResetFilter").click(function () {
                 ResetFilter();
@@ -504,7 +532,7 @@
                 ApplySessionFilter();
               }
 
-        $("#ProjectID").multiselect({
+        $("#AccountId").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
             buttonWidth: '270px',
@@ -529,22 +557,22 @@
             maxHeight: 200
         });
 
-    });*@
+    });
 
-    //function ResetFilter() {
+    function ResetFilter() {
 
-    //         $.ajax({
-    //        type: "POST",
-    //        url: "/Project/Index",
-    //             success: function (data) {
-    //                window.location.href = "/Project/ResetProjectFilter";
-    //             }
-    //            });
-    //}
-        @*function ApplySessionFilter() {
+             $.ajax({
+            type: "POST",
+            url: "/Account/Index",
+                 success: function (data) {
+                    window.location.href = "/Account/ResetAccountFilter";
+                 }
+                });
+    }
+        function ApplySessionFilter() {
             var strtDte = '@strtDte';
             var endDte = '@endDte';
-            var projectID =  @Html.Raw(Json.Serialize(ProjectID));
+            var accountId =  @Html.Raw(Json.Serialize(AccountId));
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var location =  @Html.Raw(Json.Serialize(Location));
@@ -552,18 +580,18 @@
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
-            $("#ProjectID").val(projectID);
+            $("#AccountId").val(accountId);
             $("#ClientName").val(clientName);
             $("#ArchiveStatus").val(archiveStatus);
             $("#Location").val(location);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
-            url: "/Project/Index",
+                 url: "/Account/Index",
             data: form,
                  success: function (data) {
                  }
                 });
-    }*@
+    }
 
 </script>

@@ -224,30 +224,32 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    @if (!Model.IsClientUser)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.ProjectList.Select(x => x.EndClient).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
                                                         <div class="col-md-6 col-sm-6">
                                                             <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
 
                                                                 @foreach (var item in Model.ProjectList.Select(x => x.Location).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.ProjectList.Select(x => x.EndClient).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
                                                                     {

@@ -201,62 +201,51 @@
                                                             <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
                                                                 {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                <option value="@item">@item</option>
-                                                                }
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
                                                                 }
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    @if (!Model.IsClientUser)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+
+
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
                                                         <div class="col-md-6 col-sm-6">
                                                             <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.IRFList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                                 {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                <option value="@item">@item</option>
-                                                                }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    @*<div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientRole">Client Role</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientRole" name="ClientRole" class="form-control multiselect" multiple="multiple">
-
-                                                                @foreach (var item in Model.RoleList)
-                                                                {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                <option value="@item">@item</option>
-                                                                }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>*@
-
-
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
-                                                                {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                <option value="@item">@item</option>
-                                                                }
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
                                                                 }
                                                             </select>
                                                         </div>
                                                     </div>
-
                                                     <div class="form-group col-md-12">
                                                         <div class="row">
                                                             <div class="col-md-6 col-sm-6">
@@ -357,7 +346,7 @@
                                 <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
                                     <i class="now-ui-icons fa fa-check"></i>
                                 </button>
-                                <button type="button" onclick="location.href='@Url.Action(" ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                     <i class="now-ui-icons  fa fa-calendar"></i>
                                 </button>
 
