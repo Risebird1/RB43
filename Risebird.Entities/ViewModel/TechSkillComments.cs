@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,5 +9,7 @@ namespace Risebird.Entities.ViewModel
     {
         public IList<SkillComment> SkillCollection { get; set; }
         public int IRFId { get; set; }
+        public string Message { get; set; }
+        public SelectList Skills { get; set; }
     }
 }

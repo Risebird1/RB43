@@ -728,7 +728,7 @@ namespace Risebird.Web.Controllers
                 var result = _irfService.GetTechSkillComments(Convert.ToInt16(id));
                 //if (result.Count() > 0)
                 model.SkillCollection = result;
-                ViewBag.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
+                model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(id)), "id", "Name");
                 model.IRFId = Convert.ToInt16(id);
                 return View(model);
             }
@@ -752,13 +752,17 @@ namespace Risebird.Web.Controllers
                     {
                         if (_irfService.AddSkillComments(model))
                         {
-                            TempData["SuccessErrorMessage"] = "Questions saved Successfully";
-                            return RedirectToAction("Index");
+                            //TempData["SuccessErrorMessage"] = 
+                            model.Message = "Questions saved successfully";
+                            model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
+                            return View(model);
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Questions were not saved.";
-                            return RedirectToAction("Index");
+                            //TempData["SuccessErrorMessage"] = "Questions were not saved.";
+                            model.Message = "Questions were not saved.";
+                            model.Skills = new SelectList(_irfService.GetTechSkills(Convert.ToInt16(model.IRFId)), "id", "Name");
+                            return View(model);
                         }
                     }
                     else

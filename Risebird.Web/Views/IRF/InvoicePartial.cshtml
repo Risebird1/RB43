@@ -337,14 +337,16 @@
 
 <script>
     $(document).ready(function () {
-        var d = new Date();
-        var dateStr = d.toString();
-        var date = dateStr.split(' ');
-        var shortDate = date[2] + " " + date[1] + ", " + date[3];
-        var shortDate2 = (7 +parseInt(date[2])) + " " + date[1] + ", " + date[3];
-        document.getElementById("preparedDate").innerHTML = shortDate;
-        document.getElementById("submissionDate").innerHTML = shortDate;
-        document.getElementById("expiryDate").innerHTML = shortDate2;
+        var todayDate = new Date();
+        var newDate = new Date();
+        newDate.setDate(todayDate.getDate() + 7);
+        var currentArr = todayDate.toString().split(' ');
+        var expiryArr = newDate.toString().split(' ');
+        var currentDate = currentArr[2] + " " + currentArr[1] + ", " + currentArr[3];
+        var expiryDate = expiryArr[2] + " " + expiryArr[1] + ", " + expiryArr[3];
+        document.getElementById("preparedDate").innerHTML = currentDate;
+        document.getElementById("submissionDate").innerHTML = currentDate;
+        document.getElementById("expiryDate").innerHTML = expiryDate;
 
 
     })

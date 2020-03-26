@@ -57,8 +57,8 @@
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
                 <a class="navbar-brand">Sample Questions</a>
-            </div>        
-          
+            </div>
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -93,11 +93,11 @@
                                                     <tr>
                                                         <td>
 
-                                                            @Html.DropDownList("SkillCollection[0].Skill", (SelectList)ViewBag.Skills, new { @class = "form-control" })
+                                                            @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
 
                                                         </td>
 
-                                                       
+
 
                                                         <td>
                                                             <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" style="width:100%" class="valid" aria-invalid="false"></textarea>
@@ -105,7 +105,7 @@
                                                         </td>
 
                                                         <td>
-                                                            
+
                                                             <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                             <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
 
@@ -120,7 +120,7 @@
                                                         <tr>
                                                             <td>
 
-                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, (SelectList)ViewBag.Skills, new { @class = "form-control" })
+                                                                @Html.DropDownListFor(m => m.SkillCollection[i].Skill, Model.Skills, new { @class = "form-control" })
                                                             </td>
 
                                                             <td>
@@ -128,7 +128,7 @@
                                                             </td>
 
                                                             <td>
-                                                              
+
                                                                 <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                 <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
                                                             </td>
@@ -158,14 +158,14 @@
                         </form>
 
                     </div>
-                    
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
         </div>
-         </div>
+    </div>
     <footer class="footer">
         <div class=" container-fluid ">
             <nav>
@@ -204,9 +204,8 @@
         }
     });
     function AddRowComments() {
-      
+
         var table = document.getElementById("SkillTable");
-       
 
         var $ttc = $("#SkillTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -236,6 +235,9 @@
         // add cloned row as last row
         $("#SkillTable").find("tbody tr:last").after($tr);
 
+        var $ttlast = $("#SkillTable").find("tbody tr:last");
+        $ttlast.find("textarea").val("");
+
         // Find the affected form
         var $form = $tr.closest("FORM");
 
@@ -247,9 +249,9 @@
         //$.validator.unobtrusive.parse(document);
 
     }
-    
+
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
-        
+
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -291,3 +293,60 @@
 
 
 </script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+@if (Model.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@Model.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@Model.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function () //confirm
+                    {
+                        //if Yes do this
+                        //window.location.href = '/Project/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@Model.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        //window.location.href = '/Project/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
