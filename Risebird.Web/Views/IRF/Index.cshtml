@@ -154,8 +154,8 @@
                             <div class="col-auto">
                                 @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                 {
-                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action(" InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>
-                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action(" Add", "IRF" )'" data-original-title="Tooltip on top"> Add IRF</span></button>
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>
+                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"> Add IRF</span></button>
 
                                 }
                                 <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
@@ -832,8 +832,17 @@
         //UnArchiveIRF
     </script>
     <script>
-        $(document).ready(function () {
-
+        $(document).ready(function () {           
+            $("#stDateInvoice").val("");
+            $("#EndDateInvoice").val("");
+            $("#srNumberId").val("");
+            $("#poNumberId").val("");
+            $("#requestNumberId").val("");
+            $("#currencyCodeId").val("");
+            $("#projectCodeId").val("");
+            $("#discountId").val("");
+            $("#clientAddressId").val("");
+            document.getElementById("gstCheckId").checked = false;
             $("#ResetFilter").click(function () {
                 ResetFilter();
             })
