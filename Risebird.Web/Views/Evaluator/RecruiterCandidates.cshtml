@@ -315,7 +315,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Evaluator/RecruiterCandidates';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Evaluator/RecruiterCandidates';
                     }
                 )
 
@@ -330,7 +332,9 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Evaluator/RecruiterCandidates';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Evaluator/RecruiterCandidates';
                     }
                 )
             }

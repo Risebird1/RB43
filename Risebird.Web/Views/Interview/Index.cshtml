@@ -740,7 +740,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Interview/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Interview/Index';
                     }
                 )
 
@@ -755,7 +757,9 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Interview/Index';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Interview/Index';
                     }
                 )
             }

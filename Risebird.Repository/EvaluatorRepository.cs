@@ -847,20 +847,23 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select cau.*, ca.[Name] as CandidateName, ca.VoiceItUserId, irf.IRFId as IRFName from CandidateAudio cau join CandidatesMaster cm on cau.CandidateId= cm.id join Candidate ca on cm.EmailId = ca.EmailId join irf on irf.id=cau.IRFId where cau.CandidateId = @CandidateId and cau.IRFId =@IRFId";
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@CandidateId", candidateId);
-                dynamicParameters.Add("@IRFId", irfId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<CandidateAudio>(query, dynamicParameters);
-                    return results;
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@CandidateId", candidateId);
+                    parameters.Add("@IRFId", irfId);
+                    return SqlMapper.Query<CandidateAudio>(con, "usp_GetCandidateAudios", parameters,
+                         commandType: CommandType.StoredProcedure);
                 }
 
             }
             catch (SqlException ex)
             {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
