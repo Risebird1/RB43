@@ -108,7 +108,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Candidate</th>
-                                                <th>IRF Name</th>
+                                                <th>IRF ID</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
@@ -121,7 +121,7 @@
                                         <tfoot>
                                             <tr>
                                                 <th>Candidate</th>
-                                                <th>IRF Name</th>
+                                                <th>IRF ID</th>
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
@@ -315,7 +315,9 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/Evaluator/RecruiterCandidates';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Evaluator/RecruiterCandidates';
                     }
                 )
 
@@ -330,7 +332,9 @@
                 },
                     function ()
                     {
-                        window.location.href = '/Evaluator/RecruiterCandidates';
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.href = '/Evaluator/RecruiterCandidates';
                     }
                 )
             }

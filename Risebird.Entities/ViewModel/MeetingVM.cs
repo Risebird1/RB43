@@ -55,6 +55,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current Renumeration")]
         public double CurrentRenumeration { get; set; }
         [Display(Name = "Resume Link")]
+        //[Required]
         public string resumeLink { get; set; }
         [Display(Name = "Confirmation Status")]
         [Required(ErrorMessage = "Please enter Confirmation Status.")]
@@ -99,6 +100,7 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }
         [Display(Name = "Upload Resume")]
+        //[Required]
         public IFormFile File { get; set; }
         public int? JobLevel { get; set; }
         public int? L2InterviewStatus { get; set; }

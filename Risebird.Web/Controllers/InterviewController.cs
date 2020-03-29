@@ -1256,7 +1256,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-
+                            ModelState.AddModelError("", "Please check all the fields for errors!");
                             return View("Add", meeting);
                         }
                     }
