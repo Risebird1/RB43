@@ -255,7 +255,7 @@
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
+                                                                    @foreach (var item in ViewBag.OfferStatusList)
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -372,14 +372,7 @@
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
 
-                                                    @*@if (item.VideoLink != null && item.VideoLink != "")
-                                                        {
-                                                            <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink style="height:158px;"></a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span> Video deleted !!!</span>
-                                                        }*@
+                                                   
                                                 </div>
                                                 <div class="video-card-body">
                                                     <div class="video-title">

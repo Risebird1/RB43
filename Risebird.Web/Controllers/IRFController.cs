@@ -3067,16 +3067,18 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
-                    ViewBag.irfName = irfName;
-                    ViewBag.irfId = irfId;
-                    ViewBag.candidateEmail = candidateEmail;
+                    var datamodel = new CandidateAudioVM();
+                    datamodel.IRFName = irfName;
+                    datamodel.IRFId = irfId;
+                    datamodel.CandidateEmail = candidateEmail;
                     var model = (IList<CandidateAudio>)_evaluatorService.GetCandidateAudios(candidateId, irfId).Result.Where(x => x.IsVoiceBiometric == true).ToList();
+                    datamodel.CandidateAudios = model.ToList();
                     if (TempData["SuccessErrorMessageEnroll"] != null)
                     {
                         ViewBag.Message = TempData["SuccessErrorMessageEnroll"].ToString();
                         TempData.Remove("SuccessErrorMessageEnroll");
                     }
-                    return View(model);
+                    return View(datamodel);
                 }
                 else
                 {
@@ -3093,10 +3095,10 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnrollVoiceItUser(IList<CandidateAudio> model)
+       // [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollVoiceItUser(CandidateAudioVM model)
         {
            
             try
@@ -3108,9 +3110,9 @@ namespace Risebird.Web.Controllers
                     profileName =  profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                     {
-                        var result = _evaluatorService.EnrollCandidate(model);
+                        var result = _evaluatorService.EnrollCandidate(model.CandidateAudios);
                         TempData["SuccessErrorMessageEnroll"] = result;
-                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId});
+                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.CandidateId, irfId = model.IRFId});
 
                     }
                     else
@@ -3127,7 +3129,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageEnrollment"] = "Failed!";
-                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.First().CandidateId, irfId = model.First().IRFId });
+                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.CandidateId, irfId = model.IRFId });
             }
         }
 
