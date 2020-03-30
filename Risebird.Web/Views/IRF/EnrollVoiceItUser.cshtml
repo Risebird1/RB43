@@ -1,4 +1,4 @@
-﻿@model IList<Risebird.Entities.ViewModel.CandidateAudio>
+﻿@model Risebird.Entities.ViewModel.CandidateAudioVM
 
 
 @{
@@ -63,7 +63,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="/IRF/EnrollVoiceItUser" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
+                        <form action="/IRF/EnrollVoiceItUser" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -77,14 +77,14 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            <label>Candidate Name:</label>
-                                            <label>@ViewBag.candidateEmail</label>
+                                            <label>Candidate Email:</label>
+                                            @Html.TextBoxFor(m => m.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             <label>IRF ID:</label>
-                                            <label>@ViewBag.irfName</label>
+                                            @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
 
@@ -111,19 +111,19 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if (Model != null)
+                                                    @if (Model.CandidateAudios != null)
                                                     {
-                                                        @for (int i = 0; i < Model.Count(); i++)
+                                                        @for (int i = 0; i < Model.CandidateAudios.Count(); i++)
                                                         {
                                                     <tr>
 
                                                         <td>
-                                                            <a href='@Model[i].AudioFileLink' download>
-                                                                @Model[i].AudioFileLink.Split('/').Last()
+                                                            <a href='@Model.CandidateAudios[i].AudioFileLink' download>
+                                                                @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
                                                             </a>
                                                         </td>
-                                                        <td>@Model[i].PhraseDetail</td>
-                                                        @if (Model[i].IsEnrolled)
+                                                        <td>@Model.CandidateAudios[i].PhraseDetail</td>
+                                                        @if (Model.CandidateAudios[i].IsEnrolled)
                                                         {
                                                             <td>Yes</td>
                                                         }
@@ -132,25 +132,25 @@
                                                             <td>No</td>
 
                                                         }
-                                                        @if (Model[i].EnrollmentMessage != null)
+                                                        @if (Model.CandidateAudios[i].EnrollmentMessage != null)
                                                         {
-                                                            <td>@Model[i].EnrollmentMessage</td>
+                                                            <td>@Model.CandidateAudios[i].EnrollmentMessage</td>
                                                         }
                                                         else
                                                         {
                                                             <td>NA</td>
 
                                                         }
-                                                        @Html.HiddenFor(m => Model[i].id)
-                                                        @Html.HiddenFor(m => Model[i].IRFId)
-                                                        @Html.HiddenFor(m => Model[i].IRFName)
-                                                        @Html.HiddenFor(m => Model[i].CandidateId)
-                                                        @Html.HiddenFor(m => Model[i].IsEnrolled)
-                                                        @Html.HiddenFor(m => Model[i].AudioFileLink)
-                                                        @Html.HiddenFor(m => Model[i].PhraseDetail)
-                                                        @if (Model[i].VoiceItUserId != null)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].id)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
+                                                        @if (Model.CandidateAudios[i].VoiceItUserId != null)
                                                         {
-                                                            @Html.HiddenFor(m => Model[i].VoiceItUserId)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
                                                         }
 
                                                     </tr>
@@ -173,9 +173,8 @@
                                         <label class="col-md-2"></label>
                                         <div class="col-md-9">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = @ViewBag.irfName, irfName = @ViewBag.irfName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>
-
+                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>                                           
                                         </div>
                                     </div>
                                 </div>
