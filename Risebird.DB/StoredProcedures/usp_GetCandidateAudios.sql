@@ -21,7 +21,7 @@ Begin
 
 select cau.*, ca.[Name] as CandidateName, ca.VoiceItUserId, irf.IRFId as IRFName
   from CandidateAudio cau join CandidatesMaster cm on cau.CandidateId= cm.id join Candidate ca on cm.EmailId = ca.EmailId join irf on irf.id=cau.IRFId
-  where cau.CandidateId =@CandidateId and cau.IRFId =@IRFId
+  where cau.CandidateId =@CandidateId and ca.IRFId =@IRFId
   group by cau.id, cau.IRFId, cau.CandidateId,cau.UploadedByUserId, cau.PhraseDetail, cau.IsVoiceBiometric, cau.AudioFileLink,
   cau.[Description], cau.IsEnrolled, cau.EnrollmentMessage,ca.[Name], ca.VoiceItUserId, irf.IRFId
 

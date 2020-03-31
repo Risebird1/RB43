@@ -148,10 +148,11 @@
                                                         @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
                                                         @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
                                                         @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
-                                                        @if (Model.CandidateAudios[i].VoiceItUserId != null)
+                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
+                                                        @*@if (Model.CandidateAudios[i].VoiceItUserId != null)
                                                         {
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
-                                                        }
+
+                                                        }*@
 
                                                     </tr>
 
