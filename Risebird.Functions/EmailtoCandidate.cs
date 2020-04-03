@@ -42,9 +42,9 @@ namespace Risebird.Functions
                     try
                     {
                         var mailMessage = new MailMessage();
-                        mailMessage.From = new MailAddress("hire@risebird.io", "Risebird Notification");
+                        mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
 
-                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         foreach (var mail in mails)
                         {
                             if (!string.IsNullOrEmpty(mail))
