@@ -1,23 +1,23 @@
 ﻿@model Risebird.Entities.ViewModel.IRFViewModel
-    @using Newtonsoft.Json;
-    @using Microsoft.AspNetCore.Http
-    @using Risebird.Entities.ViewModel
-    @inject IHttpContextAccessor HttpContextAccessor
-    @{
-        ViewData["Title"] = "IRF";
-        Layout = "~/Views/Shared/_Layout.cshtml";
-        dynamic filter = null;
-        string strtDte = String.Empty;
-        string endDte = String.Empty;
-        string[] RFID = new string[] { };
-        string[] ArchiveStatus = new string[] { };
-        string[] ClientName = new string[] { };
-        string[] ClientRole = new string[] { };
-    }
-    @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
-    {
-        filter = JsonConvert.DeserializeObject<IRFFilter>
-    (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "IRF";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] RFID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] ClientRole = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
+{
+    filter = JsonConvert.DeserializeObject<IRFFilter>
+(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
@@ -25,259 +25,285 @@
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
 
+}
+<style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
     }
-    <style>
-        .spanclass {
-            color: black;
-            font-size: 11px;
-        }
 
-        .desc {
-            display: inline-block;
-            width: 120px;
-            white-space: nowrap;
-            overflow: hidden !important;
-            text-overflow: ellipsis;
-        }
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
 
-        .multiple_row > h2 {
-            font-size: 18px;
-            background-color: #5f95b1;
-            padding: 8px 10px;
-            text-align: left;
-            color: #ffffff;
-            margin-top: 35px;
-            margin-bottom: 35px;
-        }
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
 
-        @@media (min-width: 1200px) {
-            .container {
-                width: 1125px;
-            }
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
         }
+    }
 
-        .thumbnail {
-            border-top: 5px solid #443f3f;
-        }
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
 
-        .list-group-item-heading {
-            font-size: 13px;
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+    .list-group-item-text {
+        padding-top: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 20px;
+    }
+
+        .list-group-item-text span {
+            float: left;
             font-weight: 700;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 15px;
+            padding-right: 5px;
         }
 
-        .list-group-item-text {
-            padding-top: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 20px;
-        }
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
 
-            .list-group-item-text span {
-                float: left;
-                font-weight: 700;
-                padding-right: 5px;
-            }
+    .list-group {
+        margin-bottom: 150px;
+    }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
 
-        .icon span {
-            padding-top: 15px;
-            font-size: 19px;
-            color: #5f95b1;
-            padding-left: 5px;
-        }
+    .multiselect-container {
+        width: 100% !important;
+    }
 
-        .list-group {
-            margin-bottom: 150px;
-        }
-    </style>
-    <style>
-        .caret {
-            display: none !important;
-        }
+    .modal-lg {
+        max-width: 690px !important;
+    }
 
-        .multiselect-container {
-            width: 100% !important;
-        }
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
 
-        .modal-lg {
-            max-width: 690px !important;
-        }
+    #StartDate, #EndDate {
+        width: 270px;
+    }
 
-        .dropdown-toggle {
-            background-color: white !important;
-            color: black !important;
-            border: 1px solid #ccc !important;
-        }
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+</style>
+<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
+<style>
+    #pClass {
+        color: darkblue;
+    }
 
-        #StartDate, #EndDate {
-            width: 270px;
-        }
+    #divHover:hover {
+        transform: scale(1.01);
+        box-shadow: 2px 3px 4px 5px #888888;
+        border: 1px solid;
+        padding: 10px;
+    }
 
-        .modal-content .modal-body {
-            padding-top: 10px;
-        }
-    </style>
-    <div class="main-panel" id="main-panel">
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-            <div class="container-fluid">
-                <div class="navbar-wrapper">
-                    <div class="navbar-toggle">
-                        <button type="button" class="navbar-toggler">
-                            <span class="navbar-toggler-bar bar1"></span>
-                            <span class="navbar-toggler-bar bar2"></span>
-                            <span class="navbar-toggler-bar bar3"></span>
-                        </button>
-                    </div>
-                    <a class="navbar-brand">
-                        Interview Request Forms
-                    </a>
+    .divTile {
+        width: 5%;
+        height: 150px;
+        background-color: green;
+        display: flex;
+        align-content: center;
+        padding: 0 20px;
+        font-family: sans-serif;
+        border-radius: 20px;
+        margin-top: 100%;
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
                 </div>
+                <a class="navbar-brand">
+                    Interview Request Forms
+                </a>
             </div>
-        </nav>
-        <!-- End Navbar -->
-        <div class="panel-header panel-header-sm">
         </div>
-        <div class="content">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Interview Request Forms</h4>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3 ml-md-auto">
-                                <div class="form-group">
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interview Request Forms</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 ml-md-auto">
+                            <div class="form-group">
 
-                                </div>
                             </div>
-                            <div class="col-auto">
-                                @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
-                                {
+                        </div>
+                        <div class="col-auto">
+                            @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                            {
                                 <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>
                                 <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"> Add IRF</span></button>
 
-                                }
-                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                            </div>
+                            }
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
                         </div>
-                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <form action="@Url.Action("Index","IRF")" method="post" id="form">
+                    </div>
+                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="@Url.Action("Index","IRF")" method="post" id="form">
 
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
-                                                            Start Date
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
-                                                        </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        Start Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
-                                                            End Date
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    @if (!Model.IsClientUser)
-                                                    {
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    }
-
-
-
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <div class="row">
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
                                                 </div>
                                             </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        End Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                @if (!Model.IsClientUser)
+                                                {
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                }
 
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.IRFList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            {
+                                                                @if (item != null && item != "")
+                                                                {
+                                                                    <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
                                         </div>
-                                    </form>
-                                </div>
-                            </div>
 
+                                    </div>
+                                </form>
+                            </div>
                         </div>
 
-                        <!-- end content-->
                     </div>
-                    <!--  end card  -->
+
+                    <!-- end content-->
                 </div>
-                <!-- end col-md-12 -->
+                <!--  end card  -->
             </div>
-            <div class="row">
-                @foreach (var item in Model.IRFList)
-                {
-                <div class="col-lg-3 col-sm-6">
+            <!-- end col-md-12 -->
+        </div>
+        <div class="row" >
+            @foreach (var item in Model.IRFList)
+            {
+                <div class="col-lg-3 col-sm-6" id="divHover">
                     <div class="card card-stats">
                         <div class="card-body">
 
@@ -285,33 +311,62 @@
 
                                 <div class="info info-horizontal">
                                     <div class="row">
-                                        <div class="col-12 text-center">
-                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFId</h3>
+                                        <div class="col-md-6">
+                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFId  <span>(###)</span></h3>
                                         </div>
+
+                                        <div class="col-md-6">
+
+                                            @if (item.IsPaused)
+                                            {
+                                                <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
+                                                    <i class="now-ui-icons fa fa-play"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
+                                                    <i class="now-ui-icons fa fa-pause"></i>
+                                                </button>
+
+                                            }
+                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                            </button>
+
+                                        </div>
+
                                     </div>
                                     <hr>
 
-                                    <div class="row" style="font-size:smaller;">
-
-                                        <div class="col-12">
+                                    <!-- irf body-->
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <p class="divTile"></p>
+                                        </div>
+                                        <div class="col-md-10">
                                             <div class="group inner list-group-item-text">
-                                                <span>Client Name:</span> <p style="color: blue;">@item.ClientCompName (@item.ClientName)</p>
-                                                <span>Primary Skill:</span> <p style="color: blue;">@item.JDTiltle.Split("|")[0]</p>
-                                                <span>Start Date:</span> <p style="color: blue;">@item.StartDate</p>
-                                                <span>End Date:</span> <p style="color: blue;">@item.EndDate</p>
-                                                <span>Total Interviews:</span> <p style="color: blue;">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</p>
-                                                <span>Total Invites:</span> <p style="color: blue;">@item.TotalInvites</p>
+                                                <span>Client Name:</span> <p id="pClass">@item.ClientCompName (@item.ClientName)</p>
+
+                                                <span>End Date:</span> <p id="pClass">@item.EndDate</p>
+                                                <span>Total Interviews:</span> <p id="pClass">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</p>
+
                                                 @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                 {
-                                                <span>Scheduled Interviews:</span> <p style="color: blue;">@(item.ScheduledMeetings !=null ?item.ScheduledMeetings : 0)</p>
+                                                    <span>Scheduled Interviews:</span> <p id="pClass">@(item.ScheduledMeetings !=null ?item.ScheduledMeetings : 0)</p>
                                                 }
 
-                                                <span>Selected Interviews:</span> <p style="color: blue;">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</p>
-                                                <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
+                                                <span>Selected Interviews:</span> <p id="pClass">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</p>
+
 
                                             </div>
                                         </div>
-
                                     </div>
 
                                 </div>
@@ -321,18 +376,18 @@
                             <div class="stats text-center">
                                 @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                 {
-                                <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
-                                    <i class="now-ui-icons fa fa-edit"></i>
-                                </button>
-                                <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
-                                    <i class="now-ui-icons fa fa-comments"></i>
-                                </button>
-                                <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
-                                    <i class="now-ui-icons fa fa-money"></i>
-                                </button>
-                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                </button>
+                                    <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
+                                        <i class="now-ui-icons fa fa-edit"></i>
+                                    </button>
+                                    <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
+                                        <i class="now-ui-icons fa fa-comments"></i>
+                                    </button>
+                                    <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                        <i class="now-ui-icons fa fa-money"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                    </button>
                                 }
                                 <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
@@ -340,50 +395,50 @@
 
                                 @if (Model.Profile != "Recruiter")
                                 {
-                                <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
-                                    <i class="now-ui-icons fa fa-meetup"></i>
-                                </button>
-                                <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
-                                    <i class="now-ui-icons fa fa-check"></i>
-                                </button>
-                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                    <i class="now-ui-icons  fa fa-calendar"></i>
-                                </button>
+                                    <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                        <i class="now-ui-icons fa fa-meetup"></i>
+                                    </button>
+                                    <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                                        <i class="now-ui-icons fa fa-check"></i>
+                                    </button>
+                                    <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                        <i class="now-ui-icons  fa fa-calendar"></i>
+                                    </button>
 
-                                <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
-                                    <i class="now-ui-icons fa fa-industry"></i>
-                                </button>
-                                if (item.IsPaused)
-                                {
-                                <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
-                                    <i class="now-ui-icons fa fa-play"></i>
-                                </button>
-                                }
-                                else
-                                {
-                                <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
-                                    <i class="now-ui-icons fa fa-pause"></i>
-                                </button>
+                                    <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
+                                        <i class="now-ui-icons fa fa-industry"></i>
+                                    </button>
+                                    @*@if (item.ispaused)
+                                    {
+                                        <button type="button" onclick="javascript:playirf('@item.id', '@item.irfid');" class="btn btn-success btn-icon btn-sm" title="play">
+                                            <i class="now-ui-icons fa fa-play"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" onclick="javascript:pauseirf('@item.id', '@item.irfid');" class="btn btn-success btn-icon btn-sm" title="pause">
+                                            <i class="now-ui-icons fa fa-pause"></i>
+                                        </button>
 
-                                }
+                                    }*@
 
                                 }
 
 
                                 @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                 {
-                                if (!item.IsDeleted)
-                                {
-                                <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                    <i class="now-ui-icons fa fa-archive"></i>
-                                </button>
-                                }
-                                else
-                                {
-                                <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                    <i class="now-ui-icons fa fa-undo"></i>
-                                </button>
-                                }
+                                    if (!item.IsDeleted)
+                                    {
+                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                            <i class="now-ui-icons fa fa-archive"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                            <i class="now-ui-icons fa fa-undo"></i>
+                                        </button>
+                                    }
 
                                 }
 
@@ -391,9 +446,9 @@
                         </div>
                     </div>
                 </div>
-                }
-            </div>
-            <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+            }
+        </div>
+        <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -404,194 +459,194 @@
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-                <!-- Modal content -->
-                <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                        <h5>Invoice</h5>
-                        <span class="close" id="invoicePopUp">&times;</span>
-                    </div>
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                        Start Date
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
+            <!-- Modal content -->
+            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5>Invoice</h5>
+                    <span class="close" id="invoicePopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                        End Date
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                        SR Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                    </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                    End Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                        PO Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                        Request Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                        Project Code
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                        Client Address
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                        Discount
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="discountId" name="discountId" type="text" class="form-control">
-                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                        Currency Code
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
-                                        Apply GST
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
-                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
-
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
                         </div>
                     </div>
-                    <div class="modal-footer" style="padding: 2px 16px;
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                    SR Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                    PO Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                    Request Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                    Project Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                    Client Address
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                    Discount
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="discountId" name="discountId" type="text" class="form-control">
+                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                    Currency Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
+                                    Apply GST
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
+                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
         background-color: #14406e;
         color: white;">
 
-                    </div>
                 </div>
-
             </div>
 
-            <!-- end row -->
         </div>
-        <footer class="footer">
-            <div class=" container-fluid ">
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Risebird
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Blog
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="copyright" id="copyright">
-                    &copy;
-                    <script>
-                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                    </script> Risebird All Rights Reserved.
-                </div>
-            </div>
-        </footer>
+
+        <!-- end row -->
     </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
 
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
 
 
-    @if (Model.Message != null)
-    {
+@if (Model.Message != null)
+{
     <script type="text/javascript">
 
         function my_code() {
@@ -634,205 +689,205 @@
         window.onload = my_code();
     </script>
 
+}
+
+
+
+<script type="text/javascript">
+    function DeleteIRF(dataID) {
+
+        var IdIRF = dataID;
+        swal.fire({
+            title: 'Are you sure?',
+            text: "It will be archived!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, archive it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    var IdIRF = dataID;
+                    $.ajax({
+                        url: '/IRF/DeleteIRF?id=' + IdIRF,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error archiving!", "Please try again", "error");
+                        }
+                    })
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Archived!',
+                    type: 'success',
+                    html: '<p>IRF has been archived.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been archived! :)',
+                    'error'
+                )
+            }
+        })
     }
 
 
+    function AddComments(id) {
 
-    <script type="text/javascript">
-        function DeleteIRF(dataID) {
+        var url = '/IRF/SampleQuestions?id=' + id;
+        window.location.href = url;
+    };
+    function SelectedInterviewMeetings(id, IRFid) {
 
-            var IdIRF = dataID;
-            swal.fire({
-                title: 'Are you sure?',
-                text: "It will be archived!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, archive it!',
-                preConfirm: function () {
-                    return new Promise(function (resolve, reject) {
-                        var IdIRF = dataID;
-                        $.ajax({
-                            url: '/IRF/DeleteIRF?id=' + IdIRF,
-                            success: function (result) {
-                                resolve(result)
+        var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function InterviewMeetings(id, IRFid) {
 
-                            },
-                            error: function () {
-                                //reject("error message")
-                                swal.fire("Error archiving!", "Please try again", "error");
-                            }
-                        })
+        var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    //Candidates
+    function Candidates(id, IRFid) {
+
+        var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
+        window.location.href = url;
+    };
+    function EditIRF(id) {
+
+        var url = '/IRF/EditIRF?id=' + id;
+        window.location.href = url;
+    };
+    function stats(id, IRFid) {
+
+        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+        window.location.href = url;
+    };
+    function UnArchiveIRF(id) {
+
+        var url = '/IRF/UnArchiveIRF?id=' + id;
+        window.location.href = url;
+    };
+
+    function PauseIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be paused!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, pause it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error pausing!", "Please try again", "error");
+                        }
                     })
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.dismiss !== 'cancel') {
-                    swal.fire({
-                        title: 'Archived!',
-                        type: 'success',
-                        html: '<p>IRF has been archived.</p>',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Close!',
-                        allowOutsideClick: false
-                    }).then(function () {
-                        window.location = "/IRF/Index";
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Paused!',
+                    type: 'success',
+                    html: '<p>IRF has been paused.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been paused! :)',
+                    'error'
+                )
+            }
+        })
+    }
+
+    function PlayIRF(irfId, irfName) {
+
+        swal.fire({
+            title: 'Are you sure?',
+            text: "The IRF will be enabled!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, play it!',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                        success: function (result) {
+                            resolve(result)
+
+                        },
+                        error: function () {
+                            //reject("error message")
+                            swal.fire("Error playing!", "Please try again", "error");
+                        }
                     })
-                }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Cancelled',
-                        'IRF has not been archived! :)',
-                        'error'
-                    )
-                }
-            })
-        }
+                })
+            },
+            allowOutsideClick: false
+        }).then(function (result) {
+            if (result.dismiss !== 'cancel') {
+                swal.fire({
+                    title: 'Played!',
+                    type: 'success',
+                    html: '<p>IRF has been enabled.</p>',
+                    showCancelButton: false,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Close!',
+                    allowOutsideClick: false
+                }).then(function () {
+                    window.location = "/IRF/Index";
+                })
+            }
+            else if (result.dismiss === 'cancel') {
+                swal.fire(
+                    'Cancelled',
+                    'IRF has not been enabled! :)',
+                    'error'
+                )
+            }
+        })
+    }
 
-
-        function AddComments(id) {
-
-            var url = '/IRF/SampleQuestions?id=' + id;
-            window.location.href = url;
-        };
-        function SelectedInterviewMeetings(id, IRFid) {
-
-            var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-            window.location.href = url;
-        };
-        function InterviewMeetings(id, IRFid) {
-
-            var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
-            window.location.href = url;
-        };
-        //Candidates
-        function Candidates(id, IRFid) {
-
-            var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
-            window.location.href = url;
-        };
-        function EditIRF(id) {
-
-            var url = '/IRF/EditIRF?id=' + id;
-            window.location.href = url;
-        };
-        function stats(id, IRFid) {
-
-            var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
-            window.location.href = url;
-        };
-        function UnArchiveIRF(id) {
-
-            var url = '/IRF/UnArchiveIRF?id=' + id;
-            window.location.href = url;
-        };
-
-        function PauseIRF(irfId, irfName) {
-
-            swal.fire({
-                title: 'Are you sure?',
-                text: "The IRF will be paused!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, pause it!',
-                preConfirm: function () {
-                    return new Promise(function (resolve, reject) {
-                        $.ajax({
-                            url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
-                            success: function (result) {
-                                resolve(result)
-
-                            },
-                            error: function () {
-                                //reject("error message")
-                                swal.fire("Error pausing!", "Please try again", "error");
-                            }
-                        })
-                    })
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.dismiss !== 'cancel') {
-                    swal.fire({
-                        title: 'Paused!',
-                        type: 'success',
-                        html: '<p>IRF has been paused.</p>',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Close!',
-                        allowOutsideClick: false
-                    }).then(function () {
-                        window.location = "/IRF/Index";
-                    })
-                }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Cancelled',
-                        'IRF has not been paused! :)',
-                        'error'
-                    )
-                }
-            })
-        }
-
-        function PlayIRF(irfId, irfName) {
-
-            swal.fire({
-                title: 'Are you sure?',
-                text: "The IRF will be enabled!",
-                type: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, play it!',
-                preConfirm: function () {
-                    return new Promise(function (resolve, reject) {
-                        $.ajax({
-                            url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
-                            success: function (result) {
-                                resolve(result)
-
-                            },
-                            error: function () {
-                                //reject("error message")
-                                swal.fire("Error playing!", "Please try again", "error");
-                            }
-                        })
-                    })
-                },
-                allowOutsideClick: false
-            }).then(function (result) {
-                if (result.dismiss !== 'cancel') {
-                    swal.fire({
-                        title: 'Played!',
-                        type: 'success',
-                        html: '<p>IRF has been enabled.</p>',
-                        showCancelButton: false,
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Close!',
-                        allowOutsideClick: false
-                    }).then(function () {
-                        window.location = "/IRF/Index";
-                    })
-                }
-                else if (result.dismiss === 'cancel') {
-                    swal.fire(
-                        'Cancelled',
-                        'IRF has not been enabled! :)',
-                        'error'
-                    )
-                }
-            })
-        }
-
-        //UnArchiveIRF
-    </script>
-    <script>
-        $(document).ready(function () {           
+    //UnArchiveIRF
+</script>
+<script>
+        $(document).ready(function () {
             $("#stDateInvoice").val("");
             $("#EndDateInvoice").val("");
             $("#srNumberId").val("");
@@ -912,63 +967,63 @@
             });
         }
 
-    </script>
-    <script>
-        var irfId = "";
-        var irfName = "";
-        var span = document.getElementById("invoicePopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
+</script>
+<script>
+    var irfId = "";
+    var irfName = "";
+    var span = document.getElementById("invoicePopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+<script>
+    function InvoicePopUp(id, irfName) {
+
+        irfId = id;
+        irfName = irfName;
+
+
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+
+
+
+    }
+
+
+    function SavePopUp() {
+        var sDate = $("#stDateInvoice").val();
+        //var stDate = document.getElementById("stDateInvoice").value;
+        var endDate = document.getElementById("EndDateInvoice").value;
+
+        var srNumber = $("#srNumberId").val();
+        var poNumber = $("#poNumberId").val();
+        var reqNumber = $("#requestNumberId").val();
+        var currencyCode = $("#currencyCodeId").val();
+        var projectCode = $("#projectCodeId").val();
+        var discount = $("#discountId").val();
+        var clientAddress = $("#clientAddressId").val();
+        var isGST = document.getElementById("gstCheckId").checked
+        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
+            document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
+            return;
+        }
+        else {
+            document.getElementById("popUp_Error").innerHTML = "";
+
         }
 
 
-    </script>
-    <script>
-        function InvoicePopUp(id, irfName) {
+        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
+        window.location.href = url;
+    }
 
-            irfId = id;
-            irfName = irfName;
-
-
-            // Get the modal
-            var modal = document.getElementById("myModal");
-
-
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-
-
-
-        }
-
-
-        function SavePopUp() {
-            var sDate = $("#stDateInvoice").val();
-            //var stDate = document.getElementById("stDateInvoice").value;
-            var endDate = document.getElementById("EndDateInvoice").value;
-
-            var srNumber = $("#srNumberId").val();
-            var poNumber = $("#poNumberId").val();
-            var reqNumber = $("#requestNumberId").val();
-            var currencyCode = $("#currencyCodeId").val();
-            var projectCode = $("#projectCodeId").val();
-            var discount = $("#discountId").val();
-            var clientAddress = $("#clientAddressId").val();
-            var isGST = document.getElementById("gstCheckId").checked
-            if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
-                document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
-                return;
-            }
-            else {
-                document.getElementById("popUp_Error").innerHTML = "";
-
-            }
-
-
-            var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
-            window.location.href = url;
-        }
-
-    </script>
+</script>
