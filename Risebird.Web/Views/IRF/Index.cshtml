@@ -67,11 +67,12 @@
         padding-bottom: 15px;
     }
 
-    .list-group-item-text {
+    /*.list-group-item-text {
         padding-top: 20px;
         border-bottom: 1px solid #ccc;
         padding-bottom: 20px;
-    }
+
+    }*/
 
         .list-group-item-text span {
             float: left;
@@ -131,16 +132,23 @@
     }
 
     .divTile {
-        width: 5%;
+       
         height: 150px;
+        width:30%;
         background-color: green;
         display: flex;
         align-content: center;
         padding: 0 20px;
         font-family: sans-serif;
         border-radius: 20px;
-        margin-top: 100%;
+        margin-top: 70%;
     }
+
+    .card .card-body {
+        padding: 5px 5px 5px 15px;
+    }
+
+    
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -302,13 +310,12 @@
         </div>
         <div class="row" >
             @foreach (var item in Model.IRFList)
-            {
+            { 
                 <div class="col-lg-3 col-sm-6" id="divHover">
                     <div class="card card-stats">
                         <div class="card-body">
 
                             <div class="statistics statistics-horizontal">
-
                                 <div class="info info-horizontal">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -317,28 +324,36 @@
 
                                         <div class="col-md-6">
 
-                                            @if (item.IsPaused)
+                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                             {
-                                                <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
-                                                    <i class="now-ui-icons fa fa-play"></i>
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
-                                                    <i class="now-ui-icons fa fa-pause"></i>
+                                                <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
+                                                    <i class="now-ui-icons fa fa-edit"></i>
                                                 </button>
 
+                                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                                </button>
                                             }
-                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                            <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                                <i class="now-ui-icons fa fa-list"></i>
                                             </button>
-                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                            </button>
+
+                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                            {
+                                                if (!item.IsDeleted)
+                                                {
+                                                    <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                                        <i class="now-ui-icons fa fa-archive"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                        <i class="now-ui-icons fa fa-undo"></i>
+                                                    </button>
+                                                }
+
+                                            }
 
                                         </div>
 
@@ -389,9 +404,27 @@
                                         <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
                                     </button>
                                 }
+
                                 <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                     <i class="now-ui-icons fa fa-list"></i>
                                 </button>
+
+                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                {
+                                    if (!item.IsDeleted)
+                                    {
+                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                            <i class="now-ui-icons fa fa-archive"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                            <i class="now-ui-icons fa fa-undo"></i>
+                                        </button>
+                                    }
+
+                                }
 
                                 @if (Model.Profile != "Recruiter")
                                 {
@@ -408,20 +441,19 @@
                                     <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
                                         <i class="now-ui-icons fa fa-industry"></i>
                                     </button>
-                                    @*@if (item.ispaused)
+                                    if (item.IsPaused)
                                     {
-                                        <button type="button" onclick="javascript:playirf('@item.id', '@item.irfid');" class="btn btn-success btn-icon btn-sm" title="play">
+                                        <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
                                             <i class="now-ui-icons fa fa-play"></i>
                                         </button>
                                     }
                                     else
                                     {
-                                        <button type="button" onclick="javascript:pauseirf('@item.id', '@item.irfid');" class="btn btn-success btn-icon btn-sm" title="pause">
+                                        <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
                                             <i class="now-ui-icons fa fa-pause"></i>
                                         </button>
 
-                                    }*@
-
+                                    }
                                 }
 
 
@@ -460,7 +492,17 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+            <div class="modal-content" style="
+        width: 70%;
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        font-size: 12px;
+        margin-top: -53px
+   ">
                 <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
                     <h5>Invoice</h5>
                     <span class="close" id="invoicePopUp">&times;</span>
@@ -692,8 +734,8 @@
 }
 
 
-
 <script type="text/javascript">
+
     function DeleteIRF(dataID) {
 
         var IdIRF = dataID;
@@ -785,7 +827,7 @@
     };
 
     function PauseIRF(irfId, irfName) {
-
+       
         swal.fire({
             title: 'Are you sure?',
             text: "The IRF will be paused!",
@@ -832,10 +874,12 @@
                 )
             }
         })
+
+        changeColor('red');
     }
 
     function PlayIRF(irfId, irfName) {
-
+        
         swal.fire({
             title: 'Are you sure?',
             text: "The IRF will be enabled!",
@@ -882,6 +926,7 @@
                 )
             }
         })
+        changeColor("yellow");
     }
 
     //UnArchiveIRF
@@ -1026,4 +1071,22 @@
         window.location.href = url;
     }
 
+    function changeColor(tileColor) {
+        localStorage.removeItem("localStorageforColorName");
+        localStorage.setItem('localStorageforColorName', 'localStorageforColor');
+        let value = localStorage.getItem('localStorageforColorName');
+        console.log("Inside the changeColor()-- color is::" + tileColor);
+
+        if (value) {
+            console.log("local storge value is::"+value);
+            $(document).ready(function () {
+                $("#divTile").css({ "backgroundColor": tileColor });
+                alert("Color Changed!!!!");
+            });
+        }
+        
+       // console.log("Div Value::"+document.getElementById("divTile"));
+        //document.getElementById("divTile").style.backgroundColor = tileColor;
+      // divTile.style.backgroundColor = color;
+    }
 </script>
