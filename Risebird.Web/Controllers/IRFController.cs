@@ -53,8 +53,18 @@ namespace Risebird.Web.Controllers
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
-
+                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderBy(y=> y.EndDate);
+                    foreach (var item in model.IRFList)
+                    {
+                        if (item.IsPaused)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                        }
+                    }
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
