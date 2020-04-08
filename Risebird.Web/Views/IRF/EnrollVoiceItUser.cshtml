@@ -115,45 +115,46 @@
                                                     {
                                                         @for (int i = 0; i < Model.CandidateAudios.Count(); i++)
                                                         {
-                                                    <tr>
+                                                            <tr>
 
-                                                        <td>
-                                                            <a href='@Model.CandidateAudios[i].AudioFileLink' download>
-                                                                @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
-                                                            </a>
-                                                        </td>
-                                                        <td>@Model.CandidateAudios[i].PhraseDetail</td>
-                                                        @if (Model.CandidateAudios[i].IsEnrolled)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
+                                                                <td>
+                                                                    <a href='@Model.CandidateAudios[i].AudioFileLink' download>
+                                                                        @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
+                                                                    </a>
+                                                                </td>
+                                                                <td>@Model.CandidateAudios[i].PhraseDetail</td>
+                                                                @if (Model.CandidateAudios[i].IsEnrolled)
+                                                                {
+                                                                    <td>Yes</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>No</td>
 
-                                                        }
-                                                        @if (Model.CandidateAudios[i].EnrollmentMessage != null)
-                                                        {
-                                                            <td>@Model.CandidateAudios[i].EnrollmentMessage</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>NA</td>
+                                                                }
+                                                                @if (Model.CandidateAudios[i].EnrollmentMessage != null)
+                                                                {
+                                                                    <td>@Model.CandidateAudios[i].EnrollmentMessage</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>NA</td>
 
-                                                        }
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].id)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
-                                                        @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
-                                                        @if (Model.CandidateAudios[i].VoiceItUserId != null)
-                                                        {
-                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
-                                                        }
+                                                                }
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].id)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
+                                                                @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
+                                                                @*@if (Model.CandidateAudios[i].VoiceItUserId != null)
+                                                                    {
 
-                                                    </tr>
+                                                                    }*@
+
+                                                            </tr>
 
                                                         }
 
@@ -174,7 +175,7 @@
                                         <div class="col-md-9">
 
                                             @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>                                           
+                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Enroll">Enroll</button>
                                         </div>
                                     </div>
                                 </div>

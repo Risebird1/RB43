@@ -53,8 +53,18 @@ namespace Risebird.Web.Controllers
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now);
-
+                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderBy(y=> y.EndDate);
+                    foreach (var item in model.IRFList)
+                    {
+                        if (item.IsPaused)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                        }
+                    }
                     if (profileName != null && profileName.Contains("Client"))
                     {
                         model.IsClientUser = true;
@@ -3095,24 +3105,41 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost]
-       // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EnrollVoiceItUser(CandidateAudioVM model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollVoiceItUser(IFormCollection model)
         {
-           
+
             try
             {
                 if (HttpContext.Session.GetString("email") != null &&
                     HttpContext.Session.GetString("profileName") != null)
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                    profileName =  profileName.Replace("\"", "");
+                    profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                     {
-                        var result = _evaluatorService.EnrollCandidate(model.CandidateAudios);
+                        var count = model.Count();
+                        int imax = (count - 3) / 8;
+                        var objList = new List<CandidateAudio>();
+                        for (int i = 0; i < imax; i++)
+                        {
+                            var obj = new CandidateAudio();
+                            obj.id = Convert.ToInt32(model["CandidateAudios[" + i + "].id"]);
+                            obj.IRFId = Convert.ToInt32(model["CandidateAudios[" + i + "].IRFId"]);
+                            obj.IRFName = model["CandidateAudios[" + i + "].IRFName"];
+                            obj.CandidateId = Convert.ToInt32(model["CandidateAudios[" + i + "].CandidateId"]);
+                            obj.IsEnrolled = Convert.ToBoolean(model["CandidateAudios[" + i + "].IsEnrolled"]);
+                            obj.AudioFileLink = model["CandidateAudios[" + i + "].AudioFileLink"];
+                            obj.PhraseDetail = model["CandidateAudios[" + i + "].PhraseDetail"];
+                            //VoiceItUserId
+                            obj.VoiceItUserId = model["CandidateAudios[" + i + "].VoiceItUserId"];
+                            objList.Add(obj);
+                        }
+                        var result = _evaluatorService.EnrollCandidate(objList);
                         TempData["SuccessErrorMessageEnroll"] = result;
-                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.CandidateId, irfId = model.IRFId});
+                        return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], candidateEmail = model["CandidateEmail"], irfId = model["CandidateAudios[0].IRFId"], irfName = model["IRFName"] });
 
                     }
                     else
@@ -3129,7 +3156,8 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageEnrollment"] = "Failed!";
-                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model.CandidateId, irfId = model.IRFId });
+                return RedirectToAction("EnrollVoiceItUser", new { candidateId = model["CandidateAudios[0].CandidateId"], irfId = model["CandidateAudios[0].IRFId"] });
+
             }
         }
 
