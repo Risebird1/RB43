@@ -74,11 +74,11 @@
 
     }*/
 
-        .list-group-item-text span {
-            float: left;
-            font-weight: 700;
-            padding-right: 5px;
-        }
+    .list-group-item-text span {
+        float: left;
+        font-weight: 700;
+        padding-right: 5px;
+    }
 
     .icon span {
         padding-top: 15px;
@@ -120,36 +120,94 @@
 </style>
 <!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
 <style>
-    #pClass {
-        color: darkblue;
+    .list-group-item-text span, p {
+        float: left;
+        font-weight: bold;
+        padding-right: 5px;
+        line-height: normal;
+        text-align: center;
     }
 
-    #divHover:hover {
-        transform: scale(1.01);
-        box-shadow: 2px 3px 4px 5px #888888;
-        border: 1px solid;
-        padding: 10px;
+    .list-group-item-text {
+        padding-top: 5px;
     }
+    /* hr {
+        padding: 0px;
+        margin: 0px;
+        border-width: 1px;
+      } */
+
+    #divIRF {
+        background-color: #99ccff;
+        line-height: normal;
+        margin-right: 1px;
+        margin-bottom:1px;
+    }
+
 
     .divTile {
-       
-        height: 150px;
-        width:30%;
-        background-color: green;
-        display: flex;
-        align-content: center;
-        padding: 0 20px;
-        font-family: sans-serif;
+        height: auto;
         border-radius: 20px;
-        margin-top: 70%;
+        margin: 5px 5px 5px 0px;
+        padding: 10px;
+        position: relative;
+        background-color: white;
+        border-radius: 0px 20px 20px 0px;
+        margin-left: 10px;
     }
 
-    .card .card-body {
-        padding: 5px 5px 5px 15px;
+    /*#divTileOuter {
+        background-color: white;
+        border-radius: 0px 20px 20px 0px;
+        margin-left: 10px;
+    }*/
+
+    .card-footer {
+        text-align: center;
     }
 
-    
+    #divTopRight {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-body {
+        padding: 5px 5px 5px 5px;
+    }
 </style>
+@*<style>
+        #pClass {
+            color: darkblue;
+        }
+
+        #divHover:hover {
+            transform: scale(1.01);
+            box-shadow: 2px 3px 4px 5px #888888;
+            border: 1px solid;
+            padding: 10px;
+        }
+
+        .divTile {
+
+            height: 150px;
+            width:30%;
+            background-color: green;
+            display: flex;
+            align-content: center;
+            padding: 0 20px;
+            font-family: sans-serif;
+            border-radius: 20px;
+            margin-top: 70%;
+        }
+
+        .card .card-body {
+            padding: 5px 5px 5px 15px;
+        }
+
+
+
+    </style>*@
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -308,179 +366,178 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div class="row" >
-            @foreach (var item in Model.IRFList)
-            { 
-                <div class="col-lg-3 col-sm-6" id="divHover">
-                    <div class="card card-stats">
-                        <div class="card-body">
 
-                            <div class="statistics statistics-horizontal">
-                                <div class="info info-horizontal">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFId  <span>(###)</span></h3>
-                                        </div>
+        <div class="container-fluid">
+            <div class="row">
+                @foreach (var item in Model.IRFList)
+                {
+                    <div class="col-lg-3 col-sm-6">
+                        <div id="divIRF">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h3 class="info-title" style="font-size:smaller;"> @item.IRFId  <span>(###)</span></h3>
+                                    </div>
 
-                                        <div class="col-md-6">
+                                    <div class="col-md-6">
 
-                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                            {
-                                                <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
-                                                    <i class="now-ui-icons fa fa-edit"></i>
-                                                </button>
-
-                                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                                </button>
-                                            }
-                                            <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                                <i class="now-ui-icons fa fa-list"></i>
+                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                        {
+                                            <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
+                                                <i class="now-ui-icons fa fa-edit"></i>
                                             </button>
 
-                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                            {
-                                                if (!item.IsDeleted)
-                                                {
-                                                    <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                                        <i class="now-ui-icons fa fa-archive"></i>
-                                                    </button>
-                                                }
-                                                else
-                                                {
-                                                    <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                                        <i class="now-ui-icons fa fa-undo"></i>
-                                                    </button>
-                                                }
+                                            <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                            </button>
+                                        }
+                                        <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                            <i class="now-ui-icons fa fa-list"></i>
+                                        </button>
 
+                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                        {
+                                            if (!item.IsDeleted)
+                                            {
+                                                <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                                    <i class="now-ui-icons fa fa-archive"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                    <i class="now-ui-icons fa fa-undo"></i>
+                                                </button>
                                             }
 
-                                        </div>
+                                        }
 
                                     </div>
-                                    <hr>
 
-                                    <!-- irf body-->
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <p class="divTile"></p>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <div class="group inner list-group-item-text">
-                                                <span>Client Name:</span> <p id="pClass">@item.ClientCompName (@item.ClientName)</p>
+                                </div>
+                                @*<hr>*@
 
-                                                <span>End Date:</span> <p id="pClass">@item.EndDate</p>
-                                                <span>Total Interviews:</span> <p id="pClass">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</p>
+                                <!-- irf body-->
+                                <div class="row">
+                                    <div class="col-md-1" id="divTile">
+                                      
+                                    </div>
+                                    <div class="col-md-11">
+                                        <div class="group inner list-group-item-text">
+                                            <span>Client Name:</span> <p id="pClass">@item.ClientCompName (@item.ClientName)</p>
 
-                                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                                {
-                                                    <span>Scheduled Interviews:</span> <p id="pClass">@(item.ScheduledMeetings !=null ?item.ScheduledMeetings : 0)</p>
-                                                }
+                                            <span>End Date:</span> <p id="pClass">@item.EndDate</p>
+                                            <span>Total Interviews:</span> <p id="pClass">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</p>
 
-                                                <span>Selected Interviews:</span> <p id="pClass">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</p>
+                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                            {
+                                                <span>Scheduled Interviews:</span> <p id="pClass">@(item.ScheduledMeetings !=null ?item.ScheduledMeetings : 0)</p>
+                                            }
+
+                                            <span>Selected Interviews:</span> <p id="pClass">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</p>
 
 
-                                            </div>
                                         </div>
                                     </div>
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer ">
+                                <div class="stats text-center">
+                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+                                        @*<button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
+                                            <i class="now-ui-icons fa fa-edit"></i>
+                                        </button>*@
+                                        <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
+                                            <i class="now-ui-icons fa fa-comments"></i>
+                                        </button>
+                                        <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                            <i class="now-ui-icons fa fa-money"></i>
+                                        </button>
+                                        @*<button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+                                            <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                        </button>*@
+                                    }
+
+                                    @*<button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                        <i class="now-ui-icons fa fa-list"></i>
+                                    </button>*@
+
+                                    @*@if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+                                        if (!item.IsDeleted)
+                                        {
+                                            <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                                <i class="now-ui-icons fa fa-archive"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                <i class="now-ui-icons fa fa-undo"></i>
+                                            </button>
+                                        }
+
+                                    }*@
+
+                                    @if (Model.Profile != "Recruiter")
+                                    {
+                                        <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                            <i class="now-ui-icons fa fa-meetup"></i>
+                                        </button>
+                                        <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                                            <i class="now-ui-icons fa fa-check"></i>
+                                        </button>
+                                        <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                            <i class="now-ui-icons  fa fa-calendar"></i>
+                                        </button>
+
+                                        <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
+                                            <i class="now-ui-icons fa fa-industry"></i>
+                                        </button>
+                                        if (item.IsPaused)
+                                        {
+                                            <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
+                                                <i class="now-ui-icons fa fa-play"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
+                                                <i class="now-ui-icons fa fa-pause"></i>
+                                            </button>
+
+                                        }
+                                    }
+
+
+                                    @*@if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+                                        if (!item.IsDeleted)
+                                        {
+                                            <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                                <i class="now-ui-icons fa fa-archive"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
+                                                <i class="now-ui-icons fa fa-undo"></i>
+                                            </button>
+                                        }
+
+                                    }*@
 
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer ">
-                            <div class="stats text-center">
-                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                {
-                                    <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
-                                        <i class="now-ui-icons fa fa-edit"></i>
-                                    </button>
-                                    <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
-                                        <i class="now-ui-icons fa fa-comments"></i>
-                                    </button>
-                                    <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
-                                        <i class="now-ui-icons fa fa-money"></i>
-                                    </button>
-                                    <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                    </button>
-                                }
-
-                                <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                    <i class="now-ui-icons fa fa-list"></i>
-                                </button>
-
-                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                {
-                                    if (!item.IsDeleted)
-                                    {
-                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                            <i class="now-ui-icons fa fa-archive"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                            <i class="now-ui-icons fa fa-undo"></i>
-                                        </button>
-                                    }
-
-                                }
-
-                                @if (Model.Profile != "Recruiter")
-                                {
-                                    <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
-                                        <i class="now-ui-icons fa fa-meetup"></i>
-                                    </button>
-                                    <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
-                                        <i class="now-ui-icons fa fa-check"></i>
-                                    </button>
-                                    <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                        <i class="now-ui-icons  fa fa-calendar"></i>
-                                    </button>
-
-                                    <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
-                                        <i class="now-ui-icons fa fa-industry"></i>
-                                    </button>
-                                    if (item.IsPaused)
-                                    {
-                                        <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
-                                            <i class="now-ui-icons fa fa-play"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
-                                            <i class="now-ui-icons fa fa-pause"></i>
-                                        </button>
-
-                                    }
-                                }
-
-
-                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                {
-                                    if (!item.IsDeleted)
-                                    {
-                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                            <i class="now-ui-icons fa fa-archive"></i>
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                            <i class="now-ui-icons fa fa-undo"></i>
-                                        </button>
-                                    }
-
-                                }
-
-                            </div>
-                        </div>
                     </div>
-                </div>
-            }
-        </div>
-        <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
+
+                }
+            </div>
+            <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -491,9 +548,8 @@
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-            <!-- Modal content -->
-            <div class="modal-content" style="
-        width: 70%;
+                <!-- Modal content -->
+                <div class="modal-content" style="        width: 70%;
         position: relative;
         background-color: #fefefe;
         margin: auto;
@@ -503,193 +559,193 @@
         font-size: 12px;
         margin-top: -53px
    ">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5>Invoice</h5>
-                    <span class="close" id="invoicePopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                    Start Date
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
+                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                        <h5>Invoice</h5>
+                        <span class="close" id="invoicePopUp">&times;</span>
+                    </div>
+                    <div class="modal-body" style="padding: 2px 16px;">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                        Start Date
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                        End Date
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                    End Date
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                    SR Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                        SR Number
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                        PO Number
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                    PO Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                        Request Number
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                        Project Code
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                    Request Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                        Client Address
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                        Discount
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="discountId" name="discountId" type="text" class="form-control">
+                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                    Project Code
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                    Client Address
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                    Discount
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="discountId" name="discountId" type="text" class="form-control">
-                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                    Currency Code
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                        Currency Code
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
 
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
+                                        Apply GST
+                                    </label>
+                                    <div class="col-md-6 col-sm-6">
+                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
+                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
-                                    Apply GST
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
-                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+                        <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
+                        <div class="">
+                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer" style="padding: 2px 16px;
+                    <div class="modal-footer" style="padding: 2px 16px;
         background-color: #14406e;
         color: white;">
 
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- end row -->
+        </div>
+        <footer class="footer">
+            <div class=" container-fluid ">
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                Risebird
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                About Us
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                Blog
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="copyright" id="copyright">
+                    &copy;
+                    <script>
+                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                    </script> Risebird All Rights Reserved.
                 </div>
             </div>
-
-        </div>
-
-        <!-- end row -->
+        </footer>
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
-</div>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
 
 
-@if (Model.Message != null)
-{
-    <script type="text/javascript">
+    @if (Model.Message != null)
+    {
+        <script type="text/javascript">
 
         function my_code() {
             var msg = '@Model.Message';
@@ -729,209 +785,209 @@
         }
 
         window.onload = my_code();
+        </script>
+
+    }
+
+
+    <script type="text/javascript">
+
+        function DeleteIRF(dataID) {
+
+            var IdIRF = dataID;
+            swal.fire({
+                title: 'Are you sure?',
+                text: "It will be archived!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, archive it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        var IdIRF = dataID;
+                        $.ajax({
+                            url: '/IRF/DeleteIRF?id=' + IdIRF,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error archiving!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Archived!',
+                        type: 'success',
+                        html: '<p>IRF has been archived.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been archived! :)',
+                        'error'
+                    )
+                }
+            })
+        }
+
+
+        function AddComments(id) {
+
+            var url = '/IRF/SampleQuestions?id=' + id;
+            window.location.href = url;
+        };
+        function SelectedInterviewMeetings(id, IRFid) {
+
+            var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        function InterviewMeetings(id, IRFid) {
+
+            var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        //Candidates
+        function Candidates(id, IRFid) {
+
+            var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
+            window.location.href = url;
+        };
+        function EditIRF(id) {
+
+            var url = '/IRF/EditIRF?id=' + id;
+            window.location.href = url;
+        };
+        function stats(id, IRFid) {
+
+            var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        function UnArchiveIRF(id) {
+
+            var url = '/IRF/UnArchiveIRF?id=' + id;
+            window.location.href = url;
+        };
+
+        function PauseIRF(irfId, irfName) {
+
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The IRF will be paused!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, pause it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error pausing!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Paused!',
+                        type: 'success',
+                        html: '<p>IRF has been paused.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been paused! :)',
+                        'error'
+                    )
+                }
+            })
+
+            changeColor('red');
+        }
+
+        function PlayIRF(irfId, irfName) {
+
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The IRF will be enabled!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, play it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error playing!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Played!',
+                        type: 'success',
+                        html: '<p>IRF has been enabled.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been enabled! :)',
+                        'error'
+                    )
+                }
+            })
+            changeColor("yellow");
+        }
+
+        //UnArchiveIRF
     </script>
-
-}
-
-
-<script type="text/javascript">
-
-    function DeleteIRF(dataID) {
-
-        var IdIRF = dataID;
-        swal.fire({
-            title: 'Are you sure?',
-            text: "It will be archived!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, archive it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    var IdIRF = dataID;
-                    $.ajax({
-                        url: '/IRF/DeleteIRF?id=' + IdIRF,
-                        success: function (result) {
-                            resolve(result)
-
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error archiving!", "Please try again", "error");
-                        }
-                    })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Archived!',
-                    type: 'success',
-                    html: '<p>IRF has been archived.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/IRF/Index";
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'IRF has not been archived! :)',
-                    'error'
-                )
-            }
-        })
-    }
-
-
-    function AddComments(id) {
-
-        var url = '/IRF/SampleQuestions?id=' + id;
-        window.location.href = url;
-    };
-    function SelectedInterviewMeetings(id, IRFid) {
-
-        var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
-        window.location.href = url;
-    };
-    function InterviewMeetings(id, IRFid) {
-
-        var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
-        window.location.href = url;
-    };
-    //Candidates
-    function Candidates(id, IRFid) {
-
-        var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
-        window.location.href = url;
-    };
-    function EditIRF(id) {
-
-        var url = '/IRF/EditIRF?id=' + id;
-        window.location.href = url;
-    };
-    function stats(id, IRFid) {
-
-        var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
-        window.location.href = url;
-    };
-    function UnArchiveIRF(id) {
-
-        var url = '/IRF/UnArchiveIRF?id=' + id;
-        window.location.href = url;
-    };
-
-    function PauseIRF(irfId, irfName) {
-       
-        swal.fire({
-            title: 'Are you sure?',
-            text: "The IRF will be paused!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, pause it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
-                        success: function (result) {
-                            resolve(result)
-
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error pausing!", "Please try again", "error");
-                        }
-                    })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Paused!',
-                    type: 'success',
-                    html: '<p>IRF has been paused.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/IRF/Index";
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'IRF has not been paused! :)',
-                    'error'
-                )
-            }
-        })
-
-        changeColor('red');
-    }
-
-    function PlayIRF(irfId, irfName) {
-        
-        swal.fire({
-            title: 'Are you sure?',
-            text: "The IRF will be enabled!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, play it!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
-                        success: function (result) {
-                            resolve(result)
-
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error playing!", "Please try again", "error");
-                        }
-                    })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Played!',
-                    type: 'success',
-                    html: '<p>IRF has been enabled.</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/IRF/Index";
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Cancelled',
-                    'IRF has not been enabled! :)',
-                    'error'
-                )
-            }
-        })
-        changeColor("yellow");
-    }
-
-    //UnArchiveIRF
-</script>
-<script>
+    <script>
         $(document).ready(function () {
             $("#stDateInvoice").val("");
             $("#EndDateInvoice").val("");
@@ -1012,81 +1068,81 @@
             });
         }
 
-</script>
-<script>
-    var irfId = "";
-    var irfName = "";
-    var span = document.getElementById("invoicePopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-
-
-</script>
-<script>
-    function InvoicePopUp(id, irfName) {
-
-        irfId = id;
-        irfName = irfName;
-
-
-        // Get the modal
-        var modal = document.getElementById("myModal");
-
-
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-
-
-    }
-
-
-    function SavePopUp() {
-        var sDate = $("#stDateInvoice").val();
-        //var stDate = document.getElementById("stDateInvoice").value;
-        var endDate = document.getElementById("EndDateInvoice").value;
-
-        var srNumber = $("#srNumberId").val();
-        var poNumber = $("#poNumberId").val();
-        var reqNumber = $("#requestNumberId").val();
-        var currencyCode = $("#currencyCodeId").val();
-        var projectCode = $("#projectCodeId").val();
-        var discount = $("#discountId").val();
-        var clientAddress = $("#clientAddressId").val();
-        var isGST = document.getElementById("gstCheckId").checked
-        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
-            document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
-            return;
+    </script>
+    <script>
+        var irfId = "";
+        var irfName = "";
+        var span = document.getElementById("invoicePopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
         }
-        else {
-            document.getElementById("popUp_Error").innerHTML = "";
+
+
+    </script>
+    <script>
+        function InvoicePopUp(id, irfName) {
+
+            irfId = id;
+            irfName = irfName;
+
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+
 
         }
 
 
-        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
-        window.location.href = url;
-    }
+        function SavePopUp() {
+            var sDate = $("#stDateInvoice").val();
+            //var stDate = document.getElementById("stDateInvoice").value;
+            var endDate = document.getElementById("EndDateInvoice").value;
 
-    function changeColor(tileColor) {
-        localStorage.removeItem("localStorageforColorName");
-        localStorage.setItem('localStorageforColorName', 'localStorageforColor');
-        let value = localStorage.getItem('localStorageforColorName');
-        console.log("Inside the changeColor()-- color is::" + tileColor);
+            var srNumber = $("#srNumberId").val();
+            var poNumber = $("#poNumberId").val();
+            var reqNumber = $("#requestNumberId").val();
+            var currencyCode = $("#currencyCodeId").val();
+            var projectCode = $("#projectCodeId").val();
+            var discount = $("#discountId").val();
+            var clientAddress = $("#clientAddressId").val();
+            var isGST = document.getElementById("gstCheckId").checked
+            if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
+                document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
+                return;
+            }
+            else {
+                document.getElementById("popUp_Error").innerHTML = "";
 
-        if (value) {
-            console.log("local storge value is::"+value);
-            $(document).ready(function () {
-                $("#divTile").css({ "backgroundColor": tileColor });
-                alert("Color Changed!!!!");
-            });
+            }
+
+
+            var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
+            window.location.href = url;
         }
-        
-       // console.log("Div Value::"+document.getElementById("divTile"));
-        //document.getElementById("divTile").style.backgroundColor = tileColor;
-      // divTile.style.backgroundColor = color;
-    }
-</script>
+
+        function changeColor(tileColor) {
+            localStorage.removeItem("localStorageforColorName");
+            localStorage.setItem('localStorageforColorName', 'localStorageforColor');
+            let value = localStorage.getItem('localStorageforColorName');
+            console.log("Inside the changeColor()-- color is::" + tileColor);
+
+            if (value) {
+                console.log("local storge value is::" + value);
+                $(document).ready(function () {
+                    $("#divTile").css({ "backgroundColor": tileColor });
+                    alert("Color Changed!!!!");
+                });
+            }
+
+            // console.log("Div Value::"+document.getElementById("divTile"));
+            //document.getElementById("divTile").style.backgroundColor = tileColor;
+            // divTile.style.backgroundColor = color;
+        }
+    </script>
