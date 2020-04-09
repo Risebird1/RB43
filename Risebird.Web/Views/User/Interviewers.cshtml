@@ -159,6 +159,7 @@
                                                 <td>@item.NoOfInterview</td>
                                                 <td>@item.SuccessRate</td>
                                                 <td class="text-right">
+                                                    <span onclick="location.href = '@Url.Action("AddInterviewerProfile", "User", new { id = item.id})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>
                                                     <span onclick="location.href = '@Url.Action("EditInterviewer", "User", new { id = item.id})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                 </td>
