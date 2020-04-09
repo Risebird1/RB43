@@ -12,6 +12,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Risebird.CommonHelper;
 
 namespace Risebird.Web.Controllers
 {
@@ -769,6 +770,49 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["SuccessErrorMessageInterviewer"] = "Deletion of Interviewer Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+        #endregion
+
+        #region Interviewer Profile Functions
+
+        [HttpGet]
+        public async Task<IActionResult> AddInterviewerProfile()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var model = new InterviewerProfileVM();
+                    model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+                    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
+                    var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
+                    var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
+                    var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+
+                    return View("AddInterviewerProfile", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return RedirectToAction("Interviewers");
             }
         }
