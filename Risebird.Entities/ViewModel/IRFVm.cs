@@ -172,5 +172,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime interviewDate { get; set; }
         public string interviewer { get; set; }
         public float TotalBudgetConsumed { get; set; }
+        public string ImageUrl { get; set; }
     }
 }
