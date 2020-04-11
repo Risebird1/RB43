@@ -53,7 +53,7 @@ namespace Risebird.Web.Controllers
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
-                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderBy(y=> y.EndDate);
+                    model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y=> y.EndDate);
                     foreach (var item in model.IRFList)
                     {
                         if (item.IsPaused)
@@ -99,7 +99,22 @@ namespace Risebird.Web.Controllers
                         {
                             model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
-
+                        foreach (var item in model.IRFList)
+                        {
+                            if (item.IsPaused)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                            }
+                            else if(item.EndDate >= DateTime.Now)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            }
+                            else 
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            }
+                        }
+                        model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
                     }
                     
                     model.Profile = profileName;
@@ -165,6 +180,21 @@ namespace Risebird.Web.Controllers
                         irfList = _irfService.GetAllIRFs(emailid, profileName).Where(x=> x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
                         irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
 
+                    }
+                    foreach (var item in irfList)
+                    {
+                        if (item.IsPaused)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                        }
+                        else if (item.EndDate >= DateTime.Now)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                        }
+                        else
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                        }
                     }
                     model.IRFList = irfList;
 
