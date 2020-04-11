@@ -59,10 +59,12 @@ namespace Risebird.Web.Controllers
                         if (item.IsPaused)
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                            item.IRFStatus = "Paused";
                         }
                         else
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.IRFStatus = "Active";
                         }
                     }
                     if (profileName != null && profileName.Contains("Client"))
@@ -104,14 +106,17 @@ namespace Risebird.Web.Controllers
                             if (item.IsPaused)
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                                item.IRFStatus = "Paused";
                             }
                             else if(item.EndDate >= DateTime.Now)
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                                item.IRFStatus = "Active";
                             }
                             else 
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
                             }
                         }
                         model.IRFList = model.IRFList.OrderByDescending(x => x.EndDate).ToList();
@@ -186,14 +191,17 @@ namespace Risebird.Web.Controllers
                         if (item.IsPaused)
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
+                            item.IRFStatus = "Paused";
                         }
                         else if (item.EndDate >= DateTime.Now)
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
+                            item.IRFStatus = "Active";
                         }
                         else
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
                         }
                     }
                     model.IRFList = irfList;
