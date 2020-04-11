@@ -67,18 +67,15 @@
         padding-bottom: 15px;
     }
 
-    /*.list-group-item-text {
-        padding-top: 20px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 20px;
+    .list-group-item-text {
+        padding-left: 30px;
+    }
 
-    }*/
-
-    .list-group-item-text span {
+    /*.list-group-item-text span {
         float: left;
         font-weight: 700;
         padding-right: 5px;
-    }
+    }*/
 
     .icon span {
         padding-top: 15px;
@@ -118,96 +115,36 @@
         padding-top: 10px;
     }
 </style>
+
 <!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
 <style>
-    .list-group-item-text span, p {
-        float: left;
-        font-weight: bold;
-        padding-right: 5px;
-        line-height: normal;
-        text-align: center;
-    }
-
-    .list-group-item-text {
-        padding-top: 5px;
-    }
-    /* hr {
-        padding: 0px;
-        margin: 0px;
-        border-width: 1px;
-      } */
-
-    #divIRF {
-        background-color: #99ccff;
-        line-height: normal;
-        margin-right: 1px;
-        margin-bottom:1px;
-    }
-
-
-    .divTile {
-        height: auto;
-        border-radius: 20px;
-        margin: 5px 5px 5px 0px;
-        padding: 10px;
-        position: relative;
-        background-color: white;
-        border-radius: 0px 20px 20px 0px;
-        margin-left: 10px;
-    }
-
-    /*#divTileOuter {
-        background-color: white;
-        border-radius: 0px 20px 20px 0px;
-        margin-left: 10px;
-    }*/
 
     .card-footer {
         text-align: center;
-    }
-
-    #divTopRight {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding:0px;
     }
 
     .card-body {
-        padding: 5px 5px 5px 5px;
+        margin:0px;
+        padding:10px;
     }
+
+    #irf-card-footer {
+        padding-left: 20px;
+        padding-top: 15px;
+    }
+
+    .card-header-buttons {
+        margin:-15px;
+        margin-left:15px;
+    }
+
+    /*.card-content-holder {
+        background-color:white;
+    }*/
+
+  
 </style>
-@*<style>
-        #pClass {
-            color: darkblue;
-        }
-
-        #divHover:hover {
-            transform: scale(1.01);
-            box-shadow: 2px 3px 4px 5px #888888;
-            border: 1px solid;
-            padding: 10px;
-        }
-
-        .divTile {
-
-            height: 150px;
-            width:30%;
-            background-color: green;
-            display: flex;
-            align-content: center;
-            padding: 0 20px;
-            font-family: sans-serif;
-            border-radius: 20px;
-            margin-top: 70%;
-        }
-
-        .card .card-body {
-            padding: 5px 5px 5px 15px;
-        }
-
-
-
-    </style>*@
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -367,105 +304,40 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                @foreach (var item in Model.IRFList)
-                {
-                    <div class="col-lg-3 col-sm-6">
-                        <div id="divIRF">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h3 class="info-title" style="font-size:smaller;"> @item.IRFId  <span>(###)</span></h3>
-                                    </div>
+        <!-- Start Card -->
 
-                                    <div class="col-md-6">
-
-                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                        {
-                                            <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
-                                                <i class="now-ui-icons fa fa-edit"></i>
-                                            </button>
-
-                                            <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
-                                                <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                            </button>
-                                        }
-                                        <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                            <i class="now-ui-icons fa fa-list"></i>
-                                        </button>
-
-                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                        {
-                                            if (!item.IsDeleted)
-                                            {
-                                                <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                                    <i class="now-ui-icons fa fa-archive"></i>
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                                    <i class="now-ui-icons fa fa-undo"></i>
-                                                </button>
-                                            }
-
-                                        }
-
-                                    </div>
-
-                                </div>
-                                @*<hr>*@
-
-                                <!-- irf body-->
-                                <div class="row">
-                                    <div class="col-md-1" id="divTile">
-                                      
-                                    </div>
-                                    <div class="col-md-11">
-                                        <div class="group inner list-group-item-text">
-                                            <span>Client Name:</span> <p id="pClass">@item.ClientCompName (@item.ClientName)</p>
-
-                                            <span>End Date:</span> <p id="pClass">@item.EndDate</p>
-                                            <span>Total Interviews:</span> <p id="pClass">@(item.TotalMeetings != null ? item.TotalMeetings : 0)</p>
-
-                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                            {
-                                                <span>Scheduled Interviews:</span> <p id="pClass">@(item.ScheduledMeetings !=null ?item.ScheduledMeetings : 0)</p>
-                                            }
-
-                                            <span>Selected Interviews:</span> <p id="pClass">@(item.SelectedMeetings != null ? item.SelectedMeetings : 0)</p>
-
-
-                                        </div>
-                                    </div>
+        <div class="row">
+            @foreach (var item in Model.IRFList)
+            {
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" >
+                    <div class=" card-content-holder" style="background-color:#bceff5;">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class=" col-md-6 col-sm-6">
+                                    <h6> @item.IRFId <span>(###)</span></h6>
                                 </div>
 
-                            </div>
-
-                            <div class="card-footer ">
-                                <div class="stats text-center">
+                                <div class="col-md-6 col-sm-6 card-header-buttons">
                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                     {
-                                        @*<button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-primary btn-icon btn-sm">
-                                            <i class="now-ui-icons fa fa-edit"></i>
-                                        </button>*@
-                                        <button type="button" onclick="javascript:AddComments('@item.id');" class="btn btn-warning btn-icon btn-sm" title="Questions">
-                                            <i class="now-ui-icons fa fa-comments"></i>
+                                        <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit">
+                                            @*class="btn btn-primary btn-icon btn-sm"*@
+                                            @*<i class="now-ui-icons fa fa-edit"></i>*@
+                                            <i class="fa fa-pencil-square" aria-hidden="true"></i>
                                         </button>
-                                        <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
-                                            <i class="now-ui-icons fa fa-money"></i>
-                                        </button>
-                                        @*<button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new {irfId=item.id, irfName=item.IRFId})'" class="btn btn-info btn-icon btn-sm" title="Interview Planner">
+
+                                        <button type="button" onclick="location.href='@Url.Action(" InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner">
+                                            @*class="btn btn-info btn-icon btn-sm"*@
                                             <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                        </button>*@
+                                        </button>
                                     }
 
-                                    @*<button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                    <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');"
+                                            class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                         <i class="now-ui-icons fa fa-list"></i>
-                                    </button>*@
+                                    </button>
 
-                                    @*@if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                     {
                                         if (!item.IsDeleted)
                                         {
@@ -480,64 +352,122 @@
                                             </button>
                                         }
 
-                                    }*@
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- irf body-->
+                        <div class="card-body"> 
+                            <div class="row">
+                                <div class="col-lg-2  col-sm-2">
+                                    <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive" >
+                                 </div>
+                                <div class="col-lg-10col-sm-10 ">
+                                    <div class="group inner list-group-item-text">
+
+                                        <div class="row">
+                                            <span>Client Name:</span> @item.ClientCompName (@item.ClientName)
+                                        </div> <br />
+
+                                        <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
+
+                                        <div class="row">
+                                            <span>Total Interviews:</span> @(item.TotalMeetings != null ?
+                                    item.TotalMeetings : 0)
+                                        </div> <br />
+
+                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                        {
+                                            <div class="row">
+                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings !=null
+                                    ?item.ScheduledMeetings : 0)
+                                            </div> <br />
+                                        }
+
+                                        <div class="row">
+                                            <span>Selected Interviews:</span> @(item.SelectedMeetings != null ?
+                                    item.SelectedMeetings : 0)
+                                        </div> <br />
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer ">
+                            <div class="row">
+
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 " id="irf-card-footer">
+                                    irf status name
+                                </div>
+
+                                <div class="stats text-center col-lg-8 col-md-8 col-sm-8 col-xs-8 ">
+                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+
+                                        <button type="button" onclick="javascript:AddComments('@item.id');"
+                                                class="btn btn-warning btn-icon btn-sm" title="Questions">
+                                            <i class="now-ui-icons fa fa-comments"></i>
+                                        </button>
+                                        <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');"
+                                                class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                            <i class="now-ui-icons fa fa-money"></i>
+                                        </button>
+
+                                    }
 
                                     @if (Model.Profile != "Recruiter")
                                     {
-                                        <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                        <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');"
+                                                class="btn btn-info btn-icon btn-sm" title="Meetings">
                                             <i class="now-ui-icons fa fa-meetup"></i>
                                         </button>
-                                        <button type="button" onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                                        <button type="button"
+                                                onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"
+                                                class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
                                             <i class="now-ui-icons fa fa-check"></i>
                                         </button>
-                                        <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                        <button type="button" onclick="location.href='@Url.Action(" ShowCalendly", "IRF" , new
+                                         {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
+                                                class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                             <i class="now-ui-icons  fa fa-calendar"></i>
                                         </button>
 
-                                        <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Stats">
+                                        <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');"
+                                                class="btn btn-success btn-icon btn-sm" title="Stats">
                                             <i class="now-ui-icons fa fa-industry"></i>
                                         </button>
                                         if (item.IsPaused)
                                         {
-                                            <button type="button" onclick="javascript:PlayIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Play">
+                                            <button type="button" onclick="PlayIRF('@item.id', '@item.IRFId');"
+                                                    class="btn btn-success btn-icon btn-sm" title="Play">
                                                 <i class="now-ui-icons fa fa-play"></i>
                                             </button>
                                         }
                                         else
                                         {
-                                            <button type="button" onclick="javascript:PauseIRF('@item.id', '@item.IRFId');" class="btn btn-success btn-icon btn-sm" title="Pause">
+                                            <button type="button" onclick="PauseIRF('@item.id', '@item.IRFId');"
+                                                    class="btn btn-success btn-icon btn-sm" title="Pause">
                                                 <i class="now-ui-icons fa fa-pause"></i>
                                             </button>
 
                                         }
                                     }
 
-
-                                    @*@if (!@item.IsClientUser && Model.Profile != "Recruiter")
-                                    {
-                                        if (!item.IsDeleted)
-                                        {
-                                            <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                                <i class="now-ui-icons fa fa-archive"></i>
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                                <i class="now-ui-icons fa fa-undo"></i>
-                                            </button>
-                                        }
-
-                                    }*@
-
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                }
-            </div>
-            <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- End Card-->
+        <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -547,9 +477,10 @@
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-                <!-- Modal content -->
-                <div class="modal-content" style="        width: 70%;
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+">
+            <!-- Modal content -->
+            <div class="modal-content" style="        width: 70%;
         position: relative;
         background-color: #fefefe;
         margin: auto;
@@ -558,182 +489,182 @@
         box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
         font-size: 12px;
         margin-top: -53px
-   ">
-                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                        <h5>Invoice</h5>
-                        <span class="close" id="invoicePopUp">&times;</span>
-                    </div>
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                        Start Date
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
+    ">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5>Invoice</h5>
+                    <span class="close" id="invoicePopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                        End Date
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                        SR Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                    </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                    End Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                        PO Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                        Request Number
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                        Project Code
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                        Client Address
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                        Discount
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="discountId" name="discountId" type="text" class="form-control">
-                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                        Currency Code
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-6">
-                                <div class="form-group">
-                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
-                                        Apply GST
-                                    </label>
-                                    <div class="col-md-6 col-sm-6">
-                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
-                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
-
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
                         </div>
                     </div>
-                    <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                    SR Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                    PO Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                    Request Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                    Project Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                    Client Address
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                    Discount
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="discountId" name="discountId" type="text" class="form-control">
+                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                    Currency Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
+                                    Apply GST
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
+                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
                     </div>
                 </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+                                 background-color: #14406e;
+                                                 color: white;">
 
+                </div>
             </div>
 
-            <!-- end row -->
         </div>
-        <footer class="footer">
-            <div class=" container-fluid ">
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Risebird
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Blog
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="copyright" id="copyright">
-                    &copy;
-                    <script>
-                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                    </script> Risebird All Rights Reserved.
-                </div>
-            </div>
-        </footer>
+
+        <!-- end row -->
     </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
 
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
@@ -842,6 +773,8 @@
                     )
                 }
             })
+
+
         }
 
 
@@ -883,7 +816,7 @@
         };
 
         function PauseIRF(irfId, irfName) {
-
+           
             swal.fire({
                 title: 'Are you sure?',
                 text: "The IRF will be paused!",
@@ -935,7 +868,7 @@
         }
 
         function PlayIRF(irfId, irfName) {
-
+            
             swal.fire({
                 title: 'Are you sure?',
                 text: "The IRF will be enabled!",
