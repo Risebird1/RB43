@@ -82,7 +82,7 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<IRFFilter>(HttpContext.Session.GetString("IRFfilters"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            model.IRFList = irfList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                            model.IRFList = irfList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
                         }
                         else
                         {
@@ -204,8 +204,7 @@ namespace Risebird.Web.Controllers
                             item.IRFStatus = "Archived";
                         }
                     }
-                    model.IRFList = irfList;
-
+                    model.IRFList = irfList.OrderByDescending(x => x.EndDate).ToList();
                     model.Profile = profileName;
                     return View(model);
 
