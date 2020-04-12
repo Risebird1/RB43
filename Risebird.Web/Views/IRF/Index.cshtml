@@ -67,9 +67,7 @@
         padding-bottom: 15px;
     }
 
-    .list-group-item-text {
-        padding-left: 30px;
-    }
+   
 
     /*.list-group-item-text span {
         float: left;
@@ -139,10 +137,20 @@
         margin-left:15px;
     }
 
-    /*.card-content-holder {
-        background-color:white;
-    }*/
+    .card-content-holder {
+        background-color: white;
+        border-top-right-radius:30px;
+    }
 
+    .list-group-item-text  {
+        line-height: 90%;
+        padding: 20px;
+    }
+
+    .list-group-item-text span{
+       font-weight:bold;
+       padding-right:7px;
+    }
   
 </style>
 
@@ -310,30 +318,26 @@
             @foreach (var item in Model.IRFList)
             {
                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" >
-                    <div class=" card-content-holder" style="background-color:#bceff5;">
+                    <div class=" card-content-holder">
                         <div class="card-header">
                             <div class="row">
-                                <div class=" col-md-6 col-sm-6">
-                                    <h6> @item.IRFId <span>(###)</span></h6>
+                                <div class=" col-md-7 col-sm-7">
+                                    <h6> @item.IRFId <span>(@item.JDTiltle.Split("|")[0])</span></h6>
                                 </div>
 
-                                <div class="col-md-6 col-sm-6 card-header-buttons">
+                                <div class="col-md-5 col-sm-5 card-header-buttons">
                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                     {
-                                        <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit">
-                                            @*class="btn btn-primary btn-icon btn-sm"*@
-                                            @*<i class="now-ui-icons fa fa-edit"></i>*@
-                                            <i class="fa fa-pencil-square" aria-hidden="true"></i>
+                                        <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit"   class="btn btn-primary btn-icon btn-sm">
+                                          <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
 
-                                        <button type="button" onclick="location.href='@Url.Action(" InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner">
-                                            @*class="btn btn-info btn-icon btn-sm"*@
+                                        <button type="button" onclick="location.href='@Url.Action(" InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
                                             <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
                                         </button>
                                     }
 
-                                    <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');"
-                                            class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                    <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
                                         <i class="now-ui-icons fa fa-list"></i>
                                     </button>
 
@@ -374,8 +378,7 @@
                                         <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
 
                                         <div class="row">
-                                            <span>Total Interviews:</span> @(item.TotalMeetings != null ?
-                                    item.TotalMeetings : 0)
+                                            <span>Total Interviews:</span> @(item.TotalMeetings != null ?item.TotalMeetings : 0)
                                         </div> <br />
 
                                         @if (!@item.IsClientUser && Model.Profile != "Recruiter")
@@ -401,7 +404,16 @@
                             <div class="row">
 
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 " id="irf-card-footer">
-                                    irf status name
+
+                                    @if (@item.IRFStatus == "Active") {
+                                    <h6 style="color: green;"> @item.IRFStatus</h6>
+                                    }
+                                    else if(@item.IRFStatus == "Paused"){
+                                    <h6 style="color: grey;"> @item.IRFStatus</h6>
+                                    }
+                                    else{
+                                    <h6 style="color: black;"> @item.IRFStatus</h6>
+                                    }
                                 </div>
 
                                 <div class="stats text-center col-lg-8 col-md-8 col-sm-8 col-xs-8 ">
