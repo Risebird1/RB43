@@ -344,7 +344,7 @@
                                             <i class="now-ui-icons fa fa-edit"></i>
                                         </button>
 
-                                        <button type="button" onclick="location.href='@Url.Action(" InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
+                                        <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
                                             <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
                                         </button>
                                         <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');"
@@ -449,7 +449,7 @@
                                                 class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
                                             <i class="now-ui-icons fa fa-check"></i>
                                         </button>
-                                        <button type="button" onclick="location.href='@Url.Action(" ShowCalendly", "IRF" , new
+                                        <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
                                          {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
                                                 class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
                                             <i class="now-ui-icons  fa fa-calendar"></i>
