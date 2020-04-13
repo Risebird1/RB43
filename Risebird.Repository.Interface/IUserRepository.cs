@@ -44,5 +44,7 @@ namespace Risebird.Repository.Interface
         Task<bool> EditRecruiter(Recruiter recruiter);
         Recruiter GetRecruiter(int id);
         Task<bool> DeleteRecruiter(int userId);
+
+        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
     }
 }

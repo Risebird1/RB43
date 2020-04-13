@@ -790,6 +790,9 @@ namespace Risebird.Web.Controllers
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                    var level = from InterviewerSkillsLevel s in Enum.GetValues(typeof(InterviewerSkillsLevel))
+                                       select new { ID = (int)s, Name = s.GetDescription() };
+                    model.LevelList = new SelectList(level, "ID", "Name");
                     var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
@@ -813,6 +816,66 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    string uploadedFileURL = string.Empty;
+                    // Need to add here property to add link to coded resume link
+                    // Need to see how to add coded resume and then see How to add that in error also
+                    if (interviewerProfile.File == null && (interviewerProfile.ResumeLink == null))
+                    {
+                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
+                        return RedirectToAction("AddInterviewerProfile");
+                    }
+
+                    // Check on this how it works and make it and also add for coded resume part
+                    if (interviewerProfile.File != null)
+                    {
+                        await _azureStorageHelper.InsertBlob(interviewerProfile.File.FileName, "resumes", interviewerProfile.File);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewerProfile.File.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                    }
+
+                    if (uploadedFileURL == null || uploadedFileURL == string.Empty)
+                    {
+                        ModelState.AddModelError(String.Empty, "Adding Interviewer Profile has Failed. Resume not added successfully");
+                        return RedirectToAction("AddInterviewerProfile");
+                    }
+                    else
+                    {
+                        interviewerProfile.ResumeLink = uploadedFileURL;
+
+                        if (_userService.AddInterviewerProfile(interviewerProfile).Result)
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+                            return RedirectToAction("Interviewers");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
+                            return RedirectToAction("Interviewers");
+                        }
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
                 return RedirectToAction("Interviewers");
             }
         }

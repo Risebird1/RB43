@@ -7,6 +7,7 @@ using System.Linq;
 using Risebird.Entities.ViewModel;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
+using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
@@ -264,6 +265,24 @@ namespace Risebird.Business
 
         #endregion
 
+        #region Interviewer Profile Service Functions
+
+        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                return _userRepository.AddInterviewerProfile(interviewerProfile).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        #endregion
+
         #region QCInterviewer Service Functions
 
         public List<QCInterviewerVM> GetQCInterviewers()
@@ -492,9 +511,6 @@ namespace Risebird.Business
                 return false;
             }
         }
-
-
-
 
     }
 }

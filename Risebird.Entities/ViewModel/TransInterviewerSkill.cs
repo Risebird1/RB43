@@ -10,5 +10,6 @@ namespace Risebird.Entities.ViewModel
         public int InterviewerProfileId { get; set; }
         public int SkillId { get; set; }
         public string Level { get; set; }
+        public string SkillName { get; set; }
     }
 }

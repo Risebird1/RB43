@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 
@@ -41,5 +42,8 @@ namespace Risebird.Business.Interface
         bool EditRecruiter(Recruiter recruiter);
         Recruiter GetRecruiter(int id);
         bool DeleteRecruiter(int userId);
+
+        // Interviewe Profile services
+        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
     }
 }

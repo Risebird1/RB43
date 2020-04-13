@@ -520,6 +520,163 @@ namespace Risebird.Repository
 
         #endregion
 
+        #region Interviewer Profile Repository function
+
+        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //var ProfileId = 
+                       await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+                    var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
+                        con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    var ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+
+                    foreach (var item in interviewerProfile.InterviewerSkill)
+                    {
+
+                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, @SkillName);";
+                        var affectedRows = con.ExecuteAsync(sqlSkill, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            SkillId = item.SkillId,
+                            Level = item.Level,
+                            SkillName = item.SkillName,
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+                    {
+                        string sqlCertificate = "INSERT INTO TransInterviewerCertificate (InterviewerProfileId, CertificateID, CertificateName) Values (@InterviewerProfileId, @CertificateID, @CertificateName);";
+                        var affectedRows = con.ExecuteAsync(sqlCertificate, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            CertificateID = item.CertificateID,
+                            CertificateName = item.CertificateName,
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+                    {
+                        string sqlProfessional = "INSERT INTO TransInterviewerProfessional (InterviewerProfileId, CompanyName, CompanyType, Domain, StartDate, EndDate) Values (@InterviewerProfileId, @CompanyName, @CompanyType, @Domain, @StartDate, @EndDate);";
+                        var affectedRows = con.ExecuteAsync(sqlProfessional, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            CompanyName = item.CompanyName,
+                            CompanyType = item.CompanyType,
+                            Domain = item.Domain,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerEducationDetails)
+                    {
+
+                        string sqlEducation = "INSERT INTO TransInterviewerEducation (InterviewerProfileId, Graduation, CollegeType, Specialization, Score) Values (@InterviewerProfileId, @Graduation, @CollegeType, @Specialization, @Score);";
+                        var affectedRows = con.ExecuteAsync(sqlEducation, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            Graduation = item.Graduation,
+                            CollegeType = item.CollegeType,
+                            Specialization = item.Specialization,
+                            Score = item.Score
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+                    {
+
+                        string sqlQuery = "INSERT INTO TransInterviewerProjects (InterviewerProfileId, ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions) Values (@InterviewerProfileId, @ProjectName, @ClientName, @StartDate, @EndDate, @Role, @ProjectDescriptions);";
+                        var affectedRows = con.ExecuteAsync(sqlQuery, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            ProjectName = item.ProjectName,
+                            ClientName = item.ClientName,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                            Role = item.Role,
+                            ProjectDescriptions = item.ProjectDescriptions
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                    {
+
+                        string sqlQuery = "INSERT INTO TransInterviewerAvailability (InterviewerProfileId, DayTimeSlot, DaySlot, StartTime, EndTime) Values (@InterviewerProfileId, @DayTimeSlot, @DaySlot, @StartTime, @EndTime);";
+                        var affectedRows = con.ExecuteAsync(sqlQuery, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            DayTimeSlot = item.DayTimeSlot,
+                            DaySlot = item.DaySlot,
+                            StartTime = item.StartTime,
+                            EndTime = item.EndTime
+                        }).Result;
+                    }
+
+                    foreach (var item in interviewerProfile.InterviewerAccDetails)
+                    {
+
+                        string sqlQuery = "INSERT INTO TransInterviewerAccDetails (InterviewerProfileId, AccountHolderName, AccountNumber, IFSCCode, Location, UPIId) Values (@InterviewerProfileId, @AccountHolderName, @AccountNumber, @IFSCCode, @Location, @UPIId);";
+                        var affectedRows = con.ExecuteAsync(sqlQuery, new
+                        {
+                            InterviewerProfileId = ProfileId,
+                            AccountHolderName = item.AccountHolderName,
+                            AccountNumber = item.AccountHolderName,
+                            IFSCCode = item.IFSCCode,
+                            Location = item.Location,
+                            UPIId = item.UPIId
+                        }).Result;
+                    }
+
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@UserId", entity.UserId);
+            parameters.Add("@FirstName", entity.FirstName);
+            parameters.Add("@LastName", entity.LastName);
+            parameters.Add("@NickName", entity.NickName);
+            parameters.Add("@EmailId", entity.EmailId);
+            parameters.Add("@AltEmailId", entity.AltEmailId);
+            parameters.Add("@Location", entity.Location);
+            parameters.Add("@MobileNumber", entity.MobileNumber);
+            parameters.Add("@AltMobileNumber", entity.AltMobileNumber);
+            parameters.Add("@CurrentRole", entity.CurrentRole);
+            parameters.Add("@Experience", entity.Experience);
+            parameters.Add("@PreferredDomain", entity.PreferredDomain);
+            parameters.Add("@ResumeLink", entity.ResumeLink);
+            parameters.Add("@CodedResumeLink", entity.CodedResumeLink);
+            parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
+            parameters.Add("@IsActive", entity.IsActive);
+            parameters.Add("@IsApproved", entity.IsApproved);
+            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+
+            return parameters;
+        }
+
+        #endregion
 
         #region QCInterviewer Repository Functions
 
@@ -975,7 +1132,7 @@ namespace Risebird.Repository
             }
         }
 
-
+        
 
     }
 }

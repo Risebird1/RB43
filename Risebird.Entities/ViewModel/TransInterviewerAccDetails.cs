@@ -12,5 +12,6 @@ namespace Risebird.Entities.ViewModel
         public string AccountNumber { get; set; }
         public string IFSCCode { get; set; }
         public string Location { get; set; }
+        public string UPIId { get; set; }
     }
 }

@@ -65,6 +65,7 @@ namespace Risebird.Entities.ViewModel
         public IList<TransInterviewerProjects> InterviewerProjectsDetails { get; set; }
         public IList<TransInterviewerAvailability> InterviewerAvailabilityDetails { get; set; }
         public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }
+        public IList<TransInterviewerCertificate> InterviewerCertificateDetails { get; set; }
 
         //To add in the dropdown List
         [Display(Name = "Skills List")]
@@ -72,6 +73,7 @@ namespace Risebird.Entities.ViewModel
         // To add in selected from the user
         public int[] SelectedSkillIds { get; set; }
         public SelectList CompanyTypeList { get; set; }
+        public SelectList LevelList { get; set; }
         public SelectList GraduationTypeList { get; set; }
         public SelectList CollegeTypeList { get; set; }
         public SelectList DayTimeSlotList { get; set; }
