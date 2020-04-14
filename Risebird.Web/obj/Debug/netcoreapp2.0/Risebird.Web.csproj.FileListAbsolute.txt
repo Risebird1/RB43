@@ -222,9 +222,9 @@ C:\RiseBirdProject\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 C:\RiseBirdProject\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.genruntimeconfig.cache
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\web.config
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.Development.json
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.json
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\bundleconfig.json
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Properties\launchSettings.json
-C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.json
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json

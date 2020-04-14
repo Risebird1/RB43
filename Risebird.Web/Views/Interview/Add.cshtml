@@ -9,6 +9,63 @@
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
+<style>
+
+
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        font-size: 12px;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+            background: #4fa4fb;
+        }
+
+</style>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">

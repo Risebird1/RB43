@@ -91,7 +91,78 @@
         width: auto;
     }
 
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        font-size: 12px;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
 
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+            background: #4fa4fb;
+        }
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    table {
+        white-space: nowrap !important;
+    }
+    .table > tfoot > tr > th {
+        padding: 5px 7px;
+
+    }
+
+ 
+    .table > tbody > tr > td {
+        padding: 20px 7px !important;
+        vertical-align: middle;
+    }
     thead, tfoot {
         /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
         background: #3f9eff; /* Old browsers */
