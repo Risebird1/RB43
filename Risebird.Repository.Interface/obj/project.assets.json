@@ -12713,19 +12713,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\abhin\\.nuget\\packages\\": {}
+    "C:\\Users\\rumab\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\RiseBirdProject\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
       "projectName": "Risebird.Repository.Interface",
-      "projectPath": "C:\\RiseBirdProject\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
-      "packagesPath": "C:\\Users\\abhin\\.nuget\\packages\\",
-      "outputPath": "C:\\RiseBirdProject\\Risebird.Repository.Interface\\obj\\",
+      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\abhin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12738,8 +12738,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\RiseBirdProject\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

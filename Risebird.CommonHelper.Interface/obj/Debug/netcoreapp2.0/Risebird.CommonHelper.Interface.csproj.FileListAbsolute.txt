@@ -103,3 +103,15 @@ C:\RiseBirdProject\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Riseb
 C:\RiseBirdProject\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\RiseBirdProject\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\RiseBirdProject\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.deps.json
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

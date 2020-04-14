@@ -93,3 +93,12 @@ C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.A
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.deps.json
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csproj.CoreCompileInputs.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
