@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage ="Please enter Mobile Number")]
         public string MobileNumber { get; set; }
 
-        [Display(Name = "Altername Mobile Num.")]
+        [Display(Name = "Altername Mobile Number")]
         [Required(ErrorMessage = "Please enter Alternate Mobile Number")]
         public string AltMobileNumber { get; set; }
 
@@ -70,7 +70,7 @@ namespace Risebird.Entities.ViewModel
         public bool IsLeadInterviewer { get; set; }
 
         public bool IsActive { get; set; }
-        [Display(Name = "Approved")]
+        [Display(Name = "IsApproved")]
         public bool IsApproved { get; set; }
 
         // For Label value
