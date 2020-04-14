@@ -538,7 +538,7 @@
                                                         </td>
                                                         <td>
 
-                                                            @*<input class="form-control text-box single-line" id="clientName" name="clientName" type="text" value="" placeholder="Client name text box">*@.
+                                                            @*<input class="form-control text-box single-line" id="clientName" name="clientName" type="text" value="" placeholder="Client name text box">*@
                                                             <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ClientName" name="InterviewerProjectsDetails[0].ClientName" type="text" value="">
                                                         </td>
 
@@ -743,7 +743,7 @@
             var rowLen = x.rows.length;
             console.log("Row Length:: " + rowLen);
             if (rowLen > 3) {
-                alert("Cannot add more than 3 Tech Skills.");
+                alert("Cannot add more than 3 Projects.");
                 return;
             }
             else {
@@ -778,7 +778,7 @@
             var x = document.getElementById('projectTable');
             // get the total number of rows
             var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
+            //console.log("Row Length to delete:: " + rowLen);
             if (rowLen == 2) {
                 alert('Must have atleast one Row');
                 return false;
@@ -794,7 +794,7 @@
             var rowLen = x.rows.length;
             console.log("Row Length:: " + rowLen);
             if (rowLen > 3) {
-                alert("Cannot add more than 3 Tech Skills.");
+                alert("Cannot add row more than 3 Professional Details.");
                 return;
             }
             else {
@@ -823,7 +823,7 @@
             var rowLen = x.rows.length;
             console.log("Row Length:: " + rowLen);
             if (rowLen > 2) {
-                alert("Cannot add more than 2 Tech Skills.");
+                alert("Cannot add more than 2 Educational Detaiils.");
                 return;
             }
             else {
@@ -851,9 +851,14 @@
             var x = document.getElementById('skillTable');
             var rowLen = x.rows.length;
             console.log("Row Length:: " + rowLen);
-
-            var new_row = x.rows[1].cloneNode(true);
-            x.appendChild(new_row);
+            if (rowLen > 14) {
+                alert("Cannot add more than 14 Skill Detaiils.");
+                return;
+            }
+            else {
+                var new_row = x.rows[1].cloneNode(true);
+                x.appendChild(new_row);
+            }
         }
 
         function deleteRowSkillDetails(row) {
@@ -876,9 +881,14 @@
             var x = document.getElementById('availabilityDetailsTable');
             var rowLen = x.rows.length;
             console.log("Row Length:: " + rowLen);
-
-            var new_row = x.rows[1].cloneNode(true);
-            x.appendChild(new_row);
+            if (rowLen > 14) {
+                alert("Cannot add more than 14 Availability Detaiils.");
+                return;
+            }
+            else {
+                var new_row = x.rows[1].cloneNode(true);
+                x.appendChild(new_row);
+            }
         }
 
         function deleteRowAvailabilityDetails(row) {
