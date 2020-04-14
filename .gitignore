@@ -76,6 +76,7 @@ artifacts/
 *.dll
 *.deps.json
 *.pdb
+*-txt
 
 # Chutzpah Test files
 _Chutzpah*
