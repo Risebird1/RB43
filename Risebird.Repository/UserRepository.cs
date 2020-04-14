@@ -529,9 +529,11 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //var ProfileId = 
-                       await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
+                    //var ResultId = 
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
+                    //int ProfileId = ResultId.First<int>();
+                    //int? ProfileId = parameters.Get<int>("@InterviewerProfileId");
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
                         con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
