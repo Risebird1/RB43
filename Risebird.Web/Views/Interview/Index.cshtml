@@ -99,10 +99,15 @@
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
-
+        table.dataTable > thead > tr > th{padding:7px;}
 
     .interviewIndex thead, .interviewIndex tfoot {
-        BACKGROUND: #214268;
+        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
         COLOR: #FFF;
     }
 
@@ -153,7 +158,12 @@
         border-top-right-radius: 13px;
         border-bottom-right-radius: 13px;
     }
-    #meeting_length label{font-size:14px;}
+    #meeting_length, #meeting_filter{
+        margin: 10px 0px
+    }
+    #meeting_length label {
+        font-size: 14px;
+    }
 
     #meeting_length select.form-control {
         padding: 8px 8px;
@@ -213,7 +223,13 @@
     #meeting_filter input::-webkit-input-placeholder {
         color: #999;
     }
-
+    .card .card-header {
+        padding: 0px 0px 0;
+        border: 0;
+        border-bottom: 1px dashed #dcd0d0;
+        margin: 0px 20px;
+        width: 100%;
+    }
     .buttons {
         border: none;
         font-family: inherit;
@@ -265,10 +281,10 @@
             top: 0px;
         }
 
-
-
-
-    .multiselect-selected-text {
+        .button-2b:active {
+            outline:0;border:0;
+        }
+        .multiselect-selected-text {
         text-transform: capitalize;
         font-weight: normal;
         letter-spacing: normal;
@@ -288,9 +304,8 @@
         top: 16px;
         color: #9A9A9A;
     }
-        .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #56a9ff;
-        color: #fff;
+    .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
+        background: #84c0ff; color: #fff;
         font-weight: bold;
         box-shadow: 0 3px #5794d4;
     }
@@ -322,7 +337,26 @@
         }
 
 
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
 
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px #56a9ff solid;
+    }
+    #videoId {
+        background: #56a9ff63;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
 
     .talk-bubble {
         display: inline-block;
@@ -605,9 +639,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Interview</h4>
-                    </div>
+                    
 
                     <div class="card-body">
                         <div class="loader text-center">
@@ -618,19 +650,20 @@
                             <div class="toolbar">
 
                                 <div class="row">
-                                    <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
+                                   
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">Interview</h4></div>
+                                    
+                                        <div class="pull-right">
+                                            <div class="col-auto">
+                                                <button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>
+                                                <button type="button" class="buttons button-2 button-2b " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-size:12px;"> Add Interview</font></span></button>
+                                                <button type="button" class="buttons button-2 button-2b " style="margin-top: 2px;"><span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invite" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'" data-original-title="Tooltip on top"><font style="font-family:arial;font-size:12px;"> Multiple Candidate Invites</font></span></button>
+                                                <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;margin-top:3px; margin-left:3px" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
 
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><span style="font-family:arial;"> Filter</span></span></button>
-                                        <button type="button" class="buttons button-2 button-2b " style="margin-top: 2px;"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><span style="font-family:arial;"> Add Interview</span></span></button>
-                                        <button type="button" class="buttons button-2 button-2b " style="margin-top: 2px;"><span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invite" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'" data-original-title="Tooltip on top"><span style="font-family:arial;"> Multiple Candidate Invites</span></span></button>
-                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;margin-top:3px; margin-left:3px" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
-
-                                    </div>
-
 
                                 </div>
                                 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -787,12 +820,12 @@
                                                             </div>
                                                             <div class="form-group col-md-12">
                                                                 <div class="row">
-                                                                    <div class="col-md-6 col-sm-6">
+                                                                    <div class="col-md-12 col-sm-12">
+
+                                                                        <button type="button" id="ResetFilter" style="float:right;margin-top: 30px;" class="btn btn-primary">Reset Filter</button>
                                                                         <button type="submit" style="margin-top:30px; float:right" class="btn btn-primary">Apply Filter</button>
                                                                     </div>
-                                                                    <div class="col-md-6 col-sm-6">
-                                                                        <button type="button" id="ResetFilter" style="float:right;margin-top: 30px;" class="btn btn-primary">Reset Filter</button>
-                                                                    </div>
+                                                                  
                                                                 </div>
                                                             </div>
 
@@ -947,7 +980,7 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in">
                                                                 <div class="talktext">
-                                                                    <textarea style="height: 50px; width:100%;">@item.ApprovalComments</textarea>
+                                                                    <textarea class="scrollbar" id="style-4" style="height: 50px; width:100%;">@item.ApprovalComments</textarea>
                                                                     </div>
                                                                 </div>
                                                         </td>
@@ -960,7 +993,7 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in">
                                                                 <div class="talktext">
-                                                                    <textarea style="height: 50px; width:100%;">@item.FinalComments</textarea>
+                                                                    <textarea class="scrollbar" id="style-4" style="height: 50px; width:100%;">@item.FinalComments</textarea>
                                                                     </div>
                                                                 </div>
                                                         </td>

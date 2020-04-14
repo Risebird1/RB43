@@ -240,6 +240,12 @@
     background-color: #f96332;
     color: #FFFFFF;
 }
+    .btn-primary span font {
+        font-family: arial;
+        font-size:12px!important;
+    }
+
+
 
     .btn-primary:hover,
     .btn-primary:focus,
@@ -6466,8 +6472,12 @@ Created using IcoMoon - icomoon.io
 }
 
 .modal .modal-header .close {
-    color: #1f4167;
+    color: #fb1128;
     text-shadow: none;
+    font-size: 30px !important;
+    position: relative;
+  top: -7px;
+    right: 0px;
 }
 
     .modal .modal-header .close:hover,
@@ -7405,10 +7415,11 @@ Created using IcoMoon - icomoon.io
         }
 
     .card .card-header {
-        padding: 15px 15px 0;
+        padding: 0px 0px 0;
         border: 0;
         border-bottom: 1px dashed #dcd0d0;
         margin: 0px 20px;
+        width: 100%;
     }
 
 .stats .card-body .card.card-chart .card-header {
@@ -10845,16 +10856,416 @@ select.selectpicker {
     color: #999;
 }
 
- thead, tfoot {
-    BACKGROUND: #214268!important;
-    COLOR: #FFF;
+.btn-call {
+    width: 32px !important;
+    height: 32px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    BORDER: 0px;
+    line-height: 1.42857;
+    background: #4a93de;
+    display: inline-block;
+}
+
+    .btn-call .fa {
+        color: #fff;
+        font-size: 17px;
+        padding: 6px;
+    }
+
+.call i {
+    color: #fff
+}
+
+.call-txt {
+    border: 1px #4a93de solid;
+    position: relative;
+    padding: 6px 15px;
+    left: -10px;
+    top: 1px;
+    font-size: 14px;
+    font-family: arial;
+    color: #1675de;
+    border-left: 0px;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+.talk-bubble {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    margin: 5px 0px;
+    background-color: #eff7ff;
+}
+
+.border-bubble {
+    border: 2px solid #eff7ff;
+}
+
+.talk-bubble textarea {
+    resize: none;
+    border: 0;
+    background: #f7fbff;
+    padding: 5px;
+}
+
+    .talk-bubble textarea:focus {
+  
+        padding: 5px;
+    }
+
+
+
+/* Right triangle placed top left flush. */
+.tri-right.border.left-top:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: -40px;
+    right: auto;
+    top: -8px;
+    bottom: auto;
+    border: 32px solid;
+    border-color: #666 transparent transparent transparent;
+}
+
+.tri-right.left-top:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: -20px;
+    right: auto;
+    top: 0px;
+    bottom: auto;
+    border: 22px solid;
+    border-color: #eff7ff transparent transparent transparent;
+}
+
+/* Right triangle, left side slightly down */
+.tri-right.border.left-in:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: -40px;
+    right: auto;
+    top: 30px;
+    bottom: auto;
+    border: 20px solid;
+    border-color: #666 #666 transparent transparent;
+}
+
+.tri-right.right-in:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -20px;
+    top: 38px;
+    bottom: auto;
+    border: 12px solid;
+    border-color: #eff7ff transparent transparent #eff7ff;
+}
+
+/*Right triangle, placed bottom left side slightly in*/
+.tri-right.border.btm-left:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: -8px;
+    right: auto;
+    top: auto;
+    bottom: -40px;
+    border: 32px solid;
+    border-color: transparent transparent transparent #666;
+}
+
+.tri-right.btm-left:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 0px;
+    right: auto;
+    top: auto;
+    bottom: -20px;
+    border: 22px solid;
+    border-color: transparent transparent transparent #eff7ff;
+}
+
+/*Right triangle, placed bottom left side slightly in*/
+.tri-right.border.btm-left-in:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 30px;
+    right: auto;
+    top: auto;
+    bottom: -40px;
+    border: 20px solid;
+    border-color: #666 transparent transparent #666;
+}
+
+.tri-right.btm-left-in:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 38px;
+    right: auto;
+    top: auto;
+    bottom: -20px;
+    border: 12px solid;
+    border-color: #eff7ff transparent transparent #eff7ff;
+}
+
+/*Right triangle, placed bottom right side slightly in*/
+.tri-right.border.btm-right-in:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: 30px;
+    bottom: -40px;
+    border: 20px solid;
+    border-color: #666 #666 transparent transparent;
+}
+
+.tri-right.btm-right-in:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: 38px;
+    bottom: -20px;
+    border: 12px solid;
+    border-color: #eff7ff #eff7ff transparent transparent;
+}
+
+.tri-right.border.btm-right:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -8px;
+    bottom: -40px;
+    border: 20px solid;
+    border-color: #666 #666 transparent transparent;
+}
+
+.tri-right.btm-right:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: 0px;
+    bottom: -20px;
+    border: 12px solid;
+    border-color: #eff7ff #eff7ff transparent transparent;
+}
+
+/* Right triangle, right side slightly down*/
+.tri-right.border.right-in:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -40px;
+    top: 30px;
+    bottom: auto;
+    border: 20px solid;
+    border-color: #666 transparent transparent #666;
+}
+
+.tri-right.right-in:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -20px;
+    top: 38px;
+    bottom: auto;
+    border: 12px solid;
+    border-color: #eff7ff transparent transparent #eff7ff;
+}
+
+/* Right triangle placed top right flush. */
+.tri-right.border.right-top:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -40px;
+    top: -8px;
+    bottom: auto;
+    border: 32px solid;
+    border-color: #666 transparent transparent transparent;
+}
+
+.tri-right.right-top:after {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: auto;
+    right: -20px;
+    top: 0px;
+    bottom: auto;
+    border: 20px solid;
+    border-color: #eff7ff transparent transparent transparent;
+}
+
+
+/* talk bubble contents */
+.talktext {
+    padding: 8px 8px 4px 8px;
+    text-align: left;
+    line-height: 1.5em;
+}
+
+.action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
+    background: #56a9ff;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 3px #5794d4;
+}
+
+
+.action .btn-warning, .action .btn-warning:not([data-action]):not([class*="btn-outline-"]):hover {
+    background: #fff;
+    color: #56a9ff;
+    font-weight: bold;
+    border: 1px #deedfd solid;
+    box-shadow: 0 3px #5794d4;
+}
+
+.multiselect-selected-text {
+    text-transform: capitalize;
+    font-weight: normal;
+    letter-spacing: normal;
+    color: #9A9A9A;
+    font-size: 13px;
+}
+.action .btn {
+    width: 32px !important;
+    height: 30px !important;
+}
+
+.action span {
+    -webkit-transition: -webkit-transform .8s ease-in-out;
+    transition: transform .8s ease-in-out;
+    font-weight: bold;
+}
+
+    .action span:hover {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+
+
+#style-4::-webkit-scrollbar {
+    width: 2px;
+    height:6px;
+    background-color: #cee0f3;
+}
+
+#style-4::-webkit-scrollbar-thumb {
+    background-color: #56a9ff;
+    border: 1px solid #56a9ff;
+    margin:2px;border-radius:2px;
+}
+
+
+textarea:focus {
+    outline: 0;
+}
+
+#meeting_length label {
+    font-size: 14px;
+}
+
+#meeting_length select.form-control {
+    padding: 8px 8px;
+}
+
+#meeting_length select:focus {
+    border-color: #4a93de;
+}
+#meeting_filter input {
+    outline: none;
+}
+
+#meeting input[type=search] {
+    -webkit-appearance: textfield;
+    -webkit-box-sizing: content-box;
+    font-family: inherit;
+    font-size: 100%;
+}
+
+#meeting_filter input::-webkit-search-decoration,
+#meeting_filter input::-webkit-search-cancel-button {
+    display: none;
+}
+
+
+#meeting_filter input[type=search] {
+    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+    border: solid 1px #ccc;
+    padding: 9px 10px 9px 32px;
+    width: 135px;
+    font-family: arial;
+    -webkit-border-radius: 10em;
+    -moz-border-radius: 10em;
+    border-radius: 10em;
+    -webkit-transition: all .5s;
+    -moz-transition: all .5s;
+    transition: all .5s;
+}
+
+    #meeting_filter input[type=search]:focus {
+        width: 200px;
+        background-color: #fff;
+        border-color: #4a93de;
+        font-family: arial;
+        margin: 3px;
+        -webkit-box-shadow: 0 0 5px #4a93de;
+        -moz-box-shadow: 0 0 5px #4a93de;
+        box-shadow: 0 0 5px #4a93de;
+    }
+
+
+#meeting_filter input:-moz-placeholder {
+    color: #999;
+}
+
+#meeting_filter input::-webkit-input-placeholder {
+    color: #999;
 }
 
 
 
 
- .table-striped tbody tr:nth-of-type(even) {
-    background-color: rgb(233,247,247,0.2);
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff !important;
+}
+
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: rgb(233,247,247,0.2)!important;
 }
 
 table.dataTable thead .sorting:after {
