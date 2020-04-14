@@ -779,13 +779,14 @@ namespace Risebird.Web.Controllers
         #region Interviewer Profile Functions
 
         [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile()
+        public async Task<IActionResult> AddInterviewerProfile(int userId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new InterviewerProfileVM();
+                    model.UserId = userId;
                     model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };

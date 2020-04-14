@@ -98,6 +98,14 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4 col-sm-4 pr-1">
+
+                                        <div class="form-group">
+
+                                                @Html.Hidden("UserId", Model.UserId)
+
+                                        </div>
+
+
                                         <div class="form-group">
                                             @*<label class="control-label col-md-4 col-sm-2 desp-label" for="name">First Name</label>
                             <input class="form-control text-box single-line" id="firstName" name="firstName" type="text" value="">*@
@@ -306,13 +314,13 @@
                                                     <tr>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
-                                                            @Html.DropDownList("SkillTypeList[0].SkillName", (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
                                                             @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
-                                                            @Html.DropDownList("LevelList[0].Level", (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.LevelList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
                                                             <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -403,15 +411,15 @@
                                                     <tr>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
-                                                            @Html.DropDownList("GraduationTypeList[0].Type", (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.GraduationTypeList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].Graduation", (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
 
                                                             @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
 
-                                                            @Html.DropDownList("CollegeTypeList[0].Type", (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.CollegeTypeList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
@@ -470,8 +478,8 @@
 
                                                             @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
 
-                                                            @Html.DropDownList("CompanyTypeList[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.CompanyTypeList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
 
                                                         </td>
                                                         <td>
@@ -596,12 +604,12 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            @Html.DropDownList("DayTimeSlotList[0].Type", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.DayTimeSlotList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].DayTimeSlot", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
-                                                            @Html.DropDownList("DaySlotList[0].Type", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.DaySlotList, "", new { @class = "text-danger" })
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].DaySlot", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
                                                         </td>
                                                         <td>
                                                             <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">
