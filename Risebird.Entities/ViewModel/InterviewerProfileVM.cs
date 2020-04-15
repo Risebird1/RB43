@@ -73,11 +73,6 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "IsApproved")]
         public bool IsApproved { get; set; }
 
-        // For Label value
-        [Display(Name = "Company Type")]
-        [Required] 
-        public string CompanyType { get; set; }
-
 
         // creating List items 
         public IList<TransInterviewerSkill> InterviewerSkill { get; set; }
@@ -100,5 +95,30 @@ namespace Risebird.Entities.ViewModel
         public SelectList DayTimeSlotList { get; set; }
         public SelectList DaySlotList { get; set; }
 
+        // To add the below fields used in View to display label and Validation
+
+        [Display(Name = "Company Type")]
+        [Required]
+        public string CompanyType { get; set; }
+
+        [Display(Name = "Level")]
+        [Required]
+        public string Level { get; set; }
+
+        [Display(Name = "Graduation Type")]
+        [Required]
+        public string GraduationType { get; set; }
+
+        [Display(Name = "College Type")]
+        [Required]
+        public string CollegeType { get; set; }
+
+        [Display(Name = "Day Time Slot")]
+        [Required]
+        public string DayTimeSlot { get; set; }
+
+        [Display(Name = "Day Slot")]
+        [Required]
+        public string DaySlot { get; set; }
     }
 }

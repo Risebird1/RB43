@@ -779,13 +779,14 @@ namespace Risebird.Web.Controllers
         #region Interviewer Profile Functions
 
         [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile()
+        public async Task<IActionResult> AddInterviewerProfile(int userId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new InterviewerProfileVM();
+                    model.UserId = userId;
                     model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                        select new { ID = (int)s, Name = s.GetDescription() };
@@ -805,6 +806,10 @@ namespace Risebird.Web.Controllers
                     var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
                                        select new { ID = (int)s, Name = s.GetDescription() };
                     model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+
+                    // To call NickName
+                    IEnumerable<string> NickNames = _userService.GetNickNames();
+                    ViewBag.NickNamesList = NickNames;
 
                     return View("AddInterviewerProfile", model);
                 }
@@ -831,14 +836,12 @@ namespace Risebird.Web.Controllers
                     string uploadedFileURL = string.Empty;
                     // Need to add here property to add link to coded resume link
                     // Need to see how to add coded resume and then see How to add that in error also
-                    if (interviewerProfile.File == null && (interviewerProfile.ResumeLink == null))
+                    if (interviewerProfile.File == null && (interviewerProfile.ResumeLink == null || interviewerProfile.CodedResumeLink == null))
                     {
                         ModelState.AddModelError(String.Empty, "Please upload a resume.");
-                        return RedirectToAction("AddInterviewerProfile");
+                        return RedirectToAction("AddInterviewerProfile","User", new { userId = interviewerProfile.UserId });
                     }
-
-                    // Check on this how it works and make it and also add for coded resume part
-                    if (interviewerProfile.File != null)
+                    else
                     {
                         await _azureStorageHelper.InsertBlob(interviewerProfile.File.FileName, "resumes", interviewerProfile.File);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
@@ -849,7 +852,7 @@ namespace Risebird.Web.Controllers
                     if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                     {
                         ModelState.AddModelError(String.Empty, "Adding Interviewer Profile has Failed. Resume not added successfully");
-                        return RedirectToAction("AddInterviewerProfile");
+                        return RedirectToAction("AddInterviewerProfile", "User", new { userId = interviewerProfile.UserId });
                     }
                     else
                     {
@@ -862,7 +865,7 @@ namespace Risebird.Web.Controllers
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed";
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
                             return RedirectToAction("Interviewers");
                         }
                     }

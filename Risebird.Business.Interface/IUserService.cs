@@ -45,5 +45,8 @@ namespace Risebird.Business.Interface
 
         // Interviewe Profile services
         Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
+
+        //To retrieve the NickNames
+        IEnumerable<string> GetNickNames();
     }
 }

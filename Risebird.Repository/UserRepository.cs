@@ -529,9 +529,11 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //var ProfileId = 
-                       await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
+                    //var ResultId = 
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
+                    //int ProfileId = ResultId.First<int>();
+                    //int? ProfileId = parameters.Get<int>("@InterviewerProfileId");
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
                         con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
@@ -676,6 +678,27 @@ namespace Risebird.Repository
             return parameters;
         }
 
+        //Get NickNames
+        public IEnumerable<string> GetNickNames()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select NickName from [dbo].[InterviewerProfile]", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         #endregion
 
         #region QCInterviewer Repository Functions
