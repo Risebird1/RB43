@@ -678,6 +678,27 @@ namespace Risebird.Repository
             return parameters;
         }
 
+        //Get NickNames
+        public IEnumerable<string> GetNickNames()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select NickName from [dbo].[InterviewerProfile]", null, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
         #endregion
 
         #region QCInterviewer Repository Functions
