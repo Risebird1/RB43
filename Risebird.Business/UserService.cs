@@ -527,5 +527,18 @@ namespace Risebird.Business
             }
         }
 
+        //testing
+        //public InterviewerProfileVM GetInterviewerProfile(int userid)
+        //{
+        //    var interviewerProfile = _userRepository.GetInterviewerProfile(userid);
+        //        if (interviewerProfile == null)
+        //            return null;
+        //        else
+        //            return interviewerProfile.Result;
+        //    }
+
+            
+        //}
+
     }
 }

@@ -48,5 +48,6 @@ namespace Risebird.Repository.Interface
         Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
 
         IEnumerable<string> GetNickNames();
+        Task<InterviewerProfileVM> GetInterviewerProfile(int userid);
     }
 }

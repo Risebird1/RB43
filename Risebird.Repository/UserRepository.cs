@@ -475,6 +475,7 @@ namespace Risebird.Repository
             }
         }
 
+        
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try
@@ -529,8 +530,7 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //var ResultId = 
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfile", parameters,
+                    var ResultId = SqlMapper.Query<int>(con, "usp_AddInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
                     //int ProfileId = ResultId.First<int>();
                     //int? ProfileId = parameters.Get<int>("@InterviewerProfileId");
@@ -698,6 +698,33 @@ namespace Risebird.Repository
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
+        }
+
+        public async Task<InterviewerProfileVM> GetInterviewerProfile(int userid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@userid", userid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QuerySingleAsync<InterviewerProfileVM>(con,
+                        "SELECT FirstName, LastName, Nickname, EmailId, AltemailId, MobileNumber, AltMobileNumber, CurrentRole , Experience, PreferredDomain, ResumeLink, CodedResumeLink from InterviewerProfile WHERE userId = @userid ;",
+                        parameters);
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
         }
         #endregion
 
