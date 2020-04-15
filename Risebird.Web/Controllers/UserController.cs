@@ -786,6 +786,11 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     var model = new InterviewerProfileVM();
+                    // We need to make commnet above one and inside the method
+                    // Check if any existiing Profile
+                    //var model = _userService.GetInterviewerProfile(userId);
+
+
                     model.UserId = userId;
                     model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
                     var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
