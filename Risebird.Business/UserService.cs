@@ -267,7 +267,7 @@ namespace Risebird.Business
 
         #region Interviewer Profile Service Functions
 
-        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
@@ -278,7 +278,7 @@ namespace Risebird.Business
                 if(Profile == null)
                 {
                     //Add Method
-                    return _userRepository.AddInterviewerProfile(interviewerProfile).Result;
+                    return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
                 }
                 else
                 {
@@ -287,7 +287,7 @@ namespace Risebird.Business
                     // Now call one by one and add the values.
 
 
-                    return false;
+                    return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
                 }
             }
 

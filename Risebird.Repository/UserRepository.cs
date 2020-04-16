@@ -523,7 +523,7 @@ namespace Risebird.Repository
 
         #region Interviewer Profile Repository function
 
-        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
@@ -531,8 +531,8 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //int ProfileId = 
-                    SqlMapper.Query<int>(con, "usp_AddInterviewerProfile", parameters,
-                       commandType: CommandType.StoredProcedure).FirstOrDefault();
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                       commandType: CommandType.StoredProcedure);
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
                         con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
@@ -651,6 +651,7 @@ namespace Risebird.Repository
                 return false;
             }
         }
+
         private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
         {
             var parameters = new DynamicParameters();
@@ -698,6 +699,7 @@ namespace Risebird.Repository
             }
             return null;
         }
+
 
         public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
         {
