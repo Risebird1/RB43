@@ -529,6 +529,7 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
+                                                <th>Interview Link</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
@@ -547,6 +548,7 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
+                                                <th>Interview Link</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
@@ -565,23 +567,31 @@
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                 }
                                                 else
                                                 {
-                                                    <td>No Resume</td>
+                                                <td>No Resume</td>
                                                 }
                                                 @if (item.MobileNumber != null)
                                                 {
-                                                    <td>@item.MobileNumber</td>
+                                                <td>@item.MobileNumber</td>
 
                                                 }
                                                 else
                                                 {
-                                                    <td>No Contact</td>
+                                                <td>No Contact</td>
                                                 }
                                                 <td> @item.ClientHrContact </td>
-                                                <td > @item.confirmationStatus</td>
+                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                {
+                                                <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                 }
+                                                else
+                                                {
+                                                <td>No Interview Link</td>
+                                                }
+                                                <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                 <td> @item.intervieweStatusStatDesc </td>
                                                 <td> @item.currentEmployerName </td>

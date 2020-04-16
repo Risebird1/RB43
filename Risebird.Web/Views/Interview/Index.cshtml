@@ -993,7 +993,7 @@
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Risebird HR</th>
+                                                    <th>Zoom ID</th>
                                                     @*<th>Candidate Contact</th>*@
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -1031,7 +1031,7 @@
                                                     <th>Resume</th>
                                                     <th>JD Link</th>
                                                     <th>Zoom Link</th>
-                                                    <th>Risebird HR</th>
+                                                    <th>Zoom ID</th>
                                                     @*<th>Candidate Contact</th>*@
                                                     <th>Client HR</th>
                                                     <th>End Client Name</th>
@@ -1060,104 +1060,111 @@
                                                 {
                                                     var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                                    <tr id=@item.imid>
-                                                        <td title=@item.IRFId> @item.IRFId </td>
-                                                        <td> @item.interviewDate </td>
-                                                        <td> @item.candidateName</td>
-                                                        <td> @item.candidateEmail</td>
-                                                        <td> @item.JDTiltle.Split("|")[0] </td>
-                                                        <td> @item.interviewer</td>
-                                                        <td> @item.confirmationStatus</td>
-                                                        <td> @item.MeetingStatusStatusDesc</td>
-                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                        @if (item.resumeLink != null && item.resumeLink != "")
+                                                <tr id=@item.imid>
+                                                    <td title=@item.IRFId> @item.IRFId </td>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName</td>
+                                                    <td> @item.candidateEmail</td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    <td> @item.interviewer</td>
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td> @item.MeetingStatusStatusDesc</td>
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
                                                         {
-                                                            <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No Resume</td>
+                                                    <td>No Resume</td>
                                                         }
-                                                        @if (item.JDLink != null && item.JDLink != "")
+                                                    @if (item.JDLink != null && item.JDLink != "")
                                                         {
-                                                            <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
+                                                    <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No JD</td>
+                                                    <td>No JD</td>
                                                         }
 
-                                                        <td class="wordwrap"> @item.zoomLink</td>
-                                                        <td> @item.risebirdHR</td>
-                                                        @*<td>@item.MobileNumber</td>*@
-                                                        <td> @item.ClientHrContact </td>
-                                                        <td> @item.ClientName </td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                    <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                    <td>No Zoom Link</td>
+                                                    }
+                                                    <td> @item.risebirdHR</td>
+                                                    @*<td>@item.MobileNumber</td>*@
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.ClientName </td>
 
-                                                        @if (item.VideoLink != null && item.VideoLink != "")
+                                                    @if (item.VideoLink != null && item.VideoLink != "")
                                                         {
-                                                            <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
                                                         }
                                                         else
                                                         {
-                                                            <td>No Video</td>
+                                                    <td>No Video</td>
                                                         }
-                                                        <td>@item.interviewSlot</td>
-                                                        <td>@item.staffingAgency</td>
-                                                        <td> @item.interviewDuration </td>
-                                                        <td> @item.joiningTime</td>
-                                                        <td> @item.preferredLocation</td>
-                                                        <td> @item.expectedPerHourRate</td>
-                                                        <td> @item.currentEmployerName</td>
-                                                        <td>
-                                                            @item.IsEmergency
-                                                        </td>
-                                                        <td>
-                                                            @item.NextLevelApprovalStat
-                                                        </td>
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea class="scrollbar" id="style-4" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
-                                                                </div>
+                                                    <td>@item.interviewSlot</td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td> @item.interviewDuration </td>
+                                                    <td> @item.joiningTime</td>
+                                                    <td> @item.preferredLocation</td>
+                                                    <td> @item.expectedPerHourRate</td>
+                                                    <td> @item.currentEmployerName</td>
+                                                    <td>
+                                                        @item.IsEmergency
+                                                    </td>
+                                                    <td>
+                                                        @item.NextLevelApprovalStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" id="style-4" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
                                                             </div>
-                                                        </td>
-                                                        <td></td>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
 
 
-                                                        <td>
-                                                            @item.FinalSelectionStat
-                                                        </td>
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea class="scrollbar" id="style-4" style="height: 40px; width:100%;">@item.FinalComments</textarea>
-                                                                </div>
+                                                    <td>
+                                                        @item.FinalSelectionStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" id="style-4" style="height: 40px; width:100%;">@item.FinalComments</textarea>
                                                             </div>
-                                                        </td>
-                                                        <td></td>
-                                                        @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
-                                                        <td class="text-right action">
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                            <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
-                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
-                                                            @if (item.IsBiometricEnabled)
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    @*<td class="wordwrap"> @item.interviewOnDevice</td>*@
+                                                    <td class="text-right action">
+                                                        <span onclick="location.href = '@Url.Action("Edit", "Interview", new { id = item.imid})'" title="Edit" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddComments", "Interview", new { interviewId = item.imid})'" title="Comment" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="far fa-comment"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.imid, irfId= item.irfIntId})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+                                                        @if (item.IsBiometricEnabled)
                                                             {
-                                                                <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+                                                        <span onclick="location.href = '@Url.Action("VerifyAudio", "Interview", new { candidateId = item.CandidateId, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
 
                                                             }
-                                                        </td>
-                                                        <td>
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    </td>
+                                                    <td>
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                             {
                                                                 <!--- <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
 
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
 
 
                                                             }
 
-                                                        </td>
-                                                    </tr>
+                                                    </td>
+                                                </tr>
                                                 }
                                             </tbody>
                                         </table>
