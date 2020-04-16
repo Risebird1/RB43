@@ -85,6 +85,258 @@
         pointer-events: none !important;
         cursor: default !important;
     }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+
+    .border-bubble {
+        border: 2px solid #eff7ff;
+    }
+
+    .talk-bubble textarea {
+        resize: none;
+        border: 0;
+        background: #f7fbff;
+        padding: 5px;
+    }
+
+        .talk-bubble textarea:focus {
+            outline: hidden;
+            padding: 5px;
+        }
+
+
+
+    /* Right triangle placed top left flush. */
+    .tri-right.border.left-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.left-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -20px;
+        right: auto;
+        top: 0px;
+        bottom: auto;
+        border: 22px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* Right triangle, left side slightly down */
+    .tri-right.border.left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -8px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 32px solid;
+        border-color: transparent transparent transparent #666;
+    }
+
+    .tri-right.btm-left:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 0px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 22px solid;
+        border-color: transparent transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 30px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.btm-left-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 38px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom right side slightly in*/
+    .tri-right.border.btm-right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 30px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 38px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    .tri-right.border.btm-right:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -8px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 0px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    /* Right triangle, right side slightly down*/
+    .tri-right.border.right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /* Right triangle placed top right flush. */
+    .tri-right.border.right-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.right-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 0px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* talk bubble contents */
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+
+
+
+
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -146,14 +398,14 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-6 ml-md-auto">
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
+                                    <div class="col-md-12 ml-md-auto">
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Meeting Details</font></span></button>
 
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export Selected Candidate</span></button>
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Export Selected Candidate</font></span></button>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> Support</span></button>
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span></button>
 
                                     </div>
 
@@ -166,7 +418,7 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                            <h5 class="modal-title" id="filterModalLabel"> Filters</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -464,7 +716,11 @@
                                                         <td>No Video</td>
                                                     }
                                                     <td>
-                                                        <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" id="style-4" style="height: 50px; width:100%;">@item.InterviewerComment</textarea>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>  </td>
                                                     <td>  </td>
@@ -475,7 +731,7 @@
                                                     <td>@item.FinalSelectionStat</td>
                                                     <td>@item.OfferStatusStatDesc</td>
                                                     <td>@item.JoiningStatusStatDesc</td>
-                                                    <td class="text-right">
+                                                    <td class="text-right action">
                                                         <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
                                                         @if (item.IsBiometricEnabled)
                                                         {
@@ -486,7 +742,15 @@
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+
+
+
+
                                                         }
 
                                                     </td>
@@ -537,8 +801,11 @@
                         <div class="col-md-6 col-sm-6 pr-1">
                             <div id="approvalComments" class="form-group">
                                 <label>Approval Comments</label>
-                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
+                                <div class="talk-bubble tri-right border-bubble right-in">
+                                    <div class="talktext">
+                                        <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                                    </div>
+                                </div>
                                 @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
@@ -555,9 +822,12 @@
                         <div class="col-md-6 col-sm-6 pr-1">
                             <div id="selectionComments" class="form-group">
                                 <label>Final Comments</label>
+                                <div class="talk-bubble tri-right border-bubble right-in">
+                                    <div class="talktext">
+                                        <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
 
-                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
+                                    </div>
+                                </div>
                                 @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
@@ -574,7 +844,11 @@
                         <div class="col-md-6 col-sm-6 pr-1">
                             <div id="offerComments" class="form-group">
                                 <label>Offer Comments</label>
-                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                                <div class="talk-bubble tri-right border-bubble right-in">
+                                    <div class="talktext">
+                                        <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                                    </div>
+                                </div>
 
                                 @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
                             </div>
@@ -592,8 +866,12 @@
                         <div class="col-md-6 col-sm-6 pr-1">
                             <div id="joiningComments" class="form-group">
                                 <label>Joining Comments</label>
-                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                                <div class="talk-bubble tri-right border-bubble right-in">
+                                    <div class="talktext">
+                                        <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
 
+                                    </div>
+                                </div>
                                 @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
                             </div>
                         </div>
@@ -914,7 +1192,7 @@
         // Get the button that opens the modal
         var btn = document.getElementById("myBtn_" + item.imid);
 
-       
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -1009,10 +1287,10 @@
             }
         });
 
-        
+
     }
 
-    
+
     function SavePopUp() {
 
         var approvalComment = document.getElementById("appComments").value;
