@@ -35,6 +35,6 @@ namespace Risebird.Entities.ViewModel
         public int ClientId { get; set; }
         public DateTime CreatedOn { get; set; }
         public SelectList ClientList { get; set; }
-
+        public string ProjectStatus { get; set; }
     }
 }
