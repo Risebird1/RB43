@@ -189,7 +189,7 @@
 
     /* The Close Button */
     .close {
-        color: #fefefe !important;
+        color: #fefefe;
         float: right;
         font-size: 28px;
         font-weight: bold;
@@ -202,20 +202,13 @@
             cursor: pointer;
         }
 
-    .modal-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
 
-    .modal-body {
-        padding: 2px 16px;
-    }
-
-    .modal-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
+   .modal-wrap .modal-header {
+        border-bottom: 3px solid #316b9e !important;
+        background: #419dff !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        color: #fff;
     }
 
     .modal-content .modal-header {
@@ -267,6 +260,17 @@
             background: #62ce17;
             box-shadow: 0 4px #4aa20d !important;
         }
+    .modal-wrap .modal-content {
+        width: 690px;
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        font-size: 12px;
+        margin-top: -53px;
+    }
 
 </style>
 <meta charset="utf-8" />
@@ -1189,25 +1193,25 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div id="myModal" class="modal">
+        <div id="myModal" class="modal modal-wrap">
             <!-- Modal content -->
-            <div class="modal-content" style="width:50%">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5>Approved For Next Round</h5>
+                    <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
                     <span class="close" id="approvePopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                        
-                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                        <label class="control-label" for="approveDropdown">Approved For Next Round</label>
                         <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                     </div>
                     <div id="approvalComments" class="form-group">
-                        <label>Approval Comments</label>
-                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
+                        <label class="control-label">Approval Comments</label>
+                        <input type="text" name="appComments" class="form-control" id="appComments" >
                     </div>
                     <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1217,26 +1221,26 @@
 
         </div>
 
-        <div id="mySelectionModal" class="modal">
+        <div id="mySelectionModal" class="modal modal-wrap">
 
             <!-- Modal content -->
-            <div class="modal-content" style="width:50%">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5>Final Selection Status</h5>
+                    <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
                     <span class="close" id="selectPopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
 
-                        <label for="selectionDropdown"><b>Final Selection</b></label>
+                        <label class="control-label" for="selectionDropdown">Final Selection</label>
                         <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
                     </div>
                     <div id="selectionComments" class="form-group">
-                        <label>Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
+                        <label class="control-label">Final Comments</label>
+                        <input type="text" name="selecComments" class="form-control" id="selecComments">
                     </div>
                     <div class="">
-                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
+                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary pull-right" id="btnSelectUpload" value="Save">
                     </div>
 
                 </div>

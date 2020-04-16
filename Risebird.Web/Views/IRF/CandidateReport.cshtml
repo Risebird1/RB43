@@ -690,17 +690,17 @@
                                         <label class="col-md-5"></label>
                                         <div class="col-md-7">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
 
                                             @if (ViewBag.Profile != "Client")
                                             {
                                                 @if (Model.IsEdited)
                                                 {
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
+                                                    <button type="submit" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                                    <button type="submit" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Submit">Submit</button>
                                                 }
 
                                             }

@@ -360,7 +360,7 @@
         background: #84c0ff;
         color: #fff;
         font-weight: bold;
-        box-shadow: 0 3px #5794d4;
+        box-shadow: 0 3px #5794d4!important;
     }
 
 
@@ -908,7 +908,7 @@
 
         .modal-wrap .form-group textarea {
             margin-left: 6px;
-            border: 1px solid #E3E3E3;
+        
             height: 48px;
             width: 95%;
         }
@@ -934,7 +934,7 @@
 
     .modal input, .modal .dropdown-toggle {
         background: #99d1fc0f !important;
-        border: 1px #3b74b3fa dotted !important;
+       
     }
 
 
@@ -951,7 +951,7 @@
         border: 0;
         font-size: 13px;
         padding: 10px;
-        border: 1px #3b74b3fa dotted !important;
+       
     }
 
     .multiselect-selected-text {
@@ -972,7 +972,22 @@
 
     .modal input, .modal .dropdown-toggle, .modal select {
         background: #99d1fc0f !important;
-        border: 1px #3b74b3fa dotted !important;
+      
+    }
+
+    td textarea {
+
+    width:200px!important;
+        display: inline-block;
+        position: relative;
+        /* width: 200px; */
+        min-height:50px;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+        border: 0;
+        font-size: 13px;
+        padding: 10px;
     }
 </style>
 
@@ -1130,14 +1145,14 @@
                                                         }
 
                                                         @*@if (item.MobileNumber != null)
-                                        {
-                                            <td>@item.MobileNumber</td>
+                            {
+                                <td>@item.MobileNumber</td>
 
-                                        }
-                                        else
-                                        {
-                                            <td>No Contact</td>
-                                        }*@
+                            }
+                            else
+                            {
+                                <td>No Contact</td>
+                            }*@
                                                         <td> @item.ClientHrContact </td>
                                                         <td> @item.confirmationStatus</td>
                                                         <td> @item.MeetingStatusStatusDesc </td>
@@ -1153,8 +1168,9 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in">
                                                                 <div class="talktext">
-                                                                    <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
-                                                                    </div></div>
+                                                                    <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                         <td></td>
 
@@ -1164,8 +1180,9 @@
                                                         <td>
                                                             <div class="talk-bubble tri-right border-bubble right-in">
                                                                 <div class="talktext">
-                                                                    <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
-                                                                    </div></div>
+                                                                    <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.FinalComments</textarea>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                         <td></td>
                                                         <td class="text-right action">

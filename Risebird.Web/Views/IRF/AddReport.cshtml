@@ -1067,18 +1067,18 @@
                                 @Html.HiddenFor(m => m.IsEdited)
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
+                                       
+                                        <div class="col-md-12">
 
                                             @{
                                                 if (ViewBag.IsSelected)
                                                 {
-                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
 
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Back to List", "InterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "InterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
 
                                                 }
 
