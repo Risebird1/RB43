@@ -19,6 +19,7 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+
     td.wordwrap {
         display: inline-block !important;
         max-width: 250px !important;
@@ -47,6 +48,7 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
@@ -83,13 +85,13 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        
+
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
 
-                           
+
                             <div class="toolbar">
 
                                 <div class="row">
@@ -103,7 +105,7 @@
                                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                     </div>
                                 </div>
-                           
+
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -118,7 +120,8 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
+                                                <th>Interview Link</th>
+                                                <th>Interview Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
@@ -136,7 +139,8 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
-                                                <th>Meeting Status</th>
+                                                <th>Interview Link</th>
+                                                <th>Interview Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
                                                 <th>Expected Per Hour Rate</th>
@@ -154,23 +158,31 @@
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                 }
                                                 else
                                                 {
-                                                    <td>No Resume</td>
+                                                <td>No Resume</td>
                                                 }
                                                 @if (item.MobileNumber != null)
                                                 {
-                                                    <td>@item.MobileNumber</td>
+                                                <td>@item.MobileNumber</td>
 
                                                 }
                                                 else
                                                 {
-                                                    <td>No Contact</td>
+                                                <td>No Contact</td>
                                                 }
                                                 <td> @item.ClientHrContact </td>
                                                 <td> @item.confirmationStatus</td>
+                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                {
+                                                <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                 }
+                                                else
+                                                {
+                                                <td>No Interview Link</td>
+                                                }
                                                 <td> @item.MeetingStatusStatusDesc </td>
                                                 <td> @item.intervieweStatusStatDesc </td>
                                                 <td> @item.currentEmployerName </td>
@@ -278,7 +290,7 @@
 
 <script>
     function FilterInterviews(filterValue) {
-        
+
         var id = '@ViewBag.IRFintId';
         var irfId ='@ViewBag.IRF'
         $.ajax({

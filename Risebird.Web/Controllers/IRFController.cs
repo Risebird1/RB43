@@ -1211,7 +1211,7 @@ namespace Risebird.Web.Controllers
 "ID", "Name", "All");
 
                         ViewData["list"] = list;
-
+                        meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
                         return View(meetings);
                     }
                     else
@@ -1320,7 +1320,7 @@ namespace Risebird.Web.Controllers
                             }
 
                         }
-
+                        meetings = meetings.OrderByDescending(x => x.interviewDate).ToList();
                         return PartialView("GetFilteredInterviewMeetings", meetings);
                     }
                     else
