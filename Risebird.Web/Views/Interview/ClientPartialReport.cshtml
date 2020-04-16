@@ -15,30 +15,148 @@
         display: none;
     }
 
-    .table-responsive {
-        overflow: hidden;
+   
+
+    #AudioFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
     }
 
+
+
+    #PageVideoLink {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+ 
+
+    #VideoFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #ProctoringTable .label-type {
+        background: #e8f5ff;
+        padding: 8px 10px;
+        border: 0;
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
     .multiple_row > h2 {
         font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        padding: 6px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
 
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px!important;
+        font-size: 12px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+
+
+
+    .btn-success {
+        background: #62ce17 !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #4aa20d !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #4aa20d !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #4aa20d;
+    }
+
+
+        .btn-success:hover {
+            background: #62ce17;
+            box-shadow: 0 4px #4aa20d !important;
+        }
     #btnPlus, #btnMinus {
         padding: 2px;
     }
 
     #btnMinus {
-        position: absolute;
         margin-left: 12px;
+        background: #d61d1d;
+        color: #fff;
     }
 
     #btnPlus {
-        background-color: #4a89dc;
+        background: #84c0ff;
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 3px #5794d4;
     }
 
     .glyphicon {
@@ -47,6 +165,12 @@
         vertical-align: middle;
         line-height: 0;
     }
+
+    #resumeID {
+        color: #214268;
+        text-decoration: underline;
+    }
+      
 </style>
 
 <style>
@@ -82,10 +206,8 @@
 
     /* The Close Button */
     .close {
-        color: #fefefe !important;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
+        text-shadow: none;
+        font-size: 30px !important;
     }
 
         .close:hover,
@@ -95,30 +217,132 @@
             cursor: pointer;
         }
 
-    .modal-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+    .modal input[type=button] {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+        .modal input[type=button]:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+        .modal-header {
+            border-bottom: 3px solid #316b9e !important;
+            background: #419dff !important;
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+            color: #fff;
+        }
+
+    .modal input, .modal .dropdown-toggle, .modal select {
+        background: #99d1fc0f !important;
+        border: 1px #3b74b3fa dotted !important;
     }
 
     .modal-body {
         padding: 2px 16px;
     }
 
-    .modal-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
+  
 
     .modal-content .modal-header {
         font-size: 10px;
     }
+
+    #Clienform textarea {
+        min-height: 100px;
+        width: 100%;
+        display: inline-block;
+        position: relative;
+        /* width: 200px; */
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+        border: 0;
+        font-size: 13px;
+        padding: 10px;
+    }
+
+        #Clienform textarea:after {
+            content: ' ';
+            position: absolute;
+            width: 0;
+            height: 0;
+            left: auto;
+            right: -20px;
+            top: 38px;
+            bottom: auto;
+            border: 12px solid;
+            border-color: #eff7ff transparent transparent #eff7ff;
+        }
 </style>
 <meta charset="utf-8" />
 <link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
 <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--     Fonts and icons     -->
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
@@ -139,14 +363,18 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="navbar-wrapper">
-                
-                <a class="navbar-brand">
-                    Interview Report
-                </a>
+            <div class="navbar-wrapper"  style="width:100%;float:left;display:block;">
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Interview Report
+                    </a>
+                </div>
+                <div class="pull-right">
+                    <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()">
+                </div>
             </div>
 
-        </div>
+            </div>
     </nav>
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
@@ -156,16 +384,17 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+                      
                         @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
-                            <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-info btn-icon btn-sm like fa fa-thumbs-up" style="width:90px"> Approve</button>
-                            <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-info btn-icon btn-sm like fa fa-check-circle" style="width:90px"> Select</button>
-
+                            <div class="clearfix text-right">
+                            <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-success btn-icon btn-sm like fa fa-thumbs-up" style="width:145px"><font style="font-family:Arial;font-size:12px;"> Approve</font></button>
+                            <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-primary btn-icon btn-sm like fa fa-check-circle" style="width:145px"> <font style="font-family:Arial;font-size:12px;">Select</font></button>
+</div>
                         }
 
-                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -298,12 +527,15 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
 
-                                        @Html.HiddenFor(x => Model.VideoLink)
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+
                                             {
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                <p></p>
                                                 <video width="320" height="240" style="width:100%" controls>
                                                     <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                     <source src=@Url.Content(Model.VideoLink) type="video/ogg">
@@ -313,13 +545,13 @@
                                             }
                                             else
                                             {
-                                                <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                <iframe width="420" height="345" style="width:100%; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
 
                                             }
                                         }
 
-                                      
-                                    </div><!--end of col-md-12-->
+                                            </p>
+                                        </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -342,30 +574,32 @@
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
-                                                @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                <span>
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    <span>
 
-                                                </span>
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </span>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -407,7 +641,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="QuestionsTable">
                                                 <thead>
                                                     <tr>
@@ -508,7 +742,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
                                                     <tr>
@@ -585,7 +819,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                 <thead>
                                                     <tr>
@@ -663,7 +897,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
@@ -740,7 +974,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                 <thead>
@@ -814,7 +1048,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="ProctoringTable">
                                                 <thead>
                                                     <tr>
@@ -833,19 +1067,19 @@
                                                     </tr>
                                                     <tr>
 
-                                                        <td>
-                                                            <label class="form-control" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
+                                                        <td >
+                                                            <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <label class="form-control" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
+                                                            <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
                                                     </tr>
@@ -853,14 +1087,14 @@
                                                         <td>
                                                             Head Movement
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
+                                                            <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -869,15 +1103,15 @@
                                                         <td>
                                                             Lips Movement
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
 
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="LipsOverhead">Using overhead light</label>
+                                                            <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -885,9 +1119,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="LipsDarklight">Dark light in the room or on the face</label>
+                                                            <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -895,9 +1129,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="LipsHeadphone">Using Headphone in front of Lips</label>
+                                                            <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -906,14 +1140,14 @@
                                                         <td>
                                                             Latency check
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
+                                                            <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -923,14 +1157,14 @@
                                                         <td>
                                                             Candidate desktop
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
+                                                            <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -938,9 +1172,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="DesktopScreenSharing">Sharing screen but not desktop</label>
+                                                            <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -949,14 +1183,14 @@
                                                         <td>
                                                             Voice Impostering
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
+                                                            <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -964,9 +1198,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
+                                                            <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @onchange = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -974,9 +1208,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
+                                                            <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -984,9 +1218,9 @@
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
+                                                            <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                         </td>
 
@@ -995,14 +1229,14 @@
                                                         <td>
                                                             Linkedin Photo
                                                         </td>
-                                                        <td></td>
+                                                        <td class="control-width"></td>
                                                     </tr>
                                                     <tr>
 
                                                         <td>
-                                                            <label class="form-control" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
+                                                            <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
                                                         </td>
-                                                        <td>
+                                                        <td class="control-width">
                                                             @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                             @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
 
@@ -1039,55 +1273,53 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div id="myModal" class="modal">
+        <div id="myModal" class="modal modal-wrap">
             <!-- Modal content -->
             <div class="modal-content" style="width:50%">
                 <div class="modal-header">
-                    <h5>Approved For Next Round</h5>
+                    <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
                     <span class="close" id="approvePopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         @*<label>Approved</label>
             <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
-                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                        <label for="approveDropdown" class="control-label">Approved For Next Round</label>
                         <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                     </div>
                     <div id="approvalComments" class="form-group">
-                        <label>Approval Comments</label>
-                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
+                        <label class="control-label">Approval Comments</label>
+                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
                     </div>
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                    <div>
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
                     </div>
                 </div>
-                <div class="modal-footer">
-
-                </div>
+               
             </div>
 
         </div>
 
-        <div id="mySelectionModal" class="modal">
+        <div id="mySelectionModal" class="modal modal-wrap">
 
             <!-- Modal content -->
             <div class="modal-content" style="width:50%">
                 <div class="modal-header">
-                    <h5>Final Selection Status</h5>
+                    <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
                     <span class="close" id="selectPopUp">&times;</span>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
 
-                        <label for="selectionDropdown"><b>Final Selection</b></label>
+                        <label for="selectionDropdown" class="control-label">Final Selection</label>
                         <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
                     </div>
                     <div id="selectionComments" class="form-group">
-                        <label>Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
+                        <label class="control-label">Final Comments</label>
+                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px">
                     </div>
                     <div class="">
-                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
+                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary pull-right" id="btnSelectUpload" value="Save">
                     </div>
 
                 </div>

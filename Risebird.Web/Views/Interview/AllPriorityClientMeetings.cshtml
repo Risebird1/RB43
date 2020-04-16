@@ -59,9 +59,23 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
+    table {
+        white-space: nowrap !important;
+    }
 
+
+
+        table.dataTable > thead > tr > th {
+            padding: 5px;
+            text-align: center;
+        }
+
+
+    .table > tfoot > tr > th {
+        padding: 5px 7px;
+    }
     td.wordwrap {
-        display: inline-block !important;
+
         max-width: 250px !important;
         min-width: 250px !important;
         overflow: hidden !important;
@@ -92,6 +106,515 @@
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
+
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+    .table > thead > tr > th, .table > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+    thead, tfoot {
+        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        COLOR: #FFF;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #fff;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: rgb(233,247,247,0.2);
+    }
+
+    table.dataTable thead .sorting:after {
+        opacity: 1;
+        content: "\f0dc";
+        color: #fff;
+    }
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    #reportId {
+        background: #b3d2f1;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px #56a9ff solid;
+    }
+
+    #videoId {
+        background: #56a9ff63;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #style-4::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: #cee0f3;
+    }
+
+    #style-4::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
+    }
+
+
+
+    td.wordwrap {
+        max-width: 200px !important;
+        min-width: 200px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+
+    .border-bubble {
+        border: 2px solid #eff7ff;
+    }
+
+    .talk-bubble textarea {
+        resize: none;
+        border: 0;
+        background: #f7fbff;
+        padding: 5px;
+    }
+
+        .talk-bubble textarea:focus {
+            outline: hidden;
+            padding: 5px;
+        }
+
+
+
+    /* Right triangle placed top left flush. */
+    .tri-right.border.left-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.left-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -20px;
+        right: auto;
+        top: 0px;
+        bottom: auto;
+        border: 22px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* Right triangle, left side slightly down */
+    .tri-right.border.left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -8px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 32px solid;
+        border-color: transparent transparent transparent #666;
+    }
+
+    .tri-right.btm-left:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 0px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 22px solid;
+        border-color: transparent transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 30px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.btm-left-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 38px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom right side slightly in*/
+    .tri-right.border.btm-right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 30px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 38px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    .tri-right.border.btm-right:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -8px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 0px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    /* Right triangle, right side slightly down*/
+    .tri-right.border.right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /* Right triangle placed top right flush. */
+    .tri-right.border.right-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.right-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 0px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* talk bubble contents */
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+    #meeting_length, #meeting_filter {
+        margin: 10px 0px
+    }
+
+        #meeting_length label {
+            font-size: 14px;
+        }
+
+        #meeting_length select.form-control {
+            padding: 8px 8px;
+        }
+
+        #meeting_length select:focus {
+            border-color: #4a93de;
+        }
+
+        #meeting_filter input {
+            outline: none;
+        }
+
+    #meeting input[type=search] {
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+        font-family: inherit;
+        font-size: 100%;
+    }
+
+    #meeting_filter input::-webkit-search-decoration,
+    #meeting_filter input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+
+    #meeting_filter input[type=search] {
+        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+        border: solid 1px #ccc;
+        padding: 9px 10px 9px 32px;
+        width: 135px;
+        font-family: arial;
+        -webkit-border-radius: 10em;
+        -moz-border-radius: 10em;
+        border-radius: 10em;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+
+        #meeting_filter input[type=search]:focus {
+            width: 200px;
+            background-color: #fff;
+            border-color: #4a93de;
+            font-family: arial;
+            margin: 3px;
+            -webkit-box-shadow: 0 0 5px #4a93de;
+            -moz-box-shadow: 0 0 5px #4a93de;
+            box-shadow: 0 0 5px #4a93de;
+        }
+
+
+    #meeting_filter input:-moz-placeholder {
+        color: #999;
+    }
+
+    #meeting_filter input::-webkit-input-placeholder {
+        color: #999;
+    }
+
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+    .modal-header {
+        border-bottom: 3px solid #316b9e !important;
+        background: #419dff !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        color: #fff;
+    }
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+        border: 1px #3b74b3fa dotted !important;
+    }
+
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -119,11 +642,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            All Interview Priority View
-                        </h4>
-                    </div>
+                    
                     <div class="card-body">
 
                         <div class="loader text-center">
@@ -134,26 +653,50 @@
 
                             <div class="toolbar">
 
+
+
+
                                 <div class="row">
-                                   
 
-                                    <div class="col-md-5 ml-md-auto">
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export All Candidate" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export All Candidate</span></button>
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">All Interview Priority View</h4></div>
 
+                                        <div class="pull-right">
+                                            <div>
+                                                <button type="button" style="margin-top:3px" class="btn btn-primary buttons "><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Meeting Details</font></span></button>
+
+                                                <button type="button" style="margin-top:3px" class="btn btn-primary buttons " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>
+                                                <button type="button" class="btn btn-primary buttons " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export All Candidate" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Export All Candidate</font></span></button>
+                                            </div>
+                                        </div>
                                     </div>
-                                             
-                                </div>
+
+
+                                  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                
 
 
                             </div>
-                            <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                            <h5 class="modal-title" id="filterModalLabel">Filters</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -402,14 +945,29 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-md-12">
+
+
+
                                                             <div class="row">
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                                <div class="col-md-12 col-sm-12">
+
+                                                                    <button type="button" style="float:right;margin-top: 30px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                                    <button type="submit" style="margin-top: 30px; float:right" class="btn btn-primary">Apply Filter</button>
                                                                 </div>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
-                                                                </div>
+
                                                             </div>
+
+
+
+
+
+
+
+
+
+
+
+                                                            
                                                         </div>
 
 

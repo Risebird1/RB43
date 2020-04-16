@@ -71,7 +71,7 @@
 
     table.dataTable > thead > tr > th {
         padding: 5px;
-        text-align: center;
+     
     }
 
 
@@ -114,16 +114,15 @@
         max-width: 300px !important;
     }
 
-    table.dataTable > thead > tr > th {
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
         padding: 7px;
-        font-weight: bold;
+        font-weight: normal !important;
     }
 
-    .table > thead > tr > th {
+    .table > thead > tr > th, .table > tfoot > tr > th {
         padding: 7px;
-        font-weight: bold;
+        font-weight: normal !important;
     }
-
     .interviewIndex thead, .interviewIndex tfoot {
         /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
         background: #3f9eff; /* Old browsers */
@@ -269,6 +268,7 @@
         padding: 8px 16px;
         display: inline-block;
         margin: 20px 5px;
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 700;
@@ -371,8 +371,16 @@
         }
 
 
-    #resumeId {
+    #resumeId{
         background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+
+    #reportId {
+        background: #b3d2f1;
         color: #1d3b5e;
         padding: 5px 10px;
         border-radius: 10px;
@@ -633,6 +641,17 @@
     }
 
     /* talk bubble contents */
+    .modal-header {
+        border-bottom: 3px solid #316b9e !important;
+        background: #419dff !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        color: #fff;
+    }
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+        border: 1px #3b74b3fa dotted !important;
+    }
     .talktext {
         padding: 8px 8px 4px 8px;
         text-align: left;
@@ -717,8 +736,14 @@
             top: 0px;
         }
 
-    .card .card-header .card-title {
-        margin-top: 0;
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+    .control-label {
+        color: #5f5c5c!important;
     }
 </style>
 
@@ -791,7 +816,7 @@
 
                                                 <div class="modal-body">
                                                     <div class="row">
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
                                                                     Start Date
@@ -811,7 +836,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-6 col-sm-6 border-rv">
 
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
@@ -1149,7 +1174,7 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal" style="        display: none; /* Hidden by default */
+            <div id="myModal" class="modal" style=" display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1159,7 +1184,8 @@
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    ">
                 <!-- Modal content -->
                 <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
                     <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">

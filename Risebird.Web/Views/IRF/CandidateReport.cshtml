@@ -12,30 +12,124 @@
         display: none;
     }
 
-    .table-responsive {
-        overflow: hidden;
+
+    . #AudioFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
     }
+
+
+
+    #PageVideoLink {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+    #VideoFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #ProctoringTable .label-type {
+        background: #e8f5ff;
+        padding: 8px 10px;
+        border: 0;
+    }
+
 
     .multiple_row > h2 {
         font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        padding: 6px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
+
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        font-size: 12px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
 
     #btnPlus, #btnMinus {
         padding: 2px;
     }
 
     #btnMinus {
-        position: absolute;
         margin-left: 12px;
+        background: #d61d1d;
+        color: #fff;
     }
 
     #btnPlus {
-        background-color: #4a89dc;
+        background: #84c0ff;
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 3px #5794d4;
     }
 
     .glyphicon {
@@ -44,6 +138,47 @@
         vertical-align: middle;
         line-height: 0;
     }
+
+    #resumeID {
+        color: #214268;
+        text-decoration: underline;
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .top-gap {
+        padding-top: 40px;
+        display: block
+    }
+    #Clienform textarea {
+        min-height: 100px;
+        width: 100%;
+        display: inline-block;
+        position: relative;
+        /* width: 200px; */
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+        border: 0;
+        font-size: 13px;
+        padding: 10px;
+    }
+
+        #Clienform textarea:after {
+            content: ' ';
+            position: absolute;
+            width: 0;
+            height: 0;
+            left: auto;
+            right: -20px;
+            top: 38px;
+            bottom: auto;
+            border: 12px solid;
+            border-color: #eff7ff transparent transparent #eff7ff;
+        }
 </style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -55,7 +190,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="navbar-wrapper">
+            <div class="top-gap">&nbsp;</div>
+            <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
                         <span class="navbar-toggler-bar bar1"></span>
@@ -63,9 +199,12 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">
-                    Candidate Report
-                </a>
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Candidate Report
+                    </a>
+                </div>
+                <div class="pull-right"> <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
             </div>
 
         </div>
@@ -79,7 +218,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+                       
                         <form action="/IRF/CandidateReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
@@ -205,7 +344,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                 <thead>
@@ -279,7 +418,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
@@ -353,7 +492,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
                                                     <tr>
@@ -426,7 +565,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                 <thead>
                                                     <tr>
@@ -499,7 +638,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                 <thead>
                                                     <tr>
@@ -548,8 +687,8 @@
                                 @Html.HiddenFor(m => m.IsEdited)
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
+                                        <label class="col-md-5"></label>
+                                        <div class="col-md-7">
 
                                             @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 

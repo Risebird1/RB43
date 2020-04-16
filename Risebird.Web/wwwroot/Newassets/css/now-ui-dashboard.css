@@ -4834,6 +4834,11 @@ Created using IcoMoon - icomoon.io
     box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.1);
 }
 
+.top-gap {
+    padding-top: 40px;
+    display: block
+}
+
 .nav-align-center {
     text-align: center;
 }
@@ -6430,7 +6435,9 @@ Created using IcoMoon - icomoon.io
     text-shadow: none;
     font-size: 30px !important;
     position: relative;
-  top: -7px;
+    top: -7px;
+    opacity: 0.7 !important;
+  
     right: 0px;
 }
 
@@ -7382,11 +7389,11 @@ Created using IcoMoon - icomoon.io
 
 
 .card .card-header h4.card-title {
-    font-size: 30px;
+    font-size:28px;
     text-transform: none;
 }
 
-.card .card-header .card-title b {
+.card .card-header .card-title b, .card .card-header .card-title strong {
     color: #22446b;
     font-weight: 600;
 }
@@ -11115,6 +11122,10 @@ select.selectpicker {
     color: #9A9A9A;
     font-size: 13px;
 }
+.control-width .form-control {
+    width: 120px;
+    background: #E3E3E3;
+}
 .action .btn {
     width: 32px !important;
     height: 30px !important;
@@ -11358,15 +11369,35 @@ div.dataTables_scrollFoot table {
     #ProctoringTable {
         white-space: inherit;
     }
-
     #scoreChart .canvasjs-chart-canvas {
-        width:300px!important;
+        width: 300px !important;
         height: auto !important;
     }
 
     .panel-header-sm {
-        height: 150px;
+        height: 95px;
     }
+
+    .talk-bubble {
+        display: block !important;
+        position: relative;
+        width: 250px !important;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+   .modal-wrap  .talk-bubble {
+        display: block !important;
+        position: relative;
+        width: 250px !important;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+
+
 }
 
 
@@ -11374,7 +11405,28 @@ div.dataTables_scrollFoot table {
 
     @media screen and (max-width: 767px) {
 
-       
+        .dataTables_wrapper .collapsed .child .child {
+            padding-left: 10px !important;
+        }
+
+            .dataTables_wrapper .collapsed .child .child .dtr-data, .dataTables_wrapper .collapsed .child .child .dtr-title {
+                white-space: initial;
+            }
+
+        .dataTables_wrapper .collapsed tr.child ul {
+            display: block;
+        }
+
+
+        .dataTables_wrapper .collapsed .child .child .dtr-data .btn-info {
+            background: #56a9ff;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 3px #5794d4;
+        }
+        .navbar .navbar-brand {
+            font-size: 0.7em !important;
+        }
 
         div.dataTables_wrapper div.dataTables_length,
         div.dataTables_wrapper div.dataTables_filter,
@@ -11383,22 +11435,59 @@ div.dataTables_scrollFoot table {
             text-align: center;
         }
 
+
+
+
             div.dataTables_wrapper div.dataTables_length select {
                 width: 110px !important;
                 display: inline-block;
             }
 
-        #AudioFile {
+
+        .border-rv{border:none;}
+
+        .modal-wrap .modal-content {
+            width: 90% !important;
+        }
+            #AudioFile {
             margin: 0px 0px 10px 0px !important;
             width: calc(100% - 0px) !important;
         }
 
+        .table-responsive-sm th, .table-responsive-sm th.table_heading{font-size:12px!important;}
 
 
-        #PageVideoLink {
-            margin: 0px 0px 10px 0px !important;
-            width: calc(100% - 0px) !important;
+        .table-responsive-sm  input.form-control{width:auto;}
+        .control-width .form-control {
+            width: 80px !important;
+            background: #E3E3E3;
         }
+
+        .talk-bubble {
+            display: block !important;
+            position: relative;
+            width: 230px !important;
+            height: auto;
+            border-radius: 10px;
+            margin: 5px 0px;
+            background-color: #eff7ff;
+        }
+
+
+        .modal-wrap .talk-bubble {
+            display: block !important;
+            position: relative;
+            width: 250px !important;
+            height: auto;
+            border-radius: 10px;
+            margin: 5px 0px;
+            background-color: #eff7ff;
+        }
+
+            #PageVideoLink {
+                margin: 0px 0px 10px 0px !important;
+                width: calc(100% - 0px) !important;
+            }
 
 
         #VideoFile {
@@ -11420,11 +11509,11 @@ div.dataTables_scrollFoot table {
         }
 
         .buttons {
-            margin: 5px 5px 5px 0px !important;
+            margin: 5px 5px 10px 0px !important;
         }
 
         .card .card-header h4.card-title {
-            font-size: 24px !important;
+            font-size: 21px !important;
             text-transform: none;
         }
     }
@@ -15224,6 +15313,11 @@ be a descendant of the grid when it is being dragged.
         .landing-page .section-story-overview .image-container:nth-child(2) {
             margin-left: 0;
             margin-bottom: 30px;
+        }
+
+                .top-gap {
+            display: none !important;
+            padding: 0px !important;
         }
     }
 

@@ -63,6 +63,10 @@
             top: 0px;
             background: #4fa4fb;
         }
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
 
 </style>
 
@@ -97,6 +101,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
+                    <div class="card-body">
                     @using (Html.BeginForm("Add", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (CheckResume() && checkDate());" } ))
                     {
 
@@ -256,6 +261,7 @@
                         </div>
                     }
 
+                </div>
                 </div>
             </div>
         </div>
