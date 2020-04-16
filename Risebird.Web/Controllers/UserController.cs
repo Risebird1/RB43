@@ -785,10 +785,10 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    var model = new InterviewerProfileVM();
+                    //var model = new InterviewerProfileVM();
                     // We need to make commnet above one and inside the method
                     // Check if any existiing Profile
-                    //var model = _userService.GetInterviewerProfile(userId);
+                    var model = _userService.GetInterviewerProfileById(userId);
 
 
                     model.UserId = userId;

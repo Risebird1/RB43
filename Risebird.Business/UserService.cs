@@ -271,7 +271,24 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.AddInterviewerProfile(interviewerProfile).Result;
+                //Get the Interviewer ProfileRecord if exist using userId
+                IEnumerable<InterviewerProfileVM> ProfileList = _userRepository.GetInterviewerProfileById(interviewerProfile.UserId).Result;
+                InterviewerProfileVM Profile = ProfileList.ToList().FirstOrDefault();
+
+                if(Profile == null)
+                {
+                    //Add Method
+                    return _userRepository.AddInterviewerProfile(interviewerProfile).Result;
+                }
+                else
+                {
+                    //Edit Method
+
+                    // Now call one by one and add the values.
+
+
+                    return false;
+                }
             }
 
             catch (Exception e)
@@ -528,17 +545,52 @@ namespace Risebird.Business
         }
 
         //testing
-        //public InterviewerProfileVM GetInterviewerProfile(int userid)
-        //{
-        //    var interviewerProfile = _userRepository.GetInterviewerProfile(userid);
-        //        if (interviewerProfile == null)
-        //            return null;
-        //        else
-        //            return interviewerProfile.Result;
-        //    }
+        public InterviewerProfileVM GetInterviewerProfileById(int userid)
+        {
+            try
+            {
+                var interviewerProfile = _userRepository.GetInterviewerProfileById(userid).Result;
+                InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
+                
+                if (ProfileModel == null)
+                {
+                    return new InterviewerProfileVM();
+                }
+                else
+                {
+                    int ProfileId = ProfileModel.id;
 
+                    // Get all the List from DB
+
+                    List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
+                    List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
+                    List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
+                    List<TransInterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
+                    List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
+                    List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
+                    List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
+                    
+                    // Assign the Lists to model
+
+                    ProfileModel.InterviewerSkill = SkillList;
+                    ProfileModel.InterviewerCertificateDetails = CertificateList;
+                    ProfileModel.InterviewerEducationDetails = EducationList;
+                    ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
+                    ProfileModel.InterviewerProjectsDetails = ProjectsList;
+                    ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+                    ProfileModel.InterviewerAccDetails = AccDetailsList;
+
+                    return ProfileModel;
+                }
             
-        //}
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
 
     }
 }

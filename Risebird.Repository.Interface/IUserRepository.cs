@@ -48,6 +48,13 @@ namespace Risebird.Repository.Interface
         Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
 
         IEnumerable<string> GetNickNames();
-        Task<InterviewerProfileVM> GetInterviewerProfile(int userid);
+        Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid);
+        Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId);
+        Task<IEnumerable<TransInterviewerCertificate>> GetCertificateList(int ProfileId);
+        Task<IEnumerable<TransInterviewerEducation>> GetEducationList(int ProfileId);
+        Task<IEnumerable<TransInterviewerProfessional>> GetProfessionalList(int ProfileId);
+        Task<IEnumerable<TransInterviewerProjects>> GetProjectsList(int ProfileId);
+        Task<IEnumerable<TransInterviewerAvailability>> GetAvailabilityList(int ProfileId);
+        Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId);
     }
 }

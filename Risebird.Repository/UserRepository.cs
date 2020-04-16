@@ -530,10 +530,9 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var ResultId = SqlMapper.Query<int>(con, "usp_AddInterviewerProfile", parameters,
-                       commandType: CommandType.StoredProcedure);
-                    //int ProfileId = ResultId.First<int>();
-                    //int? ProfileId = parameters.Get<int>("@InterviewerProfileId");
+                    //int ProfileId = 
+                    SqlMapper.Query<int>(con, "usp_AddInterviewerProfile", parameters,
+                       commandType: CommandType.StoredProcedure).FirstOrDefault();
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
                         con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
@@ -700,7 +699,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<InterviewerProfileVM> GetInterviewerProfile(int userid)
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
         {
             try
             {
@@ -709,15 +708,14 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QuerySingleAsync<InterviewerProfileVM>(con,
-                        "SELECT FirstName, LastName, Nickname, EmailId, AltemailId, MobileNumber, AltMobileNumber, CurrentRole , Experience, PreferredDomain, ResumeLink, CodedResumeLink from InterviewerProfile WHERE userId = @userid ;",
-                        parameters);
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfiletByUserId",
+                        parameters, commandType: CommandType.StoredProcedure);                   
                 }
             }
 
             catch (SqlException e)
             {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
             catch (Exception e)
@@ -726,6 +724,203 @@ namespace Risebird.Repository
                 return null;
             }
         }
+
+        public async Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerSkill>(
+                        con, "select Id, InterviewerProfileId,  SkillId, Level, SkillName from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId", 
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            
+        }
+
+        //certi
+        public async Task<IEnumerable<TransInterviewerCertificate>> GetCertificateList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerCertificate>(
+                        con, "select Id, InterviewerProfileId,  CertificateID, CertificateName from [dbo].[TransInterviewerCertificate] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Education
+        public async Task<IEnumerable<TransInterviewerEducation>> GetEducationList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerEducation>(
+                        con, "select Id, InterviewerProfileId,  Graduation, CollegeType, Specialization, Score from [dbo].[TransInterviewerEducation] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        // Profess
+        public async Task<IEnumerable<TransInterviewerProfessional>> GetProfessionalList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerProfessional>(
+                        con, "select Id, InterviewerProfileId,  CompanyName, CompanyType, Domain, StartDate, EndDate from [dbo].[TransInterviewerProfessional] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Project
+        public async Task<IEnumerable<TransInterviewerProjects>> GetProjectsList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerProjects>(
+                        con, "select Id, InterviewerProfileId,  ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions from [dbo].[TransInterviewerProjects] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Availability
+        public async Task<IEnumerable<TransInterviewerAvailability>> GetAvailabilityList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerAvailability>(
+                        con, "select Id, InterviewerProfileId,  DayTimeSlot, DaySlot, StartTime, EndTime from [dbo].[TransInterviewerAvailability] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //AccDetails
+        public async Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerAccDetails>(
+                        con, "select Id, InterviewerProfileId,  AccountHolderName, AccountNumber, IFSCCode, Location, UPIId from [dbo].[TransInterviewerAccDetails] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
         #endregion
 
         #region QCInterviewer Repository Functions
