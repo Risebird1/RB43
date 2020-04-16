@@ -23,6 +23,27 @@
     .stats .card-chart.card {
         box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.3);
     }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+        text-transform: uppercase;
+    }
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
 </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -74,7 +95,7 @@
                             <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Meetings Status</h4>
+                                        <h4 class="card-title">Meeting Status</h4>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="myChart"></canvas>
