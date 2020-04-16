@@ -317,24 +317,49 @@
                                             </thead>
                                             <tbody class="tableBody">
 
-                                                <tr>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
-                                                        @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
-                                                        @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
-                                                        <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                    </td>
+                                                @if (Model.InterviewerSkill == null || Model.InterviewerSkill.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
+                                                            @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
+                                                            @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
 
-                                                </tr>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerSkill.Count(); i++)
+                                                    {
+                                                    <tr>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
+                                                            @Html.DropDownListFor(m=>m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
+                                                            @Html.DropDownListFor(m=>m.InterviewerSkill[i].Level, (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
 
+                                                    </tr>
+                                                    }
+                                                }
                                             </tbody>
                                         </table>
                                         <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -365,22 +390,45 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="tableBody">
+                                                @if (Model.InterviewerCertificateDetails == null || Model.InterviewerCertificateDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateID" name="InterviewerCertificateDetails[0].CertificateID" type="text" value="">
 
-                                                <tr>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateID" name="InterviewerCertificateDetails[0].CertificateID" type="text" value="">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateName" name="InterviewerCertificateDetails[0].CertificateName" type="text" value="">
+                                                        </td>
 
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateName" name="InterviewerCertificateDetails[0].CertificateName" type="text" value="">
-                                                    </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                    <td>
-                                                        <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerCertificateDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateID" name="InterviewerCertificateDetails[i].CertificateID" type="text" value="">
 
-                                                    </td>
-                                                </tr>
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateName" name="InterviewerCertificateDetails[i].CertificateName" type="text" value="">
+                                                            </td>
+
+                                                            <td>
+                                                                <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
 
                                             </tbody>
                                         </table>
@@ -413,34 +461,70 @@
                                                 </tr>
                                             </thead>
                                             <tbody class="tableBody">
+                                                @if (Model.InterviewerEducationDetails == null || Model.InterviewerEducationDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].Graduation", (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
 
-                                                <tr>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
-                                                        @Html.DropDownList("InterviewerEducationDetails[0].Graduation", (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
+                                                            @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
 
-                                                        @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
+                                                            @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
+                                                            <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__specialization" name="InterviewerEducationDetails[0].Specialization" type="text" value="">
+                                                        </td>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="Score" name="Score" type="text" value="" placeholder="Score text box">*@
+                                                            <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__Score" name="InterviewerEducationDetails[0].Score" type="text" value="">
+                                                        </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                        @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
-                                                        <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__specialization" name="InterviewerEducationDetails[0].Specialization" type="text" value="">
-                                                    </td>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="Score" name="Score" type="text" value="" placeholder="Score text box">*@
-                                                        <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__Score" name="InterviewerEducationDetails[0].Score" type="text" value="">
-                                                    </td>
-                                                    <td>
-                                                        <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerEducationDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
+                                                                @Html.DropDownListFor(m=>m.InterviewerEducationDetails[i].Graduation, (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
+                                                            </td>
+                                                            <td>
 
-                                                    </td>
-                                                </tr>
+                                                                @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
+
+                                                                @Html.DropDownListFor(m=>m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
+                                                            </td>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
+                                                                <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__specialization" name="InterviewerEducationDetails[i].Specialization" type="text" value="">
+                                                            </td>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="Score" name="Score" type="text" value="" placeholder="Score text box">*@
+                                                                <input class="form-control text-box single-line" id="InterviewerEducationDetails_0__Score" name="InterviewerEducationDetails[i].Score" type="text" value="">
+                                                            </td>
+                                                            <td>
+                                                                <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
 
                                             </tbody>
                                         </table>
@@ -473,44 +557,94 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @if (Model.InterviewerProfessionalDetails == null || Model.InterviewerProfessionalDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="companyName" name="companyName" type="text" value="" placeholder="Company Name Text box">*@
+                                                            @*@Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })*@
+                                                            <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__CompanyName" name="InterviewerProfessionalDetails[0].CompanyName" type="text" value="">
+                                                        </td>
+                                                        <td>
 
-                                                <tr>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="companyName" name="companyName" type="text" value="" placeholder="Company Name Text box">*@
-                                                        @*@Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })*@
-                                                        <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__CompanyName" name="InterviewerProfessionalDetails[0].CompanyName" type="text" value="">
-                                                    </td>
-                                                    <td>
+                                                            @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
 
-                                                        @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
+                                                            @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
 
-                                                        @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__Domain" name="InterviewerProfessionalDetails[0].Domain" type="text" value="">
+                                                        </td>
+                                                        <td>
+                                                            @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="text" value="">*@
 
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__Domain" name="InterviewerProfessionalDetails[0].Domain" type="text" value="">
-                                                    </td>
-                                                    <td>
-                                                        @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="text" value="">*@
-
-                                                        @*@Html.LabelFor(model => InterviewerProfessionalDetails[0].StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
+                                                            @*@Html.LabelFor(model => InterviewerProfessionalDetails[0].StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
 
                                                         @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
                                                             <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
                                                             @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+                                                            @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+                    @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
 
-                                                        <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="date" value="" placeholder="drop down">
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__EndDate" name="InterviewerProfessionalDetails[0].EndDate" type="date" value="">
-                                                    </td>
-                                                    <td>
-                                                        <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="date" value="" placeholder="drop down">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__EndDate" name="InterviewerProfessionalDetails[0].EndDate" type="date" value="">
+                                                        </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerProfessionalDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="companyName" name="companyName" type="text" value="" placeholder="Company Name Text box">*@
+                                                                @*@Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })*@
+                                                                <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__CompanyName" name="InterviewerProfessionalDetails[i].CompanyName" type="text" value="">
+                                                            </td>
+                                                            <td>
+
+                                                                @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
+
+                                                                @Html.DropDownListFor(m=>m.InterviewerProfessionalDetails[i].CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__Domain" name="InterviewerProfessionalDetails[i].Domain" type="text" value="">
+                                                            </td>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="text" value="">*@
+
+                                                                @*@Html.LabelFor(model => InterviewerProfessionalDetails[0].StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
+
+                                                                @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
+                        <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+                        @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+
+                                                                <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[i].StartDate" type="date" value="" placeholder="drop down">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__EndDate" name="InterviewerProfessionalDetails[i].EndDate" type="date" value="">
+                                                            </td>
+                                                            <td>
+                                                                <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+
+                                                    }
+                                                }
 
                                             </tbody>
                                         </table>
@@ -543,18 +677,19 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @if (Model.InterviewerProjectsDetails == null || Model.InterviewerProjectsDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
 
-                                                <tr>
-                                                    <td>
+                                                            @*<input class="form-control text-box single-line" id="projectName" name="projectName" type="text" value="" placeholder="Project Name Text box">*@
+                                                            <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_projectname" name="InterviewerProjectsDetails[0].ProjectName" type="text" value="">
+                                                        </td>
+                                                        <td>
 
-                                                        @*<input class="form-control text-box single-line" id="projectName" name="projectName" type="text" value="" placeholder="Project Name Text box">*@
-                                                        <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_projectname" name="InterviewerProjectsDetails[0].ProjectName" type="text" value="">
-                                                    </td>
-                                                    <td>
-
-                                                        @*<input class="form-control text-box single-line" id="clientName" name="clientName" type="text" value="" placeholder="Client name text box">*@.
-                                                        <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ClientName" name="InterviewerProjectsDetails[0].ClientName" type="text" value="">
-                                                    </td>
+                                                            @*<input class="form-control text-box single-line" id="clientName" name="clientName" type="text" value="" placeholder="Client name text box">*@.
+                                                            <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ClientName" name="InterviewerProjectsDetails[0].ClientName" type="text" value="">
+                                                        </td>
 
                                                     <td>
                                                         <input class="form-control text-box single-line" id="" name="projectStartDate" type="date" value="">
@@ -569,17 +704,55 @@
                                                     <td>
                                                         @*<input class="form-control text-box single-line" id="projectDesc" name="projectDesc" type="" value="" placeholder="Description text Area">*@
                                                         @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
-                                                        @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions"  value=""></textarea>*@
-
-                                                        <textarea id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" value=""></textarea>
-
+                                                        <textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" value=""></textarea>
                                                     </td>
                                                     <td>
                                                         <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                         <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerProjectsDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+
+                                                                @*<input class="form-control text-box single-line" id="projectName" name="projectName" type="text" value="" placeholder="Project Name Text box">*@
+                                                                <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_projectname" name="InterviewerProjectsDetails[i].ProjectName" type="text" value="">
+                                                            </td>
+                                                            <td>
+
+                                                                @*<input class="form-control text-box single-line" id="clientName" name="clientName" type="text" value="" placeholder="Client name text box">*@.
+                                                                <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ClientName" name="InterviewerProjectsDetails[i].ClientName" type="text" value="">
+                                                            </td>
+
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="" name="projectStartDate" type="date" value="">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="" name="projectEndDate" type="date" value="">
+                                                            </td>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="projectRole" name="projectRole" type="text" value="" placeholder="Role text box">*@
+                                                                <input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_Role" name="InterviewerProjectsDetails[i].Role" type="text" value="">
+                                                            </td>
+                                                            <td>
+                                                                @*<input class="form-control text-box single-line" id="projectDesc" name="projectDesc" type="" value="" placeholder="Description text Area">*@
+                                                                @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
+                                                                <textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[i].ProjectDescriptions" type="text" value=""></textarea>
+                                                            </td>
+                                                            <td>
+                                                                <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
 
                                             </tbody>
                                         </table>
@@ -611,26 +784,56 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>
-                                                        @Html.DropDownList("InterviewerAvailabilityDetails[0].DayTimeSlot", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.DropDownList("InterviewerAvailabilityDetails[0].DaySlot", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">
-                                                    </td>
-                                                    <td>
-                                                        <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">
-                                                    </td>
-                                                    <td>
-                                                        <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                    </td>
-                                                </tr>
+                                                @if (Model.InterviewerAvailabilityDetails == null || Model.InterviewerAvailabilityDetails.Count() == 0)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].DayTimeSlot", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            @Html.DropDownList("InterviewerAvailabilityDetails[0].DaySlot", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
+                                                            @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">
+                                                        </td>
+                                                        <td>
+                                                            <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">
+                                                        </td>
+                                                        <td>
+                                                            <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                                else
+                                                {
+                                                    for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                @Html.DropDownListFor(m=>m.InterviewerAvailabilityDetails[i].DayTimeSlot, (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownListFor(m=>m.InterviewerAvailabilityDetails[i].DaySlot, (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
+                                                                @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[i].StartTime" type="date" value="" placeholder="drop down">
+                                                            </td>
+                                                            <td>
+                                                                <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[i].EndTime" type="date" value="">
+                                                            </td>
+                                                            <td>
+                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
 
                                             </tbody>
                                         </table>

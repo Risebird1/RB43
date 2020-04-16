@@ -49,6 +49,6 @@ namespace Risebird.Business.Interface
         //To retrieve the NickNames
         IEnumerable<string> GetNickNames();
         //testing
-        //InterviewerProfileVM GetInterviewerProfile(int userid);
+        InterviewerProfileVM GetInterviewerProfileById(int userid);
     }
 }
