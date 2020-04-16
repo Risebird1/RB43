@@ -100,3 +100,4 @@ C:\RiseBirdProject\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.p
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csproj.CoreCompileInputs.cache
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
 C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
+C:\RiseBirdProject\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
