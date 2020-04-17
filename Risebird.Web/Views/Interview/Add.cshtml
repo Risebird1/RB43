@@ -9,6 +9,67 @@
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
+<style>
+
+
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        font-size: 12px;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+            background: #4fa4fb;
+        }
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+</style>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -40,6 +101,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
+                    <div class="card-body">
                     @using (Html.BeginForm("Add", "Interview", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return (CheckResume() && checkDate());" } ))
                     {
 
@@ -64,7 +126,7 @@
                                         @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.interviewDate, new { htmlAttributes = new { @class = "form-control", @Value = Model.interviewDate.ToString("dd/MM/yyyy") } })
                                         @*@Html.ValidationMessageFor(model => model.interviewDate, "", new { @class = "text-danger" })*@
-                                        <label class="text-danger" id="error_interviewDate" style="color:red;font-size:14px"></label>
+                                        <label class="text-danger" id="error_interviewDate" style="color:red;font-size:14px; position:absolute;"></label>
 
                                     </div>
                                     <div class="form-group">
@@ -190,8 +252,8 @@
 
                         <div class="card-footer ">
                             <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
+                                <label class="col-md-5"></label>
+                                <div class="col-md-7">
                                     @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                     <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Add Interview">Submit</button>
                                 </div>
@@ -199,6 +261,7 @@
                         </div>
                     }
 
+                </div>
                 </div>
             </div>
         </div>

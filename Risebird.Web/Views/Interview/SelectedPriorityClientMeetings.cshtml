@@ -51,14 +51,145 @@
         background-color: darkgray;
     }
 
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+    table {
+        white-space: nowrap !important;
+    }
+
+ 
+
+    table.dataTable > thead > tr > th {
+        padding: 5px;
+       
+
+    }
+
+
+    .table > tfoot > tr > th {
+        padding: 5px 7px;
+    }
+
+    td .wordwrap {
+        max-width: 250px !important;
+        min-width: 250px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        vertical-align: middle !important;
+        white-space: nowrap !important;
+    }
+
+    td:hover.wordwrap {
+        text-overflow: clip !important;
+        white-space: normal !important;
+    }
+
+    /*CSS FOR Loader*/
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+    /*table.dataTable > thead > tr > th {
         max-width: 200px !important;
+    }*/
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal!important;
+    }
+
+    .table > thead > tr > th, .table > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+   thead,  tfoot {
+        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        COLOR: #FFF;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #fff;
+    }
+
+   .table-striped tbody tr:nth-of-type(even) {
+        background-color: rgb(233,247,247,0.2);
+    }
+
+    table.dataTable thead .sorting:after {
+        opacity: 1;
+        content: "\f0dc";
+        color: #fff;
+    }
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #reportId {
+        background: #b3d2f1;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px #56a9ff solid;
+    }
+
+    #videoId {
+        background: #56a9ff63;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #style-4::-webkit-scrollbar, #selecComments::-webkit-scrollbar, #appComments::-webkit-scrollbar, #offComments::-webkit-scrollbar, #joinComments::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: #cee0f3;
+    }
+
+    #style-4::-webkit-scrollbar-thumb, #selecComments::-webkit-scrollbar-thumb, #appComments::-webkit-scrollbar-thumb, #offComments::-webkit-scrollbar-thumb, #joinComments::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
     }
 
 
 
+
     td.wordwrap {
-        display: inline-block !important;
         max-width: 200px !important;
         min-width: 200px !important;
         overflow: hidden !important;
@@ -85,6 +216,395 @@
         pointer-events: none !important;
         cursor: default !important;
     }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+
+    .border-bubble {
+        border: 2px solid #eff7ff;
+    }
+
+    .talk-bubble textarea {
+        resize: none;
+        border: 0;
+        background: #f7fbff;
+        padding: 5px;
+    }
+
+        .talk-bubble textarea:focus {
+            outline: hidden;
+            padding: 5px;
+        }
+
+
+
+    /* Right triangle placed top left flush. */
+    .tri-right.border.left-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.left-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -20px;
+        right: auto;
+        top: 0px;
+        bottom: auto;
+        border: 22px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* Right triangle, left side slightly down */
+    .tri-right.border.left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -8px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 32px solid;
+        border-color: transparent transparent transparent #666;
+    }
+
+    .tri-right.btm-left:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 0px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 22px solid;
+        border-color: transparent transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom left side slightly in*/
+    .tri-right.border.btm-left-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 30px;
+        right: auto;
+        top: auto;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.btm-left-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: 38px;
+        right: auto;
+        top: auto;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /*Right triangle, placed bottom right side slightly in*/
+    .tri-right.border.btm-right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 30px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 38px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    .tri-right.border.btm-right:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -8px;
+        bottom: -40px;
+        border: 20px solid;
+        border-color: #666 #666 transparent transparent;
+    }
+
+    .tri-right.btm-right:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: 0px;
+        bottom: -20px;
+        border: 12px solid;
+        border-color: #eff7ff #eff7ff transparent transparent;
+    }
+
+    /* Right triangle, right side slightly down*/
+    .tri-right.border.right-in:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: 30px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #666 transparent transparent #666;
+    }
+
+    .tri-right.right-in:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 38px;
+        bottom: auto;
+        border: 12px solid;
+        border-color: #eff7ff transparent transparent #eff7ff;
+    }
+
+    /* Right triangle placed top right flush. */
+    .tri-right.border.right-top:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -40px;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .tri-right.right-top:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: auto;
+        right: -20px;
+        top: 0px;
+        bottom: auto;
+        border: 20px solid;
+        border-color: #eff7ff transparent transparent transparent;
+    }
+
+    /* talk bubble contents */
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+
+
+    .modal input[type=button] {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+    .modal input[type=button]:hover{
+        background: #4fa4fb;
+        box-shadow: 0 4px #3884d2 !important;
+        top: 0px;
+    }
+
+    #meeting_length, #meeting_filter {
+        margin: 10px 0px
+    }
+
+        #meeting_length label {
+            font-size: 14px;
+        }
+
+        #meeting_length select.form-control {
+            padding: 8px 8px;
+        }
+
+        #meeting_length select:focus {
+            border-color: #4a93de;
+        }
+
+        #meeting_filter input {
+            outline: none;
+        }
+
+    #meeting input[type=search] {
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+        font-family: inherit;
+        font-size: 100%;
+    }
+
+    #meeting_filter input::-webkit-search-decoration,
+    #meeting_filter input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+
+    #meeting_filter input[type=search] {
+        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+        border: solid 1px #ccc;
+        padding: 9px 10px 9px 32px;
+        width: 135px;
+        font-family: arial;
+        -webkit-border-radius: 10em;
+        -moz-border-radius: 10em;
+        border-radius: 10em;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+
+        #meeting_filter input[type=search]:focus {
+            width: 200px;
+            background-color: #fff;
+            border-color: #4a93de;
+            font-family: arial;
+            margin: 3px;
+            -webkit-box-shadow: 0 0 5px #4a93de;
+            -moz-box-shadow: 0 0 5px #4a93de;
+            box-shadow: 0 0 5px #4a93de;
+        }
+
+
+    #meeting_filter input:-moz-placeholder {
+        color: #999;
+    }
+
+    #meeting_filter input::-webkit-input-placeholder {
+        color: #999;
+    }
+
+
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -98,6 +618,115 @@
         z-index: 999;
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .modal-wrap input[type=button], .modal-wrap input[type=submit] {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+    .modal-wrap .modal-content {
+        width:690px;
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        font-size: 12px;
+        margin-top: -53px;
+    }
+    .modal-wrap .form-group {
+        margin-bottom: 5px;
+    }
+
+
+        .modal-wrap .form-group textarea {
+            margin-left: 6px;
+     
+            height: 48px;
+            width: 95%;
+        }
+
+    .control-labeled {
+        font-size: 12px;
+        margin-bottom: 5px;
+        color: #5f5c5c; padding: 0px 20px;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .modal-header {
+        border-bottom: 3px solid #316b9e !important;
+        background: #419dff !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        color: #fff;
+    }
+
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+
+    }
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #9A9A9A;
+        font-size: 13px;
+    }
+    .control-label {
+        color: #5f5c5c !important;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .modal .talk-bubble {
+        width: 300px;
+    }
+
+    .modal input, .modal .dropdown-toggle, .modal select, .modal textarea {
+        background: #99d1fc0f !important;
+       
+    }
+    .modal .talktext {
+        padding: 8px 8px 8px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+    .modal-wrap input[type=button] {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+    .modal-wrap .form-group textarea {
+        margin-left: 6px;
+       
+        width: 95%;
     }
 </style>
 
@@ -125,15 +754,11 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content selected-priority">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            Selected Candidate Priority View
-                        </h4>
-                    </div>
+                  
                     <div class="card-body">
 
                         <div class="loader text-center">
@@ -146,16 +771,30 @@
 
                                 <div class="row">
 
-                                    <div class="col-md-6 ml-md-auto">
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">  Selected Candidate Priority View</h4></div>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export Selected Candidate</span></button>
+                                        <div class="pull-right">
+                                            <div>
+                                                <button type="button" style="margin-top:3px" class="btn btn-primary buttons "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Meeting Details</font></span></button>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> Support</span></button>
+                                                <button type="button" style="margin-top:3px" class="btn btn-primary buttons " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>
 
+                                                <button type="button" class="btn btn-primary  buttons" style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Export Selected Candidate</font></span></button>
+
+                                                <button type="button" class="btn btn-primary buttons " style="margin-top: 2px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span></button>
+
+                                            </div>
+                                        </div>
                                     </div>
+
+
+
+
+
+
+
 
 
                                 </div>
@@ -166,7 +805,7 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                            <h5 class="modal-title" id="filterModalLabel"> Filter</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -175,7 +814,7 @@
 
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
                                                                 Start Date
@@ -195,7 +834,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
@@ -374,14 +1013,29 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-md-12">
+                                                            
+
+
+
+
                                                             <div class="row">
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
+
+                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
                                                                     <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
                                                                 </div>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
-                                                                </div>
+
                                                             </div>
+
+
+
+
+
+
+
+
+
+
                                                         </div>
 
 
@@ -464,7 +1118,11 @@
                                                         <td>No Video</td>
                                                     }
                                                     <td>
-                                                        <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" id="style-4" style="height: 50px; width:100%;">@item.InterviewerComment</textarea>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>  </td>
                                                     <td>  </td>
@@ -475,7 +1133,7 @@
                                                     <td>@item.FinalSelectionStat</td>
                                                     <td>@item.OfferStatusStatDesc</td>
                                                     <td>@item.JoiningStatusStatDesc</td>
-                                                    <td class="text-right">
+                                                    <td class="text-right action">
                                                         <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
                                                         @if (item.IsBiometricEnabled)
                                                         {
@@ -486,7 +1144,15 @@
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+
+
+
+
                                                         }
 
                                                     </td>
@@ -507,7 +1173,7 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        <div id="myModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -519,100 +1185,133 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5>Client Feedback</h5>
+            <div class="modal-content">
+                <div class="modal-header" style="    border-bottom: 1px solid #e9ecef;
+">
+                    <h5 class="modal-title"> Client Feedback</h5>
                     <span class="close" id="feedbackPopUp">&times;</span>
                 </div>
-                <div class="modal-body" style="padding: 2px 16px;">
+                <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
+                        <div class="col-md-6 col-sm-6 border-rv">
                             <div class="form-group">
-                                <label for="approveDropdown"><b>Approved For Next Round</b></label>
+                                
+
+
+                                <label class="control-labeled" for="approveDropdown">
+                                    Approved For Next Round
+                                </label>
+
+
                                 <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                             </div>
 
                         </div>
 
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="approvalComments" class="form-group">
-                                <label>Approval Comments</label>
-                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                        <div class="col-md-6 col-sm-6">
+                            <div id="approvalComments">
+                                <div class="form-group">
 
-                                @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
+                                    <label class="control-labeled">Approval Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="appComments" class="form-control scrollbar text-box single-line" id="appComments" style="height:43px;"></textarea>
+                                            </div>
+                                        </div>
+
+                                            @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
+                                        </div>
+                                    </div>
+
+                                </div>
 
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
+                        <div class="col-md-6 col-sm-6 border-rv">
                             <div class="form-group">
-                                <label for="selectionDropdown"><b>Final Selection</b></label>
+                                <label  class="control-labeled" for="selectionDropdown">Final Selection</label>
                                 <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="selectionComments" class="form-group">
-                                <label>Final Comments</label>
+                        <div class="col-md-6 col-sm-6">
+                            <div id="selectionComments">
+                                <div class="form-group">
+                                    <label class="control-labeled">Final Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="height:43px;"></textarea>
+                                            </div></div>
 
-                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
+                                            @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                                        </div>
+                                    </div>
+                                </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
+                        <div class="col-md-6 col-sm-6 border-rv">
                             <div class="form-group">
 
-                                <label for="offerDropdown"><b>Offer Status</b></label>
+                                <label class="control-labeled" for="offerDropdown">Offer Status</label>
                                 <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="offerComments" class="form-group">
-                                <label>Offer Comments</label>
-                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                        <div class="col-md-6 col-sm-6">
+                            <div id="offerComments">
+                                <div class="form-group">
+                                    <label class="control-labeled">Offer Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="height:43px;"></textarea>
+                                            </div>
+                                        </div>
 
-                                @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
+                                        </div>
+
+                                        @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+                                    </div>
+                                </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
+                        <div class="col-md-6 col-sm-6 border-rv">
                             <div class="form-group">
 
-                                <label for="joiningDropdown"><b>Joining Status</b></label>
+                                <label class="control-labeled" for="joiningDropdown"><b>Joining Status</b></label>
                                 <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
                             </div>
                         </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="joiningComments" class="form-group">
-                                <label>Joining Comments</label>
-                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
+                        <div class="col-md-6 col-sm-6">
+                            <div id="joiningComments">
+                                <div class="form-group">
+                                    <label class="control-labeled">Joining Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="height:43px;"></textarea>
+                                            </div>
+                                        </div>
 
-                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
+
+                                            @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
+                                        </div>
+                                    </div>
+                                </div>
                     </div>
 
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                    <div class="text-center" style="margin:0px 0px 10px 0px;">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
                     </div>
                 </div>
                 <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
+     ">
 
                 </div>
             </div>
 
         </div>
 
-        <div id="myCallModal" class="modal" style="display: none; /* Hidden by default */
+        <div id="myCallModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -624,9 +1323,9 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+            <div class="modal-content " >
+                <div class="modal-header">
+                    <h5 style="font-size:20px;margin-bottom:0px;">Call Candidate!</h5>
                     <span class="close" id="callPopUp">&times;</span>
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
@@ -639,8 +1338,8 @@
                         <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
                     </div>
                 </div>
-                <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
+                <div class="modal-footer" style="padding: 10px 16px;
+        background-color: #fff;
         color: white;">
 
                 </div>
@@ -914,7 +1613,7 @@
         // Get the button that opens the modal
         var btn = document.getElementById("myBtn_" + item.imid);
 
-       
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -1009,10 +1708,10 @@
             }
         });
 
-        
+
     }
 
-    
+
     function SavePopUp() {
 
         var approvalComment = document.getElementById("appComments").value;

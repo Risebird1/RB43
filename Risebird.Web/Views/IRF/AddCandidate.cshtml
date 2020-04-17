@@ -69,6 +69,57 @@
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
 </style>
 
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
@@ -105,137 +156,141 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Candidate for <strong>'@Model.IRFName'</strong></h4>
-                    </div>
-
                     <div class="card-body">
-
-                        @using (Html.BeginForm("AddCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-                        {
-                           
-                        <div class="row">
-                            <div class="col-md-4 col-sm-4 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-4 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
-
-                                </div>
-
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
-
-
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-4 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
-
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
-
-
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
-
-
-                                </div>
-
-                            </div>
+                        <div class="card-header">
+                            <h4 class="card-title">Add Candidate for <strong>'@Model.IRFName'</strong></h4>
                         </div>
-                        
-                            
-                        
-                        
-                            @Html.HiddenFor(x => x.IRFId)
-                            @Html.HiddenFor(x => x.IRFName)
 
-                            <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
-                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                        <div class="card-body">
+
+                            @using (Html.BeginForm("AddCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                            {
+
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
+
+                                        </div>
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 pr-1">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
+
+
+                                        </div>
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                            @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
+
+
+                                        </div>
+
+                                    </div>
                                 </div>
-                            </div>
-
-                        }
 
 
 
+
+                                @Html.HiddenFor(x => x.IRFId)
+                                @Html.HiddenFor(x => x.IRFName)
+
+                                <div class="row card-footer ">
+                                    <label class="col-md-5"></label>
+                                    <div class="col-md-7">
+                                        @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                </div>
+
+                            }
+
+
+
+                        </div>
+
+                   
+                    
+                    
+                    
                     </div>
-
-                    <div class="card-footer ">
-
-                    </div>
+                 
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
