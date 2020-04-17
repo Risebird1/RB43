@@ -122,6 +122,11 @@
                         </div>
                         <div class="dataloading">
                             <div class="row">
+                                <div class="col-md-5">
+                                    <input type="text" id="txtsearch" value="@ViewBag.searchvalue"  placeholder="Skills,Name Of Person" name="search" style="width:400px">
+                                    <button type="button" value="GO" id="btnSearch" >Submit</button>
+                                   
+                                </div>
                                 <div class="col-md-3 ml-md-auto">
                                     <div class="form-group">
 
@@ -231,6 +236,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+                                                        <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
 
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
@@ -265,7 +271,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                     
+
 
 
                                                     </div>
@@ -343,7 +349,7 @@
                                         </form>
                                     </div>
                                 </div>
-
+                               
                             </div>
                             <hr>
                             <div class="video-block section-padding" id="VideoList">
@@ -353,8 +359,10 @@
                                             <h6>Featured Videos</h6>
                                         </div>
                                     </div>
+
                                     @foreach (var item in Model)
                                     {
+
                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                         <div class="col-xl-3 col-sm-6 mb-3">
                                             <div class="video-card">
@@ -372,7 +380,7 @@
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
 
-                                                   
+
                                                 </div>
                                                 <div class="video-card-body">
                                                     <div class="video-title">
@@ -392,13 +400,19 @@
                                             </div>
                                         </div>
                                     }
-                                   
+
 
                                 </div>
                             </div>
                             <hr>
+                            @foreach (var item in Model)
+                            {
+                                <p>@item.PageNumber of @item.interviewVediosequence
+                            </p>
+                                break;
+                            }
                             @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
-                        </div>
+                            </div>
 
 
 
@@ -456,7 +470,11 @@
 
 <script type="text/javascript">
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+            $("#btnSearch").click(function () {
+            var value = $("#txtsearch").val();
+            window.location.href = "/risetube/Index?searchvalue=" + value;
+        });
             $("#ResetFilter").click(function () {
                 ResetFilter();
             })
@@ -548,6 +566,16 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
+            $(document).ready(function(){
+  $("#search").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+      $("#VideoList div").filter(function () {
+                        selectedClass: 'active1',
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
 
     });
          function ResetFilter() {
