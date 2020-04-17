@@ -612,7 +612,11 @@
     }
     .modal input, .modal .dropdown-toggle {
         background: #99d1fc0f !important;
-  ;
+ 
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
     }
 
 </style>
@@ -696,7 +700,7 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                                            <h5 class="modal-title" id="filterModalLabel">Filter</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -705,7 +709,7 @@
 
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
                                                                 Start Date
@@ -725,7 +729,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>

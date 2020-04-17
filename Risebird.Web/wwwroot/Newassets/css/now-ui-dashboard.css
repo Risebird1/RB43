@@ -11123,7 +11123,7 @@ select.selectpicker {
     font-size: 13px;
 }
 .control-width .form-control {
-    width: 120px;
+    width: 100%;
     background: #E3E3E3;
 }
 .action .btn {
@@ -11404,7 +11404,10 @@ div.dataTables_scrollFoot table {
 
 
     @media screen and (max-width: 767px) {
-
+        .card-blue .card-footer .stats-bttm-btn {
+            padding: 0px 0px 0px 0px !important;
+            text-align: center !important;
+        }
         .dataTables_wrapper .collapsed .child .child {
             padding-left: 10px !important;
         }
@@ -11443,8 +11446,10 @@ div.dataTables_scrollFoot table {
                 display: inline-block;
             }
 
-
-        .border-rv{border:none;}
+     
+        .border-rv {
+            border: none!important;
+        }
 
         .modal-wrap .modal-content {
             width: 90% !important;
