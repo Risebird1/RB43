@@ -91,3 +91,15 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.CommonHelper.Interface\obj\Debug\
 C:\Users\Admin\Documents\harshitJajoo\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\Users\Admin\Documents\harshitJajoo\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.deps.json
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb

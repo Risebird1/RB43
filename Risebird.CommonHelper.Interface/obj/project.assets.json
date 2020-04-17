@@ -12257,23 +12257,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {},
+    "C:\\Users\\gokul\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "projectName": "Risebird.CommonHelper.Interface",
-      "projectPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\obj\\",
+      "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "packagesPath": "C:\\Users\\gokul\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\gokul\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12286,8 +12286,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }
