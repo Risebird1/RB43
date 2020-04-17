@@ -62,7 +62,7 @@ namespace Risebird.Business
                 return null;
             }
         }
-        
+
 
         public List<MeetingVM> MultipleCandidateInvites()
         {
@@ -85,19 +85,19 @@ namespace Risebird.Business
                 var meetings = _meetingRespository.GetClientInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
                 //Get client user details
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                if(clientDetails.RoleId ==1)
+                if (clientDetails.RoleId == 1)
                 {
                     meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
                 }
-                
-                else if(clientDetails.RoleId == 4)
+
+                else if (clientDetails.RoleId == 4)
                 {
                     meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
                 }
-                else if (clientDetails.RoleId == 2 || clientDetails.RoleId==6)
+                else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
                 {
                     meetings = meetings.Where(x => x.ClientId == clientDetails.ClientId).ToList();
-                }                
+                }
                 return meetings;
             }
             catch (Exception ex)
@@ -118,11 +118,11 @@ namespace Risebird.Business
 
                 foreach (var item in finalList)
                 {
-                    if(item!= null)
-                    item.Replace("\n", "");
+                    if (item != null)
+                        item.Replace("\n", "");
                 }
                 finalList = finalList.Distinct().ToList();
-                
+
                 return finalList;
             }
             catch (Exception ex)
@@ -268,7 +268,7 @@ namespace Risebird.Business
             if (!string.IsNullOrEmpty(isApproved) && !string.IsNullOrEmpty(isSelected) && !string.IsNullOrEmpty(offerStatus) && !string.IsNullOrEmpty(joiningStatus) && !string.IsNullOrEmpty(imid))
             {
                 //var val = Convert.ToInt32(value);
-                var result = _meetingRespository.SaveClientFeedback(Convert.ToInt32(imid), Convert.ToInt32(isApproved), approvalComment, Convert.ToInt32(isSelected),selectionComment , Convert.ToInt32(joiningStatus),joiningComment , Convert.ToInt32(offerStatus), offerComment);
+                var result = _meetingRespository.SaveClientFeedback(Convert.ToInt32(imid), Convert.ToInt32(isApproved), approvalComment, Convert.ToInt32(isSelected), selectionComment, Convert.ToInt32(joiningStatus), joiningComment, Convert.ToInt32(offerStatus), offerComment);
                 return result;
             }
             return false;
@@ -285,7 +285,7 @@ namespace Risebird.Business
             return false;
         }
         public bool PostSelectionStatus(string imid, string value, string comment)
-        {           
+        {
             if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(imid))
             {
                 var val = Convert.ToInt32(value);
@@ -316,7 +316,7 @@ namespace Risebird.Business
                 var openMeeting = new List<Meeting>();
                 openMeeting = _meetingRespository.GetAllOpenInterviews(emailId).Result.ToList();//.OrderByDescending(x => x.interviewDate).ToList();
                 var emergencyMeetings = _meetingRespository.GetAllEmergencyOpenInterviews(emailId).Result.ToList();
-                if(emergencyMeetings!=null)
+                if (emergencyMeetings != null)
                 {
                     foreach (var item in emergencyMeetings)
                     {
@@ -338,7 +338,7 @@ namespace Risebird.Business
         {
             try
             {
-                var openMeeting = _meetingRespository.GetQCOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList().Where(x=> x.QCInterviewer == null).ToList();
+                var openMeeting = _meetingRespository.GetQCOpenInterviews(emailId).Result.OrderByDescending(x => x.interviewDate).ToList().Where(x => x.QCInterviewer == null).ToList();
                 return openMeeting;
             }
             catch (Exception ex)
@@ -485,7 +485,7 @@ namespace Risebird.Business
         {
             try
             {
-               
+
                 return _meetingRespository.QCAssignYourself(meetingid, interviewerMail);
 
             }
@@ -494,7 +494,7 @@ namespace Risebird.Business
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return "Failed to assigned interview, Please contact Risebird HR.";
             }
-            
+
         }
 
         public bool UnassignYourself(int meetingid, string email, bool isPenalty)
@@ -518,18 +518,18 @@ namespace Risebird.Business
                     {
                         interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
                     }
-                     
+
                     if (interviwers != null)
                     {
                         interviwers.Remove(email);
                         _notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
-                       
+
                     }
                     var hrs = _userService.GetAllHrsEmailld()?.ToList();
                     if (hrs != null)
                     {
-                        var candidateEmail = meeting.Result.candidateEmail;                         
-                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail,email);
+                        var candidateEmail = meeting.Result.candidateEmail;
+                        _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.Result.interviewDate.ToString(), candidateEmail, email);
 
                     }
                     return true;
@@ -548,7 +548,7 @@ namespace Risebird.Business
             try
             {
                 return _meetingRespository.QCUnassignYourself(meetingid).Result;
-                
+
             }
             catch (Exception ex)
             {
@@ -560,16 +560,16 @@ namespace Risebird.Business
         {
             try
             {
-                if( _meetingRespository.CancelInterview(meetingid))
+                if (_meetingRespository.CancelInterview(meetingid))
                 {
                     //send mail to the HRs
                     var interviewers = _meetingRespository.ListInterviewersMail(candidateEmail, interviewDate);
-                    
+
                     _notificationHelper.SendInterviewCancelledMail(interviewers, interviewDate);
                     return true;
                 }
                 return false;
-                    
+
 
             }
             catch (Exception ex)
@@ -650,7 +650,7 @@ namespace Risebird.Business
                 }
                 // check whether a feedback for the interviewId has already been submitted
                 var interviewReport = _meetingRespository.GetInterviewReportById(interviewId, irfId);
-                if (interviewReport!=null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
+                if (interviewReport != null && interviewReport.Count() > 0 /*&& interviewReport.FirstOrDefault().Rating > 0*/)
                 {
                     //call Edit Feedbackform method
                     reportModel = interviewReport.FirstOrDefault();
@@ -833,7 +833,7 @@ namespace Risebird.Business
             var techReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
             //model.TechSkillReportCollection = (IList<TechSkillReport>)(_meetingRespository.GetTechSkillReport(model.InterviewId));
 
-            if (techReportCollection.Count()==0)
+            if (techReportCollection.Count() == 0)
             {
                 var techSkillsDetails = _meetingRespository.GetSkillsbyIRFid(model.IRFId);
                 var techSkillList = new List<TechSkillReport>();
@@ -904,12 +904,12 @@ namespace Risebird.Business
                 //    total = total + item.WeightageActual;
                 //}
                 //reportModel.OverallScore = (total / 4);
-                var result =await _meetingRespository.AddInterviewReport(reportModel);
-                if(reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
+                var result = await _meetingRespository.AddInterviewReport(reportModel);
+                if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
-                    if(reportModel.InterviewStatus.Value==2 || reportModel.InterviewStatus.Value ==4)
+                    if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
                     {
-                       // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
+                        // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
                         //var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
                         //var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
 
@@ -918,8 +918,8 @@ namespace Risebird.Business
                         var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
                         var mailIds = new List<string>();
                         foreach (var item in irfQualityControllers)
-                        { 
-                            if(item.EmailId!=null)
+                        {
+                            if (item.EmailId != null)
                             {
                                 mailIds.Add(item.EmailId);
                             }
@@ -973,21 +973,21 @@ namespace Risebird.Business
         {
             try
             {
-                string finalStatus = string.Empty ;
+                string finalStatus = string.Empty;
 
                 // verify the audio
-                var verificationResult = _voiceItRepository.VerifyUser(userId,fileUrl,phrase);
+                var verificationResult = _voiceItRepository.VerifyUser(userId, fileUrl, phrase);
 
-                if(verificationResult.status=="200")
+                if (verificationResult.status == "200")
                 {
-                    if(verificationResult.responseCode== "SUCC")
+                    if (verificationResult.responseCode == "SUCC")
                     {
                         finalStatus = verificationResult.message + " with confidence " + verificationResult.confidence;
-                        if(type == "interview")
+                        if (type == "interview")
                         {
                             _meetingRespository.UpdateInterviewVerificationScore(meetingId, verificationResult.confidence);
                         }
-                        if(type == "joining")
+                        if (type == "joining")
                         {
                             _meetingRespository.UpdateJoiningVerificationScore(meetingId, verificationResult.confidence);
 
@@ -1003,7 +1003,7 @@ namespace Risebird.Business
                     finalStatus = "Verification operation failed!";
                 }
                 //update verification score in the meeting table
-                
+
 
                 return finalStatus;
             }
@@ -1016,11 +1016,11 @@ namespace Risebird.Business
         }
 
 
-        public MeetingVM GetMeetingbyid(int id)
+        public MeetingVM GetMeetingbyid(int id, string Email)
         {
             try
             {
-                var meeting = _meetingRespository.GetMeetingbyid(id);
+                var meeting = _meetingRespository.GetMeetingbyid(id,Email);
                 if (meeting == null)
                     return null;
                 else
@@ -1034,8 +1034,91 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string VedioLike(string value, string vedioid, string email)
+        {
+            try
+            {
+                var meeting = _meetingRespository.VedioLikeAsync(value, vedioid, email);
+                return "";
 
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
+        public string AddTotalViewCount(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.AddTotalViewCount(id);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+        }
+        public string VedioShare(string value, string vedioid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.VedioShare(value, vedioid);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
+        public string VedioComment(string value, string vedioid, string email)
+        {
+            try
+            {
+                var meeting = _meetingRespository.VedioComment(value, vedioid, email);
+                return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
+        public List<VedioComments> GetvedioComments(int id)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetvedioComments(id);
+                return (List<VedioComments>)meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
     }
+
 }
 
 

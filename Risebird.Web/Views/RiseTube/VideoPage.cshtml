@@ -20,7 +20,8 @@
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
-    filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters"));
+    filter = JsonConvert.DeserializeObject<InterviewFilter>
+    (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     ClientHR = filter.ClientHR != null ? filter.ClientHR : new string[] { };
@@ -307,7 +308,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="@Url.Action("VideoPage","risetube", new {id= Model.imid})" method="post" id="form">
+                                    <form action="@Url.Action(" VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
 
                                         <div class="modal-body">
                                             <div class="row">
@@ -338,6 +339,7 @@
                                                             Candidate Name
                                                         </label>
                                                         <div class="col-md-6 col-sm-6">
+                                                            <input type="text" id="txtVedioId" value="@Model.imid" hidden />
                                                             <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.SubVideo_List.Select(x => x.candidateName).Distinct().ToList())
                                                                 {
@@ -459,14 +461,14 @@
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
                                                         <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">                                                               
-                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
+                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                        <option value="@item">@item</option>
                                                                     }
+                                                                }
                                                             </select>
                                                         </div>
                                                     </div>
@@ -482,10 +484,10 @@
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                    <option value="@item">@item</option>
+                                                                    }
                                                                     }
                                                                 </select>
                                                             </div>
@@ -561,11 +563,6 @@
                                                         }
 
                                                     </div>
-                                                    <div class="single-video-title box mb-3">
-                                                        <h2><span style="color: black;font-weight: 600;">@Model.candidateName  &nbsp; <span style="color: #6c757d;">(@Model.JDTiltle.Split("|")[0])</span></span></h2>
-                                                        <p class="mb-0"><i class="fas fa-calendar"></i> @Model.interviewDate</p>
-                                                    </div>
-
                                                     <div class="single-video-info-content box mb-3">
 
                                                         <style>
@@ -598,7 +595,69 @@
                                                                 background-color: darkgray;
                                                             }
                                                         </style>
+                                                        <div class="row">
+                                                            <div class="k">
+                                                                @if (ViewBag.VedioStatus != "col-md-4")
+                                                                {
+                                                                    @if (Model.IsLike == "Liked")
+                                                                    {
+                                                                        <i class="fa fa-thumbs-up fa-10px" aria-hidden="true" id="toggle-click" style="color: blue; text-align: center;font-size: 40px;padding-right:30px"></i>
+                                                                        <i class="fa fa-thumbs-down fa-10px" aria-hidden="true" id="toggle-click1" style="color: black; text-align: center; font-size: 40px;padding-right:30px"></i>
 
+                                                                    }
+                                                                    else if (Model.IsLike == "Disliked")
+                                                                    {
+                                                                        <i class="fa fa-thumbs-up fa-10px" aria-hidden="true" id="toggle-click" style="color: black; text-align: center;font-size: 40px;padding-right:30px"></i>
+                                                                        <i class="fa fa-thumbs-down fa-10px" aria-hidden="true" id="toggle-click1" style="color: blue; text-align: center; font-size: 40px;padding-right:30px"></i>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <i class="fa fa-thumbs-up fa-10px" aria-hidden="true" id="toggle-click" style="color: black; text-align: center;font-size: 40px;padding-right:30px"></i>
+                                                                        <i class="fa fa-thumbs-down fa-10px" aria-hidden="true" id="toggle-click1" style="color: black; text-align: center; font-size: 40px;padding-right:30px"></i>
+                                                                    }
+
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-4" style="    text-align: end;">
+                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                {
+                                                                    if (Model.IsShared == "Public")
+                                                                    {
+                                                                        <input type="button" value="Share" id="btnSearch" style="background-color:green">
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <input type="button" value="Share" id="btnSearch" style="width:100px;margin-top:10px" class="btn btn-primary" >
+                                                                    }
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-4" style="text-align:end">
+                                                                <p style="text-align:end"><b>Total views:</b> @Model.TotalView - View(s)</p>
+                                                            </div>
+
+
+                                                            @if (ViewBag.VedioStatus != "Public")
+                                                            {
+                                                                <div class="input-group col-md-12 col-sm-12">
+                                                                    <input class="form-control" type="text" id="txtComment" maxlength="400" />
+                                                                    <div class="input-group-prepend">
+                                                                        <input type="button" id="btnComment" class="btn btn-success" value="Send" />
+                                                                    </div>
+                                                                </div>
+                                                                <div style="height:250px;overflow-y:auto;padding-left:20px">
+                                                                    @foreach (var itemvalue in Model.Comments)
+                                                                    {
+                                                                        <div>
+                                                                            <p><b>@itemvalue.UserName </b>:- @itemvalue.Comment</p>
+                                                                            <hr />
+                                                                        </div>
+                                                                    }
+                                                                </div>
+
+
+                                                            }
+                                                        </div>
                                                         <div class="card-body ">
                                                             <ul class="nav nav-pills nav-pills-primary" role="tablist">
                                                                 <li class="nav-item" style="margin-top: 18px;">
@@ -749,7 +808,7 @@
                                                                                 @{
                                                                                     if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
                                                                                     {
-                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                                                                     }
                                                                                 }
 
@@ -842,7 +901,8 @@
                                                                                         <th width="20%">SkillName</th>
                                                                                         <th width="10%">Rating</th>
                                                                                         <th width="10%">Time(Min)</th>
-                                                                                        @*<th width="10%">Action</th>*@
+                                                                                        @*
+                                                                                            <th width="10%">Action</th>*@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -869,7 +929,8 @@
 
                                                                                             </td>
 
-                                                                                            @*<td>
+                                                                                            @*
+                                                                                                <td>
 
                                                                                                     <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                                                     <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
@@ -903,7 +964,8 @@
 
                                                                                                 </td>
 
-                                                                                                @*<td>
+                                                                                                @*
+                                                                                                    <td>
 
                                                                                                         <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
                                                                                                         <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
@@ -1162,12 +1224,12 @@
                                                                                     <video controls style=" background:black!important;width:100%; height:100% ">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid})'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <img src="~/RiseTube/img/video-icon.png" />
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid})'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
 
 
@@ -1176,7 +1238,7 @@
                                                                             <div class="video-card-body">
 
                                                                                 <div class="video-title">
-                                                                                    <a onclick="location.href='@Url.Action("VideoPage","Risetube",videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+                                                                                    <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
                                                                                     &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
@@ -1185,6 +1247,102 @@
                                                                                 </div>
                                                                                 <div class="video-view">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@videolist.interviewDate</span>
+                                                                                    <div class="single-video-title box mb-3">
+                                                                                        <h2><span style="color: black;font-weight: 600;">@Model.candidateName  &nbsp; <span style="color: #6c757d;">(@Model.JDTiltle.Split("|")[0])</span></span></h2>
+                                                                                        <p class="mb-0"><i class="fas fa-calendar"></i> @Model.interviewDate</p>
+
+                                                                                    </div>
+
+
+                                                                                    <script>
+
+                                                                                        jQuery(document).ready(function ($) {
+
+                                                                                            $("#btnComment").on('click', function () {
+                                                                                                if ($("#txtComment").val().trim() != "") {
+                                                                                                    $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url: "/RiseTube/VedioComment",
+                                                                                                        data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
+                                                                                                        success: function (data) {
+
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
+                                                                                            $('#btnSearch').on('click', function () {
+                                                                                                if ($(this).attr('data-click-state') == 1) {
+                                                                                                    $(this).attr('data-click-state', 0);
+                                                                                                    $(this).css('background-color', 'blue');
+                                                                                                    $(this).val('Share');
+                                                                                                    $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url: "/RiseTube/VedioShare",
+                                                                                                        data: { value: "Private", vedioid: $("#txtVedioId").val() },
+                                                                                                        success: function (data) {
+
+                                                                                                        }
+                                                                                                    });
+
+                                                                                                }
+                                                                                                else {
+                                                                                                    $(this).attr('data-click-state', 1);
+                                                                                                    $(this).css('background-color', 'green');
+                                                                                                    $(this).val('Shared');
+                                                                                                    $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url: "/RiseTube/VedioShare",
+                                                                                                        data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                                                                                                        success: function (data) {
+
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
+                                                                                            $('#toggle-click').on('click', function () {
+                                                                                                if ($(this).attr('data-click-state') == 1) {
+                                                                                                    $(this).attr('data-click-state', 0);
+
+
+                                                                                                }
+                                                                                                else {
+                                                                                                    $(this).attr('data-click-state', 1);
+                                                                                                    $(this).css('color', 'blue');
+                                                                                                    $('#toggle-click1').css('color', 'black');
+                                                                                                    $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url: "/RiseTube/VedioLike",
+                                                                                                        data: { value: "Liked", vedioid: $("#txtVedioId").val() },
+                                                                                                        success: function (data) {
+
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
+                                                                                            $('#toggle-click1').on('click', function () {
+                                                                                                if ($(this).attr('data-click-state') == 1) {
+                                                                                                    $(this).attr('data-click-state', 0);
+
+
+
+                                                                                                }
+                                                                                                else {
+                                                                                                    $(this).attr('data-click-state', 1);
+                                                                                                    $(this).css('color', 'blue');
+                                                                                                    $('#toggle-click').css('color', 'black');
+                                                                                                    $.ajax({
+                                                                                                        type: "POST",
+                                                                                                        url: "/RiseTube/VedioLike",
+                                                                                                        data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
+                                                                                                        success: function (data) {
+
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            });
+                                                                                        });
+
+                                                                                        /**/</script>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
@@ -1215,7 +1373,7 @@
         </div>
         <div id="myModal" class="modal" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
+                                                                                        z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
         left: 0;
         top: 0;
@@ -1223,7 +1381,7 @@
         height: 100%; /* Full height */
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+                                                                                        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
                 <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
@@ -1282,7 +1440,8 @@
 
 <!-- Bootstrap core JavaScript-->
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
-@*<script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+@*
+    <script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
 <!-- Core plugin JavaScript-->
 <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
 <!-- Owl Carousel -->
