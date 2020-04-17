@@ -22,13 +22,14 @@ namespace Risebird.Entities.ViewModel
 
         [Required(ErrorMessage = "Please Enter Nick Name")]
         [Display(Name = "Nick Name")]
-        [Remote("IsNickNameExists", "User", ErrorMessage = "Nick Name already in use")]
+        [Remote("IsNickNameExists", "User",AdditionalFields = "UserId", ErrorMessage = "Nick Name already in use")]
         public string NickName { get; set; }
 
         [Display(Name = "Email ID")]
         [Required(ErrorMessage = "Please Enter Email ID")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
+        [Remote("IsEmailIdExists", "User", AdditionalFields = "UserId", ErrorMessage = "EmailId already in use")]
         public string EmailId { get; set; }
 
         [Display(Name = "Alternate Email ID")]
@@ -89,7 +90,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Skills List")]
         public SelectList SkillTypeList { get; set; }
         // To add in selected from the user
-        public int[] SelectedSkillIds { get; set; }
+        //public int[] SelectedSkillIds { get; set; }
         public SelectList CompanyTypeList { get; set; }
         public SelectList LevelList { get; set; }
         public SelectList GraduationTypeList { get; set; }

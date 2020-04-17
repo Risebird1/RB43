@@ -541,7 +541,7 @@ namespace Risebird.Repository
                     foreach (var item in interviewerProfile.InterviewerSkill)
                     {
 
-                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, @SkillName);";
+                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Name from Skill where Id = @SkillId ));";
                         var affectedRows = con.ExecuteAsync(sqlSkill, new
                         {
                             InterviewerProfileId = ProfileId,
@@ -679,14 +679,40 @@ namespace Risebird.Repository
         }
 
         //Get NickNames
-        public IEnumerable<string> GetNickNames()
+        public IEnumerable<string> GetNickNames(int UserId)
         {
             try
             {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<string>(
-                        con, "select NickName from [dbo].[InterviewerProfile]", null, commandType: Text);
+                        con, "select NickName from [dbo].[InterviewerProfile] where UserId != @UserId", parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        //Get NickNames
+        public IEnumerable<string> GetEmailIds(int UserId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select EmailId from [dbo].[InterviewerProfile] where UserId != @UserId", parameters, commandType: Text);
                 }
             }
             catch (SqlException ex)

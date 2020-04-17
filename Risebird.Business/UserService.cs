@@ -530,11 +530,25 @@ namespace Risebird.Business
         }
 
         // Added to retrieve the Nick names
-        public IEnumerable<string> GetNickNames()
+        public IEnumerable<string> GetNickNames(int UserId)
         {
             try
             {
-                return _userRepository.GetNickNames();
+                return _userRepository.GetNickNames(UserId);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        // Added to retrieve the EmailIds
+        public IEnumerable<string> GetEmailIds(int UserId)
+        {
+            try
+            {
+                return _userRepository.GetEmailIds(UserId);
             }
 
             catch (Exception e)
@@ -544,7 +558,6 @@ namespace Risebird.Business
             }
         }
 
-        //testing
         public InterviewerProfileVM GetInterviewerProfileById(int userid)
         {
             try
