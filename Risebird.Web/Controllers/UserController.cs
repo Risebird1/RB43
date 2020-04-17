@@ -863,7 +863,7 @@ namespace Risebird.Web.Controllers
                     {
                         interviewerProfile.ResumeLink = uploadedFileURL;
 
-                        if (_userService.AddInterviewerProfile(interviewerProfile).Result)
+                        if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
                             return RedirectToAction("Interviewers");
