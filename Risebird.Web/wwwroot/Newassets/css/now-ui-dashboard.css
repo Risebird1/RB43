@@ -11126,7 +11126,9 @@ select.selectpicker {
     width: 100%;
     background: #E3E3E3;
 }
-.action .btn {
+
+
+    .action .btn {
     width: 32px !important;
     height: 30px !important;
 }
@@ -11148,6 +11150,9 @@ button {
 
 textarea:focus {
     outline: 0;
+}
+#QuestionsTable {
+  width:99.5%;
 }
 
 #meeting_length label {
