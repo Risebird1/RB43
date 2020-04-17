@@ -11152,7 +11152,9 @@ textarea:focus {
     outline: 0;
 }
 #QuestionsTable {
-  width:95%;
+  width:98.5%;
+margin:0px auto;
+ 
 }
 
 #meeting_length label {
