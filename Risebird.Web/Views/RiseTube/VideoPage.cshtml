@@ -142,6 +142,13 @@
     .modal-title {
         color: #fff !important;
     }
+    .modal-wrap button {
+        margin: 0px;
+    }
+
+    .modal-wrap .form-group {
+        margin-bottom: 8px;
+    }
 </style>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
@@ -449,7 +456,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group border-rv">
+                                                    <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
                                                         <div class="col-md-6 col-sm-6">
                                                             <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">                                                               
@@ -486,17 +493,23 @@
 
 
                                                     </div>*@
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12 text-right">
 
-                                                    <div class="form-group col-md-12">
+                                                    <div class="form-group">
+
+
+
+
+
+
 
 
 
                                                         <div class="row">
                                                             <div class="col-md-12 col-sm-12">
 
-                                                                <button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="buttons button-2 button-2b">Reset Filter</button>
-                                                                <button type="submit" style="margin-top: 40px; float:right" class="buttons button-2 button-2b">Apply Filter</button>
+                                                                <button type="button" id="ResetFilter" style="float:right;margin-top:40px;" class="buttons button-2 button-2b">Reset Filter</button>
+                                                                <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>
                                                             </div>
 
                                                         </div>
