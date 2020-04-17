@@ -812,10 +812,6 @@ namespace Risebird.Web.Controllers
                                   select new { ID = (int)s, Name = s.GetDescription() };
                     model.DaySlotList = new SelectList(daySlot, "ID", "Name");
 
-                    // To call NickName
-                    IEnumerable<string> NickNames = _userService.GetNickNames();
-                    ViewBag.NickNamesList = NickNames;
-
                     return View("AddInterviewerProfile", model);
                 }
                 else
@@ -839,7 +835,7 @@ namespace Risebird.Web.Controllers
                 return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
             }
             else
-                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
+                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
         [HttpPost]
