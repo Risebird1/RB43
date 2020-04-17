@@ -1024,36 +1024,47 @@
                                                 <td> @item.ClientHrContact </td>
                                                 <td> @item.ClientName </td>
                                                 <td> @item.JDTiltle.Split("|")[0] </td>
+                                                @if (item.QCInterview > 0)
+                                                {
                                                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                }
+                                                else
+                                                {
+                                                <td>No Report</td>
+                                                }
+
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
                                                 }
                                                 else
                                                 {
-                                                    <td>No Resume</td>
+                                                <td>No Resume</td>
                                                 }
-                                                @if (item.VideoLink != null && item.VideoLink != "")
+                                                @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
                                                 {
-                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
                                                 }
                                                 else
                                                 {
-                                                    <td>No Video</td>
+                                                <td>No Video</td>
                                                 }
                                                 @if (item.MobileNumber != null)
                                                 {
-                                                    <td>@item.MobileNumber</td>
+                                                <td>@item.MobileNumber</td>
 
                                                 }
                                                 else
                                                 {
-                                                    <td>No Contact</td>
+                                                <td>No Contact</td>
                                                 }
 
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc </td>
+                                                @if (item.QCInterview > 0)
+                                                {
                                                 <td> @item.intervieweStatusStatDesc </td>
+                                                }
                                                 <td> @item.currentEmployerName </td>
                                                 <td> @item.expectedPerHourRate </td>
                                                 <td> @item.joiningTime </td>
