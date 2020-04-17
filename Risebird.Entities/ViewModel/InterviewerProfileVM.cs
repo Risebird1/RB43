@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,7 @@ namespace Risebird.Entities.ViewModel
 
         [Required(ErrorMessage = "Please Enter Nick Name")]
         [Display(Name = "Nick Name")]
+        [Remote("IsNickNameExists", "User", ErrorMessage = "Nick Name already in use")]
         public string NickName { get; set; }
 
         [Display(Name = "Email ID")]
