@@ -3,7 +3,114 @@
     ViewData["Title"] = "Schedule Meeting";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+    <style>
+        .caret {
+            display: none !important;
+        }
 
+        .multiselect-container {
+            width: 100% !important;
+        }
+
+        .modal-lg {
+            max-width: 690px !important;
+        }
+
+        .dropdown-toggle {
+            background-color: white !important;
+            color: black !important;
+            border: 1px solid #ccc !important;
+        }
+
+        #StartDate, #EndDate {
+            width: 270px;
+        }
+
+        .modal-content .modal-body {
+            padding-top: 10px;
+        }
+
+        .buttons {
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            color: inherit;
+            background: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            display: inline-block;
+            margin: 20px 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            outline: none;
+            position: relative;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+            font-family: Arial, sans-serif;
+        }
+
+            .buttons:after {
+                content: '';
+                position: absolute;
+                z-index: -1;
+                -webkit-transition: all 0.3s;
+                -moz-transition: all 0.3s;
+                transition: all 0.3s;
+            }
+
+        .button-2 {
+            background: #4fa4fb;
+            color: #fff;
+            -webkit-box-shadow: 0 3px #3884d2;
+            -moz-box-shadow: 0 3px #3884d2;
+            box-shadow: 0 3px #3884d2;
+            -webkit-transition: none;
+            -moz-transition: none;
+            transition: none;
+        }
+
+        .button-2b {
+            border-radius: 5px 5px 5px 5px;
+            box-shadow: 0 3px #3884d2;
+        }
+
+            .button-2b:hover {
+                box-shadow: 0 4px #3884d2;
+                top: 0px;
+            }
+
+            .button-2b:active {
+                outline: 0;
+                border: 0;
+            }
+
+        .border-rv {
+            border-right: 1px dotted #ccc;
+        }
+
+        .modal-header {
+            border-bottom: 3px solid #316b9e !important;
+            background: #419dff !important;
+            padding-top: 15px !important;
+            padding-bottom: 15px !important;
+            color: #fff !important;
+        }
+
+        .modal-title {
+            color: #fff !important;
+        }
+
+        .modal-wrap button {
+            margin: 0px;
+        }
+
+        .modal-wrap .form-group {
+            margin-bottom: 8px;
+        }
+    </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -41,7 +148,7 @@
                         <div class="row">
                             
                             <div class="col-md-3 ml-md-auto">
-                               @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                               @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "buttons button-2 button-2b", @role = "button", @style = "margin-top: 2px;" })
                             </div>
 
 

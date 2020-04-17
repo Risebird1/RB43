@@ -70,6 +70,86 @@
     .modal-content .modal-body {
         padding-top: 10px;
     }
+
+    .buttons {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 20px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .buttons:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .button-2 {
+        background: #4fa4fb;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2;
+        -moz-box-shadow: 0 3px #3884d2;
+        box-shadow: 0 3px #3884d2;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+    }
+
+    .button-2b {
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+        .button-2b:hover {
+            box-shadow: 0 4px #3884d2;
+            top: 0px;
+        }
+
+        .button-2b:active {
+            outline: 0;
+            border: 0;
+        }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .modal-header {
+        border-bottom: 3px solid #316b9e !important;
+        background: #419dff !important;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        color: #fff !important;
+    }
+
+    .modal-title {
+        color: #fff !important;
+    }
+    .modal-wrap button {
+        margin: 0px;
+    }
+
+    .modal-wrap .form-group {
+        margin-bottom: 8px;
+    }
 </style>
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
@@ -215,15 +295,15 @@
                                 </div>
                             </div>
                             <div class="col-auto">
-                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style = "margin-top: 2px;" })
-                                <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                <button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>
+                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "buttons button-2 button-2b", @role = "button", @style = "margin-top: 2px;" })
                             </div>
                         </div>
-                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                        <h5 class="modal-title" id="filterModalLabel" style="color:#fff">Filter</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -232,7 +312,7 @@
 
                                         <div class="modal-body">
                                             <div class="row">
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
                                                             Start Date
@@ -252,7 +332,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-6  border-rv">
 
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName">
@@ -324,7 +404,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-6 border-rv">
 
                                                     <div class="form-group">
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
@@ -415,17 +495,33 @@
 
 
                                                     </div>*@
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-12 col-sm-12 text-right">
 
-                                                    <div class="form-group col-md-12">
+                                                    <div class="form-group">
+
+
+
+
+
+
+
+
+
                                                         <div class="row">
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                            <div class="col-md-12 col-sm-12">
+
+                                                                <button type="button" id="ResetFilter" style="float:right;margin-top:40px;" class="buttons button-2 button-2b">Reset Filter</button>
+                                                                <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>
                                                             </div>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="btn btn-primary">Reset Filter</button>
-                                                            </div>
+
                                                         </div>
+
+
+
+
+
+
+
                                                     </div>
                                                 </div>
                                             </div>

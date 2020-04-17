@@ -236,7 +236,7 @@ namespace Risebird.Functions
                 try
                 {
                     var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("hire@risebird.io", "Risebird Notification");
+                    mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -245,7 +245,7 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
@@ -280,7 +280,7 @@ namespace Risebird.Functions
                 try
                 {
                     var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("hire@risebird.io", "Interview Schedule Alert");
+                    mailMessage.From = new MailAddress("notification@risebird.io", "Interview Schedule Alert");
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -289,7 +289,7 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));
@@ -327,7 +327,7 @@ namespace Risebird.Functions
                 try
                 {
                     var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("hire@risebird.io", "Risebird Notification");
+                    mailMessage.From = new MailAddress("notification@risebird.io", "Risebird Notification");
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -337,7 +337,7 @@ namespace Risebird.Functions
                         cmd.Parameters.Add(new SqlParameter("@candidateEmail", candidateEmail));
                         cmd.Parameters.Add(new SqlParameter("@interviewDate", interviewDate));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             mailMessage.Bcc.Add(new MailAddress(reader.GetString(0), null));
@@ -370,7 +370,7 @@ namespace Risebird.Functions
                 try
                 {
                     var mailMessage = new MailMessage();
-                    mailMessage.From = new MailAddress("hire@risebird.io", "Interview Cancellation Alert");
+                    mailMessage.From = new MailAddress("notification@risebird.io", "Interview Cancellation Alert");
                     using (SqlConnection conn = new SqlConnection(str))
                     {
                         conn.Open();
@@ -379,7 +379,7 @@ namespace Risebird.Functions
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.Add(new SqlParameter("@IRFID", IRFID));
                         var reader = cmd.ExecuteReader();
-                        mailMessage.To.Add(new MailAddress("hire@risebird.io", "Risebird"));
+                        mailMessage.To.Add(new MailAddress("notification@risebird.io", "Risebird"));
                         while (reader.Read())
                         {
                             mailMessage.CC.Add(new MailAddress(reader.GetString(0), null));

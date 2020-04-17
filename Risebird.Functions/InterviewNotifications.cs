@@ -206,7 +206,7 @@ namespace Risebird.Functions
                 //var mailList = new List<string>();
                 ////if(noScheduleCandidateEmails.Count()=0 )
                 //mailList.Add("harshitjajoo95@gmail.com");
-                var mailFrom = "hire@risebird.io";
+                var mailFrom = "notification@risebird.io";
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));

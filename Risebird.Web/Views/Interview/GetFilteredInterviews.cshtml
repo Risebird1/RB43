@@ -75,7 +75,7 @@
             <th>Resume</th>
             <th>JD Link</th>
             <th>Zoom Link</th>
-            <th>Risebird HR</th>
+            <th>Zoom ID</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
             <th>Staffing Agenecy</th>
@@ -109,7 +109,7 @@
             <th>Resume</th>
             <th>JD Link</th>
             <th>Zoom Link</th>
-            <th>Risebird HR</th>
+            <th>Zoom ID</th>
             <th>Candidate Contact</th>
             <th>Client HR</th>
             <th>Staffing Agenecy</th>
@@ -158,7 +158,14 @@
                 <td>No JD</td>
             }
 
-            <td class="wordwrap"> @item.zoomLink</td>
+            @if (item.zoomLink != null && item.zoomLink != "")
+            {
+                <td> <a id="zoomlinkId" target="_blank" title="Zoom Link" href=@item.zoomLink>Zoom Link</a> </td>
+            }
+            else
+            {
+                <td>No Zoom Link</td>
+            }
             <td> @item.risebirdHR</td>
             <td>@item.MobileNumber</td>
             <td> @item.ClientHrContact </td>

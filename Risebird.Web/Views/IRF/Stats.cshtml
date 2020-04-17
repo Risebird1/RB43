@@ -7,6 +7,43 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js" type="text/javascript"></script>
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="~/js/canvasjs.min.js"></script>
+<style>
+    .stats .card-chart .card-header .card-title {
+        margin-top: 10px;
+        margin-bottom: 0;        
+        text-align: center;
+        font-size: 22px;
+        padding: 7px 0px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+
+    .stats .card-chart.card {
+        box-shadow: 0 1px 15px 1px rgba(39, 39, 39, 0.3);
+    }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+        text-transform: uppercase;
+    }
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
+</style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -28,17 +65,18 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content stats">
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Interview Stats For <b>@ViewBag.IRF</b></h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-right">
+                    <div class="card-header clearfix">
+                        <h4 class="card-title pull-left">Interview Stats For <b>@ViewBag.IRF</b></h4>
+                        <div class="text-right pull-right">
                             @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                         </div>
+                    </div>
+                    <div class="card-body">
+
                         <div class="row">
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
                                 <div class="card card-chart">
@@ -50,18 +88,18 @@
 
                                         @*<canvas id="myFunnelChart" style="display: block;height: 350px;width: 100%;"></canvas>*@
                                     </div>
-                                   
+
                                 </div>
                             </div>
                             <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
-                                        <h4 class="card-title">Meetings Status</h4>
+                                        <h4 class="card-title">Meeting Status</h4>
                                     </div>
                                     <div class="card-body">
                                         <canvas id="myChart"></canvas>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                             <div class="col-md-5 mr-auto">
@@ -72,11 +110,11 @@
                                     <div class="card-body">
                                         <canvas id="myChartselected"></canvas>
                                     </div>
-                                    
+
                                 </div>
                             </div>
 
-                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                            <div class="col-md-5 ml-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
                                         <h4 class="card-title">HR Staffing Meeting Status</h4>
@@ -84,10 +122,10 @@
                                     <div class="card-body">
                                         <canvas id="clientIndiv" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                    
+
                                 </div>
                             </div>
-                            <div class="col-md-10 mr-auto" style="margin-left: auto">
+                            <div class="col-md-5 mr-auto">
                                 <div class="card card-chart">
                                     <div class="card-header">
                                         <h4 class="card-title">HR Staffing Interview Status</h4>
@@ -95,7 +133,7 @@
                                     <div class="card-body">
                                         <canvas id="clientIndivFeedback" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                             <div class="col-md-10 mr-auto" style="margin-left: auto">
@@ -106,7 +144,7 @@
                                     <div class="card-body">
                                         <canvas id="myCostChart" style="display: block;height: 350px;width: 100%;"></canvas>
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -165,9 +203,9 @@
                     fill: false,
                     //backgroundColor: [ "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
 
-                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                    borderColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)", "rgb(255, 99, 132)", "rgb(63, 191, 63)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
-                    borderWidth: 1
+                    backgroundColor: ["rgba(40,157,231, 1)", "rgba(255, 205, 86, 1)", "rgba(199,44,83, 1)", "rgba(71,182,99, 1)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(201, 203, 207, 1)"],
+                    borderColor: ["rgb(40,157,231)", "rgb(255, 205, 86)", "rgb(199,44,83)", "rgb(71,182,99)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
+                    borderWidth: 0
                 }]
             };
             var ctx = $("#myChart").get(0).getContext("2d");
@@ -183,6 +221,17 @@
                         xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
                         yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
+
+                    tooltips: {
+                        yAlign: 'bottom',
+
+                        titleFontColor: '#6b6b6b',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#FFF',
+                        borderColor: '#000',
+                        borderWidth: '0.3',
+                        borderStyle: 'dotted'
+                    }
                 }
             });
         }
@@ -203,9 +252,9 @@
                     label: "Interview Status",
                     data: aDatasets1,
                     fill: false,
-                    backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
-                    borderColor: ["rgb(54, 162, 235)", "rgb(63, 191, 63)", "rgb(255, 99, 132)", "rgb(255, 205, 86)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
-                    borderWidth: 1
+                    backgroundColor: ["rgba(84, 172, 198, 1)", "rgba(169,222,58, 1)", "rgba(220,53,69, 1)", "rgba(255, 205, 86, 1)", "rgba(255, 159, 64, 1)", "rgba(75, 192, 192, 1)", "rgba(153, 102, 255, 1)", "rgba(201, 203, 207, 1)"],
+                    borderColor: ["rgb(84, 172, 198)", "rgb(169,222,58)", "rgb(220,53,69)", "rgb(255, 205, 86)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
+                    borderWidth: 0
                 }]
             };
             var ctx = $("#myChartselected").get(0).getContext("2d");
@@ -219,8 +268,19 @@
                     legend: { position: 'bottom' },
                     scales: {
                         xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
-                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
+                        yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true, interval: 5, maxTicksLimit: 5 } }]
                     },
+
+                    tooltips: {
+                        yAlign: 'bottom',
+
+                        titleFontColor: '#4b4c4c',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#FFF',
+                        borderColor: '#000',
+                        borderWidth: '0.3',
+                        borderStyle: 'dotted'
+                    }
                 }
             });
         }
@@ -249,13 +309,13 @@
             }
 
             var yDataSets = [{
-                label: 'No show', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                label: 'No show', data: yData1, borderWidth: 1, borderColor: 'rgba(40,157,231)', backgroundColor: 'rgba(40,157,231, 1)'
             }, {
-                label: 'Scheduled', data: yData2, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                label: 'Scheduled', data: yData2, borderWidth: 1, borderColor: 'rgba(255, 205, 86)', backgroundColor: 'rgba(255, 205, 86, 1)'
             }, {
-                label: 'Dropped', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                label: 'Dropped', data: yData3, borderWidth: 1, borderColor: 'rgba(199,44,83)', backgroundColor: 'rgba(199,44,83,1)'
             }, {
-                label: 'Completed', data: yData4, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                label: 'Completed', data: yData4, borderWidth: 1, borderColor: 'rgba(71,182,99)', backgroundColor: 'rgba(71,182,99, 1)'
             }
             ]
             var chart = new Chart(clientIndiv, {
@@ -271,15 +331,25 @@
                     responsive: true,
                     legend: {
                         labels: {
-                            usePointStyle: true
+                            usePointStyle: false
                         },
-                        position: 'right',
+                        position: 'bottom',
                         // place legend on the right side of chart
                     },
                     scales: {
                         xAxes: [{ gridLines: { display: false }, display: true, ticks: { autoSkip: false }, stacked: true, scaleLabel: { display: false, labelString: '' } }],
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
+                    tooltips: {
+                        yAlign: 'bottom',
+
+                        titleFontColor: '#4b4c4c',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#FFF',
+                        borderColor: '#000',
+                        borderWidth: '0.3',
+                        borderStyle: 'dotted'
+                    }
                 }
             });
 
@@ -310,13 +380,13 @@
             }
 
             var yDataSets = [{
-                label: 'Proxy', data: yData1, backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                label: 'Proxy', data: yData1, borderWidth: 1, borderColor: 'rgba(84, 172, 198 )', backgroundColor: 'rgba(84, 172, 198, 1)'
             }, {
-                label: 'Selected', data: yData2, backgroundColor: 'rgba(63, 191, 63, 0.7)'
+                label: 'Selected', data: yData2, borderWidth: 1, borderColor: 'rgba(169,222,58 )', backgroundColor: 'rgba(169,222,58, 1)'
             }, {
-                label: 'Rejected', data: yData3, backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                label: 'Rejected', data: yData3, borderWidth: 1, borderColor: 'rgba(220,53,69)', backgroundColor: 'rgba( 220,53,69, 1)'
             }, {
-                label: 'Borderline', data: yData4, backgroundColor: 'rgba(255, 205, 86, 0.7)'
+                label: 'Borderline', data: yData4, borderWidth: 1, borderColor: 'rgba(255, 205, 86 )', backgroundColor: 'rgba(255, 205, 86, 1)'
             }
             ]
             var chart = new Chart(clientIndivFeedback, {
@@ -332,9 +402,9 @@
                     responsive: true,
                     legend: {
                         labels: {
-                            usePointStyle: true
+                            usePointStyle: false
                         },
-                        position: 'right' // place legend on the right side of chart
+                        position: 'bottom' // place legend on the right side of chart
                     },
                     scales: {
                         xAxes: [{
@@ -342,6 +412,16 @@
                         }],
                         yAxes: [{ gridLines: { display: false }, display: true, stacked: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 10, beginAtZero: true } }]
                     },
+                    tooltips: {
+                        yAlign: 'bottom',
+
+                        titleFontColor: '#4b4c4c',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#FFF',
+                        borderColor: '#000',
+                        borderWidth: '0.3',
+                        borderStyle: 'dotted'
+                    }
                 }
             });
 
@@ -361,7 +441,8 @@
             for (i = 0; i < chData.length; i++) {
                 xData.push(chData[i].date);
                 yData.push(chData[i].cost);
-                backgroundColor.push("rgba(0, 0, 255, 1)");
+                backgroundColor.push("rgba(78, 128, 188, 1)");
+
             }
             //var aData = chData;
             var aLabels = xData;
@@ -376,6 +457,7 @@
                     //backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(255, 205, 86, 0.2)", "rgba(255, 99, 132, 0.2)", "rgba(63, 191, 63, 0.2)", "rgba(255, 159, 64, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"],
 
                     backgroundColor: backgroundColor,//["rgba(0, 0, 255, 1)"],
+
                     //borderColor: ["rgb(54, 162, 235)", "rgb(255, 205, 86)", "rgb(255, 99, 132)", "rgb(63, 191, 63)", "rgba(255, 159, 64)", "rgba(75, 192, 192)", "rgba(153, 102, 255)", "rgba(201, 203, 207)"],
                     borderWidth: 1
                 }]
@@ -393,6 +475,17 @@
                         xAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' } }],
                         yAxes: [{ gridLines: { display: false }, display: true, scaleLabel: { display: false, labelString: '' }, ticks: { stepSize: 1500, beginAtZero: true } }]
                     },
+
+                    tooltips: {
+                        yAlign: 'bottom',
+
+                        titleFontColor: '#4b4c4c',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#FFF',
+                        borderColor: '#000',
+                        borderWidth: '0.3',
+                        borderStyle: 'dotted'
+                    }
                 }
             });
         }
@@ -407,15 +500,18 @@
             var chart = new CanvasJS.Chart("myFunnelChart", {
                 animationEnabled: true,
                 title: {
-                    text: "Interview Analysis"
+                    text: ""
                 },
                 data: [{
                     type: "funnel",
                     reversed: true,
                     indexLabel: "{label} - {y}",
+                    indexLabelFontSize: 14,
+                    indexLabelFontColor: "grey",
                     toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
                     neckWidth: 20,
                     neckHeight: 0,
+
                     valueRepresents: "area",
                     dataPoints: [
                         { y: chData.totalCandidates, label: "Total Candidates" },
@@ -446,6 +542,6 @@
             }
         }
     });
-    
+
 </script>
 
