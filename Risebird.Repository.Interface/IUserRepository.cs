@@ -46,7 +46,9 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteRecruiter(int userId);
 
         Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile);
-        IEnumerable<string> GetNickNames();
+        IEnumerable<string> GetNickNames(int UserId);
+        IEnumerable<string> GetEmailIds(int UserId);
+
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid);
         Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId);
         Task<IEnumerable<TransInterviewerCertificate>> GetCertificateList(int ProfileId);

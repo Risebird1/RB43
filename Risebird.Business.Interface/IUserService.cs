@@ -47,8 +47,8 @@ namespace Risebird.Business.Interface
         Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile);
 
         //To retrieve the NickNames
-        IEnumerable<string> GetNickNames();
-        //testing
+        IEnumerable<string> GetNickNames(int UserId);
+        IEnumerable<string> GetEmailIds(int UserId);
         InterviewerProfileVM GetInterviewerProfileById(int userid);
     }
 }

@@ -785,32 +785,15 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //var model = new InterviewerProfileVM();
-                    // We need to make commnet above one and inside the method
-                    // Check if any existiing Profile
-                    var model = _userService.GetInterviewerProfileById(userId);
-
-
+                    // Call Add Or edit 
+                    InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
                     model.UserId = userId;
-                    model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
-                    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                                       select new { ID = (int)s, Name = s.GetDescription() };
-                    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-                    var level = from InterviewerSkillsLevel s in Enum.GetValues(typeof(InterviewerSkillsLevel))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-                    model.LevelList = new SelectList(level, "ID", "Name");
-                    var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-                    model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
-                    var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-                    model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
-                    var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-                    model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
-                    var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-                    model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+
+                    TempData["ResumeLink"] = model.ResumeLink;
+                    TempData["CodedResumeLink"] = model.CodedResumeLink;
+
+                    // Get all the select Lists
+                    GetAllSelectList(model);
 
                     return View("AddInterviewerProfile", model);
                 }
@@ -826,18 +809,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public JsonResult IsNickNameExists(string NickName)
-        {
-            //check if the NickName exists
-            IEnumerable<string> NickNamesList = _userService.GetNickNames();
-            if (NickNamesList.Contains(NickName))
-            {
-                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
-            }
-            else
-                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
@@ -847,25 +818,36 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     string uploadedFileURL = string.Empty;
+
                     // Need to add here property to add link to coded resume link
                     // Need to see how to add coded resume and then see How to add that in error also
                     if (interviewerProfile.File == null && (interviewerProfile.ResumeLink == null || interviewerProfile.CodedResumeLink == null))
                     {
-                        ModelState.AddModelError(String.Empty, "Please upload a resume.");
-                        return RedirectToAction("AddInterviewerProfile", "User", new { userId = interviewerProfile.UserId });
+                        ModelState.AddModelError("ResumeLink", "Please upload a resume.");
+                        InterviewerProfileVM model = _userService.GetInterviewerProfileById(interviewerProfile.UserId);
+                        model.UserId = interviewerProfile.UserId;
+                        // Get all the select Lists
+                        GetAllSelectList(model);
+                        return View("AddInterviewerProfile", model);
                     }
                     else
                     {
+
                         await _azureStorageHelper.InsertBlob(interviewerProfile.File.FileName, "resumes", interviewerProfile.File);
                         var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
                         var blob = containerRef.GetBlockBlobReference(interviewerProfile.File.FileName);
                         uploadedFileURL = blob.Uri.ToString();
+
                     }
 
                     if (uploadedFileURL == null || uploadedFileURL == string.Empty)
                     {
-                        ModelState.AddModelError(String.Empty, "Adding Interviewer Profile has Failed. Resume not added successfully");
-                        return RedirectToAction("AddInterviewerProfile", "User", new { userId = interviewerProfile.UserId });
+                        ModelState.AddModelError("ResumeLink", "Adding Interviewer Profile has Failed. Resume not added successfully");
+                        InterviewerProfileVM model = _userService.GetInterviewerProfileById(interviewerProfile.UserId);
+                        model.UserId = interviewerProfile.UserId;
+                        // Get all the select Lists
+                        GetAllSelectList(model);
+                        return View("AddInterviewerProfile", model);
                     }
                     else
                     {
@@ -894,6 +876,52 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
                 return RedirectToAction("Interviewers");
             }
+        }
+
+        private void GetAllSelectList(InterviewerProfileVM model)
+        {
+            model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var level = from InterviewerSkillsLevel s in Enum.GetValues(typeof(InterviewerSkillsLevel))
+                        select new { ID = (int)s, Name = s.GetDescription() };
+            model.LevelList = new SelectList(level, "ID", "Name");
+            var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
+                                 select new { ID = (int)s, Name = s.GetDescription() };
+            model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
+            var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
+            var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
+                              select new { ID = (int)s, Name = s.GetDescription() };
+            model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
+            var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+        }
+        public JsonResult IsNickNameExists(string NickName, int UserId)
+        {
+            //check if the NickName exists
+            IEnumerable<string> NickNamesList = _userService.GetNickNames(UserId);
+            if (NickNamesList.Contains(NickName))
+            {
+                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
+            }
+            else
+                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
+        }
+
+        public JsonResult IsEmailIdExists(string EmailId, int UserId)
+        {
+            //check if the Email Id exists
+            IEnumerable<string> EmailIdList = _userService.GetEmailIds(UserId);
+            if (EmailIdList.Contains(EmailId))
+            {
+                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
+            }
+            else
+                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
         #endregion
