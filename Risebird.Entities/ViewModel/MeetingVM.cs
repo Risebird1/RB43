@@ -154,5 +154,6 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Candidate Visa")]
         public string CandidateVisa { get; set; }
+        public int QCInterview { get; set; }
     }
 }
