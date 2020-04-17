@@ -394,7 +394,7 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateName" name="InterviewerCertificateDetails[0].CertificateName" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerCertificateDetails[0].CertificateName", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerCertificateDetails[0].CertificateName", null, new { @class = "form-control text-box single-line", })
                                                         </td>
 
                                                         <td>
@@ -479,13 +479,13 @@
                                                             @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__specialization" name="InterviewerEducationDetails[0].Specialization" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerEducationDetails[0].Specialization", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerEducationDetails[0].Specialization", null, new { @class = "form-control text-box single-line", })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="Score" name="Score" type="text" value="" placeholder="Score text box">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__Score" name="InterviewerEducationDetails[0].Score" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerEducationDetails[0].Score", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerEducationDetails[0].Score", null, new { @class = "form-control text-box single-line", })
                                                         </td>
                                                         <td>
                                                             <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -585,7 +585,7 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__Domain" name="InterviewerProfessionalDetails[0].Domain" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line", })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="text" value="">*@
@@ -710,7 +710,7 @@
                                                             @*<input class="form-control text-box single-line" id="projectName" name="projectName" type="text" value="" placeholder="Project Name Text box">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_projectname" name="InterviewerProjectsDetails[0].ProjectName" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerProjectsDetails[0].ProjectName", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].ProjectName", null, new { @class = "form-control text-box single-line", })
                                                         </td>
                                                         <td>
 
@@ -728,18 +728,20 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="" name="projectEndDate" type="date" value="">*@
 
-                                                            @Html.TextBox( "InterviewerProjectsDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="projectRole" name="projectRole" type="text" value="" placeholder="Role text box">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_Role" name="InterviewerProjectsDetails[0].Role" type="text" value="">*@
 
-                                                            @Html.TextBox( "InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line", })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line", })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="projectDesc" name="projectDesc" type="" value="" placeholder="Description text Area">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
                                                             @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" value=""></textarea>*@
+
+                                                            @*@Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })*@
 
                                                             @Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })
 
@@ -792,7 +794,9 @@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
                                                                 @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[i].ProjectDescriptions" type="text" value=""></textarea>*@
 
-                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].ProjectDescriptions, new { @class = "form-control text-box single-line" })
+                                                                @*@Html.TextArea(m => m.InterviewerProjectsDetails[i].ProjectDescriptions, new { @class = "form-control text-box single-line" })*@
+
+                                                                @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -853,7 +857,7 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">*@
 
-                                                            @Html.TextBox( "InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date" })
+                                                            @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td>
                                                             <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -921,7 +925,7 @@
                                             @*<input class="form-control text-box single-line" id="accountHolderNameList" name="accountHolderNameList" type="text" value="" placeholder="Slot- morning -evening- drop-down">*@
                                             @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountHolderName" name="InterviewerAccDetails[0].AccountHolderName" type="text" value="">*@
 
-                                            @Html.TextBox( "InterviewerAccDetails[0].AccountHolderName", null, new { @class = "form-control text-box single-line", })
+                                            @Html.TextBox("InterviewerAccDetails[0].AccountHolderName", null, new { @class = "form-control text-box single-line", })
                                         </div>
                                     </div>
                                     <div class="col-md-2 col-sm-2 px-1">
@@ -930,7 +934,7 @@
                                             @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                             @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
 
-                                            @Html.TextBox( "InterviewerAccDetails[0].AccountNumber", null, new { @class = "form-control text-box single-line", })
+                                            @Html.TextBox("InterviewerAccDetails[0].AccountNumber", null, new { @class = "form-control text-box single-line", })
 
                                         </div>
                                     </div>
@@ -952,7 +956,7 @@
 
                                             @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />*@
 
-                                            @Html.TextBox( "InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line", })
+                                            @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line", })
 
                                         </div>
                                     </div>
@@ -974,7 +978,7 @@
                                             @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                             @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_UPIId" name="InterviewerAccDetails[0].UPIId" type="text" value="" />*@
 
-                                            @Html.TextBox( "InterviewerAccDetails[0].UPIId", null, new { @class = "form-control text-box single-line", })
+                                            @Html.TextBox("InterviewerAccDetails[0].UPIId", null, new { @class = "form-control text-box single-line", })
                                         </div>
                                     </div>
                                 </div>
@@ -1053,28 +1057,28 @@
                                             </div>
                                         </div>
                                     </div>
-                                 }
+                                }
                                 <!-- Account Detilas End-->
-
-                                <div class="card-footer ">
-                                    <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class=" col-md-3">
-
-                                        </div>
-                                        <div class="col-md-6">
-                                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                                        </div>
-                                        <div class=" col-md-3">
-
-                                        </div>
-                                    </div>
-                                </div>
                             }
                         }
+                        <div class="card-footer-button ">
+                            <div class="row">
+                                <label class="col-md-2"></label>
+                                <div class=" col-md-3">
+
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                </div>
+                                <div class=" col-md-3">
+
+                                </div>
+                            </div>
                         </div>
+
+                    </div>
                 </div>
             </div>
         </div>
