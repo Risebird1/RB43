@@ -810,6 +810,7 @@
 
                                                                 @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].ProjectDescriptions, new { @class = "form-control text-box single-line" })
 
+                                                                @Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -1074,7 +1075,7 @@
                                 }
                                 <!-- Account Detilas End-->
                             }
-
+                        }
                         <div class="card-footer-button ">
                             <div class="row">
                                 <label class="col-md-2"></label>
@@ -1091,7 +1092,7 @@
                                 </div>
                             </div>
                         </div>
-                        }
+
                     </div>
                 </div>
             </div>
