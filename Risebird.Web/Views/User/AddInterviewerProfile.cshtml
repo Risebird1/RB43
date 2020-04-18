@@ -61,6 +61,13 @@
     .fieldHeader {
         text-align: center;
     }
+
+    .myTextArea-form-control {
+        resize: vertical; 
+        border: none; 
+        border-radius: 0;
+        line-height: 2;
+    }
 </style>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -283,9 +290,6 @@
                                         @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                         @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-
-
-
                                     </div>
 
                                 </div>
@@ -674,7 +678,7 @@
 
                                             </tbody>
                                         </table>
-                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+                                        <label class="text-danger" id="SkillCollection_WeightageError" style=" color: red; margin-left: 815px"></label>
 
                                     </div>
                                 </div>
@@ -744,7 +748,7 @@
 
                                                             @*@Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })*@
 
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { @class = "form-control text-box single-line" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { @class = "form-control myTextArea-form-control" })
 
                                                         </td>
                                                         <td>
@@ -795,9 +799,9 @@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
                                                                 @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[i].ProjectDescriptions" type="text" value=""></textarea>*@
 
-                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].ProjectDescriptions, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[0].ProjectDescriptions, new { @class = "form-control text-box single-line", })
 
-                                                                @Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })
+
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -853,12 +857,12 @@
                                                     <td>
                                                         @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">*@
 
-                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "time", value = "null" })
                                                     </td>
                                                     <td>
                                                         @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">*@
 
-                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "time", value = "null"})
                                                     </td>
                                                     <td>
                                                         <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
