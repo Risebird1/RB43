@@ -13,6 +13,62 @@
         color: #ffffff;
         margin-top: 45px;
     }
+    .buttons {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 20px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .buttons:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .button-2 {
+        background: #4fa4fb;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2;
+        -moz-box-shadow: 0 3px #3884d2;
+        box-shadow: 0 3px #3884d2;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+    }
+
+    .button-2b {
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+        .button-2b:hover {
+            box-shadow: 0 4px #3884d2;
+            top: 0px;
+        }
+
+        .button-2b:active {
+            outline: 0;
+            border: 0;
+        }
 
     #btnPlus, #btnMinus {
         padding: 2px;
@@ -145,10 +201,10 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-                                    <label class="col-md-2"></label>
-                                    <div class="col-md-9">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    <label class="col-md-5"></label>
+                                    <div class="col-md-7 text-right">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "buttons button-2 button-2b", @role = "button" })
+                                        <button type="submit" class="buttons button-2 button-2b" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
                             </div>

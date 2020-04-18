@@ -21,15 +21,15 @@
     }
 
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 200px !important;
+        max-width: 300px !important;
     }
 
-
+   
 
     td.wordwrap {
         display: inline-block !important;
-        max-width: 200px !important;
-        min-width: 200px !important;
+        max-width: 250px !important;
+        min-width: 250px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         vertical-align: top !important;
@@ -54,6 +54,157 @@
         pointer-events: none !important;
         cursor: default !important;
     }
+
+
+    .form-group .form-control, .input-group .form-control {
+        padding: 10px 18px 10px 18px;
+        margin: 0px 20px;
+  
+        width: calc(100% - 40px);
+    }
+
+
+    select.minimal {
+        background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
+        background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+        background-size: 5px 5px, 5px 5px, 1px 1.5em;
+        background-repeat: no-repeat;
+    }
+
+        select.minimal:focus {
+            background-image: linear-gradient(45deg, green 50%, transparent 50%), linear-gradient(135deg, transparent 50%, green 50%), linear-gradient(to right, #ccc, #ccc);
+            background-position: calc(100% - 15px) 1em, calc(100% - 20px) 1em, calc(100% - 2.5em) 0.5em;
+            background-size: 5px 5px, 5px 5px, 1px 1.5em;
+            background-repeat: no-repeat;
+            border-color: green;
+            outline: 0;
+        }
+
+
+    select:-moz-focusring {
+        color: transparent;
+        text-shadow: 0 0 0 #000;
+    }
+    .search-show {
+        display: block;
+        float: left;
+        width: auto;
+    }
+
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        font-size: 12px;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+            background: #4fa4fb;
+        }
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    table {
+        white-space: nowrap !important;
+    }
+    .table > tfoot > tr > th {
+        padding: 5px 7px;
+
+    }
+
+ 
+    .table > tbody > tr > td {
+        padding: 20px 7px !important;
+        vertical-align: middle;
+    }
+    thead, tfoot {
+        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        COLOR: #FFF;
+    }
+    .card .card-header {
+        padding: 0px 0px 0;
+        border: 0;
+        border-bottom: 1px dashed #dcd0d0;
+        margin: 0px 20px;
+        width: 100%;
+    }
+
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 10px;
+        border: 1px #56a9ff solid;
+    }
+
+    #videoId {
+        background: #56a9ff63;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    #dupmeeting_length, #dupmeeting_filter {
+        margin: 10px 0px
+    }
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
@@ -68,6 +219,20 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+
+
+   .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #fff;
+    }
+
+    .table-striped tbody tr:nth-of-type(even) {
+        background-color: rgb(233,247,247,0.2);
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -95,9 +260,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Multiple Candidate Invites</h4>
-                    </div>
+                   
 
                     <div class="card-body">
                         <div class="loader text-center">
@@ -108,15 +271,21 @@
                             <div class="toolbar">
 
                                 <div class="row">
-                                    <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
 
+
+                                    <div class="card-header">
+  <div class="pull-left"><h4 class="card-title">Multiple Candidate Invites</h4></div>
+
+                                        <div class="pull-right">
+                                            <button type="button" class="btn btn-primary " style="margin-bottom: 20px;"><span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "Interview")'" data-original-title="Tooltip on top"> Back</span></button>
+                                            <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MultipleCandidateInvitesExporttoExcel", "Interview")'"></i>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span data-toggle="tooltip" data-placement="top" title="Back" onclick="location.href='@Url.Action("Index", "Interview")'" data-original-title="Tooltip on top"> Back</span></button>
-                                        <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("MultipleCandidateInvitesExporttoExcel", "Interview")'"></i>
-                                    </div>
+
+
+
+
+                                  
 
 
                                 </div>
@@ -133,7 +302,7 @@
                                                     <th>Primary Skill</th>
                                                     <th>Interviewer</th>
                                                     <th>Confirmation Status</th>
-                                                    <th>Meeting Status</th>
+                                                    <th >Meeting Status</th>
                                                     <th>Interview Status</th>
                                                     <th>IRF ID</th>
                                                     <th>Risebird HR</th>

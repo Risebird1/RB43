@@ -72,7 +72,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        var modelList = _meetingService.GetRiseTubeMeetings();
+                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
 
                         if (isClientUser)
                         {
@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                         }
-                        var modelList = _meetingService.GetRiseTubeMeetings();
+                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
                         if (isClientUser)
                         {
                             modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
@@ -370,7 +370,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        var modelList1 = _meetingService.GetRiseTubeMeetings();
+                        var modelList1 = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
                         if (isClientUser)
                         {
                             modelList1 = modelList1.Where(x => x.ClientId == ClientId).ToList();
@@ -560,7 +560,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                        var modelList = _meetingService.GetRiseTubeMeetings();
+                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0);
                         if (isClientUser)
                         {
                             modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
