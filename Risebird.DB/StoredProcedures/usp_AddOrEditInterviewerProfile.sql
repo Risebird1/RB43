@@ -1,4 +1,9 @@
 /****** Object:  StoredProcedure [dbo].[usp_AddOrEditInterviewerProfile]    Script Date: 4/17/2020 10:09:01 PM ******/
+IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_AddOrEditInterviewerProfile'))
+BEGIN
+    DROP PROCEDURE dbo.usp_AddOrEditInterviewerProfile
+END
+
 SET ANSI_NULLS ON
 GO
 

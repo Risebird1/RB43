@@ -61,11 +61,13 @@ namespace Risebird.Entities.ViewModel
         public string PreferredDomain { get; set; }
 
         [Display(Name = "Resume Link")]
-        [Required(ErrorMessage = "Please enter a link.")]
+        //[Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
 
         [Display(Name = "Upload Resume")]
-        public IFormFile File { get; set; }
+        public IFormFile ResumeFile { get; set; }
+        [Display(Name = "Upload Coded Resume")]
+        public IFormFile CodedResumeFile { get; set; }
 
         public string CodedResumeLink { get; set; }
 

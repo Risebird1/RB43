@@ -218,7 +218,7 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="nickName">Nick Name</label>
-                        <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
+            <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.NickName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -227,7 +227,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="location">Current Location</label>
-                        <input class="form-control text-box single-line" id="location" name="location" type="text" value="">*@
+            <input class="form-control text-box single-line" id="location" name="location" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -238,7 +238,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="role">Current Role</label>
-                        <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
+            <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -250,7 +250,7 @@
                                     <div class="form-group">
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="isApproved">Is Approved</label>
-                        <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
+            <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
@@ -271,23 +271,35 @@
                                     <div style="display:none" id="linkDiv">
                                         @*@Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                        @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
+            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
 
-                                        @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.ResumeLink, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-                                        
+                                        @Html.TextBoxFor(model => model.CodedResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
+
                                     </div>
                                     <div class="" id="uploadDiv">
-                                        @Html.LabelFor(model => model.File, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.File, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
-
+                                        @Html.TextBoxFor(model => model.ResumeFile, new { type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
 
 
                                     </div>
-
+                                    <div>
+                                        @if (Model.ResumeLink != null)
+                                        {
+                                            <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
+                                        }
+                                    </div>
+                                    <div>
+                                        @if (Model.CodedResumeLink != null)
+                                        {
+                                            <a id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink>Coded Resume</a>
+                                        }
+                                    </div>
+                                    @Html.HiddenFor(m=>m.ResumeLink, Model.ResumeLink)
+                                    @Html.HiddenFor(m=>m.CodedResumeLink, Model.CodedResumeLink)
                                 </div>
                             </div>
                             <!-- INterviewer personal Details End-->
@@ -318,12 +330,12 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
                                                             @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
+                                                            @*@Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })*@
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
                                                             @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+                                                            @*@Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })*@
                                                         </td>
                                                         <td>
                                                             <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -339,13 +351,13 @@
                                                         <tr>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="InterviewerSkill_0__id" name="InterviewerSkill[0].SkillName" type="text" value="" placeholder="Skill name shoule be drop down">*@
-                                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })
+                                                                @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillId, (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
+                                                                @*@Html.ValidationMessageFor(model => model.SkillTypeList, "", new { @class = "text-danger" })*@
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="InterviewerSkill_0__Level" name="InterviewerSkill[0].Level" type="text" value="" placeholder="Skill level shoule be drop down" />*@
                                                                 @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.LevelList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.Level, "", new { @class = "text-danger" })
+                                                                @*@Html.ValidationMessageFor(model => model.LevelList, "", new { @class = "text-danger" })*@
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -467,14 +479,14 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
                                                             @Html.DropDownList("InterviewerEducationDetails[0].Graduation", (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
+                                                            @*@Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })*@
                                                         </td>
                                                         <td>
 
                                                             @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
 
                                                             @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
+                                                            @*@Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })*@
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
@@ -503,14 +515,14 @@
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="educationType" name="educationType" type="text" value="" placeholder="Education type drop down">*@
                                                                 @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Graduation, (SelectList)Model.GraduationTypeList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })
+                                                                @*@Html.ValidationMessageFor(model => model.GraduationType, "", new { @class = "text-danger" })*@
                                                             </td>
                                                             <td>
 
                                                                 @*<input class="form-control text-box single-line" id="collegeType" name="collegeType" type="text" value="" placeholder="College type drop down">*@
 
                                                                 @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })
+                                                                @*@Html.ValidationMessageFor(model => model.CollegeType, "", new { @class = "text-danger" })*@
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
@@ -580,7 +592,7 @@
                                                             @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
 
                                                             @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                            @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+                                                            @*@Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })*@
 
                                                         </td>
                                                         <td>
@@ -602,14 +614,14 @@
 
                                                             @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="date" value="" placeholder="drop down">*@
 
-                                                            @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" , value = "null" })
+                                                            @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null,  new { @class = "form-control text-box single-line", type = "date"  })
 
 
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__EndDate" name="InterviewerProfessionalDetails[0].EndDate" type="date" value="">*@
 
-                                                            @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                            @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null,  new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td>
                                                             <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -636,7 +648,7 @@
                                                                 @*<input class="form-control text-box single-line" id="companyType" name="companyType" type="text" value="" placeholder="Comapny Type drop down">*@
 
                                                                 @Html.DropDownListFor(m => m.InterviewerProfessionalDetails[i].CompanyType, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
+                                                                @*@Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })*@
 
                                                             </td>
                                                             <td>
@@ -649,18 +661,19 @@
 
                                                                 @*@Html.LabelFor(model => InterviewerProfessionalDetails[0].StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
 
-                                                                @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
-                                                @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+                                                                @Html.EditorFor(m => m.InterviewerProfessionalDetails[i].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[i].StartDate } })
+                                                                @*<label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+        @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
 
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[i].StartDate" type="date" value="" placeholder="drop down">*@
 
-                                                                @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].StartDate, null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                                @*@Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].StartDate, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerProfessionalDetails[i].StartDate.ToString("dd/MM/yyyy") }) *@
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProfessionalDetails_0__EndDate" name="InterviewerProfessionalDetails[i].EndDate" type="date" value="">*@
+                                                                @Html.EditorFor(m => m.InterviewerProfessionalDetails[i].EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[i].EndDate } })
 
-                                                                @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].EndDate, null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                                @*@Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].EndDate, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerProfessionalDetails[i].EndDate.ToString("dd/MM/yyyy") })*@
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -724,12 +737,12 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="" name="projectStartDate" type="date" value="">*@
 
-                                                            @Html.TextBox("InterviewerProjectsDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="" name="projectEndDate" type="date" value="">*@
 
-                                                            @Html.TextBox("InterviewerProjectsDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="projectRole" name="projectRole" type="text" value="" placeholder="Role text box">*@
@@ -744,7 +757,7 @@
 
                                                             @*@Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })*@
 
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { @class = "form-control text-box single-line" })
 
                                                         </td>
                                                         <td>
@@ -776,13 +789,13 @@
 
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="" name="projectStartDate" type="date" value="">*@
-
-                                                                @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].StartDate, null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                                @Html.EditorFor(m => m.InterviewerProjectsDetails[i].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProjectsDetails[i].StartDate } })
+                                                                @*@Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].StartDate, null, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerProjectsDetails[i].StartDate.ToString("dd/MM/yyyy") })*@
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="" name="projectEndDate" type="date" value="">*@
-
-                                                                @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].EndDate, null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                                @Html.EditorFor(m => m.InterviewerProjectsDetails[i].EndDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProjectsDetails[i].EndDate } })
+                                                                @*@Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].EndDate, null, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerProjectsDetails[i].EndDate.ToString("dd/MM/yyyy") })*@
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="projectRole" name="projectRole" type="text" value="" placeholder="Role text box">*@
@@ -832,8 +845,8 @@
                                                 <tr>
                                                     <th width="25%" class="table_heading">Slot </th>
                                                     <th width="25%" class="table_heading">Week Days</th>
-                                                    <th width="20%" class="table_heading">Start Date</th>
-                                                    <th width="20%" class="table_heading">End Date</th>
+                                                    <th width="20%" class="table_heading">Start Time</th>
+                                                    <th width="20%" class="table_heading">End Time</th>
                                                     <th width="10%" class="table_heading">Action</th>
                                                 </tr>
                                             </thead>
@@ -843,21 +856,21 @@
                                                 <tr>
                                                     <td>
                                                         @Html.DropDownList("InterviewerAvailabilityDetails[0].DayTimeSlot", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
+                                                        @*@Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })*@
                                                     </td>
                                                     <td>
                                                         @Html.DropDownList("InterviewerAvailabilityDetails[0].DaySlot", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
-                                                        @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
+                                                        @*@Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })*@
                                                     </td>
                                                     <td>
                                                         @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">*@
 
-                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "time"})
                                                     </td>
                                                     <td>
                                                         @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">*@
 
-                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "time" })
                                                     </td>
                                                     <td>
                                                         <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -869,31 +882,31 @@
                                                 {
                                                     for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
                                                     {
-                                                        <tr>
-                                                            <td>
-                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].DayTimeSlot, (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].DaySlot, (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
-                                                                @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
-                                                            </td>
-                                                            <td>
+                                            <tr>
+                                                <td>
+                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].DayTimeSlot, (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
+                                                    @*@Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })*@
+                                                </td>
+                                                <td>
+                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].DaySlot, (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
+                                                    @*@Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })*@
+                                                </td>
+                                                <td>
 
-                                                                @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[i].StartTime" type="date" value="" placeholder="drop down">*@
-
-                                                                @Html.TextBoxFor(m => m.InterviewerAvailabilityDetails[i].StartTime, null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
-                                                            </td>
-                                                            <td>
-                                                                @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[i].EndTime" type="date" value="">*@
-
-                                                                @Html.TextBoxFor(m => m.InterviewerAvailabilityDetails[i].EndTime, null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
-                                                            </td>
-                                                            <td>
-                                                                <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                            </td>
-                                                        </tr>
+                                                    @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[i].StartTime" type="date" value="" placeholder="drop down">*@
+                                                    @Html.EditorFor(m => m.InterviewerAvailabilityDetails[i].StartTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerAvailabilityDetails[i].StartTime } })
+                                                    @*@Html.TextBoxFor(m => m.InterviewerAvailabilityDetails[i].StartTime, null, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerAvailabilityDetails[i].StartTime.ToString("dd/MM/yyyy") })*@
+                                                </td>
+                                                <td>
+                                                    @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[i].EndTime" type="date" value="">*@
+                                                    @Html.EditorFor(m => m.InterviewerAvailabilityDetails[i].EndTime, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerAvailabilityDetails[i].EndTime } })
+                                                    @*@Html.TextBoxFor(m => m.InterviewerAvailabilityDetails[i].EndTime, null, new { @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerAvailabilityDetails[i].EndTime.ToString("dd/MM/yyyy") })*@
+                                                </td>
+                                                <td>
+                                                    <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                    <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                </td>
+                                            </tr>
                                                     }
                                                 }
 
