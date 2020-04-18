@@ -764,7 +764,7 @@
 
                                                             @*@Html.TextArea("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })*@
 
-                                                            @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { @class = "form-control myTextArea-form-control" })
+                                                            @Html.TextArea("InterviewerProjectsDetails[0].ProjectDescriptions", null, new { })
 
                                                         </td>
                                                         <td>
@@ -815,7 +815,7 @@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
                                                                 @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[i].ProjectDescriptions" type="text" value=""></textarea>*@
 
-                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[0].ProjectDescriptions, new { @class = "form-control text-box single-line", })
+                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[0].ProjectDescriptions, new {  })
 
 
                                                             </td>
