@@ -530,7 +530,10 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    //int ProfileId = 
+                    //Just added to get Id this way
+                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    //   commandType: CommandType.StoredProcedure);
+                    //int ProfileId = result.FirstOrDefault();
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
@@ -541,7 +544,7 @@ namespace Risebird.Repository
                     foreach (var item in interviewerProfile.InterviewerSkill)
                     {
 
-                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Name from Skill where Id = @SkillId ));";
+                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Description from Skill where Id = @SkillId ));";
                         var affectedRows = con.ExecuteAsync(sqlSkill, new
                         {
                             InterviewerProfileId = ProfileId,
@@ -726,6 +729,23 @@ namespace Risebird.Repository
             return null;
         }
 
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<LevelTech>(con, "Select Id, Name, Description from LevelTech",
+                        null, commandType: Text);
+                }
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
         public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
         {

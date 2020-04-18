@@ -48,6 +48,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile);
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
+        IEnumerable<LevelTech> GetLevelTech();
 
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid);
         Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId);

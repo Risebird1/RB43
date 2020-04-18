@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -11,7 +12,9 @@ namespace Risebird.Entities.ViewModel
         public string CompanyName { get; set; }
         public string CompanyType { get; set; }
         public string Domain { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? StartDate { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? EndDate { get; set; }
     }
 }

@@ -50,5 +50,6 @@ namespace Risebird.Business.Interface
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
         InterviewerProfileVM GetInterviewerProfileById(int userid);
+        List<LevelTech> GetLevelTech();
     }
 }

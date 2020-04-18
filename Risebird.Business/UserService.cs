@@ -604,6 +604,18 @@ namespace Risebird.Business
             }
 
         }
+        public List<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                return _userRepository.GetLevelTech().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
 
     }
 }

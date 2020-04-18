@@ -789,9 +789,6 @@ namespace Risebird.Web.Controllers
                     InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
                     model.UserId = userId;
 
-                    TempData["ResumeLink"] = model.ResumeLink;
-                    TempData["CodedResumeLink"] = model.CodedResumeLink;
-
                     // Get all the select Lists
                     GetAllSelectList(model);
 
@@ -821,26 +818,29 @@ namespace Risebird.Web.Controllers
 
                     // Need to add here property to add link to coded resume link
                     // Need to see how to add coded resume and then see How to add that in error also
-                    if (interviewerProfile.File == null && (interviewerProfile.ResumeLink == null || interviewerProfile.CodedResumeLink == null))
+                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
                     {
-                        ModelState.AddModelError("ResumeLink", "Please upload a resume.");
-                        InterviewerProfileVM model = _userService.GetInterviewerProfileById(interviewerProfile.UserId);
-                        model.UserId = interviewerProfile.UserId;
-                        // Get all the select Lists
-                        GetAllSelectList(model);
-                        return View("AddInterviewerProfile", model);
+                        if (interviewerProfile.ResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.ResumeLink = uploadedFileURL;
+
+                        }
+                        else if (interviewerProfile.CodedResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.CodedResumeLink = uploadedFileURL;
+                        }
                     }
-                    else
-                    {
-
-                        await _azureStorageHelper.InsertBlob(interviewerProfile.File.FileName, "resumes", interviewerProfile.File);
-                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                        var blob = containerRef.GetBlockBlobReference(interviewerProfile.File.FileName);
-                        uploadedFileURL = blob.Uri.ToString();
-
-                    }
-
-                    if (uploadedFileURL == null || uploadedFileURL == string.Empty)
+                    
+                    if ((interviewerProfile.CodedResumeLink == null || interviewerProfile.CodedResumeLink == string.Empty) &&
+                                        ( interviewerProfile.ResumeLink == null || interviewerProfile.ResumeLink == string.Empty))
                     {
                         ModelState.AddModelError("ResumeLink", "Adding Interviewer Profile has Failed. Resume not added successfully");
                         InterviewerProfileVM model = _userService.GetInterviewerProfileById(interviewerProfile.UserId);
@@ -851,8 +851,7 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        interviewerProfile.ResumeLink = uploadedFileURL;
-
+                        
                         if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
                         {
                             TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
@@ -881,12 +880,10 @@ namespace Risebird.Web.Controllers
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+            model.LevelList = new SelectList(_userService.GetLevelTech(), "id", "Name");
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
             model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            var level = from InterviewerSkillsLevel s in Enum.GetValues(typeof(InterviewerSkillsLevel))
-                        select new { ID = (int)s, Name = s.GetDescription() };
-            model.LevelList = new SelectList(level, "ID", "Name");
             var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
                                  select new { ID = (int)s, Name = s.GetDescription() };
             model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
