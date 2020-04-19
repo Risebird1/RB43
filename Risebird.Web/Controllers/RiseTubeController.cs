@@ -72,7 +72,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
+                        var modelList = _meetingService.GetRiseTubeMeetings();
 
                         if (isClientUser)
                         {
@@ -214,7 +214,7 @@ namespace Risebird.Web.Controllers
                         {
                             HttpContext.Session.SetString("RiseTubefilters", JsonConvert.SerializeObject(filter));
                         }
-                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
+                        var modelList = _meetingService.GetRiseTubeMeetings();
                         if (isClientUser)
                         {
                             modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
@@ -370,7 +370,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["SuccessErrorMessageInterview"].ToString();
                             TempData.Remove("SuccessErrorMessageInterview");
                         }
-                        var modelList1 = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0).ToList();
+                        var modelList1 = _meetingService.GetRiseTubeMeetings();
                         if (isClientUser)
                         {
                             modelList1 = modelList1.Where(x => x.ClientId == ClientId).ToList();
@@ -453,7 +453,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
-
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -489,7 +490,8 @@ namespace Risebird.Web.Controllers
 
                         NewModel.InterviewerComment = model.InterviewerComment;                        NewModel.InterviewStatus = model.InterviewStatus;                        NewModel.JDTiltle = model.JDTiltle;                        NewModel.JDLink = model.JDLink;                        NewModel.MeetingStatus = model.MeetingStatus;                        NewModel.confirmationStatus = model.confirmationStatus;                        NewModel.VideoLink = model.VideoLink;                        NewModel.candidateEmail = model.candidateEmail;                        NewModel.reportLink = model.reportLink;                        NewModel.resumeLink = model.resumeLink;                        NewModel.zoomLink = model.zoomLink;                        NewModel.IreportModel = IRListModel;                        NewModel.IsLike = model.IsLike;                        NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
-
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
 
 
                         if (NewModel.IreportModel.QuestionsCollection == null)                        {                            ViewBag.QuestionsDiscussedCount = 0;                        }                        else                        {                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();                        }                        bool isQC = false;                        NewModel.IreportModel.IsQC = isQC;
@@ -560,7 +562,7 @@ namespace Risebird.Web.Controllers
 
 
 
-                        var modelList = _meetingService.GetRiseTubeMeetings().Where(x => x.QCInterview > 0);
+                        var modelList = _meetingService.GetRiseTubeMeetings();
                         if (isClientUser)
                         {
                             modelList = modelList.Where(x => x.ClientId == ClientId).ToList();
@@ -623,6 +625,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;

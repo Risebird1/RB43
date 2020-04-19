@@ -159,6 +159,9 @@ namespace Risebird.Entities.ViewModel
 
         public int QCInterview { get; set; }
         public string IsLike { get; set; }
+        public int TotalVedioLike { get; set; }
+        public int TotalVedioDisLike { get; set; }
+
         public int TotalView { get; set; }
         public string IsShared { get; set; }
         public List<VedioComments> Comments { get; set; }
