@@ -511,6 +511,10 @@
                                                 <div class="video-card-image">
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
+                                                        if (!string.IsNullOrEmpty(item.ThumbnailImagestring))
+                                                        {
+                                                            <img src="@item.ThumbnailImagestring" style="height: 179px !important;" />
+                                                        }
                                                         <video controls style="height: 179px !important; background:black;width:100% ">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>

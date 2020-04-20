@@ -92,6 +92,9 @@ namespace Risebird.Entities.ViewModel
         public string intervieweStatusStatDesc { get; set; }
         public string selectionStatus { get; set; }
         public string VideoLink { get; set; }
+        public string ThumbnailImage { get; set; }
+        public string ThumbnailImagestring { get; set; }
+      
         public string reportLink { get; set; }
         public string fraudSyncComment { get; set; }
         public string hrCoordinatorComment { get; set; }

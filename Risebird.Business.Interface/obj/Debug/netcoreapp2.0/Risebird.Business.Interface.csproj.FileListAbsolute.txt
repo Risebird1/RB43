@@ -118,3 +118,14 @@ C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netc
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
 C:\Users\Admin\Documents\harshitJajoo\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+E:\CodeFile\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.deps.json
+E:\CodeFile\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+E:\CodeFile\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+E:\CodeFile\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+E:\CodeFile\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csprojAssemblyReference.cache
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfoInputs.cache
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfo.cs
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+E:\CodeFile\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb

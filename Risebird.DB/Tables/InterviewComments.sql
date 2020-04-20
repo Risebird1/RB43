@@ -28,6 +28,9 @@ CREATE TABLE [dbo].[InterviewComments](
 	[FinalComments] [varchar](max) NULL,
 	[JoiningComments] [varchar](max) NULL,
 	[OfferComments] [varchar](max) NULL,
+	[ThumbnailImage] [varchar](Max) NULL,
+	[TotalView] [int] NULL,
+	[IsShared] [varchar](10) NULL,
 	CONSTRAINT [FK_Interview] FOREIGN KEY (InterviewId) REFERENCES InterviewMeetings(id),
 
  CONSTRAINT [PK_InterviewComments] PRIMARY KEY CLUSTERED 
@@ -40,6 +43,36 @@ CREATE TABLE [dbo].[InterviewComments](
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
+End
+Else 
+begin
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'ThumbnailImage')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add ThumbnailImage varchar(MAX)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'TotalView')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add TotalView int
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'IsShared')
+      AND Object_ID = Object_ID(N'InterviewComments'))
+BEGIN
+    ALTER TABLE InterviewComments
+    Add IsShared varchar(10)
+END
 End
 GO
 
