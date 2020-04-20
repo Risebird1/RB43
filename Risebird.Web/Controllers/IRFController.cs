@@ -2966,16 +2966,10 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" || profileName == "Recruiter")
                 {
                     var model = _evaluatorService.GetCandidate(candidateId, irfId);
-                   
-                    var list = new SelectList(new[]
-                    {
-                        new { ID = "Enrollment1", Name = "Enrollment 1"},
-                        new { ID = "Enrollment2", Name = "Enrollment 2"  },
-                        new { ID = "Enrollment3", Name = "Enrollment 3" }
-                    }, "ID", "Name", "Enrollment1");
+                    model.PhraseList = new SelectList(_evaluatorService.GetPhrases(), "text", "text");
+                    
+                    model.EnrollmentList = GetEnrollmentList();
 
-
-                    ViewData["list"] = list;
                     return View(model);
                 }
                 else
@@ -3230,6 +3224,17 @@ namespace Risebird.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+        }
+
+        private SelectList GetEnrollmentList()
+        {
+            var listItems = new List<SelectListItem>();
+            foreach (var item in Enum.GetValues(typeof(VoiceEnrollment)))
+            {
+                listItems.Add(new SelectListItem { Text = item.ToString(), Value = item.ToString() });
+            }
+
+            return new SelectList(listItems, "Value", "Text", listItems.First().Value);
         }
     }
 }

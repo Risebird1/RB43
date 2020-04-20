@@ -12263,11 +12263,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "projectName": "Risebird.CommonHelper.Interface",
-      "projectPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.CommonHelper.Interface\\obj\\",
+      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -12286,8 +12286,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\Admin\\Documents\\harshitJajoo\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

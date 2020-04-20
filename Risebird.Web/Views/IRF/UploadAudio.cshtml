@@ -124,7 +124,7 @@
                                         </div>
                                         <div class="form-group" id="descDrop" style="display:none">
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(m => m.DropDescription, ViewData["list"] as SelectList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
+                                            @Html.DropDownListFor(m => m.DropDescription, Model.EnrollmentList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
 
                                         </div>
                                     </div>
@@ -142,9 +142,9 @@
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PhraseDetail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.PhraseDetail, new { @class = "form-control text-box single-line" })
-                                        </div>
+                                            @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
 
+                                        </div>
                                     </div>
 
                                 </div>
