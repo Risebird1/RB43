@@ -6260,7 +6260,8 @@
       "path": "microsoft.data.edm/5.6.4",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
+        "Microsoft.Data.Edm.5.6.4.nupkg.sha512",
+        "Microsoft.Data.Edm.nuspec",
         "lib/net40/Microsoft.Data.Edm.dll",
         "lib/net40/Microsoft.Data.Edm.xml",
         "lib/net40/de/Microsoft.Data.Edm.resources.dll",
@@ -6304,9 +6305,7 @@
         "lib/sl4/ko/Microsoft.Data.Edm.resources.dll",
         "lib/sl4/ru/Microsoft.Data.Edm.resources.dll",
         "lib/sl4/zh-Hans/Microsoft.Data.Edm.resources.dll",
-        "lib/sl4/zh-Hant/Microsoft.Data.Edm.resources.dll",
-        "microsoft.data.edm.5.6.4.nupkg.sha512",
-        "microsoft.data.edm.nuspec"
+        "lib/sl4/zh-Hant/Microsoft.Data.Edm.resources.dll"
       ]
     },
     "Microsoft.Data.OData/5.6.4": {
@@ -6315,7 +6314,8 @@
       "path": "microsoft.data.odata/5.6.4",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
+        "Microsoft.Data.OData.5.6.4.nupkg.sha512",
+        "Microsoft.Data.OData.nuspec",
         "lib/net40/Microsoft.Data.OData.dll",
         "lib/net40/Microsoft.Data.OData.xml",
         "lib/net40/de/Microsoft.Data.OData.resources.dll",
@@ -6359,9 +6359,7 @@
         "lib/sl4/ko/Microsoft.Data.OData.resources.dll",
         "lib/sl4/ru/Microsoft.Data.OData.resources.dll",
         "lib/sl4/zh-Hans/Microsoft.Data.OData.resources.dll",
-        "lib/sl4/zh-Hant/Microsoft.Data.OData.resources.dll",
-        "microsoft.data.odata.5.6.4.nupkg.sha512",
-        "microsoft.data.odata.nuspec"
+        "lib/sl4/zh-Hant/Microsoft.Data.OData.resources.dll"
       ]
     },
     "Microsoft.Data.Services.Client/5.6.4": {
@@ -6370,7 +6368,8 @@
       "path": "microsoft.data.services.client/5.6.4",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
+        "Microsoft.Data.Services.Client.5.6.4.nupkg.sha512",
+        "Microsoft.Data.Services.Client.nuspec",
         "lib/net40/Microsoft.Data.Services.Client.dll",
         "lib/net40/Microsoft.Data.Services.Client.xml",
         "lib/net40/de/Microsoft.Data.Services.Client.resources.dll",
@@ -6403,9 +6402,7 @@
         "lib/sl4/ko/Microsoft.Data.Services.Client.resources.dll",
         "lib/sl4/ru/Microsoft.Data.Services.Client.resources.dll",
         "lib/sl4/zh-Hans/Microsoft.Data.Services.Client.resources.dll",
-        "lib/sl4/zh-Hant/Microsoft.Data.Services.Client.resources.dll",
-        "microsoft.data.services.client.5.6.4.nupkg.sha512",
-        "microsoft.data.services.client.nuspec"
+        "lib/sl4/zh-Hant/Microsoft.Data.Services.Client.resources.dll"
       ]
     },
     "Microsoft.Data.Sqlite/2.0.1": {
@@ -8660,7 +8657,6 @@
       "path": "system.componentmodel/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -8804,7 +8800,6 @@
       "path": "system.componentmodel.primitives/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -8843,7 +8838,6 @@
       "path": "system.componentmodel.typeconverter/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -11352,7 +11346,6 @@
       "path": "system.runtime.serialization.formatters/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -11381,7 +11374,6 @@
       "path": "system.runtime.serialization.json/4.3.0",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -12137,7 +12129,8 @@
       "path": "system.spatial/5.6.4",
       "files": [
         ".nupkg.metadata",
-        ".signature.p7s",
+        "System.Spatial.5.6.4.nupkg.sha512",
+        "System.Spatial.nuspec",
         "lib/net40/System.Spatial.dll",
         "lib/net40/System.Spatial.xml",
         "lib/net40/de/System.Spatial.resources.dll",
@@ -12181,9 +12174,7 @@
         "lib/sl4/ko/System.Spatial.resources.dll",
         "lib/sl4/ru/System.Spatial.resources.dll",
         "lib/sl4/zh-Hans/System.Spatial.resources.dll",
-        "lib/sl4/zh-Hant/System.Spatial.resources.dll",
-        "system.spatial.5.6.4.nupkg.sha512",
-        "system.spatial.nuspec"
+        "lib/sl4/zh-Hant/System.Spatial.resources.dll"
       ]
     },
     "System.Text.Encoding/4.3.0": {
@@ -13280,19 +13271,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rumab\\.nuget\\packages\\": {}
+    "C:\\Users\\gokul\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
-      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\obj\\",
+      "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "packagesPath": "C:\\Users\\gokul\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\gokul\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -13305,8 +13300,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             }
           }
         }
@@ -13364,16 +13359,10 @@
           }
         },
         "imports": [
-          "net461",
-          "net462",
-          "net47",
-          "net471",
-          "net472",
-          "net48"
+          "net461"
         ],
         "assetTargetFallback": true,
-        "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "warn": true
       }
     }
   },
@@ -13382,7 +13371,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Edm",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13392,7 +13381,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.OData",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13402,7 +13391,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Services.Client",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13412,7 +13401,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.IdentityModel.Protocol.Extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13422,7 +13411,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "System.Spatial",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13432,7 +13421,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "TransientFaultHandling.Core",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13442,7 +13431,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13452,7 +13441,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices.extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
