@@ -168,8 +168,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalView { get; set; }
         public string IsShared { get; set; }
         public List<VedioComments> Comments { get; set; }
-        public int TotalVedioLike { get; set; }
-        public int TotalVedioDisLike { get; set; }
+     
     }
     public class VedioComments
     {

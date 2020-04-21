@@ -171,3 +171,9 @@ E:\CodeFile\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.Asse
 E:\CodeFile\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 E:\CodeFile\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
 E:\CodeFile\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csprojAssemblyReference.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CoreCompileInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfoInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb

@@ -91,3 +91,9 @@ E:\CodeFile\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.Assembly
 E:\CodeFile\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 E:\CodeFile\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 E:\CodeFile\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csproj.CoreCompileInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb

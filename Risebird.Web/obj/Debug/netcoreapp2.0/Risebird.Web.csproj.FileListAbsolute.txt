@@ -218,3 +218,10 @@ E:\CodeFile\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplet
 E:\CodeFile\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 E:\CodeFile\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 E:\CodeFile\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

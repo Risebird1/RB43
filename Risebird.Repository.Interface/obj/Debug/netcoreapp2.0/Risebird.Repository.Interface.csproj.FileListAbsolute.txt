@@ -128,3 +128,15 @@ E:\CodeFile\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repos
 E:\CodeFile\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
 E:\CodeFile\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 E:\CodeFile\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.deps.json
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CoreCompileInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfoInputs.cache
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfo.cs
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
