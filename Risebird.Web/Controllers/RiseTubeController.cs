@@ -453,7 +453,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
-
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -489,7 +490,8 @@ namespace Risebird.Web.Controllers
 
                         NewModel.InterviewerComment = model.InterviewerComment;                        NewModel.InterviewStatus = model.InterviewStatus;                        NewModel.JDTiltle = model.JDTiltle;                        NewModel.JDLink = model.JDLink;                        NewModel.MeetingStatus = model.MeetingStatus;                        NewModel.confirmationStatus = model.confirmationStatus;                        NewModel.VideoLink = model.VideoLink;                        NewModel.candidateEmail = model.candidateEmail;                        NewModel.reportLink = model.reportLink;                        NewModel.resumeLink = model.resumeLink;                        NewModel.zoomLink = model.zoomLink;                        NewModel.IreportModel = IRListModel;                        NewModel.IsLike = model.IsLike;                        NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
-
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
 
 
                         if (NewModel.IreportModel.QuestionsCollection == null)                        {                            ViewBag.QuestionsDiscussedCount = 0;                        }                        else                        {                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();                        }                        bool isQC = false;                        NewModel.IreportModel.IsQC = isQC;
@@ -623,6 +625,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
+                        NewModel.TotalVedioLike = model.TotalVedioLike;
+                        NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;

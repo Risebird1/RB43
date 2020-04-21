@@ -137,17 +137,63 @@
         border-right: 1px dotted #ccc;
     }
 
- .modal-header {
+    .modal-header {
         border-bottom: 3px solid #316b9e !important;
         background: #419dff !important;
         padding-top: 15px !important;
         padding-bottom: 15px !important;
-        color: #fff!important;
+        color: #fff !important;
     }
- .modal-title{color:#fff!important;}
 
+    .modal-title {
+        color: #fff !important;
+    }
 </style>
+<style>
+    .newsletter {
+        padding: 40px 0;
+    }
 
+
+
+    .input-group .input-group-btn {
+        padding: 0 12px;
+        margin: -11px;
+    }
+
+    .newsletter .content {
+        max-width: 650px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+        .newsletter .content h2 {
+            color: #243c4f;
+            margin-bottom: 40px;
+        }
+
+        .newsletter .content .form-control {
+            height: 50px;
+            border-color: black;
+            border-radius: 0;
+        }
+
+            .newsletter .content.form-control:focus {
+                box-shadow: none;
+                border: 2px solid #243c4f;
+            }
+
+        .newsletter .content .btn {
+            min-height: 50px;
+            border-radius: 0;
+            background: #4fa4fb;
+            color: #fff;
+            font-weight: 600;
+            width: 100px
+        }
+</style>
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -193,10 +239,24 @@
                         </div>
                         <div class="dataloading">
                             <div class="row">
-                                <div class="col-md-5">
-                                    <input type="text" id="txtsearch" value="@ViewBag.searchvalue"  placeholder="Skills,Name Of Person" name="search" style="width:400px">
-                                    <button type="button" value="GO" id="btnSearch" >Submit</button>
-                                   
+                                <div class="col-md-7" style="margin-left:70px">
+                                    <section class="newsletter">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="content">
+                                                        <div class="input-group" id="myForm">
+                                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control" placeholder="Please enter Skills (or) Name Of candidate">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn" id="btnSearch" type="submit">Search</button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
                                 </div>
                                 <div class="col-md-3 ml-md-auto">
                                     <div class="form-group">
@@ -422,7 +482,7 @@
 
 
 
-                                                            
+
                                                         </div>
 
                                                     </div>
@@ -432,7 +492,7 @@
                                         </form>
                                     </div>
                                 </div>
-                               
+
                             </div>
                             <hr>
                             <div class="video-block section-padding" id="VideoList">
@@ -490,12 +550,13 @@
                             <hr>
                             @foreach (var item in Model)
                             {
-                                <p>@item.PageNumber of @item.interviewVediosequence
-                            </p>
+                                <p>
+                                    @item.PageNumber of @item.interviewVediosequence
+                                </p>
                                 break;
                             }
                             @Html.PagedListPager(Model, Page => Url.Action("Index", new { Page = Page }))
-                            </div>
+                        </div>
 
 
 
@@ -732,5 +793,5 @@
             $("#VideoList").show();
         }, 2000);
     };
-    //// script for loader ends here
+//// script for loader ends here
 </script>

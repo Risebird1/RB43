@@ -3280,11 +3280,32 @@ namespace Risebird.Web.Controllers
             }
 
         }
-        public async Task<IActionResult> InterviewerDetail()        {            try            {                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)                {                    if (TempData["SuccessErrorMessageInterviewer"] != null)                    {                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();                        TempData.Remove("SuccessErrorMessageInterviewer");                    }
+        public async Task<IActionResult> InterviewerDetail()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (TempData["SuccessErrorMessageInterviewer"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterviewer");
 
-                    return View(_userService.GetInterviewers());                }                else                {                    return RedirectToAction("SignOut", "Session");                }
+                    }
+
+                    return View(_userService.GetInterviewers());
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
                 //details for InterviewerDetails Page
-            }            catch (Exception ex)            {                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);                return RedirectToAction("Index");            }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
 
 
         }
