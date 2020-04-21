@@ -631,7 +631,8 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-
+                        var comments = _meetingService.GetvedioComments(id);
+                        NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
                         GetStatusList(IRListModel, model.irfIntId);
@@ -737,6 +738,6 @@ namespace Risebird.Web.Controllers
 
             return Json("Success");
         }
-
+     
     }
 }
