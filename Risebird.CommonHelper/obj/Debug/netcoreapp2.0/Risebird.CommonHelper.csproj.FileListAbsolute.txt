@@ -138,3 +138,17 @@ C:\RiseBirdProject\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.Common
 C:\RiseBirdProject\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
 C:\RiseBirdProject\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
 C:\RiseBirdProject\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.deps.json
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CoreCompileInputs.cache
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb

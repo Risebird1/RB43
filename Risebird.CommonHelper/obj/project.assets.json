@@ -13273,19 +13273,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\abhin\\.nuget\\packages\\": {}
+    "C:\\Users\\Prabha\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\RiseBirdProject\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\RiseBirdProject\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
-      "packagesPath": "C:\\Users\\abhin\\.nuget\\packages\\",
-      "outputPath": "C:\\RiseBirdProject\\Risebird.CommonHelper\\obj\\",
+      "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "packagesPath": "C:\\Users\\Prabha\\.nuget\\packages\\",
+      "outputPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\abhin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Prabha\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -13298,8 +13298,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\RiseBirdProject\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             }
           }
         }

@@ -370,6 +370,7 @@
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
+                                                    <th style="text-align:center">Zoom Call</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
@@ -408,6 +409,7 @@
                                                     @*<th>Interview Device Details</th>*@
                                                     <th class="disabled-sorting" style="text-align:center">Actions</th>
                                                     <th style="text-align:center">Call</th>
+                                                    <th style="text-align:center">Zoom Call</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
@@ -499,6 +501,12 @@
                                                                 <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick(@jsonObject)" data-original-title="Tooltip on top"> Call Candidate</span></button>
                                                             }
 
+                                                        </td>
+                                                        <td>
+                                                            @if (item.zoomLink != null && item.zoomLink != string.Empty)
+                                                            {
+                                                                <a href="@item.zoomLink"  type="submit" target="_blank" class="fa fa-phone button Secondary" style="color:blue"> Click To Zoom Call </a>
+                                                            }
                                                         </td>
                                                     </tr>
                                                 }

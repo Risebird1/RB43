@@ -15059,19 +15059,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\abhin\\.nuget\\packages\\": {}
+    "C:\\Users\\Prabha\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\RiseBirdProject\\Risebird.Web\\Risebird.Web.csproj",
+      "projectUniqueName": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
       "projectName": "Risebird.Web",
-      "projectPath": "C:\\RiseBirdProject\\Risebird.Web\\Risebird.Web.csproj",
-      "packagesPath": "C:\\Users\\abhin\\.nuget\\packages\\",
-      "outputPath": "C:\\RiseBirdProject\\Risebird.Web\\obj\\",
+      "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
+      "packagesPath": "C:\\Users\\Prabha\\.nuget\\packages\\",
+      "outputPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\abhin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Prabha\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -15084,26 +15084,26 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\RiseBirdProject\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.Business\\Risebird.Business.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Business\\Risebird.Business.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business\\Risebird.Business.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business\\Risebird.Business.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Entities\\Risebird.Entities.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             },
-            "C:\\RiseBirdProject\\Risebird.Repository\\Risebird.Repository.csproj": {
-              "projectPath": "C:\\RiseBirdProject\\Risebird.Repository\\Risebird.Repository.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj"
             }
           }
         }
