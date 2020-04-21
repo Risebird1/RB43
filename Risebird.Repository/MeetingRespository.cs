@@ -864,7 +864,7 @@ namespace Risebird.Repository
                     parameters.Add("@interviewerComment", reportDetails.InterviewerComment);
                     parameters.Add("@audiolink", reportDetails.AudioLink);
                     parameters.Add("@videolink", reportDetails.VideoLink);
-
+                    parameters.Add("@ThumbnailImage", reportDetails.ThumbnailImage);
                     if (reportDetails.IsEdited)
                     {
                         var result = SqlMapper.Query<int>(con, "usp_UpdateInterviewReport", paramx,

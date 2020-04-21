@@ -130,6 +130,7 @@ namespace Risebird.Entities.ViewModel
         public string CandidateMobileNumber { get; set; }
         [Display(Name = "Candidate Visa")]
         public string CandidateVisa { get; set; }
+        public string ThumbnailImage { get; set; }
 
     }
 }

@@ -17,6 +17,10 @@ using Risebird.CommonHelper;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.IO;
+using MediaToolkit.Model;
+using MediaToolkit;
+using MediaToolkit.Options;
+using Microsoft.AspNetCore.Http.Internal;
 
 namespace Risebird.Web.Controllers
 {
@@ -3798,15 +3802,11 @@ namespace Risebird.Web.Controllers
 
                         if (model.VideoFile != null)
                         {
-                            // byte[] videofileData = new byte[model.VideoFile.Length];
-                            // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
                             await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
                             var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
                             string uploadedvideoFileURL = blob.Uri.ToString();
-                            //string path = @"C:\Users\Admin\Desktop\RBVideoRandom.mp4";
-                            //var filePath = Path.GetFullPath(model.VideoFile.FileName);
-                            //var uploadedvideoFileURL = _azureStorageHelper.UploadAndPublishVideo(path);
+                           
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Video Upload is failed.");
@@ -3815,6 +3815,43 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
+                                //Start:Generate Thumbnail from Vedio
+                                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+
+                                using (var stream = new FileStream(path, FileMode.Create))
+                                {
+                                    await model.VideoFile.CopyToAsync(stream);
+                                }
+
+                                var inputFile = new MediaFile { Filename = path };
+                                string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
+                                var outputFile = new MediaFile { Filename = @outputFileName };
+
+                                using (var engine = new Engine())
+                                {
+                                    engine.GetMetadata(inputFile);
+                                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(4) };
+                                    if (!System.IO.File.Exists(outputFileName))
+                                        engine.GetThumbnail(inputFile, outputFile, options);
+                                }
+                                //End:Generate Thumbnail from Vedio
+                                using (var stream = System.IO.File.OpenRead(outputFileName))
+                                {
+                                    var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+                                    {
+                                        Headers = new HeaderDictionary(),
+                                        ContentType = "application/jpg"
+                                    };
+                                    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
+                                    var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                    var imageblob = containerRef.GetBlockBlobReference(outputFileName);
+                                    string uploadedImageFileURL = blob.Uri.ToString();
+                                    model.ThumbnailImage = uploadedImageFileURL;
+                                    System.IO.File.Delete(path);
+                                    System.IO.File.Delete(outputFileName);
+                                }
+                               
+
                                 model.VideoLink = uploadedvideoFileURL;
                             }
                         }
