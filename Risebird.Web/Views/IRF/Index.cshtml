@@ -141,14 +141,15 @@
         text-align: right;
     }
 
-   .card-blue .card-header {
+    .card-blue .card-header {
         padding: .5rem 1.25rem 0.3rem 1.25rem;
     }
 
-    .card-blue .card-header .btn-info, .card-blue .card-header  .btn-danger {
-        margin-top: 0px;
-        margin-bottom: 5px;
-    }
+        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
+            margin-top: 0px;
+            margin-bottom: 5px;
+        }
+
     .card-content-holder {
         background-color: white;
     }
@@ -268,16 +269,16 @@
             margin: 0;
         }
 
-            .card-blue .card-body {
-                margin: 0px;
-                padding: 12px 5px 10px 5px;
-            }
+        .card-blue .card-body {
+            margin: 0px;
+            padding: 12px 5px 10px 5px;
+        }
 
             .card-blue .card-body span {
                 color: #1b4775;
             }
 
-           
+
 
         .card-blue:hover {
             box-shadow: 0 0 25px #134e8c45;
@@ -286,6 +287,7 @@
     .card-header-buttons button.btn-danger {
         background: #FF3636 !important;
     }
+
     .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 25px 0px 0px;
         text-align: right;
@@ -310,7 +312,8 @@
         padding-bottom: 15px !important;
         color: #fff;
     }
-     .modal-wrap .modal-content {
+
+    .modal-wrap .modal-content {
         width: 690px;
         position: relative;
         background-color: #fefefe;
@@ -321,9 +324,11 @@
         font-size: 12px;
         margin-top: -53px;
     }
+
     .border-rv {
         border-right: 1px dotted #ccc;
     }
+
     .card label {
         font-size: 12px;
         margin-bottom: 5px;
@@ -332,7 +337,9 @@
     }
 
 
-    .modal-wrap .text-danger{margin:0px;}
+    .modal-wrap .text-danger {
+        margin: 0px;
+    }
 
     .modal-wrap input[type=button] {
         background: #4fa4fb !important;
@@ -352,11 +359,11 @@
     }
 
 
-        .modal-wrap input[type=button]:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-        }
+    .modal-wrap input[type=button]:hover {
+        background: #4fa4fb;
+        box-shadow: 0 4px #3884d2 !important;
+        top: 0px;
+    }
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -394,6 +401,8 @@
 
                                 <div class="pull-right">
                                     <div>
+                                        <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa-amazon " data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF" )'" data-original-title="Tooltip on top"> Interviewer Search</span></button>
+
                                         @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                         {
                                             <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
@@ -518,7 +527,7 @@
 
 
 
-                                                        
+
                                                     </div>
 
 
@@ -614,7 +623,7 @@
                                         @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                         {
                                             <div class="row">
-                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null? item.ScheduledMeetings : 0)
+                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
                                             </div> <br />
                                         }
 
@@ -738,14 +747,14 @@
                     <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
                     <span class="close" id="invoicePopUp">&times;</span>
                 </div>
-                <div class="modal-body" >
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 col-sm-6 border-rv">
                             <div class="form-group">
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
                                     Start Date
                                 </label>
-                                <div >
+                                <div>
                                     <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
                                     <label class="text-danger" id="stDate_Error" style="color:red"></label>
 
@@ -770,7 +779,7 @@
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
                                     SR Number
                                 </label>
-                                <div >
+                                <div>
                                     <input id="srNumberId" name="srNumberId" type="text" class="form-control">
                                     <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
@@ -782,7 +791,7 @@
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
                                     PO Number
                                 </label>
-                                <div >
+                                <div>
                                     <input id="poNumberId" name="poNumberId" type="text" class="form-control">
                                     <label class="text-danger" id="poNumber_Error" style="color:red"></label>
                                 </div>
@@ -795,7 +804,7 @@
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
                                     Request Number
                                 </label>
-                                <div >
+                                <div>
                                     <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
                                     <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
                                 </div>
@@ -806,7 +815,7 @@
                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
                                     Project Code
                                 </label>
-                                <div >
+                                <div>
                                     <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
                                     <label class="text-danger" id="projectCode_Error" style="color:red"></label>
                                 </div>
@@ -871,7 +880,7 @@
                         <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
                     </div>
                 </div>
-             
+
             </div>
 
         </div>
@@ -1101,7 +1110,7 @@
                 else if (result.dismiss === 'cancel') {
                     swal.fire(
                         'Cancelled',
-                        'IRF has not been paused! :)',
+                        'IRF has not been paused!',
                         'error'
                     )
                 }
@@ -1313,7 +1322,7 @@
                 console.log("local storge value is::" + value);
                 $(document).ready(function () {
                     $("#divTile").css({ "backgroundColor": tileColor });
-                    alert("Color Changed!!!!");
+
                 });
             }
 

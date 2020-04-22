@@ -17,6 +17,10 @@ using Risebird.CommonHelper;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.IO;
+using MediaToolkit.Model;
+using MediaToolkit;
+using MediaToolkit.Options;
+using Microsoft.AspNetCore.Http.Internal;
 
 namespace Risebird.Web.Controllers
 {
@@ -494,7 +498,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0);
                         if(filter.StartDate==null && filter.EndDate==null)
                         {
                             meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
@@ -629,7 +633,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x=> x.QCInterview >0);
                         if (filter.StartDate == null && filter.EndDate == null)
                         {
                             meetings = meetings.Where(x => x.interviewDate.Date >= DateTime.Now.Date.AddDays(-30)).ToList();
@@ -2216,7 +2220,7 @@ namespace Risebird.Web.Controllers
                     if (profileName == "Client")
                     {
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0);
                         if (HttpContext.Session.GetString("ClientSelectedMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("ClientSelectedMeetingsfilters"));
@@ -2535,7 +2539,7 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Client")
                     {
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid);
                         if (HttpContext.Session.GetString("AllPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("AllPriorityClientMeetingsfilters"));
@@ -3026,7 +3030,7 @@ namespace Risebird.Web.Controllers
                     {
 
                         var selectedMeeting = new List<MeetingVM>();
-                        var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                        var meetings = _meetingService.GetClientMeetingList(emailid).Where(x=> x.QCInterview >0);
                         if (HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                         {
                             var filter = JsonConvert.DeserializeObject<SelectedPriorityViewFilter>(HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters"));
@@ -3798,15 +3802,11 @@ namespace Risebird.Web.Controllers
 
                         if (model.VideoFile != null)
                         {
-                            // byte[] videofileData = new byte[model.VideoFile.Length];
-                            // string uploadedvideoFileURL = _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", videofileData);
                             await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", model.VideoFile);
                             var containerRef = _azureStorageHelper.GetCloudBlobContainer("videos");
                             var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
                             string uploadedvideoFileURL = blob.Uri.ToString();
-                            //string path = @"C:\Users\Admin\Desktop\RBVideoRandom.mp4";
-                            //var filePath = Path.GetFullPath(model.VideoFile.FileName);
-                            //var uploadedvideoFileURL = _azureStorageHelper.UploadAndPublishVideo(path);
+                           
                             if (uploadedvideoFileURL == null)
                             {
                                 ModelState.AddModelError(String.Empty, "Video Upload is failed.");
@@ -3815,6 +3815,43 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
+                                //Start:Generate Thumbnail from Vedio
+                                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+
+                                using (var stream = new FileStream(path, FileMode.Create))
+                                {
+                                    await model.VideoFile.CopyToAsync(stream);
+                                }
+
+                                var inputFile = new MediaFile { Filename = path };
+                                string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
+                                var outputFile = new MediaFile { Filename = @outputFileName };
+
+                                using (var engine = new Engine())
+                                {
+                                    engine.GetMetadata(inputFile);
+                                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(4) };
+                                    if (!System.IO.File.Exists(outputFileName))
+                                        engine.GetThumbnail(inputFile, outputFile, options);
+                                }
+                                //End:Generate Thumbnail from Vedio
+                                using (var stream = System.IO.File.OpenRead(outputFileName))
+                                {
+                                    var imagefile = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name))
+                                    {
+                                        Headers = new HeaderDictionary(),
+                                        ContentType = "application/jpg"
+                                    };
+                                    await _azureStorageHelper.InsertBlob(model.VideoFile.FileName, "videos", imagefile);
+                                    var containerImageRef = _azureStorageHelper.GetCloudBlobContainer("videos");
+                                    var imageblob = containerRef.GetBlockBlobReference(outputFileName);
+                                    string uploadedImageFileURL = blob.Uri.ToString();
+                                    model.ThumbnailImage = uploadedImageFileURL;
+                                    System.IO.File.Delete(path);
+                                    System.IO.File.Delete(outputFileName);
+                                }
+                               
+
                                 model.VideoLink = uploadedvideoFileURL;
                             }
                         }
@@ -4174,7 +4211,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var selectedMeeting = new List<MeetingVM>();
-                var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                var meetings = _meetingService.GetClientMeetingList(emailid);
 
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 foreach (var meeting in meetings)
@@ -4348,8 +4385,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
                         Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-                        Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        if (item.QCInterview > 0)
+                        {
+                            Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 8].Value = "";
+                        }
+                        if (!string.IsNullOrEmpty(item.VideoLink) && item.QCInterview >0)
                         {
                             try
                             {
@@ -4368,10 +4412,18 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
-                        Sheet.Cells[i, 11].Value = "Report Link";
-                        Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                        Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        if (item.QCInterview > 0)
+                        {
+                            Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+
+                            Sheet.Cells[i, 11].Value = "Report Link";
+                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 11].Value = "No Report";
+                        }
                         i++;
                     }
                     return File(Ep.GetAsByteArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
@@ -4506,8 +4558,15 @@ namespace Risebird.Web.Controllers
                         Sheet.Cells[i, 5].Value = item.JDTiltle.Split("|")[0];
                         Sheet.Cells[i, 6].Value = item.confirmationStatus;
                         Sheet.Cells[i, 7].Value = item.MeetingStatusDescription;
-                        Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
-                        if (!string.IsNullOrEmpty(item.VideoLink))
+                        if (item.QCInterview > 0)
+                        {
+                            Sheet.Cells[i, 8].Value = item.intervieweStatusStatDesc;
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 8].Value = "";
+                        }
+                        if (!string.IsNullOrEmpty(item.VideoLink) && item.QCInterview >0)
                         {
                             try
                             {
@@ -4526,10 +4585,17 @@ namespace Risebird.Web.Controllers
                             Sheet.Cells[i, 9].Value = "No Video";
                         }
                         Sheet.Cells[i, 10].Value = item.InterviewerComment;
-                        Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
-                        Sheet.Cells[i, 11].Value = "Report Link";
-                        Sheet.Cells[i, 11].Style.Font.UnderLine = true;
-                        Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        if ( item.QCInterview > 0)
+                        {
+                            Sheet.Cells[i, 11].Hyperlink = new Uri("https://portal.risebird.io/Interview/AddReport?interviewId=" + item.imid + "&irfId=" + item.irfIntId + "&isClient=" + true, UriKind.Absolute);
+                            Sheet.Cells[i, 11].Value = "Report Link";
+                            Sheet.Cells[i, 11].Style.Font.UnderLine = true;
+                            Sheet.Cells[i, 11].Style.Font.Color.SetColor(System.Drawing.Color.Blue);
+                        }
+                        else
+                        {
+                            Sheet.Cells[i, 11].Value = "No Report";
+                        }
                         if (!string.IsNullOrEmpty(item.resumeLink))
                         {
                             try
@@ -4594,7 +4660,7 @@ namespace Risebird.Web.Controllers
                 emailid = emailid.Replace("\"", "");
 
                 var selectedMeeting = new List<MeetingVM>();
-                var meetings = _meetingService.GetClientMeetingList(emailid);//_meetingService.GetClientMeetingList("aneel.tirumalasetty@mphasis.com")
+                var meetings = _meetingService.GetClientMeetingList(emailid).Where(x => x.QCInterview > 0);
                 meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
                 foreach (var meeting in meetings)
                 {

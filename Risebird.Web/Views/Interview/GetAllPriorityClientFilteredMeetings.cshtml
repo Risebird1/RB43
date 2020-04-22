@@ -88,9 +88,16 @@
             <td> @item.JDTiltle.Split("|")[0] </td>
             <td> @item.confirmationStatus</td>
             <td> @item.MeetingStatusStatusDesc</td>
-            <td> @item.intervieweStatusStatDesc</td>
-            <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-            @if (item.VideoLink != null && item.VideoLink != "")
+            @if (item.QCInterview > 0)
+            {
+                <td> @item.intervieweStatusStatDesc</td>
+                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+            }
+            else
+            {
+                <td>No Report</td>
+            }
+            @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
             {
                 <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
             }
