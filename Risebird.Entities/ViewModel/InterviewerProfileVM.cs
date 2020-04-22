@@ -36,10 +36,16 @@ namespace Risebird.Entities.ViewModel
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$",
         ErrorMessage = "Please Enter Correct Email Address")]
         public string AltEmailId { get; set; }
-
-        [Display(Name = "Current Location")]
-        public string Location { get; set; }
-
+        [Display(Name = "Date Of Birth")]
+        public DateTime DOB { get; set; }
+        [Display(Name = "Gender")]
+        public string Gender { get; set; }
+        [Display(Name = "Annual Salary")]
+        public int AnnualSalary { get; set; }
+        [Display(Name = "Country")]
+        public string Country { get; set; }
+        [Display(Name = "Current City")]
+        public string City { get; set; }
         [Display(Name = "Mobile Number")]
         [Required(ErrorMessage ="Please enter Mobile Number")]
         public string MobileNumber { get; set; }
@@ -70,6 +76,14 @@ namespace Risebird.Entities.ViewModel
         public IFormFile CodedResumeFile { get; set; }
 
         public string CodedResumeLink { get; set; }
+        [Display(Name = "GitHub Link")]
+        public string GitHubLink { get; set; }
+        [Display(Name = "StackOverflow Link")]
+        public string StackOverflowLink { get; set; }
+        [Display(Name = "Linkedin Link")]
+        public string LinkedinLink { get; set; }
+        [Display(Name = "Blog Link")]
+        public string Blog { get; set; }
 
         [Display(Name = "Lead Interviewer")]
         public bool IsLeadInterviewer { get; set; }
@@ -103,27 +117,21 @@ namespace Risebird.Entities.ViewModel
         // To add the below fields used in View to display label and Validation
 
         [Display(Name = "Company Type")]
-        [Required]
         public string CompanyType { get; set; }
 
         [Display(Name = "Level")]
-        [Required]
         public string Level { get; set; }
 
         [Display(Name = "Graduation Type")]
-        [Required]
         public string GraduationType { get; set; }
 
         [Display(Name = "College Type")]
-        [Required]
         public string CollegeType { get; set; }
 
         [Display(Name = "Day Time Slot")]
-        [Required]
         public string DayTimeSlot { get; set; }
 
         [Display(Name = "Day Slot")]
-        [Required]
         public string DaySlot { get; set; }
     }
 }

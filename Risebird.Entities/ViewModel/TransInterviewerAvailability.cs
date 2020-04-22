@@ -9,12 +9,8 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public int InterviewerProfileId { get; set; }
-        public string DayTimeSlot { get; set; }
-        public string DaySlot { get; set; }
-        [DataType(DataType.Time)]
-        public DateTime? StartTime { get; set; }
-        [DataType(DataType.Time)]
-        public DateTime? EndTime { get; set; }
-
+        public string Weekday { get; set; }
+        public string Weekend { get; set; }
+        public bool IsAvailableOnPublicHolidays { get; set; }
     }
 }

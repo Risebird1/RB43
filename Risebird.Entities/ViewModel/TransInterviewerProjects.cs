@@ -9,13 +9,10 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public int InterviewerProfileId { get; set; }
-        public string ProjectName { get; set; }
-        public string ClientName { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? StartDate { get; set; }
-        [DataType(DataType.Date)]
-        public DateTime? EndDate { get; set; }
-        public string Role { get; set; }
-        public string ProjectDescriptions { get; set; }
+        public string TechnologyEnvironment { get; set; }
+        public bool IsPrimarySkillUsed { get; set; }
+        public string Description { get; set; }
+        public bool IsCommercialProject { get; set; }
+        public string NatureOfProject { get; set; }
     }
 }
