@@ -553,7 +553,14 @@
         background-color: #53a5f5;
     }
 
-
+    .video-card-list .video-card-body .video-title a {
+        text-transform: capitalize;
+    }
+    .fa-calendar-alt {
+        color: #606060;
+        font-weight: 600;
+        font-size: 12px;
+    }
 </style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
@@ -994,7 +1001,7 @@
                                                         }
                                                      
                                                     <h1 class="title style-scope name-video-primary-info-renderer">
-                                                        @Model.candidateName <span style="    color: #606060;
+                                                        @Model.candidateName <span style="   color: #606060;
     font-weight: 500;
     font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 600;padding-top:-50px">@Model.interviewDate</span>
                                                        </h1>
@@ -1022,7 +1029,9 @@
 
                                                                 }
                                                             </div>
-                                                            <div class="col-md-4" style="    text-align: end;margin-top: -30px;">
+                                                            <div class="col-md-4" style="        text-align: end;
+        margin-top: -30px;
+">
 
                                                             </div>
                                                             <div class="col-md-4" style="text-align: end; margin-top: -30px;">
@@ -1749,7 +1758,7 @@
                                                                                 <div class="video-title">
                                                                                     <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
-                                                                                   <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                                   <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
                                                                                 <div class="video-page text-success">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
@@ -2889,15 +2898,15 @@
                             data: { vedioid: $("#txtVedioId").val() },
                             success: function (data) {
                                 var html = '';
-                                html += ' <ul class="posts" style="height:200px;overflow-y:auto;padding-left:20px">';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" style="height:200px;overflow-y:auto;padding-left:20px">';
                                 for (var i = 0; i < data.length; i++) {
 
                                     html += '                <li>';
-                                    html += '       <b>' + data[i].userName + ' </b>:-' + data[i].comment;
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message "> ' + data[i].comment;  '</div>'
                                     html += '    </li>';
                                 }
 
-                                html += '    </ul>';
+                                html += '    </ul></div></div>';
                                 $("#divcomments").empty().html(html);
                             }
                         });
