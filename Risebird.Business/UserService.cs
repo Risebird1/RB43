@@ -13,14 +13,14 @@ namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;        
+        private IUserRepository _userRepository;
         private IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
-    }
+        }
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
         {
@@ -137,7 +137,7 @@ namespace Risebird.Business
                     return clientUser.Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
@@ -151,7 +151,7 @@ namespace Risebird.Business
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
-            catch(Exception e)
+            catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -275,7 +275,7 @@ namespace Risebird.Business
                 IEnumerable<InterviewerProfileVM> ProfileList = _userRepository.GetInterviewerProfileById(interviewerProfile.UserId).Result;
                 InterviewerProfileVM Profile = ProfileList.ToList().FirstOrDefault();
 
-                if(Profile == null)
+                if (Profile == null)
                 {
                     //Add Method
                     return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
@@ -420,7 +420,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.GetResumeEvaluator(id);               
+                return _userRepository.GetResumeEvaluator(id);
             }
 
             catch (Exception e)
@@ -465,7 +465,7 @@ namespace Risebird.Business
                 if (_userRepository.GetRecruiters() != null)
                     return _userRepository.GetRecruiters().ToList();
                 else
-                   return new List<Recruiter>(); 
+                    return new List<Recruiter>();
             }
             catch (Exception e)
             {
@@ -564,38 +564,31 @@ namespace Risebird.Business
             {
                 var interviewerProfile = _userRepository.GetInterviewerProfileById(userid).Result;
                 InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
-                
-                if (ProfileModel == null)
-                {
-                    return new InterviewerProfileVM();
-                }
-                else
-                {
-                    int ProfileId = ProfileModel.id;
 
-                    // Get all the List from DB
+                int ProfileId = ProfileModel.id;
 
-                    List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
-                    List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
-                    List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
-                    List<TransInterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
-                    List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
-                    List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
-                    List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
-                    
-                    // Assign the Lists to model
+                // Get all the List from DB
 
-                    ProfileModel.InterviewerSkill = SkillList;
-                    ProfileModel.InterviewerCertificateDetails = CertificateList;
-                    ProfileModel.InterviewerEducationDetails = EducationList;
-                    ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
-                    ProfileModel.InterviewerProjectsDetails = ProjectsList;
-                    ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
-                    ProfileModel.InterviewerAccDetails = AccDetailsList;
+                List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
+                List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
+                List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
+                List<TransInterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
+                List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
+                List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
+                List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
 
-                    return ProfileModel;
-                }
-            
+                // Assign the Lists to model
+
+                ProfileModel.InterviewerSkill = SkillList;
+                ProfileModel.InterviewerCertificateDetails = CertificateList;
+                ProfileModel.InterviewerEducationDetails = EducationList;
+                ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
+                ProfileModel.InterviewerProjectsDetails = ProjectsList;
+                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+                ProfileModel.InterviewerAccDetails = AccDetailsList;
+
+                return ProfileModel;
+
             }
             catch (Exception e)
             {

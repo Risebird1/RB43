@@ -779,16 +779,13 @@ namespace Risebird.Web.Controllers
         #region Interviewer Profile Functions
 
         [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile(int userId)
+        public async Task<IActionResult> AddInterviewerProfile()
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    // Call Add Or edit 
-                    InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
-                    model.UserId = userId;
-
+                    InterviewerProfileVM model = new InterviewerProfileVM();
                     // Get all the select Lists
                     GetAllSelectList(model);
 
@@ -816,8 +813,6 @@ namespace Risebird.Web.Controllers
                 {
                     string uploadedFileURL = string.Empty;
 
-                    // Need to add here property to add link to coded resume link
-                    // Need to see how to add coded resume and then see How to add that in error also
                     if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
                     {
                         if (interviewerProfile.ResumeFile != null)
@@ -838,31 +833,26 @@ namespace Risebird.Web.Controllers
                             interviewerProfile.CodedResumeLink = uploadedFileURL;
                         }
                     }
-                    
-                    if ((interviewerProfile.CodedResumeLink == null || interviewerProfile.CodedResumeLink == string.Empty) &&
-                                        ( interviewerProfile.ResumeLink == null || interviewerProfile.ResumeLink == string.Empty))
+                    else
                     {
-                        ModelState.AddModelError("ResumeLink", "Adding Interviewer Profile has Failed. Resume not added successfully");
-                        InterviewerProfileVM model = _userService.GetInterviewerProfileById(interviewerProfile.UserId);
-                        model.UserId = interviewerProfile.UserId;
+                        ModelState.AddModelError("ResumeLink", "Please add a Resume File");
+                        InterviewerProfileVM model = new InterviewerProfileVM();
                         // Get all the select Lists
                         GetAllSelectList(model);
                         return View("AddInterviewerProfile", model);
                     }
+
+                    if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+                        return RedirectToAction("Interviewers");
+                    }
                     else
                     {
-                        
-                        if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
-                        {
-                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
-                            return RedirectToAction("Interviewers");
-                        }
-                        else
-                        {
-                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                            return RedirectToAction("Interviewers");
-                        }
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("Interviewers");
                     }
+
                 }
                 else
                 {
@@ -877,6 +867,86 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditInterviewerProfile(int userId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
+                    // Get all the select Lists
+                    GetAllSelectList(model);
+
+                    return View("AddInterviewerProfile", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    string uploadedFileURL = string.Empty;
+
+                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                    {
+                        if (interviewerProfile.ResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.ResumeLink = uploadedFileURL;
+
+                        }
+                        else if (interviewerProfile.CodedResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.CodedResumeLink = uploadedFileURL;
+                        }
+                    }
+
+                    if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+                        return RedirectToAction("Interviewers");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("Interviewers");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
         private void GetAllSelectList(InterviewerProfileVM model)
         {
             model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");

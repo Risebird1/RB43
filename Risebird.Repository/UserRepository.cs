@@ -534,6 +534,7 @@ namespace Risebird.Repository
                     //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                     //   commandType: CommandType.StoredProcedure);
                     //int ProfileId = result.FirstOrDefault();
+                    
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
