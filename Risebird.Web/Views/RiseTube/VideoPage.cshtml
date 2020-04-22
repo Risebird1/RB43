@@ -573,7 +573,7 @@
                                                                 color: black;
                                                             }
                                                         </style>
-                                                        <h1 class="title style-scope name-video-primary-info-renderer">@Model.candidateName &nbsp;(@Model.JDTiltle.Split("|")[0])</h1>
+                                                        <h1 class="title style-scope name-video-primary-info-renderer"> @Model.candidateName &nbsp;(@Model.JDTiltle.Split("|")[0]) &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;padding-top:-50px">@Model.interviewDate</span></h1> 
 
                                                         <div class="row">
                                                             <div class="k" style="margin-top: -30px;">
@@ -1217,11 +1217,10 @@
                                                                 <div class="container">
                                                                     <form>
                                                                         <div class="form-group">
-                                                                            <input type="text" class="form-control status-box" id="txtComment" placeholder="Enter your comment here..." style="border-color:darkblue" />
+                                                                            <textarea class="form-control status-box" rows="1" id="txtComment" placeholder="Enter your comment here..." style="border-color:darkblue"></textarea>
                                                                         </div>
                                                                     </form>
                                                                     <div class="button-group pull-right">
-                                                                        <p class="counter"> 450</p>
                                                                         <a href="#" class="btn btn-primary" id="btnComment">Save</a>
                                                                     </div>
                                                                     <div id="divcomments">
@@ -1291,18 +1290,115 @@
 
                                                                                 @*<div class="time">3:50</div>*@
                                                                             </div>
-                                                                            <div class="video-card-body">
+                                                                                <div class="video-card-body">
 
-                                                                                <div class="video-title">
-                                                                                    <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+                                                                            <div class="video-title">
+                                                                                <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
-                                                                                    &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
-                                                                                </div>
-                                                                                <div class="video-page text-success">
-                                                                                    @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
-                                                                                </div>
-
+                                                                                &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                     </div>
+                                                                            <div class="video-page text-success">
+                                                                                @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
                                                                             </div>
+                                                                            <div class="video-view">
+                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@videolist.interviewDate</span>
+                                                                                <div class="single-video-title box mb-3">
+                                                                                   
+
+                                                                                </div>
+
+
+                                                                                <script>
+
+                                                                                    jQuery(document).ready(function ($) {
+
+                                                                                        $("#btnComment").on('click', function () {
+                                                                                            if ($("#txtComment").val().trim() != "") {
+                                                                                                $.ajax({
+                                                                                                    type: "POST",
+                                                                                                    url: "/RiseTube/VedioComment",
+                                                                                                    data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
+                                                                                                    success: function (response) {
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                        $('#btnSearch').on('click', function () {
+                                                                                            if ($(this).attr('data-click-state') == 1) {
+                                                                                                $(this).attr('data-click-state', 0);
+                                                                                                $(this).css('background-color', 'blue');
+                                                                                                $(this).val('Share');
+                                                                                                $.ajax({
+                                                                                                    type: "POST",
+                                                                                                    url: "/RiseTube/VedioShare",
+                                                                                                    data: { value: "Private", vedioid: $("#txtVedioId").val() },
+                                                                                                    success: function (data) {
+
+                                                                                                    }
+                                                                                                });
+
+                                                                                            }
+                                                                                            else {
+                                                                                                $(this).attr('data-click-state', 1);
+                                                                                                $(this).css('background-color', 'green');
+                                                                                                $(this).val('Shared');
+                                                                                                $.ajax({
+                                                                                                    type: "POST",
+                                                                                                    url: "/RiseTube/VedioShare",
+                                                                                                    data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                                                                                                    success: function (data) {
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                        $('#toggle-click').on('click', function () {
+                                                                                            if ($(this).attr('data-click-state') == 1) {
+                                                                                                $(this).attr('data-click-state', 0);
+
+
+                                                                                            }
+                                                                                            else {
+                                                                                                $(this).attr('data-click-state', 1);
+                                                                                                $(this).css('color', 'blue');
+                                                                                                $('#toggle-click1').css('color', 'black');
+                                                                                                $.ajax({
+                                                                                                    type: "POST",
+                                                                                                    url: "/RiseTube/VedioLike",
+                                                                                                    data: { value: "Liked", vedioid: $("#txtVedioId").val() },
+                                                                                                    success: function (data) {
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                        $('#toggle-click1').on('click', function () {
+                                                                                            if ($(this).attr('data-click-state') == 1) {
+                                                                                                $(this).attr('data-click-state', 0);
+
+
+
+                                                                                            }
+                                                                                            else {
+                                                                                                $(this).attr('data-click-state', 1);
+                                                                                                $(this).css('color', 'blue');
+                                                                                                $('#toggle-click').css('color', 'black');
+                                                                                                $.ajax({
+                                                                                                    type: "POST",
+                                                                                                    url: "/RiseTube/VedioLike",
+                                                                                                    data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
+                                                                                                    success: function (data) {
+
+                                                                                                    }
+                                                                                                });
+                                                                                            }
+                                                                                        });
+                                                                                    });
+
+                                                                                    /**/</script>
+                                                                            </div>
+                                                                        </div>
                                                                         </div>
 
                                                                     }
