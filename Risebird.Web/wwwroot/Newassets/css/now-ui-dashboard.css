@@ -7389,7 +7389,7 @@ Created using IcoMoon - icomoon.io
 
 
 .card .card-header h4.card-title {
-    font-size:28px;
+    font-size:26px;
     text-transform: none;
 }
 
@@ -10765,7 +10765,21 @@ select.selectpicker {
 .dataTables_length select:focus {
     border-color: #4a93de;
 }
+.video-choose {
+    position: relative;
+    top: -28px;
+}
 
+
+.table-responsive-sm .table > thead > tr > th{font-size:13px;}
+.trash-btn {
+    background: #d20505 !important;
+}
+
+.click {
+    color: #53a5f5;
+    text-decoration: underline;
+}
 #dupmeeting_filter input {
     outline: none;
 }
@@ -10852,6 +10866,7 @@ select.selectpicker {
     border-top-right-radius: 13px;
     border-bottom-right-radius: 13px;
 }
+/*
 .talk-bubble {
     display: inline-block;
     position: relative;
@@ -10880,7 +10895,7 @@ select.selectpicker {
 
 
 
-/* Right triangle placed top left flush. */
+
 .tri-right.border.left-top:before {
     content: ' ';
     position: absolute;
@@ -10907,7 +10922,7 @@ select.selectpicker {
     border-color: #eff7ff transparent transparent transparent;
 }
 
-/* Right triangle, left side slightly down */
+
 .tri-right.border.left-in:before {
     content: ' ';
     position: absolute;
@@ -10934,7 +10949,7 @@ select.selectpicker {
     border-color: #eff7ff transparent transparent #eff7ff;
 }
 
-/*Right triangle, placed bottom left side slightly in*/
+
 .tri-right.border.btm-left:before {
     content: ' ';
     position: absolute;
@@ -10961,7 +10976,7 @@ select.selectpicker {
     border-color: transparent transparent transparent #eff7ff;
 }
 
-/*Right triangle, placed bottom left side slightly in*/
+
 .tri-right.border.btm-left-in:before {
     content: ' ';
     position: absolute;
@@ -10988,7 +11003,7 @@ select.selectpicker {
     border-color: #eff7ff transparent transparent #eff7ff;
 }
 
-/*Right triangle, placed bottom right side slightly in*/
+
 .tri-right.border.btm-right-in:before {
     content: ' ';
     position: absolute;
@@ -11037,7 +11052,7 @@ select.selectpicker {
     border-color: #eff7ff #eff7ff transparent transparent;
 }
 
-/* Right triangle, right side slightly down*/
+
 .tri-right.border.right-in:before {
     content: ' ';
     position: absolute;
@@ -11064,7 +11079,7 @@ select.selectpicker {
     border-color: #eff7ff transparent transparent #eff7ff;
 }
 
-/* Right triangle placed top right flush. */
+
 .tri-right.border.right-top:before {
     content: ' ';
     position: absolute;
@@ -11089,10 +11104,10 @@ select.selectpicker {
     bottom: auto;
     border: 20px solid;
     border-color: #eff7ff transparent transparent transparent;
-}
+}*/
 
 
-/* talk bubble contents */
+
 .talktext {
     padding: 8px 8px 4px 8px;
     text-align: left;
@@ -11151,11 +11166,7 @@ button {
 textarea:focus {
     outline: 0;
 }
-#QuestionsTable {
-  width:98.5%;
-margin:0px auto;
- 
-}
+
 
 #meeting_length label {
     font-size: 14px;
@@ -11223,11 +11234,11 @@ margin:0px auto;
 
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #fff !important;
+ 
 }
 
 .table-striped tbody tr:nth-of-type(even) {
-    background-color: rgb(233,247,247,0.2)!important;
+ 
 }
 
 table.dataTable thead .sorting:after {
@@ -11415,6 +11426,11 @@ div.dataTables_scrollFoot table {
             padding: 0px 0px 0px 0px !important;
             text-align: center !important;
         }
+
+        .video-choose {
+            position: relative;
+            top: -16px;
+        }
         .dataTables_wrapper .collapsed .child .child {
             padding-left: 10px !important;
         }
@@ -11456,6 +11472,9 @@ div.dataTables_scrollFoot table {
      
         .border-rv {
             border: none!important;
+        }
+        .mc-button-area{
+            text-align:center!important;
         }
 
         .modal-wrap .modal-content {

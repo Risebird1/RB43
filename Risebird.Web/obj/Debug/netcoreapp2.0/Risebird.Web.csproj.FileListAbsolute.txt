@@ -245,11 +245,11 @@ C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebi
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csprojAssemblyReference.cache
-C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
-C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.genruntimeconfig.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CoreCompileInputs.cache
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
