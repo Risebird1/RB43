@@ -48,8 +48,253 @@
     .pagination-container {
         float: right !important;
     }
-</style>
-<style>
+
+
+
+
+
+    #myForm input {
+        outline: none;
+    }
+
+    #myForm input[type=email] {
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+        font-family: inherit;
+        font-size: 100%;
+    }
+
+    #myForm input::-webkit-search-decoration,
+    #myForm input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+
+        #myForm input[type=email] {
+            background: #fff;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 20px;
+            width: 265px;
+            font-family: arial;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+            float: left;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 0em;
+            border-bottom-right-radius: 0em;
+        }
+
+            #myForm input[type=email]:focus {
+                width: 280px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 0px;
+                -webkit-box-shadow: 0 0 3px #4a93de;
+                -moz-box-shadow: 0 0 3px #4a93de;
+                box-shadow: 0 0 3px #4a93de;
+            }
+
+
+    #myForm input:-moz-placeholder {
+        color: #999;
+    }
+
+    #myForm input::-webkit-input-placeholder {
+        color: #999;
+    }
+    #myForm .searchbox{margin-right:10px;}
+    #myForm .searchbox .input-group-btn {
+        float: left;
+        padding: 0;
+        margin: 0px 0px 0px 0px;
+    }
+        #myForm .searchbox .input-group-btn .btn {
+            background: #53a5f5; 
+            padding: 5px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            margin: 0;
+            border: 1px #53a5f5 solid;
+        }
+
+
+      .newsletter .input-group {
+            margin-bottom:0px;
+        }
+
+
+    .video-block{
+  margin-top:15px;
+
+    }
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 50px;
+        background: none !important;
+    }
+
+
+
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+
+
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: 500;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+
+
+
+
     .caret {
         display: none !important;
     }
@@ -63,9 +308,23 @@
     }
 
     .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke !important;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .dropdown-toggle::after {
+            color: rgba(0, 0, 0, 0.29);
+            position: absolute;
+            right: 30px;
+            top: 14px;
+        }
+
+    .mdc-card button.dropdown-toggle:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
     #StartDate, #EndDate {
@@ -76,82 +335,17 @@
         padding-top: 10px;
     }
 
-    .buttons {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 20px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
+    .modal .form-group {
+        margin-bottom: 10px;
     }
 
-        .buttons:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
+        .modal .form-group .btn {
+            margin: 0px;
         }
 
-    .button-2 {
-        background: #4fa4fb;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2;
-        -moz-box-shadow: 0 3px #3884d2;
-        box-shadow: 0 3px #3884d2;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-    }
-
-    .button-2b {
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-        .button-2b:hover {
-            box-shadow: 0 4px #3884d2;
-            top: 0px;
-        }
-
-        .button-2b:active {
-            outline: 0;
-            border: 0;
-        }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        color: #fff !important;
-    }
-
-    .modal-title {
-        color: #fff !important;
-    }
-</style>
-<style>
     .newsletter {
-        padding: 40px 0;
+        padding: 0;
+        float:left;
     }
 
 
@@ -169,29 +363,22 @@
         z-index: 2;
     }
 
-        .newsletter .content h2 {
-            color: #243c4f;
-            margin-bottom: 40px;
-        }
+    .newsletter .video-title span {
+        color: #606060;
+        font-weight: 500;
+        
+        font-size: 13px;
+    }
+    .video-block .video-title {
+        margin-bottom: 5px;
+        min-height: 40px;
+    }
 
-        .newsletter .content .form-control {
-            height: 50px;
-            border-color: black;
-            border-radius: 0;
-        }
-            .newsletter .content.form-control:focus {
-                box-shadow: none;
-                border: 2px solid #243c4f;
-            }
 
-        .newsletter .content .btn {
-            min-height: 50px;
-            border-radius: 0;
-            background: #4fa4fb;
-            color: #fff;
-            font-weight: 600;
-            width: 100px
-        }
+    .video-block .main-title > h6 {
+        margin: 0px 0 16px;
+        font-size: 15px;
+    }
 </style>
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
@@ -200,6 +387,11 @@
 <!-- Owl Carousel -->
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.carousel.css">
 <link rel="stylesheet" href="~/RiseTube/vendor/owl-carousel/owl.theme.css">
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -213,7 +405,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">RiseTube</a>
+                <a class="navbar-brand"></a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -225,20 +417,81 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+   
+    <div class="content video">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        @*<h4 class="card-title">RiseTube</h4>*@
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
                             <div class="row">
-                                <div class="col-md-7" style="margin-left:70px">
+
+
+
+                                <div class="card-header">
+                                    <div class="pull-left"> <h4 class="card-title">RiseTube</h4></div>
+
+                                    <div class="pull-right">
+                                        <div>
+                                            <div class="newsletter">
+
+                                                <div class="content">
+                                                    <div class="input-group" id="myForm">
+                                                        <div class="searchbox">
+                                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control" placeholder="Please enter Skills (or) Name Of candidate">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded"  data-toggle="modal" data-target="#filterModal">
+
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                            </button>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <!--  <div class="card-header">
+                                    <div class="pull-left">
+                                        <h4 class="card-title">RiseTube</h4>
+                                        </div>
+
+
+
+
+                                         <div class="col-md-7" style="margin-left:70px">
                                     <section class="newsletter">
                                         <div class="container">
                                             <div class="row">
@@ -257,20 +510,40 @@
                                     </section>
 
                                 </div>
-                                <div class="col-md-3 ml-md-auto">
-                                    <div class="form-group">
 
-                                    </div>
-                                </div>
                                 <div class="col-auto">
                                     <button type="button" class="buttons button-2 button-2b " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;">  Filter </font></span></button>
                                 </div>
+
+
+
+
+                                    </div>
+
+
+
+                                  -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             </div>
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel"> Filter</h5>
+                                            <h5 class="modal-title" id="filterModalLabel" style="color:#fff;"> Filter</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -467,8 +740,27 @@
                                                             <div class="row">
                                                                 <div class="col-md-12 col-sm-12">
 
-                                                                    <button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="buttons button-2 button-2b">Reset Filter</button>
-                                                                    <button type="submit" style="margin-top: 40px; float:right" class="buttons button-2 button-2b">Apply Filter</button>
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+                                                                    <!--<button type="button" id="ResetFilter" style="float:right;margin-top: 39px;" class="buttons button-2 button-2b">Reset Filter</button>-->
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
+
+
+
+
+
+
+
+                                                                    <!--  <button type="submit" style="margin-top: 40px; float:right" class="buttons button-2 button-2b">Apply Filter</button>-->
                                                                 </div>
 
                                                             </div>
@@ -493,7 +785,7 @@
                                 </div>
 
                             </div>
-                            <hr>
+                        
                             <div class="video-block section-padding" id="VideoList">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -528,7 +820,10 @@
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
 
-                                                        &nbsp; <span style="color: #6c757d;font-weight: 600;">(@item.JDTiltle.Split("|")[0])</span>
+                                                      <span style="  color: #606060;
+        font-weight: 500;
+        
+        font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -536,7 +831,10 @@
 
                                                     </div>
                                                     <div class="video-view">
-                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@item.interviewDate</span>
+                                                        &nbsp;<i style="    font-size: 14px;
+    color: #888888;" class="fas fa-calendar-alt"></i> <span style="color: #606060;
+    font-weight: 600;
+    font-size: 12px;">@item.interviewDate</span>
                                                     </div>
                                                 </div>
                                             </div>

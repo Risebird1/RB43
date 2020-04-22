@@ -7376,20 +7376,21 @@ Created using IcoMoon - icomoon.io
         }
 
     .card .card-header {
-        padding: 0px 0px 0;
+        padding: 0px 0px 5px 0;
         border: 0;
         border-bottom: 1px dashed #dcd0d0;
         margin: 0px 20px;
         width: calc(100% - 40px);
     }
-
-.stats .card-body .card.card-chart .card-header {
-    border: none;
-}
+     
+      
+        .stats .card-body .card.card-chart .card-header {
+            border: none;
+        }
 
 
 .card .card-header h4.card-title {
-    font-size:26px;
+    font-size:25px;
     text-transform: none;
 }
 
@@ -10843,11 +10844,7 @@ select.selectpicker {
     display: inline-block;
 }
 
-    .btn-call .fa {
-        color: #fff;
-        font-size: 17px;
-        padding: 6px;
-    }
+  
 
 .call i {
     color: #fff
@@ -11106,9 +11103,10 @@ select.selectpicker {
     border-color: #eff7ff transparent transparent transparent;
 }*/
 
-
-
-.talktext {
+.talk-bubble textarea {
+    font-size:13px;
+}
+    .talktext {
     padding: 8px 8px 4px 8px;
     text-align: left;
     line-height: 1.5em;
@@ -15181,9 +15179,9 @@ be a descendant of the grid when it is being dragged.
             display: block;
             position: relative;
             width: 22px;
-            height: 1px;
+            height: 2px;
             border-radius: 1px;
-            background: #FFFFFF;
+            background: #53a5f5;
         }
 
             .navbar-toggler-bar + .navbar-toggler-bar {
