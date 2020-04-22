@@ -25,6 +25,8 @@ ELSE
 BEGIN
 Insert into RisetubeVideoLike values(@Id,@VedioId, @isLiked) 
 END
+Select (Select count(*) from RisetubeVideoLike where IsLike='Liked' and InterviewId=@VedioId) as TotalVedioLike,(Select count(*) from RisetubeVideoLike where IsLike='Disliked' and InterviewId=@VedioId) as TotalVedioDisLike
+
 END
 
 
