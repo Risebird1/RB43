@@ -43,8 +43,30 @@
         overflow-x: hidden;
         overflow-y: scroll;
     }
-</style>
-<style>
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #style-2 {
+        height: 1000px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    textarea::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: var(--mdc-theme-primary, #018786) !important;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
+    }
+
     .caret {
         display: none !important;
     }
@@ -58,9 +80,23 @@
     }
 
     .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke !important;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .dropdown-toggle::after {
+            color: rgba(0, 0, 0, 0.29);
+            position: absolute;
+            right: 30px;
+            top: 14px;
+        }
+
+    .mdc-card button.dropdown-toggle:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
     #StartDate, #EndDate {
@@ -71,87 +107,467 @@
         padding-top: 10px;
     }
 
-    .buttons {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 20px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
+    .modal .form-group {
+        margin-bottom: 10px;
+    }
+
+        .modal .form-group .btn {
+            margin: 0px;
+        }
+
+
+    .video-block .video-title {
+        margin-bottom: 5px;
+        min-height: 40px;
+    }
+
+
+    .video-block .main-title > h6 {
+        margin: 0px 0 16px;
+        font-size: 15px;
+    }
+
+
+    #myForm input {
         outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
     }
 
-        .buttons:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
+        #myForm input[type=email] {
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+            font-family: inherit;
+            font-size: 100%;
         }
 
-    .button-2 {
-        background: #4fa4fb;
+        #myForm input::-webkit-search-decoration,
+        #myForm input::-webkit-search-cancel-button {
+            display: none;
+        }
+
+
+        #myForm input[type=email] {
+            background: #fff;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 20px;
+            width: 265px;
+            font-family: arial;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+            float: left;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            border-top-right-radius: 0em;
+            border-bottom-right-radius: 0em;
+        }
+
+            #myForm input[type=email]:focus {
+                width: 280px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 0px;
+                -webkit-box-shadow: 0 0 3px #4a93de;
+                -moz-box-shadow: 0 0 3px #4a93de;
+                box-shadow: 0 0 3px #4a93de;
+            }
+
+
+        #myForm input:-moz-placeholder {
+            color: #999;
+        }
+
+        #myForm input::-webkit-input-placeholder {
+            color: #999;
+        }
+
+    #myForm .searchbox {
+        margin-right: 10px;
+    }
+
+        #myForm .searchbox .input-group-btn {
+            float: left;
+            padding: 0;
+            margin: 0px 0px 0px 0px;
+        }
+
+            #myForm .searchbox .input-group-btn .btn {
+                background: #53a5f5;
+                padding: 5px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                margin: 0;
+                border: 1px #53a5f5 solid;
+            }
+
+
+    .newsletter .input-group {
+        margin-bottom: 0px;
+    }
+
+
+    .video-block {
+        margin-top: 15px;
+    }
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 50px;
+        background: none !important;
+    }
+
+
+
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+
+
+    #resumeId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
         color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2;
-        -moz-box-shadow: 0 3px #3884d2;
-        box-shadow: 0 3px #3884d2;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
     }
 
-    .button-2b {
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
+
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
     }
 
-        .button-2b:hover {
-            box-shadow: 0 4px #3884d2;
-            top: 0px;
-        }
 
-        .button-2b:active {
-            outline: 0;
-            border: 0;
-        }
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
 
     .border-rv {
         border-right: 1px dotted #ccc;
     }
 
-    .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        color: #fff !important;
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: 500;
     }
 
-    .modal-title {
-        color: #fff !important;
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
     }
 
-    .modal-wrap button {
-        margin: 0px;
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
     }
 
-    .modal-wrap .form-group {
-        margin-bottom: 8px;
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+    .title.name-video-primary-info-renderer {
+        display: block;
+        max-height: 2.8rem;
+        overflow: hidden;
+        font-size: 1.0rem;
+        font-weight: 600;
+        line-height: 2.4rem;
+        color: black;
+    }
+
+    .card-text {
+        text-align: left;
+        background: #e3e3e37a;
+        padding: 5px 10px;
+        font-size: 15px;
+    }
+
+    .chart-box {
+        border: 1px #cccccc94 solid;
+    }
+
+    .single-video-left .comment-area textarea {
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        min-height: 50px;
+        border: 0;
+        border-left: 3px solid transparent;
+        background-color: #EEE;
+        padding: 10px 10px 10px 10px;
+        transition: .65s ease;
+        font-size: 15px;
+    }
+
+
+        .single-video-left .comment-area textarea:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+    .card-text-label {
+        font-size: 14px !important;
+    }
+
+    .comment-area textarea {
+        width:89%;
+        float:left
+    }
+
+    .comment-area .mdc-button--raised{
+    padding: 24px 16px;
+    background-color: #fff;
+    font-size: 15px;
+    text-decoration: none;
+
+    line-height: 1.5;
+    transition: 0.65s ease;
+    }
+
+
+
+
+            .chat .chat-history .message-data {
+                margin-bottom: 15px;
+            }
+
+            .chat .chat-history .message-data-time {
+                color: #a8aab1;
+                padding-left: 6px;
+            }
+
+            .chat .chat-history .message {
+                color: white;
+                padding: 18px 20px;
+                line-height: 26px;
+                font-size: 16px;
+                border-radius: 7px;
+                margin-bottom: 10px;
+                width: 60%;
+                position: relative;
+            }
+
+                .chat .chat-history .message:after {
+                    bottom: 100%;
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                    border-bottom-color: #c9e8fc;
+                    border-width: 10px;
+                    margin-left: -10px;
+                }
+
+    .chat .chat-history .my-message {
+        background: #53a5f540;
+        color: #093552;
+    }
+
+    .chat .chat-history li:nth-child(even) .my-message {
+        float: right;
+        background: #9cbddc4d;
+    }
+    .chat .chat-history li:nth-child(even) .message-data {
+        text-align: right;
+    }
+        .chat .chat-history li:nth-child(odd) .my-message {
+        float: left;
+    }
+
+
+    .chat .chat-history li:nth-child(even) .message:after {
+        bottom: 100%;
+        right: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #e1ebf5;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+
+
+
+
+
+
+            .chat .chat-history .other-message {
+                background: #94C2ED;
+            }
+
+                .chat .chat-history .other-message:after {
+                    border-bottom-color: #94C2ED;
+                    left: 93%;
+                }
+
+        .chat .chat-message {
+            padding: 30px;
+        }
+
+            .chat .chat-message textarea {
+                width: 100%;
+                border: none;
+                padding: 10px 20px;
+                font: 14px/22px "Lato", Arial, sans-serif;
+                margin-bottom: 10px;
+                border-radius: 5px;
+                resize: none;
+            }
+
+
+            .chat .chat-message button {
+                float: right;
+                color: #94C2ED;
+                font-size: 16px;
+                text-transform: uppercase;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                background: #F2F5F8;
+            }
+
+                .chat .chat-message button:hover {
+                    color: #75b1e8;
+                }
+
+    .nav-pills.nav-pills-primary .nav-item .nav-link.active {
+        background-color: #53a5f5;
+    }
+
+    .video-card-list .video-card-body .video-title a {
+        text-transform: capitalize;
+    }
+    .fa-calendar-alt {
+        color: #606060;
+        font-weight: 600;
+        font-size: 12px;
     }
 </style>
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -269,7 +685,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">RiseTube</a>
+                <a class="navbar-brand"></a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -284,21 +700,40 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title"></h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="row">
-                            <div class="col-md-3 ml-md-auto">
-                                <div class="form-group">
 
+
+
+                            <div class="card-header">
+                                <div class="pull-left"> <h4 class="card-title">RiseTube</h4></div>
+
+                                <div class="pull-right">
+                                    <div>
+
+
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+
+                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
+
+
+
+
+                                        <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
+                                        @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+
+
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-auto">
-                                <button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>
-                                @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "buttons button-2 button-2b", @role = "button", @style = "margin-top: 2px;" })
-                            </div>
+
+
+
+
                         </div>
                         <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg" role="document">
@@ -309,7 +744,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="@Url.Action(" VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
+                                    <form action="@Url.Action("VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
 
                                         <div class="modal-body">
                                             <div class="row">
@@ -476,26 +911,26 @@
                                                 </div>
 
                                                 @*<div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
-                                                                Client
-                                                                HR
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
-                                                                    {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                    <option value="@item">@item</option>
-                                                                    }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                Client
+                                                HR
+                                            </label>
+                                            <div class="col-md-6 col-sm-6">
+                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
+                                                    {
+                                                    @if (item != null && item != "")
+                                                    {
+                                                    <option value="@item">@item</option>
+                                                    }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
 
 
-                                                    </div>*@
+                                    </div>*@
                                                 <div class="col-md-12 col-sm-12 text-right">
 
                                                     <div class="form-group">
@@ -511,7 +946,9 @@
                                                         <div class="row">
                                                             <div class="col-md-12 col-sm-12">
 
-                                                                <button type="button" id="ResetFilter" style="float:right;margin-top:40px;" class="buttons button-2 button-2b">Reset Filter</button>
+                                                                <button type="button" id="ResetFilter" style="float: right;
+        margin-top: 40px;
+   " class="buttons button-2 button-2b">Reset Filter</button>
                                                                 <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>
                                                             </div>
 
@@ -521,7 +958,8 @@
 
 
 
-                                                        
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -531,12 +969,12 @@
                             </div>
 
                         </div>
-                        <hr>
+                        
                         <div id="wrapper">
                             <!-- Sidebar -->
 
                             <div id="content-wrapper">
-                                <div class="container-fluid pb-0">
+                                <div class="container-wrap pb-0">
                                     <div class="video-block section-padding">
                                         <div class="row">
 
@@ -561,20 +999,12 @@
                                                         {
                                                             <span> Video deleted !!!</span>
                                                         }
-                                                        <style>
-                                                            .title.name-video-primary-info-renderer {
-                                                                display: block;
-                                                                max-height: 2.8rem;
-                                                                overflow: hidden;
-                                                                font-size: 1.0rem;
-                                                                font-weight: 400;
-                                                                line-height: 2.4rem;
-                                                                color: black;
-                                                            }
-                                                        </style>
-
-
-                                                        <h1 class="title style-scope name-video-primary-info-renderer">@Model.candidateName &nbsp;(@Model.JDTiltle.Split("|")[0])</h1>
+                                                     
+                                                    <h1 class="title style-scope name-video-primary-info-renderer">
+                                                        @Model.candidateName <span style="   color: #606060;
+    font-weight: 500;
+    font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 600;padding-top:-50px">@Model.interviewDate</span>
+                                                       </h1>
 
                                                         <div class="row">
                                                             <div class="k" style="margin-top: -30px;">
@@ -582,27 +1012,29 @@
                                                                 {
                                                                     @if (Model.IsLike == "Liked")
                                                                     {
-                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: blue;font-size: 24px;padding-right:30px">&nbsp; @Model.TotalVedioLike </i>
-                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"> @Model.TotalVedioDisLike</i>
+                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: #070765;font-size: 24px;padding-right:30px">&nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"><label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
 
                                                                     }
                                                                     else if (Model.IsLike == "Disliked")
                                                                     {
-                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px;padding-right:30px"> @Model.TotalVedioLike</i>
-                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:30px">  @Model.TotalVedioDisLike</i>
+                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px;padding-right:30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:30px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black; font-size: 24px;padding-right:30px"> @Model.TotalVedioLike</i>
-                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px">  @Model.TotalVedioDisLike</i>
+                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black; font-size: 24px;padding-right:30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                     }
 
                                                                 }
                                                             </div>
-                                                            <div class="col-md-4" style="    text-align: end;margin-top: -30px;">
+                                                            <div class="col-md-4" style="        text-align: end;
+        margin-top: -30px;
+">
 
                                                             </div>
-                                                            <div class="col-md-4" style="text-align:end; margin-top: -30px;">
+                                                            <div class="col-md-4" style="text-align: end; margin-top: -30px;">
                                                                 <p style="text-align:end"><b>Total views:</b> @Model.TotalView - View(s)</p>
                                                             </div>
 
@@ -611,7 +1043,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="single-video-info-content box mb-3">
+                                                    <div class="single-video-info-content mb-3">
 
                                                         <style>
                                                             .nav-pills .nav-item .nav-link {
@@ -644,7 +1076,7 @@
                                                             }
                                                         </style>
 
-                                                        <div class="card-body ">
+                                                        <div >
                                                             <ul class="nav nav-pills nav-pills-primary" role="tablist">
                                                                 <li class="nav-item" style="margin-top: 18px;">
                                                                     <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist" style="font-size: 10px;">
@@ -687,32 +1119,43 @@
                                                                 <div class="tab-pane active" id="link1">
                                                                     <div class="row">
                                                                         <div class="col-md-7 col-sm-7">
-                                                                            <div class="card">
-                                                                                <div class="card-body">
+                                                                           
+                                                                                <div class="chart-box">
                                                                                     <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                                                     <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                         <div id="scoreChart" style="height: 200px; width: 100%;"></div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
+                                                                           
                                                                         </div>
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <div class="card">
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                                                    @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 150px; width:100%", @readonly = "readonly" })
+                                                                        <div class="col-md-5 col-sm-5">
+                                                                     
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
 
-                                                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                                                                </div>
-                                                                                <div class="form-group">
-                                                                                    @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                    @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                    @Html.ValidationMessageFor(model => model.IreportModel.JobLevelName, "", new { @class = "text-danger" })
+
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                    <div class="talktext">
+
+
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height:105px;width:100%", @readonly = "readonly" })
+
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+                                                                                        @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                                                    </div>
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        @Html.ValidationMessageFor(model => model.IreportModel.JobLevelName, "", new { @class = "text-danger" })
+                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
                                                                 </div>
                                                                 <div class="tab-pane" id="link2">
                                                                     <div class="row">
@@ -888,7 +1331,7 @@
                                                                                         <th width="10%">Rating</th>
                                                                                         <th width="10%">Time(Min)</th>
                                                                                         @*
-                                                                                            <th width="10%">Action</th>*@
+                                                                            <th width="10%">Action</th>*@
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -916,12 +1359,12 @@
                                                                                             </td>
 
                                                                                             @*
-                                                                                                <td>
+                                                                                <td>
 
-                                                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                                                </td>*@
+                                                                                </td>*@
                                                                                         </tr>
                                                                                     }
                                                                                     else
@@ -951,12 +1394,12 @@
                                                                                                 </td>
 
                                                                                                 @*
-                                                                                                    <td>
+                                                                                    <td>
 
-                                                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                                                    </td>*@
+                                                                                    </td>*@
                                                                                             </tr>
 
 
@@ -1127,17 +1570,20 @@
                                                                     }
 
                                                                         .posts li {
-                                                                            background-color: #fff;
+                                                                            /*ackground-color: #fff;
                                                                             border: 1.5px solid #d8d8d8;
                                                                             border-radius: 10px;
                                                                             padding-top: 10px;
-                                                                            padding-left: 20px;
-                                                                            padding-right: 20px;
+                                                                         
                                                                             padding-bottom: 10px;
                                                                             margin-bottom: 10px;
                                                                             word-wrap: break-word;
                                                                             min-height: 42px;
-                                                                            box-shadow: 8px 8px 5px #888888;
+                                                                            box-shadow: 8px 8px 5px #888888;*/
+                                                                            padding-left: 20px;
+                                                                            padding-right: 20px;
+                                                                            float: left;
+                                                                            width: 100%;
                                                                         }
 
                                                                     .btn-primary {
@@ -1146,35 +1592,7 @@
                                                                         border-color: #2e6da4;
                                                                     }
                                                                 </style>
-                                                                <script>
-                                                                    jQuery(document).ready(function ($) {
 
-
-
-                                                                        var main = function () {
-                                                                            $('.btn').click(function () {
-                                                                                var post = $('.status-box').val();
-                                                                                $('<li>').text(post).prependTo('.posts');
-                                                                                $('.status-box').val('');
-                                                                                $('.counter').text('450');
-                                                                                $('.btn').addClass('disabled');
-                                                                            });
-                                                                            $('.status-box').keyup(function () {
-                                                                                var postLength = $(this).val().length;
-                                                                                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
-                                                                                $('.counter').text(charactersLeft);
-                                                                                if (charactersLeft < 0) {
-                                                                                    $('.btn').addClass('disabled');
-                                                                                } else if (charactersLeft === 450) {
-                                                                                    $('.btn').addClass('disabled');
-                                                                                } else {
-                                                                                    $('.btn').removeClass('disabled');
-                                                                                }
-                                                                            });
-                                                                        }
-                                                                        $('.btn').addClass('disabled');
-                                                                        $(document).ready(main)
-                                                                </script>
                                                                 <div class="tab-pane" id="link7">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                                         <div class="table-responsive">
@@ -1243,29 +1661,44 @@
                                                             </div>
                                                             @if (ViewBag.VedioStatus != "Public")
                                                             {
-                                                                <div class="container">
-                                                                    <form>
-                                                                        <div class="form-group">
-                                                                            <textarea class="form-control status-box" rows="1" id="txtComment" placeholder="Enter your comment here..." style="border-color:darkblue"></textarea>
-                                                                        </div>
-                                                                    </form>
+                                                        <div>
+                                                            <form>
+                                                                <div class="form-group comment-area">
+
+<textarea class="form-control status-box" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
                                                                     <div class="button-group pull-right">
-                                                                        <p class="counter"> 450</p>
-                                                                        <a href="#" class="btn btn-primary" id="btnComment">Save</a>
+                                                                        <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded " id="btnComment">POST</a>
                                                                     </div>
-                                                                    <div id="divcomments">
-                                                                        <ul class="posts" style="height:200px;overflow-y:auto;padding-left:20px">
+                                                                </div>
+                                                            </form>
+
+                                                            <div id="divcomments">
+
+
+                                                                <div class="chat">
+                                                                    <div class="chat-history">
+                                                                        <ul class="posts" >
                                                                             @foreach (var itemvalue in Model.Comments)
                                                                             {
 
                                                                                 <li>
-                                                                                    <b>@itemvalue.UserName </b>:- @itemvalue.Comment
+                                                                                    <div class="message-data">
+
+                                                                                        <span class="message-data-name">  <b>@itemvalue.UserName </b></span>
+                                                                                    </div>
+
+
+
+
+                                                        <div class="message my-message ">   @itemvalue.Comment</div>
                                                                                 </li>
                                                                             }
 
                                                                         </ul>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                        </div>
                                                             }
                                                         </div>
 
@@ -1273,20 +1706,20 @@
 
 
                                                         @*<h6>Cast:</h6>
-                                                            <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
-                                                            <h6>Category :</h6>
-                                                            <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
-                                                            <h6>About :</h6>
-                                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
-                                                            <h6>Tags :</h6>
-                                                            <p class="tags mb-0">
-                                                                <span><a href="#">Uncharted 4</a></span>
-                                                                <span><a href="#">Playstation 4</a></span>
-                                                                <span><a href="#">Gameplay</a></span>
-                                                                <span><a href="#">1080P</a></span>
-                                                                <span><a href="#">ps4Share</a></span>
-                                                                <span><a href="#">+ 6</a></span>
-                                                            </p>*@
+                                            <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
+                                            <h6>Category :</h6>
+                                            <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
+                                            <h6>About :</h6>
+                                            <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
+                                            <h6>Tags :</h6>
+                                            <p class="tags mb-0">
+                                                <span><a href="#">Uncharted 4</a></span>
+                                                <span><a href="#">Playstation 4</a></span>
+                                                <span><a href="#">Gameplay</a></span>
+                                                <span><a href="#">1080P</a></span>
+                                                <span><a href="#">ps4Share</a></span>
+                                                <span><a href="#">+ 6</a></span>
+                                            </p>*@
                                                     </div>
                                                 </div>
                                             </div>
@@ -1309,12 +1742,12 @@
                                                                                     <video controls style=" background:black!important;width:100%; height:100% ">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <img src="~/RiseTube/img/video-icon.png" />
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
 
 
@@ -1325,110 +1758,16 @@
                                                                                 <div class="video-title">
                                                                                     <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
-                                                                                    &nbsp; <span style="color: #6c757d;font-weight: 600;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                                   <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
                                                                                 <div class="video-page text-success">
+                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
+    font-weight: 600;
+    font-size: 12px;">@videolist.interviewDate</span>
+
                                                                                     @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
                                                                                 </div>
-                                                                                <div class="video-view">
-                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #343a40;font-weight: 600;">@videolist.interviewDate</span>
-                                                                                    <div class="single-video-title box mb-3">
-                                                                                        <h2><span style="color: black;font-weight: 600;">@Model.candidateName  &nbsp; <span style="color: #6c757d;">(@Model.JDTiltle.Split("|")[0])</span></span></h2>
-                                                                                        <p class="mb-0"><i class="fas fa-calendar"></i> @Model.interviewDate</p>
 
-                                                                                    </div>
-
-
-                                                                                    <script>
-
-                                                                                        jQuery(document).ready(function ($) {
-
-                                                                                            $("#btnComment").on('click', function () {
-                                                                                                if ($("#txtComment").val().trim() != "") {
-                                                                                                    $.ajax({
-                                                                                                        type: "POST",
-                                                                                                        url: "/RiseTube/VedioComment",
-                                                                                                        data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
-                                                                                                        success: function (response) {
-
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
-                                                                                            $('#btnSearch').on('click', function () {
-                                                                                                if ($(this).attr('data-click-state') == 1) {
-                                                                                                    $(this).attr('data-click-state', 0);
-                                                                                                    $(this).css('background-color', 'blue');
-                                                                                                    $(this).val('Share');
-                                                                                                    $.ajax({
-                                                                                                        type: "POST",
-                                                                                                        url: "/RiseTube/VedioShare",
-                                                                                                        data: { value: "Private", vedioid: $("#txtVedioId").val() },
-                                                                                                        success: function (data) {
-
-                                                                                                        }
-                                                                                                    });
-
-                                                                                                }
-                                                                                                else {
-                                                                                                    $(this).attr('data-click-state', 1);
-                                                                                                    $(this).css('background-color', 'green');
-                                                                                                    $(this).val('Shared');
-                                                                                                    $.ajax({
-                                                                                                        type: "POST",
-                                                                                                        url: "/RiseTube/VedioShare",
-                                                                                                        data: { value: "Public", vedioid: $("#txtVedioId").val() },
-                                                                                                        success: function (data) {
-
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
-                                                                                            $('#toggle-click').on('click', function () {
-                                                                                                if ($(this).attr('data-click-state') == 1) {
-                                                                                                    $(this).attr('data-click-state', 0);
-
-
-                                                                                                }
-                                                                                                else {
-                                                                                                    $(this).attr('data-click-state', 1);
-                                                                                                    $(this).css('color', 'blue');
-                                                                                                    $('#toggle-click1').css('color', 'black');
-                                                                                                    $.ajax({
-                                                                                                        type: "POST",
-                                                                                                        url: "/RiseTube/VedioLike",
-                                                                                                        data: { value: "Liked", vedioid: $("#txtVedioId").val() },
-                                                                                                        success: function (data) {
-
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
-                                                                                            $('#toggle-click1').on('click', function () {
-                                                                                                if ($(this).attr('data-click-state') == 1) {
-                                                                                                    $(this).attr('data-click-state', 0);
-
-
-
-                                                                                                }
-                                                                                                else {
-                                                                                                    $(this).attr('data-click-state', 1);
-                                                                                                    $(this).css('color', 'blue');
-                                                                                                    $('#toggle-click').css('color', 'black');
-                                                                                                    $.ajax({
-                                                                                                        type: "POST",
-                                                                                                        url: "/RiseTube/VedioLike",
-                                                                                                        data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
-                                                                                                        success: function (data) {
-
-                                                                                                        }
-                                                                                                    });
-                                                                                                }
-                                                                                            });
-                                                                                        });
-
-                                                                                        /**/</script>
-                                                                                </div>
                                                                             </div>
                                                                         </div>
 
@@ -1456,7 +1795,9 @@
                 </div>
             </div>
         </div>
-        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+    </div>
+</div>
+<div id="myModal" class="modal" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
                                                                                         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1467,233 +1808,261 @@
         overflow: auto; /* Enable scroll if needed */
         background-color: rgb(0,0,0); /* Fallback color */
                                                                                         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-            <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
-                    <span class="close" id="callPopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+    <!-- Modal content -->
+    <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+            <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
+            <span class="close" id="callPopUp">&times;</span>
+        </div>
+        <div class="modal-body" style="padding: 2px 16px;">
+            <div class="row">
+                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
 
-                    </div>
+            </div>
 
-                    <div class="">
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                    </div>
-                </div>
-                <div class="modal-footer" style="padding: 2px 16px;
+            <div class="">
+                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 2px 16px;
         background-color: #14406e;
         color: white;">
 
-                </div>
-            </div>
-            <footer class="footer">
-                <div class=" container-fluid ">
-                    <nav>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    Risebird
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    Blog
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="copyright" id="copyright">
-                        &copy;
-                        <script>
-                            document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                        </script> Risebird All Rights Reserved.
-                    </div>
-                </div>
-            </footer>
         </div>
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
 
-        <!-- Bootstrap core JavaScript-->
-        <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
-        @*
-            <script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
-        <!-- Core plugin JavaScript-->
-        <script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
-        <!-- Owl Carousel -->
-        <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
-        <!-- Custom scripts for all pages-->
-        <script src="~/RiseTube/js/custom.js"></script>
+<!-- Bootstrap core JavaScript-->
+<script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
+@*
+    <script src="~/RiseTube/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+<!-- Core plugin JavaScript-->
+<script src="~/RiseTube/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Owl Carousel -->
+<script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="~/RiseTube/js/custom.js"></script>
+
+
+<script>
+    jQuery(document).ready(function ($) {
 
 
 
-        <script>
-    $('form').submit(function () {
-        if ($(this).valid()) {
-            $(':submit', this).attr('disabled', 'disabled');
+        var main = function () {
+            $('.btn').click(function () {
+                var post = $('.status-box').val();
+                $('<li>').text(post).prependTo('.posts');
+                $('.status-box').val('');
+                $('.counter').text('450');
+                $('.btn').addClass('disabled');
+            });
+            $('.status-box').keyup(function () {
+                var postLength = $(this).val().length;
+                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
+                $('.counter').text(charactersLeft);
+                if (charactersLeft < 0) {
+                    $('.btn').addClass('disabled');
+                } else if (charactersLeft === 450) {
+                    $('.btn').addClass('disabled');
+                } else {
+                    $('.btn').removeClass('disabled');
+                }
+            });
         }
-    });
+        $('.btn').addClass('disabled');
+        $(document).ready(main)
+</script>
+<script>
+            $('form').submit(function () {
+                if ($(this).valid()) {
+                    $(':submit', this).attr('disabled', 'disabled');
+                }
+            });
 
-    function CountProctoring(value) {
+            function CountProctoring(value) {
 
-        if (value == "" || value == null) {
-            return;
-        }
+                if (value == "" || value == null) {
+                    return;
+                }
 
-        var proctoringItems = $('[id^="Proctoring_"]');
-        var proctoringTotal = 0;
-        for (i = 0; i < proctoringItems.length; i++) {
-            proctoringTotal += parseInt(proctoringItems[i].value);
-        }
-        $("#ProctoringCount").val(proctoringTotal);
-        if (parseInt(proctoringTotal) > 0) {
-            $("#ProctoringCount").css("border-color", "red");
-        }
-        else {
-            $("#ProctoringCount").css("border-color", "#E3E3E3");
-        }
-    }
+                var proctoringItems = $('[id^="Proctoring_"]');
+                var proctoringTotal = 0;
+                for (i = 0; i < proctoringItems.length; i++) {
+                    proctoringTotal += parseInt(proctoringItems[i].value);
+                }
+                $("#ProctoringCount").val(proctoringTotal);
+                if (parseInt(proctoringTotal) > 0) {
+                    $("#ProctoringCount").css("border-color", "red");
+                }
+                else {
+                    $("#ProctoringCount").css("border-color", "#E3E3E3");
+                }
+            }
 
-    function CalculateOverAll(id, value) {
+            function CalculateOverAll(id, value) {
 
-        value = parseInt(value);
-        var index;
-        var skillName;
-        if (id.includes("Tech")) {
-            index = id.charAt(26);
-            skillName = "TechSkillReportCollection";
-        }
+                value = parseInt(value);
+                var index;
+                var skillName;
+                if (id.includes("Tech")) {
+                    index = id.charAt(26);
+                    skillName = "TechSkillReportCollection";
+                }
 
-        else if (id.includes("General")) {
-            index = id.charAt(29);
-            skillName = "SkillGeneralReportCollection";
-        }
-        else if (id.includes("Joinability")) {
-            index = id.charAt(30);
-            skillName = "JoinabilityHRReportCollection";
-        }
-        else {
-            index = id.charAt(39);
-            skillName = "SelectabilityEvaluatorReportCollection";
-        }
-        var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
-        var required = $("#" + reqLevelId).val();
-        if (required <= value) {
-            var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
-            $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
+                else if (id.includes("General")) {
+                    index = id.charAt(29);
+                    skillName = "SkillGeneralReportCollection";
+                }
+                else if (id.includes("Joinability")) {
+                    index = id.charAt(30);
+                    skillName = "JoinabilityHRReportCollection";
+                }
+                else {
+                    index = id.charAt(39);
+                    skillName = "SelectabilityEvaluatorReportCollection";
+                }
+                var reqLevelId = skillName + "_" + index + "__RequiredLevelId"; //SkillGeneralReportCollection_0__RequiredLevel
+                var required = $("#" + reqLevelId).val();
+                if (required <= value) {
+                    var reqWeightage = $("#" + skillName + "_" + index + "__WeightageRequired").val();
+                    $("#" + skillName + "_" + index + "__WeightageActual").val(reqWeightage);
+                    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "#008000");
 
-        }
-        else {
-            $("#" + skillName + "_" + index + "__WeightageActual").val("0");
-            $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
-        }
+                }
+                else {
+                    $("#" + skillName + "_" + index + "__WeightageActual").val("0");
+                    $("#" + skillName + "_" + index + "__ActualLevelId").css("border-color", "red");
+                }
 
-        var items = $('[id$="WeightageActual"]');
-        //var length = item.length;
-        var totalCount = 0;
+                var items = $('[id$="WeightageActual"]');
+                //var length = item.length;
+                var totalCount = 0;
 
-        for (i = 0; i < items.length; i++) {
-            totalCount += parseInt(items[i].value);
-        }
-        //items.forEach(function (item) {
-        //    totalCount = totalCount + item.val();
-        //});
-        var average = totalCount / 4;
-        $("#OverallScore").val(average);
+                for (i = 0; i < items.length; i++) {
+                    totalCount += parseInt(items[i].value);
+                }
+                //items.forEach(function (item) {
+                //    totalCount = totalCount + item.val();
+                //});
+                var average = totalCount / 4;
+                $("#OverallScore").val(average);
 
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
+                var arr = [];
+                var obj = { y: "", legendText: "", label: "" }
+                //TechSkills actual weightage total
+                var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+                var techTotal = 0;
+                for (i = 0; i < techItems.length; i++) {
 
-            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+                    techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
-        }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
+                }
+                obj.y = parseInt(techTotal) / 4;
+                obj.label = "Tech Skills Score";
+                obj.legendText = "Tech Skills Score";
+                arr.push(obj);
 
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
+                //SkillsGeneral actual weightage total
+                var objGen = { y: "", legendText: "", label: "" }
+                var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+                var genTotal = 0;
+                for (i = 0; i < genSkillsItems.length; i++) {
+                    var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+                    genTotal = parseInt(genTotal) + parseInt(weightage);
 
-        }
+                }
 
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
+                objGen.y = parseInt(genTotal) / 4;
+                objGen.label = "General Skills Score";
+                objGen.legendText = "General Skills Score";
+                arr.push(objGen);
 
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
+                //Joinability actual weightage total
+                var objJoin = { y: "", legendText: "", label: "" }
+                var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+                var joinabilityTotal = 0;
+                for (i = 0; i < joinabilityItems.length; i++) {
 
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+                    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
 
-        }
-        objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
+                }
+                objJoin.y = parseInt(joinabilityTotal) / 4;
+                objJoin.label = "Joinability Score";
+                objJoin.legendText = "Joinability Score";
+                arr.push(objJoin);
 
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
+                //Selectability actual weightage total
+                var objSelect = { y: "", legendText: "", label: "" }
+                var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+                var selectabilityTotal = 0;
+                for (i = 0; i < selectabilityItems.length; i++) {
 
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+                    selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
 
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
+                }
+                objSelect.y = parseInt(selectabilityTotal) / 4;
+                objSelect.label = "Selectability Score";
+                objSelect.legendText = "Selectability Score";
+                arr.push(objSelect);
 
-        //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = average;
+                //totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+                document.getElementById("totScore").innerHTML = average;
 
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
+                var chart = new CanvasJS.Chart("scoreChart", {
+                    theme: "light2", // "light1", "light2", "dark1", "dark2"
+                    width: 400,//in pixels
+                    height: 200,//in pixels
+                    animationEnabled: true,
+                    title: {
+                        text: "Score Chart"
+                    },
+                    data: [{
+                        type: "column",
+                        //startAngle: 60,
+                        //innerRadius: 55,
+                        indexLabelFontSize: 8,
+                        indexLabel: "{label}  {y}",
+                        toolTipContent: "<b>{label} </b>({y})",
+                        dataPoints: arr
 
-            }]
-        });
-        chart.render();
+                    }]
+                });
+                chart.render();
 
 
-    }
+            }
 
-    $(document).ready(function () {
+             $(document).ready(function () {
 
         var proctoringItems = $('[id^="Proctoring_"]');
         var proctoringTotal = 0;
@@ -2244,106 +2613,106 @@
 
     });
 
-        </script>
+</script>
 
-        <script>
+<script>
 
-            window.onload = function () {
+    window.onload = function () {
 
-                var totalScore = 0;
-                var arr = [];
-                var obj = { y: "", legendText: "", label: "" }
-                //TechSkills actual weightage total
-                var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-                var techTotal = 0;
-                for (i = 0; i < techItems.length; i++) {
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; i++) {
 
-                    techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
+            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
-                }
-                obj.y = parseInt(techTotal) / 4;
-                obj.label = "Tech Skills Score";
-                obj.legendText = "Tech Skills Score";
-                arr.push(obj);
+        }
+        obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj);
 
-                //SkillsGeneral actual weightage total
-                var objGen = { y: "", legendText: "", label: "" }
-                var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-                var genTotal = 0;
-                for (i = 0; i < genSkillsItems.length; i++) {
-                    var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-                    genTotal = parseInt(genTotal) + parseInt(weightage);
+        //SkillsGeneral actual weightage total
+        var objGen = { y: "", legendText: "", label: "" }
+        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+        var genTotal = 0;
+        for (i = 0; i < genSkillsItems.length; i++) {
+            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+            genTotal = parseInt(genTotal) + parseInt(weightage);
 
-                }
+        }
 
-                objGen.y = parseInt(genTotal) / 4;
-                objGen.label = "General Skills Score";
-                objGen.legendText = "General Skills Score";
-                arr.push(objGen);
+        objGen.y = parseInt(genTotal) / 4;
+        objGen.label = "General Skills Score";
+        objGen.legendText = "General Skills Score";
+        arr.push(objGen);
 
-                //Joinability actual weightage total
-                var objJoin = { y: "", legendText: "", label: "" }
-                var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-                var joinabilityTotal = 0;
-                for (i = 0; i < joinabilityItems.length; i++) {
+        //Joinability actual weightage total
+        var objJoin = { y: "", legendText: "", label: "" }
+        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+        var joinabilityTotal = 0;
+        for (i = 0; i < joinabilityItems.length; i++) {
 
-                    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
 
-                }
-                objJoin.y = parseInt(joinabilityTotal) / 4;
-                objJoin.label = "Joinability Score";
-                objJoin.legendText = "Joinability Score";
-                arr.push(objJoin);
+        }
+        objJoin.y = parseInt(joinabilityTotal) / 4;
+        objJoin.label = "Joinability Score";
+        objJoin.legendText = "Joinability Score";
+        arr.push(objJoin);
 
-                //Selectability actual weightage total
-                var objSelect = { y: "", legendText: "", label: "" }
-                var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-                var selectabilityTotal = 0;
-                for (i = 0; i < selectabilityItems.length; i++) {
+        //Selectability actual weightage total
+        var objSelect = { y: "", legendText: "", label: "" }
+        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+        var selectabilityTotal = 0;
+        for (i = 0; i < selectabilityItems.length; i++) {
 
-                    selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
 
-                }
-                objSelect.y = parseInt(selectabilityTotal) / 4;
-                objSelect.label = "Selectability Score";
-                objSelect.legendText = "Selectability Score";
-                arr.push(objSelect);
+        }
+        objSelect.y = parseInt(selectabilityTotal) / 4;
+        objSelect.label = "Selectability Score";
+        objSelect.legendText = "Selectability Score";
+        arr.push(objSelect);
 
-                totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-                document.getElementById("totScore").innerHTML = totalScore;
-
-
-                var chart = new CanvasJS.Chart("scoreChart", {
-                    theme: "light2", // "light1", "light2", "dark1", "dark2"
-                    width: 400,//in pixels
-                    height: 200,//in pixels
-                    animationEnabled: true,
-                    title: {
-                        text: "Score Chart"
-                    },
-                    data: [{
-                        type: "column",
-                        //startAngle: 60,
-                        //innerRadius: 55,
-                        indexLabelFontSize: 8,
-                        indexLabel: "{label}  {y}",
-                        toolTipContent: "<b>{label} </b>({y})",
-                        dataPoints: arr
-
-                    }]
-                });
-                chart.render();
+        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+        document.getElementById("totScore").innerHTML = totalScore;
 
 
+        var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            width: 400,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: {
+                text: "Score Chart"
+            },
+            data: [{
+                type: "column",
+                //startAngle: 60,
+                //innerRadius: 55,
+                indexLabelFontSize: 8,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+                dataPoints: arr
 
-            }
-        </script>
-        <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/data.js"></script>
-        <script src="https://code.highcharts.com/modules/drilldown.js"></script>
-        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+            }]
+        });
+        chart.render();
 
-        <script type="text/javascript">
+
+
+    }
+</script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+<script type="text/javascript">
 
         $(document).ready(function () {
             $("#ResetFilter").click(function () {
@@ -2444,70 +2813,180 @@
     }
 
 
-        </script>
+</script>
 
-        <script>
-            var candidate = "";
-            var span = document.getElementById("callPopUp");
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function () {
-                hangUp();
-                var modal = document.getElementById("myModal");
-                modal.style.display = "none";
-            }
-            $(document).ready(function () {
-                $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                    // Set up the Twilio Client Device with the token
-                    Twilio.Device.setup(data.token);
+<script>
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function ModalButtonClick(mobileNumber, candidateName) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+
+
+</script>
+
+<script>
+
+    jQuery(document).ready(function ($) {
+
+        $("#btnComment").on('click', function () {
+            if ($("#txtComment").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioComment",
+                    data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
+                    success: function (response) {
+                        $("#txtComment").val("");
+                        $.ajax({
+                            type: "POST",
+                            url: "/RiseTube/UpdateVedioComment",
+                            data: { vedioid: $("#txtVedioId").val() },
+                            success: function (data) {
+                                var html = '';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" style="height:200px;overflow-y:auto;padding-left:20px">';
+                                for (var i = 0; i < data.length; i++) {
+
+                                    html += '                <li>';
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message "> ' + data[i].comment;  '</div>'
+                                    html += '    </li>';
+                                }
+
+                                html += '    </ul></div></div>';
+                                $("#divcomments").empty().html(html);
+                            }
+                        });
+                    }
                 });
-            });
-
-            /* Callback to let us know Twilio Client is ready */
-            Twilio.Device.ready(function (device) {
-
-            });
-
-            function callCandidate(phoneNumber) {
-                var params = { "phoneNumber": phoneNumber };
-                Twilio.Device.connect(params);
             }
-            function hangUp() {
-                Twilio.Device.disconnectAll();
+        });
+        $('#btnSearch').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
+                $(this).css('background-color', 'blue');
+                $(this).val('Share');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioShare",
+                    data: { value: "Private", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+
+                    }
+                });
+
             }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('background-color', 'green');
+                $(this).val('Shared');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioShare",
+                    data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
 
-            Twilio.Device.connect(function (connection) {
-                var appendText = "In call with " + "<b>" + candidate + "</b>";
-                document.getElementById("callingLabel").innerHTML = appendText;
-            });
-
-            function afterTimeOut() {
-                var modal = document.getElementById("myModal");
-                modal.style.display = "none";
+                    }
+                });
             }
+        });
+        $('#toggle-click').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
 
-            Twilio.Device.disconnect(function (connection) {
-                var appendText = "Call disconnected! ";
-                document.getElementById("callingLabel").innerHTML = appendText;
-                setTimeout(afterTimeOut, 2000);
 
-            });
-
-            function ModalButtonClick(mobileNumber, candidateName) {
-                candidate = candidateName;
-                // Get the modal
-                var modal = document.getElementById("myModal");
-                // When the user clicks the button, open the modal
-                modal.style.display = "block";
-                var appendText = "Calling... " + "<b>" + candidate + "</b>";
-                document.getElementById("callingLabel").innerHTML = appendText;
-                callCandidate(mobileNumber);
             }
-            function closeCallPopUp() {
-                hangUp();
-                var modal = document.getElementById("myModal");
-                modal.style.display = "none";
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('color', 'blue');
+                $('#toggle-click1').css('color', 'black');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioLike",
+                    data: { value: "Liked", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+                        $("#pTotalvediolike").text(data.totalVedioLike);
+                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
+
+                    }
+                });
             }
+        });
+        $('#toggle-click1').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
 
+            }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('color', 'blue');
+                $('#toggle-click').css('color', 'black');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioLike",
+                    data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+                        $("#pTotalvediolike").text(data.totalVedioLike);
+                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
 
-        </script>
+                    }
+                });
+            }
+        });
+    });
+
+</script>
 

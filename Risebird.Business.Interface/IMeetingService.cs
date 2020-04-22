@@ -47,7 +47,7 @@ namespace Risebird.Business.Interface
 
         MeetingVM GetMeetingbyid(int id, string Email);
         List<MeetingVM> GetRiseTubeMeetings();
-        string VedioLike(string value, string vedioid,string email);
+        MeetingVM VedioLike(string value, string vedioid,string email);
         string AddTotalViewCount(int id);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);

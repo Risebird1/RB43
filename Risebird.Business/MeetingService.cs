@@ -1034,12 +1034,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public string VedioLike(string value, string vedioid, string email)
+        public MeetingVM VedioLike(string value, string vedioid, string email)
         {
             try
             {
                 var meeting = _meetingRespository.VedioLikeAsync(value, vedioid, email);
-                return "";
+                return meeting.Result;
 
             }
 
@@ -1047,7 +1047,7 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
 
-                return "";
+                return null;
             }
 
         }

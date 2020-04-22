@@ -91,6 +91,13 @@
             @if (item.QCInterview > 0)
             {
                 <td> @item.intervieweStatusStatDesc</td>
+            }
+            else
+            {
+                < td ></ td >
+            }
+            @if (item.QCInterview > 0)
+            {
                 <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
             }
             else
