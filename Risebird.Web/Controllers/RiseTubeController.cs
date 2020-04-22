@@ -463,7 +463,7 @@ namespace Risebird.Web.Controllers
                         {
                             ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
                         }
-                        var comments= _meetingService.GetvedioComments(id);
+                        var comments = _meetingService.GetvedioComments(id);
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
@@ -721,7 +721,7 @@ namespace Risebird.Web.Controllers
             var email = HttpContext.Session.GetString("email");
             var modelList = _meetingService.VedioLike(value, vedioid, email);
 
-            return Json("Success");
+            return Json(modelList);
         }
 
         [HttpPost]
@@ -736,12 +736,20 @@ namespace Risebird.Web.Controllers
         public JsonResult VedioComment(string comment, string vedioid)
         {
             //store data in database
-            var email = HttpContext.Session.GetString("email");
-       
-            var modelList = _meetingService.VedioComment(comment, vedioid,email);
 
+            var email = HttpContext.Session.GetString("email");
+            var modelList = _meetingService.VedioComment(comment, vedioid, email);
             return Json("Success");
         }
-     
+        [HttpPost]
+        public JsonResult UpdateVedioComment(string vedioid)
+        {
+            //store data in database
+            int id = Convert.ToInt32(vedioid);
+            var comments = _meetingService.GetvedioComments(id);
+
+            return Json(comments);
+        }
+
     }
 }

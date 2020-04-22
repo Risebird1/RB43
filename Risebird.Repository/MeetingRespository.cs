@@ -1466,7 +1466,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public async Task<string> VedioLikeAsync(string value, string vedioid, string email)
+        public async Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email)
         {
             try
             {
@@ -1478,9 +1478,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioLike", parameters,
+                    var result = await SqlMapper.QueryFirstAsync<MeetingVM>(con, "usp_AddinterviewvedioLike", parameters,
                         commandType: CommandType.StoredProcedure);
-                    return "";
+                    return result;
                 }
 
             }
@@ -1489,7 +1489,7 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
 
-            return "";
+            return null;
         }
         public string AddTotalViewCount(int id)
         {
