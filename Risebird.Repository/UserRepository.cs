@@ -542,102 +542,102 @@ namespace Risebird.Repository
                         con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
                     var ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
 
-                    foreach (var item in interviewerProfile.InterviewerSkill)
-                    {
+                    //foreach (var item in interviewerProfile.InterviewerSkill)
+                    //{
 
-                        string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Description from Skill where Id = @SkillId ));";
-                        var affectedRows = con.ExecuteAsync(sqlSkill, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            SkillId = item.SkillId,
-                            Level = item.Level,
-                            SkillName = item.SkillName,
-                        }).Result;
-                    }
+                    //    string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Description from Skill where Id = @SkillId ));";
+                    //    var affectedRows = con.ExecuteAsync(sqlSkill, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        SkillId = item.SkillId,
+                    //        Level = item.Level,
+                    //        SkillName = item.SkillName,
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerCertificateDetails)
-                    {
-                        string sqlCertificate = "INSERT INTO TransInterviewerCertificate (InterviewerProfileId, CertificateID, CertificateName) Values (@InterviewerProfileId, @CertificateID, @CertificateName);";
-                        var affectedRows = con.ExecuteAsync(sqlCertificate, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            CertificateID = item.CertificateID,
-                            CertificateName = item.CertificateName,
-                        }).Result;
-                    }
+                    //foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+                    //{
+                    //    string sqlCertificate = "INSERT INTO TransInterviewerCertificate (InterviewerProfileId, CertificateID, CertificateName) Values (@InterviewerProfileId, @CertificateID, @CertificateName);";
+                    //    var affectedRows = con.ExecuteAsync(sqlCertificate, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        CertificateID = item.CertificateID,
+                    //        CertificateName = item.CertificateName,
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
-                    {
-                        string sqlProfessional = "INSERT INTO TransInterviewerProfessional (InterviewerProfileId, CompanyName, CompanyType, Domain, StartDate, EndDate) Values (@InterviewerProfileId, @CompanyName, @CompanyType, @Domain, @StartDate, @EndDate);";
-                        var affectedRows = con.ExecuteAsync(sqlProfessional, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            CompanyName = item.CompanyName,
-                            CompanyType = item.CompanyType,
-                            Domain = item.Domain,
-                            StartDate = item.StartDate,
-                            EndDate = item.EndDate
-                        }).Result;
-                    }
+                    //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+                    //{
+                    //    string sqlProfessional = "INSERT INTO TransInterviewerProfessional (InterviewerProfileId, CompanyName, CompanyType, Domain, StartDate, EndDate) Values (@InterviewerProfileId, @CompanyName, @CompanyType, @Domain, @StartDate, @EndDate);";
+                    //    var affectedRows = con.ExecuteAsync(sqlProfessional, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        CompanyName = item.CompanyName,
+                    //        CompanyType = item.CompanyType,
+                    //        Domain = item.Domain,
+                    //        StartDate = item.StartDate,
+                    //        EndDate = item.EndDate
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerEducationDetails)
-                    {
+                    //foreach (var item in interviewerProfile.InterviewerEducationDetails)
+                    //{
 
-                        string sqlEducation = "INSERT INTO TransInterviewerEducation (InterviewerProfileId, Graduation, CollegeType, Specialization, Score) Values (@InterviewerProfileId, @Graduation, @CollegeType, @Specialization, @Score);";
-                        var affectedRows = con.ExecuteAsync(sqlEducation, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            Graduation = item.Graduation,
-                            CollegeType = item.CollegeType,
-                            Specialization = item.Specialization,
-                            Score = item.Score
-                        }).Result;
-                    }
+                    //    string sqlEducation = "INSERT INTO TransInterviewerEducation (InterviewerProfileId, Graduation, CollegeType, Specialization, Score) Values (@InterviewerProfileId, @Graduation, @CollegeType, @Specialization, @Score);";
+                    //    var affectedRows = con.ExecuteAsync(sqlEducation, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        Graduation = item.Graduation,
+                    //        CollegeType = item.CollegeType,
+                    //        Specialization = item.Specialization,
+                    //        Score = item.Score
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerProjectsDetails)
-                    {
+                    //foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+                    //{
 
-                        string sqlQuery = "INSERT INTO TransInterviewerProjects (InterviewerProfileId, ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions) Values (@InterviewerProfileId, @ProjectName, @ClientName, @StartDate, @EndDate, @Role, @ProjectDescriptions);";
-                        var affectedRows = con.ExecuteAsync(sqlQuery, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            ProjectName = item.ProjectName,
-                            ClientName = item.ClientName,
-                            StartDate = item.StartDate,
-                            EndDate = item.EndDate,
-                            Role = item.Role,
-                            ProjectDescriptions = item.ProjectDescriptions
-                        }).Result;
-                    }
+                    //    string sqlQuery = "INSERT INTO TransInterviewerProjects (InterviewerProfileId, ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions) Values (@InterviewerProfileId, @ProjectName, @ClientName, @StartDate, @EndDate, @Role, @ProjectDescriptions);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        ProjectName = item.ProjectName,
+                    //        ClientName = item.ClientName,
+                    //        StartDate = item.StartDate,
+                    //        EndDate = item.EndDate,
+                    //        Role = item.Role,
+                    //        ProjectDescriptions = item.ProjectDescriptions
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
-                    {
+                    //foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                    //{
 
-                        string sqlQuery = "INSERT INTO TransInterviewerAvailability (InterviewerProfileId, DayTimeSlot, DaySlot, StartTime, EndTime) Values (@InterviewerProfileId, @DayTimeSlot, @DaySlot, @StartTime, @EndTime);";
-                        var affectedRows = con.ExecuteAsync(sqlQuery, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            DayTimeSlot = item.DayTimeSlot,
-                            DaySlot = item.DaySlot,
-                            StartTime = item.StartTime,
-                            EndTime = item.EndTime
-                        }).Result;
-                    }
+                    //    string sqlQuery = "INSERT INTO TransInterviewerAvailability (InterviewerProfileId, DayTimeSlot, DaySlot, StartTime, EndTime) Values (@InterviewerProfileId, @DayTimeSlot, @DaySlot, @StartTime, @EndTime);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        DayTimeSlot = item.DayTimeSlot,
+                    //        DaySlot = item.DaySlot,
+                    //        StartTime = item.StartTime,
+                    //        EndTime = item.EndTime
+                    //    }).Result;
+                    //}
 
-                    foreach (var item in interviewerProfile.InterviewerAccDetails)
-                    {
+                    //foreach (var item in interviewerProfile.InterviewerAccDetails)
+                    //{
 
-                        string sqlQuery = "INSERT INTO TransInterviewerAccDetails (InterviewerProfileId, AccountHolderName, AccountNumber, IFSCCode, Location, UPIId) Values (@InterviewerProfileId, @AccountHolderName, @AccountNumber, @IFSCCode, @Location, @UPIId);";
-                        var affectedRows = con.ExecuteAsync(sqlQuery, new
-                        {
-                            InterviewerProfileId = ProfileId,
-                            AccountHolderName = item.AccountHolderName,
-                            AccountNumber = item.AccountHolderName,
-                            IFSCCode = item.IFSCCode,
-                            Location = item.Location,
-                            UPIId = item.UPIId
-                        }).Result;
-                    }
+                    //    string sqlQuery = "INSERT INTO TransInterviewerAccDetails (InterviewerProfileId, AccountHolderName, AccountNumber, IFSCCode, Location, UPIId) Values (@InterviewerProfileId, @AccountHolderName, @AccountNumber, @IFSCCode, @Location, @UPIId);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        AccountHolderName = item.AccountHolderName,
+                    //        AccountNumber = item.AccountHolderName,
+                    //        IFSCCode = item.IFSCCode,
+                    //        Location = item.Location,
+                    //        UPIId = item.UPIId
+                    //    }).Result;
+                    //}
 
                     return true;
                 }
@@ -666,7 +666,11 @@ namespace Risebird.Repository
             parameters.Add("@NickName", entity.NickName);
             parameters.Add("@EmailId", entity.EmailId);
             parameters.Add("@AltEmailId", entity.AltEmailId);
-            parameters.Add("@Location", entity.Location);
+            parameters.Add("@DOB", entity.DOB);
+            parameters.Add("@Gender", entity.Gender);
+            parameters.Add("@AnnualSalary", entity.AnnualSalary);
+            parameters.Add("@Country", entity.Country);
+            parameters.Add("@City", entity.City);
             parameters.Add("@MobileNumber", entity.MobileNumber);
             parameters.Add("@AltMobileNumber", entity.AltMobileNumber);
             parameters.Add("@CurrentRole", entity.CurrentRole);
@@ -674,6 +678,10 @@ namespace Risebird.Repository
             parameters.Add("@PreferredDomain", entity.PreferredDomain);
             parameters.Add("@ResumeLink", entity.ResumeLink);
             parameters.Add("@CodedResumeLink", entity.CodedResumeLink);
+            parameters.Add("@ResumeLink", entity.GitHubLink);
+            parameters.Add("@CodedResumeLink", entity.StackOverflowLink);
+            parameters.Add("@ResumeLink", entity.LinkedinLink);
+            parameters.Add("@CodedResumeLink", entity.Blog);
             parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             parameters.Add("@IsActive", entity.IsActive);
             parameters.Add("@IsApproved", entity.IsApproved);
