@@ -6,94 +6,160 @@
 
 <style>
     .multiple_row > h2 {
-        font-size: 18px;
-        background: #3f9eff; /* Old browsers */
-        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
-        padding: 8px 10px;
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
         margin-top: 0px;
         margin-bottom: 10px;
     }
 
-    #AudioFile {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 50px;
+        background: none !important;
     }
 
 
 
-    #PageVideoLink {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
-    }
 
-
-    #VideoFile {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
-    }
-
-
-    .btn {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 0px 5px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        font-size: 12px;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
-
-        .btn:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .btn-primary, .btn-fill {
-        background: #4fa4fb !important;
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
         color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
+    }
+
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+    }
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
     }
 
 
-        .btn-primary:hover, .btn-fill:hover {
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-            background: #4fa4fb;
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
         }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+            color: #143e67 !important;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
+    }
 
     #btnPlus, #btnMinus {
         padding: 2px;
     }
+
     #btnMinus {
-    
         margin-left: 12px;
         background: #d61d1d;
         color: #fff;
@@ -116,8 +182,32 @@
     .table-responsive {
         overflow: hidden;
     }
-</style>
 
+    #AudioFile {
+        margin: 0px 0px 15px 0px;
+ 
+    }
+
+
+
+    #PageVideoLink {
+        margin: 0px 0px 10px 0px;
+      
+    }
+
+
+    #VideoFile {
+        margin: 0px 0px 10px 0px;
+      
+    }
+
+
+</style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel readonly" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -131,7 +221,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/Interview/Index">Interview</a>
-                <a class="navbar-brand">Interview Comments</a>
+                /  <a class="navbar-brand">&nbsp; Interview Comments</a>
             </div>
 
 
@@ -144,198 +234,211 @@
         @using (Html.BeginForm("AddComments", "Interview", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
-            <div class="row">
+        <div class="row">
 
-                <div class="col-md-12">
-                    <div class="card ">
-                        <div class="card-header ">
-                            <h4 class="card-title">Interview Comments</h4>
-                        </div>
-                        <div class="card-body ">
-                            <form class="form-horizontal">
-                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                @Html.HiddenFor(model => model.InterviewId)
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interviewer Action</h2>
-                                        </div>
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        
+
+                        <form class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.HiddenFor(model => model.InterviewId)
+                            <div class="row">
+
+                                <div class="card-header ">
+                                    <h4 class="card-title">Interview Comments</h4>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Interviewer Action</h2>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                     </div>
 
-                                    <div class="col-md-6 col-sm-6 pr-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
-                                        </div>
-
-
-
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                        </div>
+                                        @Html.DropDownListFor(x => Model.InterviewStatus, Model.InterviewStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.InterviewStatus, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        @*<div class="form-group">*@
-                                        @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
-                                        @{
-                                            if (Model.AudioLink != null)
-                                            {
-                                                <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
-                                            }
+
+
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pl-1">
+
+                                    @*<div class="form-group">*@
+                                    @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control" })
+                                    @{
+                                        if (Model.AudioLink != null)
+                                        {
+                                            <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
                                         }
+                                    }
 
-                                        @*</div>*@
-                                        @*<div class="form-group">*@
-                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                    @*</div>*@
+                                    @*<div class="form-group">*@
+                                    @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control " })
-                                        @{
-                                            if (Model.VideoLink != null)
-                                            {
-                                                <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                            }
+                                    @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control " })
+                                    @{
+                                        if (Model.VideoLink != null)
+                                        {
+                                            <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
                                         }
+                                    }
 
-                                        @*</div>*@
+                                    @*</div>*@
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>HR Action</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.FinalInterviewMeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.FinalInterviewMeetingStatus, Model.FinalInterviewMeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.FinalInterviewMeetingStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.FraudCheckStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.FraudCheckStatus, Model.FraudCheckStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.FraudCheckStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.OfferStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.OfferStatus, Model.OfferStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.OfferStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+
+
+                                </div>
+                                <div class="col-md-6 col-sm-6 pl-1">
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.JoiningStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.JoiningStatus, Model.JoiningStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.JoiningStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.HRComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.HRComment, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.HRComment, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Quality Controller Action</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.QCStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.QCStatus, Model.QCStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.QCStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.QCComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.QCComment, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.QCComment, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Trainer Action</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TrainingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.TrainingStatus, Model.TrainingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.TrainingStatus, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.PreparationStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                        @Html.DropDownListFor(x => Model.PreparationStatus, Model.PreparationStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
+                                        @Html.ValidationMessageFor(model => model.PreparationStatus, "", new { @class = "text-danger" })
+
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>HR Action</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 pr-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.FinalInterviewMeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                <div class="col-md-6 col-sm-6 pl-1">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.TrainerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.DropDownListFor(x => Model.FinalInterviewMeetingStatus, Model.FinalInterviewMeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.FinalInterviewMeetingStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.FraudCheckStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.FraudCheckStatus, Model.FraudCheckStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.FraudCheckStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.OfferStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.OfferStatus, Model.OfferStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.OfferStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                       
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                       
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.JoiningStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.JoiningStatus, Model.JoiningStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.JoiningStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.HRComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.HRComment, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.HRComment, "", new { @class = "text-danger" })
-
-                                        </div>
+                                        @Html.EditorFor(model => model.TrainerComment, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.TrainerComment, "", new { @class = "text-danger" })
 
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Quality Controller Action</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 pr-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.QCStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                            </div>
+                        </form>
 
-                                            @Html.DropDownListFor(x => Model.QCStatus, Model.QCStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.QCStatus, "", new { @class = "text-danger" })
 
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.QCComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.QCComment, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.QCComment, "", new { @class = "text-danger" })
 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Trainer Action</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 pr-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.TrainingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.TrainingStatus, Model.TrainingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.TrainingStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.PreparationStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.DropDownListFor(x => Model.PreparationStatus, Model.PreparationStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled" })
-                                            @Html.ValidationMessageFor(model => model.PreparationStatus, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        <div class="form-group">
-                                            @Html.LabelFor(model => model.TrainerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                            @Html.EditorFor(model => model.TrainerComment, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.TrainerComment, "", new { @class = "text-danger" })
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
                         <div class="card-footer ">
                             <div class="row">
-                                <label class="col-md-5"></label>
-                                <div class="col-md-7">
-                                    @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Update Comments">Update Comments</button>
+                                
+                                <div class="col-md-12 mc-button-area">
+                                    @Html.ActionLink("Back to List", "Index", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                    <!---  <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Update Comments">Update Comments</button>-->
+
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Update Comments">
+                                        Update Comments
+                                    </button>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+        </div>
 
 
             </div>

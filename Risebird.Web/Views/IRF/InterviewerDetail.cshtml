@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>
+@{
+    ViewData["Title"] = "Interviewers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+</style>
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interviewers</a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interviewers</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                @*<div class="text-right">
+                                        <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
+                                    </div>*@
+                            </div>
+                            @foreach (var item in Model)
+                            {
+                                <div class="card" Onclick="callingfunction('@item.id')">
+                                    <p>@item.FirstName @item.LastName</p>
+                                    <p>@item.EmailId</p>
+                                    <p>Primary Skills:- @item.PrimarySkill</p>
+                                </div>
+                            }
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    //// script for loader starts here
+    function callingfunction(value) {
+      window.location.href = "/IRF/InterviewerDetailById?Id=" + value;
+
+       
+    }
+</script>

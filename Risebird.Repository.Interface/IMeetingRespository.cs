@@ -64,7 +64,15 @@ namespace Risebird.Repository.Interface
         bool UpdateJoiningVerificationScore(int meetingId, double confidence);
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
 
-        Task<MeetingVM> GetMeetingbyid(int id);
+        Task<MeetingVM> GetMeetingbyid(int id, string Email);
         Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings();
+        //string VedioLikeAsync(string value, string vedioid, string email);
+        Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email);
+        string AddTotalViewCount(int id);
+        Task<string> VedioShare(string value, string vedioid);
+         Task<string> VedioComment(string value, string vedioid,string email);
+        List<VedioComments> GetvedioComments(int id);
+
+
     }
 }
