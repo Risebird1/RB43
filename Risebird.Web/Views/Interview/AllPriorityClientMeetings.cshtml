@@ -1036,22 +1036,29 @@
                                                 <td> @item.MeetingStatusStatusDesc</td>
                                                 @if (item.QCInterview > 0)
                                                 {
-                                                <td> @item.intervieweStatusStatDesc</td>
-
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                    <td> @item.intervieweStatusStatDesc</td>
                                                 }
                                                 else
                                                 {
-                                                <td>No Report</td>
+                                                < td ></ td >
                                                 }
+                                                @if(item.QCInterview > 0)
+                                                 {                                                  
 
-                                                @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
-                                                {
-                                                <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                 }
                                                 else
                                                 {
-                                                <td>No Video</td>
+                                                < td > No Report </ td >
+                                                }
+
+                                                @if(item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
+                                               {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    < td > No Video </ td >
                                                 }
                                                 <td>@item.NextLevelApprovalStat</td>
                                                 <td>@item.FinalSelectionStat</td>
