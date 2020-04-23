@@ -842,7 +842,7 @@ namespace Risebird.Web.Controllers
                         return View("AddInterviewerProfile", model);
                     }
 
-                    if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
+                    if (_userService.AddInterviewerProfile(interviewerProfile).Result)
                     {
                         TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
                         return RedirectToAction("Interviewers");
@@ -923,7 +923,7 @@ namespace Risebird.Web.Controllers
                         }
                     }
 
-                    if (_userService.AddOrEditInterviewerProfile(interviewerProfile).Result)
+                    if (_userService.EditInterviewerProfile(interviewerProfile).Result)
                     {
                         TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
                         return RedirectToAction("Interviewers");
