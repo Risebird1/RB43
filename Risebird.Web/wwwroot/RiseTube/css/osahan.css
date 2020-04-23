@@ -731,6 +731,13 @@ Version: 1.0
  .video-title {
      margin-bottom: 5px;
 }
+
+.video-block .single-video-right .video-title{
+margin-bottom: 5px;
+min-height: 20px;
+}
+
+
  .video-page {
      font-size: 11px;
 }

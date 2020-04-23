@@ -2393,7 +2393,7 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
         position: absolute;
         width: 100%;
         padding-top: 10px;
-        z-index: 1029;
+        z-index: 1;
     }
 
 .documentation .navbar.fixed-top {
@@ -4766,7 +4766,7 @@ Created using IcoMoon - icomoon.io
     .nav-pills .nav-item .nav-link.active:hover {
         background-color: #9A9A9A;
         color: #FFFFFF;
-        box-shadow: 0px 5px 35px 0px rgba(0, 0, 0, 0.3);
+        /*box-shadow: 0px 5px 35px 0px rgba(0, 0, 0, 0.3);*/
     }
 
     .nav-pills .nav-item .nav-link.disabled,
@@ -6436,11 +6436,18 @@ Created using IcoMoon - icomoon.io
     text-shadow: none;
     font-size: 30px !important;
     position: relative;
-    top: -7px;
+    top: 0px;
     opacity: 0.7 !important;
   
     right: 0px;
 }
+
+
+
+
+
+
+
 
     .modal .modal-header .close:hover,
     .modal .modal-header .close:focus {

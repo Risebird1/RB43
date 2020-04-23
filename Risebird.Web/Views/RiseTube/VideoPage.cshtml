@@ -363,17 +363,16 @@
         color: #53a5f5 !important;
     }
 
-    .mdc-card .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    .mdc-card .modal .form-control, .mdc-card .form-control{    border: 0;
+    border-radius: 4px 4px 0 0;
+    background: whitesmoke;
+    height: 40px;
+    font-size: 0.8rem;
+    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
     }
 
-        .mdc-card .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
+        .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus{
+        border-bottom: 2px rgb(80, 158, 235) solid;
         }
 
 
@@ -577,6 +576,15 @@
         flex: 0 0 41.666667%;
         max-width: 41.666667%;
         padding: 0px;
+    }
+
+    .single-video-left .tab-content table {
+        white-space: nowrap;
+    }
+
+    .upload-label {
+        background: #57adf80f;
+        padding: 5px 15px!important;
     }
 
 </style>
@@ -964,10 +972,25 @@
                                                         <div class="row">
                                                             <div class="col-md-12 col-sm-12">
 
-                                                                <button type="button" id="ResetFilter" style="float: right;
-        margin-top: 40px;
-   " class="buttons button-2 button-2b">Reset Filter</button>
-                                                                <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>
+
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <font style="font-size:12px;"> Reset Filter</font>
+                                                                </button>
+
+
+
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <font style="font-size:12px;"> Apply Filter</font>
+                                                                </button>
+
+
+
+
+
+                                                                <!-- <button type="button" id="ResetFilter" style="float: right; margin-top: 40px; " class="buttons button-2 button-2b"> Reset Filter</button>
+         <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>-->
                                                             </div>
 
                                                         </div>
@@ -1051,8 +1074,7 @@
                                                                 }
                                                             </div>
                                                             <div class="col-md-4" style="        text-align: end;
-        margin-top: -30px;
-">
+        margin-top: -30px;">
 
                                                             </div>
                                                             <div class="col-md-4" style="text-align: end; margin-top: -30px;">
@@ -1183,6 +1205,7 @@
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
                                                                                 @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                              
                                                                                 @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                                             </div>
@@ -1251,14 +1274,14 @@
 
                                                                     </div>
                                                                     <div class="row">
-                                                                        <div class="col-md-6 col-sm-6">
+                                                                        <div class="col-md-12 col-sm-12">
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                                                                 @{
                                                                                     if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
                                                                                     {
-                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
                                                                                     }
                                                                                 }
 
@@ -1278,7 +1301,7 @@
                                                                 </div>
                                                                 <div class="tab-pane" id="link3">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="table-responsive">
+                                                                        <div class="table-responsive-sm">
                                                                             <table class="table table-bordered mbn" id="SkillTable">
                                                                                 <thead>
                                                                                     <tr>
@@ -1331,25 +1354,31 @@
                                                                             </table>
                                                                         </div>
                                                                         <div class="form-group">
-                                                                            @Html.LabelFor(model => model.IreportModel.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                            @Html.LabelFor(model => model.IreportModel.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                            @Html.TextAreaFor(m => m.IreportModel.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talktext">
+
+                                                                                    @Html.TextAreaFor(m => m.IreportModel.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
 
 
 
-                                                                    </div>
+                                                                            </div>
                                                                 </div>
 
                                                                 <div class="tab-pane" id="link4">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="table-responsive">
+                                                                        <div class="table-responsive-sm">
                                                                             <table class="table table-bordered mbn" id="QuestionsTable">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <th width="50%">Questions</th>
+                                                                                        <th width="40%">Questions</th>
                                                                                         <th width="20%">SkillName</th>
-                                                                                        <th width="10%">Rating</th>
+                                                                                        <th width="20%">Rating</th>
                                                                                         <th width="10%">Time(Min)</th>
                                                                                         @*
                                                                             <th width="10%">Action</th>*@
@@ -1438,7 +1467,7 @@
                                                                 </div>
                                                                 <div class="tab-pane" id="link5">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="table-responsive">
+                                                                        <div class="table-responsive-sm">
                                                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                                                 <thead>
                                                                                     <tr>
@@ -1492,18 +1521,24 @@
                                                                             </table>
 
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                                @Html.TextAreaFor(m => m.IreportModel.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                                                            </div>
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                    <div class="talktext">
 
 
-                                                                        </div>
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                                                        </div></div>
+                                                                                    </div>
+
+
+                                                                                </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="tab-pane" id="link6">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="table-responsive">
+                                                                        <div class="table-responsive-sm">
 
                                                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                                                 <thead>
@@ -1557,13 +1592,18 @@
                                                                                 </tbody>
                                                                             </table>
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                                @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-                                                                            </div>
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                    <div class="talktext">
+
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+                                                                                        </div></div>
+                                                                                    </div>
 
 
-                                                                        </div>
+                                                                                </div>
                                                                     </div>
                                                                 </div>
                                                                 <style>
@@ -1616,7 +1656,7 @@
 
                                                                 <div class="tab-pane" id="link7">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="table-responsive">
+                                                                        <div class="table-responsive-sm">
 
                                                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                                                 <thead>
@@ -1670,13 +1710,22 @@
                                                                                 </tbody>
                                                                             </table>
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                                                @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-                                                                            </div>
+                                                                             
+                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                    <div class="talktext">
+
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                                           
+                                                                                    
+                                                                                    </div></div>
+                                                                                    
+                                                                                    
+                                                                                    </div>
 
 
-                                                                        </div>
+                                                                                </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
