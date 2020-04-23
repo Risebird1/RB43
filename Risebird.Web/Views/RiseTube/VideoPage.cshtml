@@ -216,14 +216,21 @@
 
     .panel-header-sm {
         height: 85px;
-        padding-top: 50px;
+        padding-top: 65px;
         background: none !important;
     }
+    .nav-pills.nav-pills-primary .nav-item .nav-link.active, .nav-pills.nav-pills-primary .nav-item .nav-link.active:focus, .nav-pills.nav-pills-primary .nav-item .nav-link.active:hover {
+        background-color: #53a5f5;
+    }
 
+    .nav-pills .nav-item .nav-link {
+        padding: 10px 5px !important;
+        font-size: 11px !important;
+    }
 
-
-
-
+    .nav-pills.nav-pills:not(.flex-column) .nav-item:not(:last-child) .nav-link {
+        margin-right: 6px !important;
+    }
     .multiselect-selected-text {
         text-transform: capitalize;
         font-weight: normal;
@@ -441,70 +448,35 @@
 
 
 
-            .chat .chat-history .message-data {
-                margin-bottom: 15px;
-            }
+    .chat .chat-history .message-data {
+        margin-bottom: 5px;
+        position: relative;
+        top: 5px;
+    }
 
             .chat .chat-history .message-data-time {
                 color: #a8aab1;
                 padding-left: 6px;
             }
 
-            .chat .chat-history .message {
-                color: white;
-                padding: 18px 20px;
-                line-height: 26px;
-                font-size: 16px;
-                border-radius: 7px;
-                margin-bottom: 10px;
-                width: 60%;
-                position: relative;
-            }
-
-                .chat .chat-history .message:after {
-                    bottom: 100%;
-                    border: solid transparent;
-                    content: " ";
-                    height: 0;
-                    width: 0;
-                    position: absolute;
-                    pointer-events: none;
-                    border-bottom-color: #c9e8fc;
-                    border-width: 10px;
-                    margin-left: -10px;
-                }
-
+    .chat .chat-history .message {
+        padding: 10px 20px;
+        line-height: 23px;
+        font-size: 14px;
+        border-radius: 3px;
+        margin-bottom: 10px;
+        min-width: 35%;
+        max-width:calc(100% - 10%);
+        position: relative;
+        background: #cccccc36;
+        margin-left: 12%;
+        display: inline-block;
+    }
     .chat .chat-history .my-message {
-        background: #53a5f540;
-        color: #093552;
+        color: #000000bf;
     }
 
-    .chat .chat-history li:nth-child(even) .my-message {
-        float: right;
-        background: #9cbddc4d;
-    }
-    .chat .chat-history li:nth-child(even) .message-data {
-        text-align: right;
-    }
-        .chat .chat-history li:nth-child(odd) .my-message {
-        float: left;
-    }
-
-
-    .chat .chat-history li:nth-child(even) .message:after {
-        bottom: 100%;
-        right: 7%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-bottom-color: #e1ebf5;
-        border-width: 10px;
-        margin-left: -10px;
-    }
-
+   
 
 
 
@@ -561,6 +533,52 @@
         font-weight: 600;
         font-size: 12px;
     }
+    .borders {
+        border: 2px solid #fff !important;
+    }
+
+    .comment-tri-right.border.left-tp:before {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -40px;
+        right: auto;
+        top: -8px;
+        bottom: auto;
+        border: 32px solid;
+        border-color: #666 transparent transparent transparent;
+    }
+
+    .comment-tri-right.left-tp:after {
+        content: ' ';
+        position: absolute;
+        width: 0;
+        height: 0;
+        left: -20px;
+        right: auto;
+        top: 0px;
+        bottom: auto;
+        border: 22px solid;
+        border-color: #f4f4f4 transparent transparent transparent;
+    }
+
+    .left-chart {
+        flex: 0 0 58.333333%;
+        max-width: 58.333333%;
+        padding: 0px 10px 0px 10px;
+    }
+    .single-video-left .tab-space {
+        padding: 0px 0 30px 0px;
+    }
+
+    .interviewer-comment {
+        -ms-flex: 0 0 41.666667%;
+        flex: 0 0 41.666667%;
+        max-width: 41.666667%;
+        padding: 0px;
+    }
+
 </style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
@@ -1023,7 +1041,10 @@
                                                                     }
                                                                     else
                                                                     {
-                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black; font-size: 24px;padding-right:30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="        margin-left: 25px;
+        color: black;
+        font-size: 24px;
+        padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
                                                                         <i class="fa fa-thumbs-down fa-5px" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                     }
 
@@ -1118,7 +1139,7 @@
                                                             <div class="tab-content tab-space">
                                                                 <div class="tab-pane active" id="link1">
                                                                     <div class="row">
-                                                                        <div class="col-md-7 col-sm-7">
+                                                                        <div class="left-chart">
                                                                            
                                                                                 <div class="chart-box">
                                                                                     <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
@@ -1128,7 +1149,7 @@
                                                                                 </div>
                                                                            
                                                                         </div>
-                                                                        <div class="col-md-5 col-sm-5">
+                                                                        <div class="interviewer-comment">
                                                                      
                                                                             <div class="form-group">
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
@@ -1138,7 +1159,7 @@
                                                                                     <div class="talktext">
 
 
-                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height:105px;width:100%", @readonly = "readonly" })
+                                                                                        @Html.TextAreaFor(m => m.IreportModel.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height:115px;width:100%", @readonly = "readonly" })
 
                                                                                         </div>
                                                                                     </div>
@@ -1690,7 +1711,7 @@
 
 
 
-                                                        <div class="message my-message ">   @itemvalue.Comment</div>
+                                                                                    <div class="message my-message  borders comment-tri-right left-tp">   @itemvalue.Comment</div>
                                                                                 </li>
                                                                             }
 
@@ -2898,11 +2919,11 @@
                             data: { vedioid: $("#txtVedioId").val() },
                             success: function (data) {
                                 var html = '';
-                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" style="height:200px;overflow-y:auto;padding-left:20px">';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
                                 for (var i = 0; i < data.length; i++) {
 
                                     html += '                <li>';
-                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message "> ' + data[i].comment;  '</div>'
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
                                     html += '    </li>';
                                 }
 
