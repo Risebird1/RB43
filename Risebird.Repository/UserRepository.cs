@@ -475,6 +475,7 @@ namespace Risebird.Repository
             }
         }
 
+        
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try
@@ -520,6 +521,464 @@ namespace Risebird.Repository
 
         #endregion
 
+        #region Interviewer Profile Repository function
+
+        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //Just added to get Id this way
+                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    //   commandType: CommandType.StoredProcedure);
+                    //int ProfileId = result.FirstOrDefault();
+                    
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+                    var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
+                        con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    var ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+
+                    //foreach (var item in interviewerProfile.InterviewerSkill)
+                    //{
+
+                    //    string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Description from Skill where Id = @SkillId ));";
+                    //    var affectedRows = con.ExecuteAsync(sqlSkill, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        SkillId = item.SkillId,
+                    //        Level = item.Level,
+                    //        SkillName = item.SkillName,
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+                    //{
+                    //    string sqlCertificate = "INSERT INTO TransInterviewerCertificate (InterviewerProfileId, CertificateID, CertificateName) Values (@InterviewerProfileId, @CertificateID, @CertificateName);";
+                    //    var affectedRows = con.ExecuteAsync(sqlCertificate, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        CertificateID = item.CertificateID,
+                    //        CertificateName = item.CertificateName,
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+                    //{
+                    //    string sqlProfessional = "INSERT INTO TransInterviewerProfessional (InterviewerProfileId, CompanyName, CompanyType, Domain, StartDate, EndDate) Values (@InterviewerProfileId, @CompanyName, @CompanyType, @Domain, @StartDate, @EndDate);";
+                    //    var affectedRows = con.ExecuteAsync(sqlProfessional, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        CompanyName = item.CompanyName,
+                    //        CompanyType = item.CompanyType,
+                    //        Domain = item.Domain,
+                    //        StartDate = item.StartDate,
+                    //        EndDate = item.EndDate
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerEducationDetails)
+                    //{
+
+                    //    string sqlEducation = "INSERT INTO TransInterviewerEducation (InterviewerProfileId, Graduation, CollegeType, Specialization, Score) Values (@InterviewerProfileId, @Graduation, @CollegeType, @Specialization, @Score);";
+                    //    var affectedRows = con.ExecuteAsync(sqlEducation, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        Graduation = item.Graduation,
+                    //        CollegeType = item.CollegeType,
+                    //        Specialization = item.Specialization,
+                    //        Score = item.Score
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+                    //{
+
+                    //    string sqlQuery = "INSERT INTO TransInterviewerProjects (InterviewerProfileId, ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions) Values (@InterviewerProfileId, @ProjectName, @ClientName, @StartDate, @EndDate, @Role, @ProjectDescriptions);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        ProjectName = item.ProjectName,
+                    //        ClientName = item.ClientName,
+                    //        StartDate = item.StartDate,
+                    //        EndDate = item.EndDate,
+                    //        Role = item.Role,
+                    //        ProjectDescriptions = item.ProjectDescriptions
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                    //{
+
+                    //    string sqlQuery = "INSERT INTO TransInterviewerAvailability (InterviewerProfileId, DayTimeSlot, DaySlot, StartTime, EndTime) Values (@InterviewerProfileId, @DayTimeSlot, @DaySlot, @StartTime, @EndTime);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        DayTimeSlot = item.DayTimeSlot,
+                    //        DaySlot = item.DaySlot,
+                    //        StartTime = item.StartTime,
+                    //        EndTime = item.EndTime
+                    //    }).Result;
+                    //}
+
+                    //foreach (var item in interviewerProfile.InterviewerAccDetails)
+                    //{
+
+                    //    string sqlQuery = "INSERT INTO TransInterviewerAccDetails (InterviewerProfileId, AccountHolderName, AccountNumber, IFSCCode, Location, UPIId) Values (@InterviewerProfileId, @AccountHolderName, @AccountNumber, @IFSCCode, @Location, @UPIId);";
+                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
+                    //    {
+                    //        InterviewerProfileId = ProfileId,
+                    //        AccountHolderName = item.AccountHolderName,
+                    //        AccountNumber = item.AccountHolderName,
+                    //        IFSCCode = item.IFSCCode,
+                    //        Location = item.Location,
+                    //        UPIId = item.UPIId
+                    //    }).Result;
+                    //}
+
+                    return true;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@UserId", entity.UserId);
+            parameters.Add("@FirstName", entity.FirstName);
+            parameters.Add("@LastName", entity.LastName);
+            parameters.Add("@NickName", entity.NickName);
+            parameters.Add("@EmailId", entity.EmailId);
+            parameters.Add("@AltEmailId", entity.AltEmailId);
+            parameters.Add("@DOB", entity.DOB);
+            parameters.Add("@Gender", entity.Gender);
+            parameters.Add("@AnnualSalary", entity.AnnualSalary);
+            parameters.Add("@Country", entity.Country);
+            parameters.Add("@City", entity.City);
+            parameters.Add("@MobileNumber", entity.MobileNumber);
+            parameters.Add("@AltMobileNumber", entity.AltMobileNumber);
+            parameters.Add("@CurrentRole", entity.CurrentRole);
+            parameters.Add("@Experience", entity.Experience);
+            parameters.Add("@PreferredDomain", entity.PreferredDomain);
+            parameters.Add("@ResumeLink", entity.ResumeLink);
+            parameters.Add("@CodedResumeLink", entity.CodedResumeLink);
+            parameters.Add("@ResumeLink", entity.GitHubLink);
+            parameters.Add("@CodedResumeLink", entity.StackOverflowLink);
+            parameters.Add("@ResumeLink", entity.LinkedinLink);
+            parameters.Add("@CodedResumeLink", entity.Blog);
+            parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
+            parameters.Add("@IsActive", entity.IsActive);
+            parameters.Add("@IsApproved", entity.IsApproved);
+            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+
+            return parameters;
+        }
+
+        //Get NickNames
+        public IEnumerable<string> GetNickNames(int UserId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select NickName from [dbo].[InterviewerProfile] where UserId != @UserId", parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        //Get NickNames
+        public IEnumerable<string> GetEmailIds(int UserId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<string>(
+                        con, "select EmailId from [dbo].[InterviewerProfile] where UserId != @UserId", parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public IEnumerable<LevelTech> GetLevelTech()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<LevelTech>(con, "Select Id, Name, Description from LevelTech",
+                        null, commandType: Text);
+                }
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@userid", userid);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfiletByUserId",
+                        parameters, commandType: CommandType.StoredProcedure);                   
+                }
+            }
+
+            catch (SqlException e)
+            {
+                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerSkill>(
+                        con, "select Id, InterviewerProfileId,  SkillId, Level, SkillName from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId", 
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            
+        }
+
+        //certi
+        public async Task<IEnumerable<TransInterviewerCertificate>> GetCertificateList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerCertificate>(
+                        con, "select Id, InterviewerProfileId,  CertificateID, CertificateName from [dbo].[TransInterviewerCertificate] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Education
+        public async Task<IEnumerable<TransInterviewerEducation>> GetEducationList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerEducation>(
+                        con, "select Id, InterviewerProfileId,  Graduation, CollegeType, Specialization, Score from [dbo].[TransInterviewerEducation] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        // Profess
+        public async Task<IEnumerable<TransInterviewerProfessional>> GetProfessionalList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerProfessional>(
+                        con, "select Id, InterviewerProfileId,  CompanyName, CompanyType, Domain, StartDate, EndDate from [dbo].[TransInterviewerProfessional] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Project
+        public async Task<IEnumerable<TransInterviewerProjects>> GetProjectsList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerProjects>(
+                        con, "select Id, InterviewerProfileId,  ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions from [dbo].[TransInterviewerProjects] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //Availability
+        public async Task<IEnumerable<TransInterviewerAvailability>> GetAvailabilityList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerAvailability>(
+                        con, "select Id, InterviewerProfileId,  DayTimeSlot, DaySlot, StartTime, EndTime from [dbo].[TransInterviewerAvailability] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        //AccDetails
+        public async Task<IEnumerable<TransInterviewerAccDetails>> GetAccDetailsList(int ProfileId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Profileid", ProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<TransInterviewerAccDetails>(
+                        con, "select Id, InterviewerProfileId,  AccountHolderName, AccountNumber, IFSCCode, Location, UPIId from [dbo].[TransInterviewerAccDetails] where InterviewerProfileId = @ProfileId",
+                        parameters, commandType: Text);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+
+        #endregion
 
         #region QCInterviewer Repository Functions
 
@@ -975,7 +1434,7 @@ namespace Risebird.Repository
             }
         }
 
-
+        
 
     }
 }

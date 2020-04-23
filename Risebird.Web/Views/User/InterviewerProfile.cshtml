@@ -1,0 +1,577 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
+
+@{
+    ViewData["Title"] = "Add Interviewer Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.min.js"></script>
+<script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
+
+<script src="sweetalert2.all.min.js"></script>
+<script src="sweetalert2.min.js"></script>
+<link rel="stylesheet" href="sweetalert2.min.css">
+
+<style>
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #013855;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 45px;
+    }
+
+    #btnPlus, #btnMinus {
+        padding: 2px;
+    }
+
+    #btnMinus {
+        position: absolute;
+        margin-left: 12px;
+    }
+
+    #btnPlus {
+        background-color: #4a89dc;
+    }
+
+    .glyphicon {
+        top: -1px;
+        right: -2px;
+        vertical-align: middle;
+        line-height: 0;
+    }
+
+    .table-responsive {
+        overflow: hidden;
+    }
+</style>
+<!-- Style added by Vishwanath for AddInterviewerProfile-->>
+<style>
+    .table-responsive {
+        width: 98%;
+    }
+
+    .tableHeaderClass {
+        text-align: center;
+    }
+
+    .fieldHeader {
+        text-align: center;
+    }
+</style>
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Add Interviewer Profile form</a>
+                <a class="navbar-brand">Add Interviewer Profile </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+                <span class="navbar-toggler-bar navbar-kebab"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        @using (Html.BeginForm("AddInterviewerProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.AntiForgeryToken()
+                            <!-- Add Interviewer personal Details Start-->
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Personal Details</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 pr-1">
+
+                                    <div class="form-group">
+
+                                        @Html.Hidden("UserId", Model.UserId)
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="name">First Name</label>
+                                            <input class="form-control text-box single-line" id="firstName" name="firstName" type="text" value="">*@
+
+                                        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Email ID</label>
+                                        @*<input class="form-control text-box single-line" id="emailID" name="emailID" type="text" value="">*@
+
+                                        @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+
+                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">mobile</label>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
+        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+
+                                        @*@Html.LabelFor(model => model.Experience, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
+
+        @Html.EditorFor(model => model.Experience, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+        @Html.ValidationMessageFor(model => model.Experience, "", new { @class = "text-danger" })*@
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">current location</label>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6 col-sm-6 pr-1">
+
+                                    <div class="form-group">
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="lastName">Last Name</label>
+        <input class="form-control text-box single-line" id="lastName" name="lastName" type="text" value="">*@
+
+                                        @*@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })*@
+
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Last name</label>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="alternateEmail">Alternate Email</label>
+        <input class="form-control text-box single-line" id="alternateEmail" name="alternateEmail" type="text" value="">*@
+
+                                        @*@Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+        @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+        @Html.ValidationMessageFor(model => model.AltEmailId, "", new { @class = "text-danger" })*@
+
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">alternate Email ID</label>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="alterMobile">Alternate Mobile</label>
+        <input class="form-control text-box single-line" id="alterMobile" name="alterMobile" type="text" value="">*@
+
+                                        @*@Html.LabelFor(model => model.AltMobileNumber, htmlAttributes: new { @class = "control-label col-md-8 col-sm-8 col-lg-8 desp-label" })
+        @Html.EditorFor(model => model.AltMobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+        @Html.ValidationMessageFor(model => model.AltMobileNumber, "", new { @class = "text-danger" })*@
+
+                                        <label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Alternate Mobile ID</label>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        REsume
+                                    </div>                                    
+                                </div>
+                              </div>
+                           
+                        <!-- Availability Details start-->
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Availability Details</h2>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mbn" id="availabilityDetailsTable">
+                                            <thead class="tableHeaderClass">
+                                                <tr>
+                                                    <th width="25%" class="table_heading">Slot </th>
+                                                    <th width="25%" class="table_heading">Week Days</th>
+                                                    <th width="20%" class="table_heading">Start Date</th>
+                                                    <th width="20%" class="table_heading">End Date</th>
+                                                    <th width="10%" class="table_heading">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        @Html.DropDownList("InterviewerAvailabilityDetails[0].DayTimeSlot", (SelectList)Model.DayTimeSlotList, new { @class = "form-control text-box single-line" })
+                                                        @Html.ValidationMessageFor(model => model.DayTimeSlot, "", new { @class = "text-danger" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("InterviewerAvailabilityDetails[0].DaySlot", (SelectList)Model.DaySlotList, new { @class = "form-control text-box single-line" })
+                                                        @Html.ValidationMessageFor(model => model.DaySlot, "", new { @class = "text-danger" })
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">
+                                                    </td>
+                                                    <td>
+                                                        <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                        <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Availabality Details end-->
+
+
+                            <!-- Account Details start-->
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="multiple_row">
+                                        <h2>Account Details</h2>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                        @*<input class="form-control text-box single-line" id="accountHolderNameList" name="accountHolderNameList" type="text" value="" placeholder="Slot- morning -evening- drop-down">*@
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountHolderName" name="InterviewerAccDetails[0].AccountHolderName" type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                        @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="confirmAccountNumber">Confirm Account number</label>
+
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-2pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />
+
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2pr-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">Location</label>
+
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_Location" name="InterviewerAccDetails[0].Location" type="text" value="" />
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 px-1">
+                                    <div class="form-group">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                        @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
+                                        <input class="form-control text-box single-line" id="InterviewerAccDetails_0_UPIId" name="InterviewerAccDetails[0].UPIId" type="text" value="" />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Account Detilas End-->
+
+                            <div class="card-footer ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class=" col-md-3">
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
+                                    <div class=" col-md-3">
+
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+</div>
+<script>
+
+
+
+    function addProjectTableRow() {
+        var x = document.getElementById('projectTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            alert("Cannot add more than 3 Projects Details.");
+            swal("Sweet Alert Called!!!!!!");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+        // deep clone the targeted row
+
+
+        // get the total number of rows
+        //var len = x.rows.length;
+
+
+        // set the innerHTML of the first row
+        //  new_row.cells[0].innerHTML = len;
+
+        // grab the input from the first cell and update its ID and value
+        //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+        //inp1.id += len;
+        //inp1.value = '';
+
+        // grab the input from the first cell and update its ID and value
+        //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+        //inp2.id += len;
+        //inp2.value = '';
+
+        // append the new row to the table
+
+    }
+
+    function deleteProjectTableRow(row) {
+        var x = document.getElementById('projectTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        //console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('projectTable').deleteRow(i);
+        }
+    }
+
+    function addRowProfessionalDetails() {
+        var x = document.getElementById('professionalDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            swal("Cannot add row more than 3 Professional Details.");
+
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowProfessionalDetails(row) {
+        var x = document.getElementById('professionalDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('professionalDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowEducationDetails() {
+        var x = document.getElementById('educationTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 2) {
+            alert("Cannot add more than 2 Educational Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowEducationDetails(row) {
+        var x = document.getElementById('educationTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('educationTable').deleteRow(i);
+        }
+    }
+
+    function addRowSkillDetails() {
+        var x = document.getElementById('skillTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Skill Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowSkillDetails(row) {
+        var x = document.getElementById('skillTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('skillTable').deleteRow(i);
+        }
+    }
+
+
+    function addAvailabilityDetails() {
+        var x = document.getElementById('availabilityDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Availability Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowAvailabilityDetails(row) {
+        var x = document.getElementById('availabilityDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('availabilityDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowCertificateDetails() {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+
+        var new_row = x.rows[1].cloneNode(true);
+        x.appendChild(new_row);
+    }
+
+    function deleteRowCertificateDetails(row) {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('certificateTable').deleteRow(i);
+        }
+    }
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
+        }
+
+    }
+</script>
+    addRowSkillDetails

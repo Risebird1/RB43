@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
 
@@ -41,5 +42,15 @@ namespace Risebird.Business.Interface
         bool EditRecruiter(Recruiter recruiter);
         Recruiter GetRecruiter(int id);
         bool DeleteRecruiter(int userId);
+
+        // Interviewe Profile services
+        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
+
+        //To retrieve the NickNames
+        IEnumerable<string> GetNickNames(int UserId);
+        IEnumerable<string> GetEmailIds(int UserId);
+        InterviewerProfileVM GetInterviewerProfileById(int userid);
+        List<LevelTech> GetLevelTech();
     }
 }
