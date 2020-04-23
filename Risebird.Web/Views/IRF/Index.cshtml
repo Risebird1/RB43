@@ -270,7 +270,7 @@
 
     .pskill {
         display: inline-block;
-        width: 120px;
+        width: 200px;
         white-space: nowrap;
         overflow: hidden !important;
         text-overflow: ellipsis;
@@ -541,14 +541,7 @@
                                     <div>
 
 
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                            <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF" )'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Interviewer Search</font></span>
-                                        </button>
-
-
-                                        <!--<button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa-amazon " data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF" )'" data-original-title="Tooltip on top"> Interviewer Search</span></button>-->
-
-                                        @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                                         @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                         {
 
 
@@ -746,7 +739,7 @@
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class=" col-md-6 col-sm-6">
+                                                <div class=" col-md-6 col-sm-6" style="padding:0px">
                                                     <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
                                                 </div>
 
@@ -800,10 +793,6 @@
                                                         if (!item.IsDeleted)
                                                         {
 
-                                                            <!--
-                                                        <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
-                                                            <i class="now-ui-icons fa fa-archive"></i>
-                                                        </button>-->
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
@@ -979,48 +968,17 @@
                                                         </button>
 
 
-
-                                                        <!--
-                                                    <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');"
-                                                            class="btn btn-info btn-icon btn-sm" title="Stats">
-                                                        <i class="now-ui-icons fa fa-industry"></i>
-                                                    </button>--->
                                                         if (item.IsPaused)
                                                         {
-
-                                                            <!--
-                                                        <button type="button" onclick="PlayIRF('@item.id', '@item.IRFId');"
-                                                                class="btn btn-info btn-icon btn-sm" title="Play">
-                                                            <i class="now-ui-icons fa fa-play"></i>
-                                                        </button>--->
-
-
-
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Play">
                                                                 <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                             </button>
-
-
-
-
-
-
                                                         }
                                                         else
                                                         {
-
-                                                            <!--
-                                                        <button type="button" onclick="PauseIRF('@item.id', '@item.IRFId');"
-                                                                class="btn btn-info btn-icon btn-sm" title="Pause">
-                                                            <i class="now-ui-icons fa fa-pause"></i>
-                                                        </button>--->
-
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Pause">
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Play">
                                                                 <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                             </button>
-
 
                                                         }
                                                     }
