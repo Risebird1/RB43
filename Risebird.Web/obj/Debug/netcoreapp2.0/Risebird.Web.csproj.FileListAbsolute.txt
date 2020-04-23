@@ -225,3 +225,5 @@ C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\R
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

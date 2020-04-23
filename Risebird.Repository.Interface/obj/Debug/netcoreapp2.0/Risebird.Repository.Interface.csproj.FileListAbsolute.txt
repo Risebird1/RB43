@@ -140,3 +140,5 @@ C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debu
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb

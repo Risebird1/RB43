@@ -211,3 +211,5 @@ C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business\obj\Debug\netcoreapp
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb

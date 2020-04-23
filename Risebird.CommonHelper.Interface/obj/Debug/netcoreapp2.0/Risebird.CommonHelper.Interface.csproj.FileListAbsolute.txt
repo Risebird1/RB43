@@ -113,3 +113,5 @@ C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\De
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
