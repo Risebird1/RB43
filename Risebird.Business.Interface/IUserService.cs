@@ -44,7 +44,8 @@ namespace Risebird.Business.Interface
         bool DeleteRecruiter(int userId);
 
         // Interviewe Profile services
-        Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
 
         //To retrieve the NickNames
         IEnumerable<string> GetNickNames(int UserId);

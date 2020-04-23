@@ -267,30 +267,28 @@ namespace Risebird.Business
 
         #region Interviewer Profile Service Functions
 
-        public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
-                //Get the Interviewer ProfileRecord if exist using userId
-                IEnumerable<InterviewerProfileVM> ProfileList = _userRepository.GetInterviewerProfileById(interviewerProfile.UserId).Result;
-                InterviewerProfileVM Profile = ProfileList.ToList().FirstOrDefault();
-
-                if (Profile == null)
-                {
-                    //Add Method
-                    return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
-                }
-                else
-                {
-                    //Edit Method
-
-                    // Now call one by one and add the values.
+                //Add Method
+                return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
 
 
-                    return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
-                }
             }
-
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                //Edit Method
+                return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+            }
             catch (Exception e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
