@@ -112,7 +112,7 @@ namespace Risebird.Repository
         public async Task<bool> UpdateUser(UserList user)
         {
             try
-            {              
+            {
                 DynamicParameters parameters = SetStoredProcedureParameterForUser(user);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -170,7 +170,7 @@ namespace Risebird.Repository
                 parameters.Add("@id", entity.Id);
             //if (entity.IdProfile.HasValue)
 
-            parameters.Add("@selectedProfileId", entity.IdProfile); 
+            parameters.Add("@selectedProfileId", entity.IdProfile);
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
@@ -216,18 +216,18 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("Email", emailID);
-                    return  SqlMapper.Query<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
+                    return SqlMapper.Query<ClientUserVM>(con, "sp_ClientUserDetail", parameters,
                          commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
 
             }
             catch (SqlException ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
         }
@@ -245,7 +245,7 @@ namespace Risebird.Repository
                         commandType: CommandType.StoredProcedure);
 
                     return true;
-                   
+
                 }
             }
 
@@ -281,7 +281,7 @@ namespace Risebird.Repository
             catch (SqlException e)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-               return false;
+                return false;
             }
 
             catch (Exception e)
@@ -475,7 +475,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
         public async Task<bool> UpdateInterviewer(InterviewerVM Interviewer)
         {
             try
@@ -508,8 +508,8 @@ namespace Risebird.Repository
                 parameters.Add("@id", entity.id);
 
             parameters.Add("@selectedSkills", entity.PrimarySkill);
-            parameters.Add("@resumeLink", entity.ResumeLink);           
-            parameters.Add("@slots", entity.Slots);   
+            parameters.Add("@resumeLink", entity.ResumeLink);
+            parameters.Add("@slots", entity.Slots);
             parameters.Add("@userFirstName", entity.FirstName);
             parameters.Add("@userLastName", entity.LastName);
             parameters.Add("@userEmailId", entity.EmailId);
@@ -527,6 +527,8 @@ namespace Risebird.Repository
         {
             try
             {
+                int ProfileId;
+
                 DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
@@ -534,113 +536,154 @@ namespace Risebird.Repository
                     //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                     //   commandType: CommandType.StoredProcedure);
                     //int ProfileId = result.FirstOrDefault();
-                    
+
                     await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
-                        con, "select * from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
-                    var ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
-
-                    //foreach (var item in interviewerProfile.InterviewerSkill)
-                    //{
-
-                    //    string sqlSkill = "INSERT INTO TransInterviewerSkill (InterviewerProfileId, SkillId, Level, SkillName) Values (@InterviewerProfileId, @SkillId, @Level, (select Description from Skill where Id = @SkillId ));";
-                    //    var affectedRows = con.ExecuteAsync(sqlSkill, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        SkillId = item.SkillId,
-                    //        Level = item.Level,
-                    //        SkillName = item.SkillName,
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerCertificateDetails)
-                    //{
-                    //    string sqlCertificate = "INSERT INTO TransInterviewerCertificate (InterviewerProfileId, CertificateID, CertificateName) Values (@InterviewerProfileId, @CertificateID, @CertificateName);";
-                    //    var affectedRows = con.ExecuteAsync(sqlCertificate, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        CertificateID = item.CertificateID,
-                    //        CertificateName = item.CertificateName,
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
-                    //{
-                    //    string sqlProfessional = "INSERT INTO TransInterviewerProfessional (InterviewerProfileId, CompanyName, CompanyType, Domain, StartDate, EndDate) Values (@InterviewerProfileId, @CompanyName, @CompanyType, @Domain, @StartDate, @EndDate);";
-                    //    var affectedRows = con.ExecuteAsync(sqlProfessional, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        CompanyName = item.CompanyName,
-                    //        CompanyType = item.CompanyType,
-                    //        Domain = item.Domain,
-                    //        StartDate = item.StartDate,
-                    //        EndDate = item.EndDate
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerEducationDetails)
-                    //{
-
-                    //    string sqlEducation = "INSERT INTO TransInterviewerEducation (InterviewerProfileId, Graduation, CollegeType, Specialization, Score) Values (@InterviewerProfileId, @Graduation, @CollegeType, @Specialization, @Score);";
-                    //    var affectedRows = con.ExecuteAsync(sqlEducation, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        Graduation = item.Graduation,
-                    //        CollegeType = item.CollegeType,
-                    //        Specialization = item.Specialization,
-                    //        Score = item.Score
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerProjectsDetails)
-                    //{
-
-                    //    string sqlQuery = "INSERT INTO TransInterviewerProjects (InterviewerProfileId, ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions) Values (@InterviewerProfileId, @ProjectName, @ClientName, @StartDate, @EndDate, @Role, @ProjectDescriptions);";
-                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        ProjectName = item.ProjectName,
-                    //        ClientName = item.ClientName,
-                    //        StartDate = item.StartDate,
-                    //        EndDate = item.EndDate,
-                    //        Role = item.Role,
-                    //        ProjectDescriptions = item.ProjectDescriptions
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
-                    //{
-
-                    //    string sqlQuery = "INSERT INTO TransInterviewerAvailability (InterviewerProfileId, DayTimeSlot, DaySlot, StartTime, EndTime) Values (@InterviewerProfileId, @DayTimeSlot, @DaySlot, @StartTime, @EndTime);";
-                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        DayTimeSlot = item.DayTimeSlot,
-                    //        DaySlot = item.DaySlot,
-                    //        StartTime = item.StartTime,
-                    //        EndTime = item.EndTime
-                    //    }).Result;
-                    //}
-
-                    //foreach (var item in interviewerProfile.InterviewerAccDetails)
-                    //{
-
-                    //    string sqlQuery = "INSERT INTO TransInterviewerAccDetails (InterviewerProfileId, AccountHolderName, AccountNumber, IFSCCode, Location, UPIId) Values (@InterviewerProfileId, @AccountHolderName, @AccountNumber, @IFSCCode, @Location, @UPIId);";
-                    //    var affectedRows = con.ExecuteAsync(sqlQuery, new
-                    //    {
-                    //        InterviewerProfileId = ProfileId,
-                    //        AccountHolderName = item.AccountHolderName,
-                    //        AccountNumber = item.AccountHolderName,
-                    //        IFSCCode = item.IFSCCode,
-                    //        Location = item.Location,
-                    //        UPIId = item.UPIId
-                    //    }).Result;
-                    //}
-
-                    return true;
+                        con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                 }
+
+                //To Add Skills
+                foreach (var item in interviewerProfile.InterviewerSkill)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@SkillId", item.SkillId);
+                    Params.Add("@Category", item.Category);
+                    Params.Add("@Ip", item.Ip);
+                    Params.Add("@Level", item.Level);
+                    Params.Add("@SkillExperience", item.SkillExperience);
+                    Params.Add("@Nature", item.Nature);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkills", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerCertificateDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@CertificateID", item.CertificateID);
+                    Params.Add("@CertificateName", item.CertificateName);
+                    Params.Add("@Version", item.Version);
+                    Params.Add("@ExpiryDate", item.Expirydate);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerCertificate", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@CompanyName", item.CompanyName);
+                    Params.Add("@Type", item.Type);
+                    Params.Add("@CompanyStage", item.CompanyStage);
+                    Params.Add("@Size", item.Size);
+                    Params.Add("@JobFunction", item.JobFunction);
+                    Params.Add("@Industry", item.Industry);
+                    Params.Add("@Headquarters", item.Headquarters);
+                    Params.Add("@Role", item.Role);
+                    Params.Add("@Domain", item.Domain);
+                    Params.Add("@SeniorityLevel", item.SeniorityLevel);
+                    Params.Add("@Experience", item.Experience);
+                    Params.Add("@WorkNature", item.WorkNature);
+                    Params.Add("@PrimaryResponsibility", item.PrimaryResponsibility);
+                    Params.Add("@CompanyLinkedinPage", item.CompanyLinkedinPage);
+                    Params.Add("@CompanyWebsite", item.CompanyWebsite);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerEducationDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@EducationType", item.EducationType);
+                    Params.Add("@Degree", item.Degree);
+                    Params.Add("@EducationMode", item.EducationMode);
+                    Params.Add("@CollegeType", item.CollegeType);
+                    Params.Add("@UniversityName", item.UniversityName);
+                    Params.Add("@PassOutYear", item.PassOutYear);
+                    Params.Add("@AnyGap", item.AnyGap);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "TransInterviewerEducation", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerProjectsDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@TechnologyEnvironment", item.TechnologyEnvironment);
+                    Params.Add("@IsPrimarySkillUsed", item.IsPrimarySkillUsed);
+                    Params.Add("@Description", item.Description);
+                    Params.Add("@IsCommercialProject", item.IsCommercialProject);
+                    Params.Add("@NatureOfProject", item.NatureOfProject);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProjects", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@Weekday", item.Weekday);
+                    Params.Add("@Weekend", item.Weekend);
+                    Params.Add("@IsAvailableOnPublicHolidays", item.IsAvailableOnPublicHolidays);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerAccDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@AccountName", item.AccountNumber);
+                    Params.Add("@AccountNumber", item.AccountNumber);
+                    Params.Add("@IFSCCode", item.IFSCCode);
+                    Params.Add("@UPIId", item.UPIId);
+                    Params.Add("@PAN", item.PAN);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                return true;
+
             }
 
             catch (SqlException e)
@@ -676,15 +719,48 @@ namespace Risebird.Repository
             parameters.Add("@CurrentRole", entity.CurrentRole);
             parameters.Add("@Experience", entity.Experience);
             parameters.Add("@PreferredDomain", entity.PreferredDomain);
+            parameters.Add("@GitHubLink", entity.GitHubLink);
             parameters.Add("@ResumeLink", entity.ResumeLink);
             parameters.Add("@CodedResumeLink", entity.CodedResumeLink);
-            parameters.Add("@ResumeLink", entity.GitHubLink);
-            parameters.Add("@CodedResumeLink", entity.StackOverflowLink);
-            parameters.Add("@ResumeLink", entity.LinkedinLink);
-            parameters.Add("@CodedResumeLink", entity.Blog);
-            parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
+            parameters.Add("@StackOverflowLink", entity.StackOverflowLink);
+            parameters.Add("@LinkedinLink", entity.LinkedinLink);
+            parameters.Add("@Blog", entity.Blog);
             parameters.Add("@IsActive", entity.IsActive);
             parameters.Add("@IsApproved", entity.IsApproved);
+            parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
+            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+
+            return parameters;
+        }
+        private DynamicParameters SetSPParametersForSkills(InterviewerProfileVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@UserId", entity.UserId);
+            parameters.Add("@FirstName", entity.FirstName);
+            parameters.Add("@LastName", entity.LastName);
+            parameters.Add("@NickName", entity.NickName);
+            parameters.Add("@EmailId", entity.EmailId);
+            parameters.Add("@AltEmailId", entity.AltEmailId);
+            parameters.Add("@DOB", entity.DOB);
+            parameters.Add("@Gender", entity.Gender);
+            parameters.Add("@AnnualSalary", entity.AnnualSalary);
+            parameters.Add("@Country", entity.Country);
+            parameters.Add("@City", entity.City);
+            parameters.Add("@MobileNumber", entity.MobileNumber);
+            parameters.Add("@AltMobileNumber", entity.AltMobileNumber);
+            parameters.Add("@CurrentRole", entity.CurrentRole);
+            parameters.Add("@Experience", entity.Experience);
+            parameters.Add("@PreferredDomain", entity.PreferredDomain);
+            parameters.Add("@GitHubLink", entity.GitHubLink);
+            parameters.Add("@ResumeLink", entity.ResumeLink);
+            parameters.Add("@CodedResumeLink", entity.CodedResumeLink);
+            parameters.Add("@StackOverflowLink", entity.StackOverflowLink);
+            parameters.Add("@LinkedinLink", entity.LinkedinLink);
+            parameters.Add("@Blog", entity.Blog);
+            parameters.Add("@IsActive", entity.IsActive);
+            parameters.Add("@IsApproved", entity.IsApproved);
+            parameters.Add("@IsLeadInterviewer", entity.IsLeadInterviewer);
             parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -766,13 +842,13 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfiletByUserId",
-                        parameters, commandType: CommandType.StoredProcedure);                   
+                        parameters, commandType: CommandType.StoredProcedure);
                 }
             }
 
             catch (SqlException e)
             {
-                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
             catch (Exception e)
@@ -792,7 +868,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return await SqlMapper.QueryAsync<TransInterviewerSkill>(
-                        con, "select Id, InterviewerProfileId,  SkillId, Level, SkillName from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId", 
+                        con, "select Id, InterviewerProfileId,  SkillId, Level, SkillName from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -806,7 +882,7 @@ namespace Risebird.Repository
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
-            
+
         }
 
         //certi
@@ -1434,7 +1510,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
 
     }
 }
