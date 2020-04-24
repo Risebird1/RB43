@@ -949,6 +949,9 @@ namespace Risebird.Web.Controllers
         }
         private void GetAllSelectList(InterviewerProfileVM model)
         {
+            var GenderType = new SelectList(from Gender s in Enum.GetValues(typeof(Gender))
+                                              select new { ID = (int)s, Name = s.GetDescription() });
+            model.GenderList = new SelectList(GenderType, "ID", "Name");
             model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
             model.LevelList = new SelectList(_userService.GetLevelTech(), "id", "Name");
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))

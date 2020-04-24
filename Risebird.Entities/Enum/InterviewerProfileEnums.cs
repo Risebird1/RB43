@@ -5,6 +5,13 @@ using System.ComponentModel;
 
 namespace Risebird.Entities.Enum
 {
+    public enum Gender
+    {
+        [Description("Male")]
+        Male = 1,
+        [Description("Female")]
+        Female = 2
+    }
     public enum GraduationType
     {
         [Description("Graduation")]
