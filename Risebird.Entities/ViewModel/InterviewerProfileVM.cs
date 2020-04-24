@@ -38,10 +38,8 @@ namespace Risebird.Entities.ViewModel
         public string AltEmailId { get; set; }
         [Display(Name = "Date Of Birth")]
         public DateTime DOB { get; set; }
-
         [Display(Name = "Gender")]
-        public IList<string> Gender { get; set; }
-
+        public string Gender { get; set; }
         [Display(Name = "Annual Salary")]
         public int AnnualSalary { get; set; }
         [Display(Name = "Country")]
@@ -107,9 +105,6 @@ namespace Risebird.Entities.ViewModel
         //To add in the dropdown List
         [Display(Name = "Skills List")]
         public SelectList SkillTypeList { get; set; }
-        public SelectList GenderList { get; set; }
-
-
         // To add in selected from the user
         //public int[] SelectedSkillIds { get; set; }
         public SelectList CompanyTypeList { get; set; }

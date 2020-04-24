@@ -63,8 +63,8 @@
     }
 
     .myTextArea-form-control {
-        resize: vertical;
-        border: none;
+        resize: vertical; 
+        border: none; 
         border-radius: 0;
         line-height: 2;
     }
@@ -123,13 +123,7 @@
                                         @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { id = "DOB", placeholder = "MM/dd/yyyy", @class = "form-control text-box single-line", type = "date" } })
-                                        @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
-                                   s
 
-                                    </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Email ID</label>
                                             <input class="form-control text-box single-line" id="emailID" name="emailID" type="text" value="">*@
@@ -187,12 +181,6 @@
                                         @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
 
                                     </div>
-                                    <div class="form-group">
-                                        @Html.Label("DOB", "Age", htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.TextBox("txt_Age", null, new { @class = "form-control" })
-
-                                    </div>
-
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="alternateEmail">Alternate Email</label>
@@ -237,7 +225,7 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="nickName">Nick Name</label>
-            <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
+                                            <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.NickName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -245,14 +233,8 @@
                                     </div>
 
                                     <div class="form-group">
-
-                                        @Html.LabelFor(model => model.Gender, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
-                                        @Html.DropDownListFor(model => model.Gender, (SelectList)Model.GenderList, new { @class = "form-control text-box single-line" })
-                                        @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
-                                    </div>
-                                    <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="location">Current Location</label>
-            <input class="form-control text-box single-line" id="location" name="location" type="text" value="">*@
+                                            <input class="form-control text-box single-line" id="location" name="location" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -263,7 +245,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="role">Current Role</label>
-            <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
+                                            <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -275,7 +257,7 @@
                                     <div class="form-group">
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="isApproved">Is Approved</label>
-            <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
+                                            <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
@@ -296,8 +278,8 @@
                                     <div style="display:none" id="linkDiv">
                                         @*@Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
+                                            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
 
                                         @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -450,7 +432,7 @@
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateID" name="InterviewerCertificateDetails[i].CertificateID" type="text" value="">*@
 
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { @class = "form-control text-box single-line"})
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__CertificateName" name="InterviewerCertificateDetails[i].CertificateName" type="text" value="">*@
@@ -553,13 +535,13 @@
                                                                 @*<input class="form-control text-box single-line" id="Specialization" name="Specialization" type="text" value="" placeholder="Specialization text box">*@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__specialization" name="InterviewerEducationDetails[i].Specialization" type="text" value="">*@
 
-                                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].Degree, null, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].Degree, null, new { @class = "form-control text-box single-line"})
                                                             </td>
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="Score" name="Score" type="text" value="" placeholder="Score text box">*@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerEducationDetails_0__Score" name="InterviewerEducationDetails[i].Score" type="text" value="">*@
 
-                                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].EducationMode, null, new { @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].EducationMode, null, new { @class = "form-control text-box single-line"})
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -773,7 +755,7 @@
                                                             @*<input class="form-control text-box single-line" id="projectRole" name="projectRole" type="text" value="" placeholder="Role text box">*@
                                                             @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_Role" name="InterviewerProjectsDetails[0].Role" type="text" value="">*@
 
-                                                            @Html.TextBox("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line" })
+                                                            @Html.TextBox("InterviewerProjectsDetails[0].Role", null, new { @class = "form-control text-box single-line"})
                                                         </td>
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="projectDesc" name="projectDesc" type="" value="" placeholder="Description text Area">*@
@@ -833,7 +815,7 @@
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[0].ProjectDescriptions" type="text" row="5" value="">*@
                                                                 @*<textarea class="form-control text-box single-line" id="InterviewerProjectsDetails_0_ProjectDescriptions" name="InterviewerProjectsDetails[i].ProjectDescriptions" type="text" value=""></textarea>*@
 
-                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[0].Description, new { })
+                                                                @Html.TextAreaFor(m => m.InterviewerProjectsDetails[0].Description, new {  })
 
 
                                                             </td>
@@ -891,18 +873,18 @@
                                                         <td>
                                                             @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0_StartDate" name="InterviewerAvailabilityDetails[0].StartTime" type="date" value="" placeholder="drop down">*@
 
-                                                            @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
-                                                        </td>
-                                                        <td>
-                                                            @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">*@
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].StartTime", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
+                                                    </td>
+                                                    <td>
+                                                        @*<input class="form-control text-box single-line" id="InterviewerAvailabilityDetails_0__EndDate" name="InterviewerAvailabilityDetails[0].EndTime" type="date" value="">*@
 
-                                                            @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date", value = "null" })
-                                                        </td>
-                                                        <td>
-                                                            <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                        </td>
-                                                    </tr>
+                                                        @Html.TextBox("InterviewerAvailabilityDetails[0].EndTime", null, new { @class = "form-control text-box single-line", type = "date" , value = "null"})
+                                                    </td>
+                                                    <td>
+                                                        <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                    </td>
+                                                </tr>
                                                 }
                                                 else
                                                 {
@@ -996,7 +978,7 @@
 
                                             @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />*@
 
-                                            @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line" })
+                                            @Html.TextBox("InterviewerAccDetails[0].IFSCCode", null, new { @class = "form-control text-box single-line"})
 
                                         </div>
                                     </div>
@@ -1040,7 +1022,7 @@
                                                 @*<input class="form-control text-box single-line" id="accountHolderNameList" name="accountHolderNameList" type="text" value="" placeholder="Slot- morning -evening- drop-down">*@
                                                 @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountHolderName" name="InterviewerAccDetails[0].AccountHolderName" type="text" value="">*@
 
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { @class = "form-control text-box single-line" })
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { @class = "form-control text-box single-line"})
                                             </div>
                                         </div>
                                         <div class="col-md-2 col-sm-2 px-1">
@@ -1049,7 +1031,7 @@
                                                 @*<input class="form-control text-box single-line" id="accountHolderNumber" name="accountHolderNumber" type="text" value="" placeholder="WeekDay Drop-Down Monday-sunday">*@
                                                 @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
 
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line" })
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line"})
 
                                             </div>
                                         </div>
@@ -1059,7 +1041,7 @@
 
                                                 @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_AccountNumber" name="InterviewerAccDetails[0].AccountNumber" type="text" value="" />*@
 
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line" })
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { @class = "form-control text-box single-line"})
 
                                                 <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                             </div>
@@ -1071,7 +1053,7 @@
 
                                                 @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_IFSCCode" name="InterviewerAccDetails[0].IFSCCode" type="text" value="" />*@
 
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { @class = "form-control text-box single-line" })
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { @class = "form-control text-box single-line"})
 
                                             </div>
                                         </div>
@@ -1081,7 +1063,7 @@
 
                                                 @*<input class="form-control text-box single-line" id="InterviewerAccDetails_0_Location" name="InterviewerAccDetails[0].Location" type="text" value="" />*@
 
-                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { @class = "form-control text-box single-line" })
+                                                @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { @class = "form-control text-box single-line"})
 
 
                                                 <label class="text-danger" id="uniqueMsg" style="color:red"></label>
@@ -1154,21 +1136,6 @@
         </div>
     </footer>
 </div>
-
-
-<script>
-    //====== Age CalculationFunctiopn======//
-
-    $(document).ready(function () {
-        $("#DOB").change(function () {
-            var BirthDate = $("#DOB").val();
-            var dob = new Date(BirthDate);
-            var today = new Date();
-            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-            document.getElementById("txt_Age").value = age.toString();
-        });
-    });
-</script>
 <script>
 
 
