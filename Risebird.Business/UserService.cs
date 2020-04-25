@@ -295,6 +295,18 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                return _userRepository.AddEmployerProfile(interviewerProfessional).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         #endregion
 
@@ -570,7 +582,7 @@ namespace Risebird.Business
                 List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
                 List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
                 List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
-                List<TransInterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
+                List<InterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
                 List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
                 List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
                 List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
@@ -595,11 +607,66 @@ namespace Risebird.Business
             }
 
         }
+        //public InterviewerProfileVM GetEmployerDetails(int id)
+        //{
+        //    try
+        //    {
+        //        var EmployerList = _userRepository.GetInterviewerProfileById(userid).Result;
+        //        InterviewerProfileVM ProfileModel = EmployerList.FirstOrDefault();
+
+                
+
+        //        return ProfileModel;
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+
+        //}
         public List<LevelTech> GetLevelTech()
         {
             try
             {
                 return _userRepository.GetLevelTech().ToList();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<ExperienceRange> GetExperienceRange()
+        {
+            try
+            {
+                return _userRepository.GetExperienceRange();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<JobFunction> GetJobFunction()
+        {
+            try
+            {
+                return _userRepository.GetJobFunction();
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<Industry> GetIndustry()
+        {
+            try
+            {
+                return _userRepository.GetIndustry();
             }
             catch (Exception e)
             {

@@ -582,33 +582,33 @@ namespace Risebird.Repository
                     }
                 }
 
-                foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
-                {
-                    DynamicParameters Params = new DynamicParameters();
-                    Params.Add("@InterviewerProfileId", ProfileId);
-                    Params.Add("@CompanyName", item.CompanyName);
-                    Params.Add("@Type", item.Type);
-                    Params.Add("@CompanyStage", item.CompanyStage);
-                    Params.Add("@Size", item.Size);
-                    Params.Add("@JobFunction", item.JobFunction);
-                    Params.Add("@Industry", item.Industry);
-                    Params.Add("@Headquarters", item.Headquarters);
-                    Params.Add("@Role", item.Role);
-                    Params.Add("@Domain", item.Domain);
-                    Params.Add("@SeniorityLevel", item.SeniorityLevel);
-                    Params.Add("@Experience", item.Experience);
-                    Params.Add("@WorkNature", item.WorkNature);
-                    Params.Add("@PrimaryResponsibility", item.PrimaryResponsibility);
-                    Params.Add("@CompanyLinkedinPage", item.CompanyLinkedinPage);
-                    Params.Add("@CompanyWebsite", item.CompanyWebsite);
+                //foreach (var item in interviewerProfile.InterviewerProfessionalDetails)
+                //{
+                //    DynamicParameters Params = new DynamicParameters();
+                //    Params.Add("@InterviewerProfileId", ProfileId);
+                //    Params.Add("@CompanyName", item.CompanyName);
+                //    Params.Add("@Type", item.Type);
+                //    Params.Add("@CompanyStage", item.CompanyStage);
+                //    Params.Add("@Size", item.Size);
+                //    Params.Add("@JobFunction", item.JobFunction);
+                //    Params.Add("@Industry", item.Industry);
+                //    Params.Add("@Headquarters", item.Headquarters);
+                //    Params.Add("@Role", item.Role);
+                //    Params.Add("@Domain", item.Domain);
+                //    Params.Add("@SeniorityLevel", item.SeniorityLevel);
+                //    Params.Add("@Experience", item.Experience);
+                //    Params.Add("@WorkNature", item.WorkNature);
+                //    Params.Add("@PrimaryResponsibility", item.PrimaryResponsibility);
+                //    Params.Add("@CompanyLinkedinPage", item.CompanyLinkedinPage);
+                //    Params.Add("@CompanyWebsite", item.CompanyWebsite);
 
-                    using (SqlConnection con = new SqlConnection(connectionString))
-                    {
-                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
-                       commandType: CommandType.StoredProcedure);
+                //    using (SqlConnection con = new SqlConnection(connectionString))
+                //    {
+                //        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
+                //       commandType: CommandType.StoredProcedure);
 
-                    }
-                }
+                //    }
+                //}
 
                 foreach (var item in interviewerProfile.InterviewerEducationDetails)
                 {
@@ -766,6 +766,47 @@ namespace Risebird.Repository
             return parameters;
         }
 
+        public async Task<bool> AddEmployerProfile(InterviewerProfessional item)
+        {
+            try
+            {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", item.InterviewerProfileId);
+                    Params.Add("@CompanyName", item.CompanyName);
+                    Params.Add("@Type", item.Type);
+                    Params.Add("@CompanyStage", item.CompanyStage);
+                    Params.Add("@Size", item.Size);
+                    Params.Add("@JobFunction", item.JobFunction);
+                    Params.Add("@Industry", item.Industry);
+                    Params.Add("@Headquarters", item.Headquarters);
+                    Params.Add("@Role", item.Role);
+                    Params.Add("@Domain", item.Domain);
+                    Params.Add("@SeniorityLevel", item.SeniorityLevel);
+                    Params.Add("@Experience", item.Experience);
+                    Params.Add("@WorkNature", item.WorkNature);
+                    Params.Add("@PrimaryResponsibility", item.PrimaryResponsibility);
+                    Params.Add("@CompanyLinkedinPage", item.CompanyLinkedinPage);
+                    Params.Add("@CompanyWebsite", item.CompanyWebsite);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                    return true;
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
         //Get NickNames
         public IEnumerable<string> GetNickNames(int UserId)
         {
@@ -831,7 +872,59 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        
 
+        public List<ExperienceRange> GetExperienceRange()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<ExperienceRange>(con, "Select Id, Description from ExperienceRanges",
+                        null, commandType: Text).ToList();
+                }
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<JobFunction> GetJobFunction()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<JobFunction>(con, "Select Id,  Description from JobFunction",
+                        null, commandType: Text).ToList();
+                }
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<Industry> GetIndustry()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Industry>(con, "Select Id, Description from IndustryCodes",
+                        null, commandType: Text).ToList();
+                }
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
         {
             try
@@ -942,7 +1035,7 @@ namespace Risebird.Repository
         }
 
         // Profess
-        public async Task<IEnumerable<TransInterviewerProfessional>> GetProfessionalList(int ProfileId)
+        public async Task<IEnumerable<InterviewerProfessional>> GetProfessionalList(int ProfileId)
         {
             try
             {
@@ -951,7 +1044,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<TransInterviewerProfessional>(
+                    return await SqlMapper.QueryAsync<InterviewerProfessional>(
                         con, "select Id, InterviewerProfileId,  CompanyName, CompanyType, Domain, StartDate, EndDate from [dbo].[TransInterviewerProfessional] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
