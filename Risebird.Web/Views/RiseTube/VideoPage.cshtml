@@ -1032,12 +1032,7 @@
 
                                                             @if (@Model.VideoLink.Contains(".mp4"))
                                                             {
-                                                                @if (Model.ThumbnailImage != null)
-                                                                {
-                                                                    <img src="@Model.ThumbnailImage" style=" width:97%; height:13%; position: absolute; z-index: auto; " />
-
-                                                                }
-                                                                <video controls style=" background:black!important;width:100% ">
+                                                                <video controls style=" background:black!important;width:100% " autoplay>
                                                                     <source src="@Model.VideoLink" type="video/mp4">
                                                                 </video>
                                                             }
@@ -1234,7 +1229,7 @@
                                                                         </div>
 
                                                                     </div>
-                                                                    <div class="row">
+                                                                    @*<div class="row">
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
                                                                                 @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -1249,7 +1244,7 @@
                                                                             </div>
                                                                         </div>
 
-                                                                    </div>
+                                                                    </div>*@
                                                                     <div class="row">
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
@@ -1924,35 +1919,7 @@
 
         </div>
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    
 </div>
 
 <!-- Bootstrap core JavaScript-->
