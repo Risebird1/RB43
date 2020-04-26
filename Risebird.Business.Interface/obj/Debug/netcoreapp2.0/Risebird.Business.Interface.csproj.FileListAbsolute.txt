@@ -141,3 +141,14 @@ C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business.Interface\obj\Debug\
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
 C:\Users\gokul\source\repos\rise-bird-new\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.deps.json
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csprojAssemblyReference.cache
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfoInputs.cache
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfo.cs
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb

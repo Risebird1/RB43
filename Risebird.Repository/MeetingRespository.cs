@@ -1585,5 +1585,27 @@ namespace Risebird.Repository
             return null;
 
         }
+        public int GetvedioShortList(string vedioid, string email)
+        {
+            try
+            {
+                email = email.Replace("\"", "");
+                var parameters = new DynamicParameters();
+                parameters.Add("@VedioId", vedioid);
+                parameters.Add("@emailId", email);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<int>(con, "usp_AddinterviewvedioShortList", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return 0;
+        }
     }
 }

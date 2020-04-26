@@ -12695,24 +12695,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gokul\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\PS250550\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.Entities\\Risebird.Entities.csproj",
+      "projectUniqueName": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
       "projectName": "Risebird.Entities",
-      "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.Entities\\Risebird.Entities.csproj",
-      "packagesPath": "C:\\Users\\gokul\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.Entities\\obj\\",
+      "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
+      "packagesPath": "C:\\Users\\PS250550\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.Entities\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\gokul\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\PS250550\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.0"
@@ -12751,10 +12752,16 @@
           }
         },
         "imports": [
-          "net461"
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
         ],
         "assetTargetFallback": true,
-        "warn": true
+        "warn": true,
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

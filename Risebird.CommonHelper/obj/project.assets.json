@@ -13271,24 +13271,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gokul\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\PS250550\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
-      "packagesPath": "C:\\Users\\gokul\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper\\obj\\",
+      "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "packagesPath": "C:\\Users\\PS250550\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\gokul\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\PS250550\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.0"
@@ -13300,8 +13301,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\gokul\\source\\repos\\rise-bird-new\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             }
           }
         }
@@ -13359,10 +13360,16 @@
           }
         },
         "imports": [
-          "net461"
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48"
         ],
         "assetTargetFallback": true,
-        "warn": true
+        "warn": true,
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -13371,7 +13378,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Edm",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13381,7 +13388,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.OData",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13391,7 +13398,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Services.Client",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13401,7 +13408,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.IdentityModel.Protocol.Extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13411,7 +13418,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "System.Spatial",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13421,7 +13428,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "TransientFaultHandling.Core",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13431,7 +13438,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -13441,7 +13448,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices.extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
