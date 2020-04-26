@@ -671,7 +671,7 @@ namespace Risebird.Web.Controllers
                         string uploadedFileURL = string.Empty;
                         if (irfDetails.JDFile == null && (irfDetails.JDLink == null))
                         {
-                            TempData["SuccessErrorMessage"] = "Adding IRF has Failed. JDLink not found.";
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed. JDLink not found.";
                             return RedirectToAction("Index");
                         }
                         if (irfDetails.JDFile != null)
@@ -685,12 +685,12 @@ namespace Risebird.Web.Controllers
 
                         if (_irfService.AddIRFDetails(irfDetails).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "IRF is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Skills Channel is added Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding IRF has Failed";
+                            TempData["SuccessErrorMessage"] = "Adding Skills Channel has Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -1451,17 +1451,17 @@ namespace Risebird.Web.Controllers
                         {
                             if (!(_irfService.CheckUniqueness(model.IRFId)))
                             {
-                                TempData["SuccessErrorMessage"] = "Sorry!IRF with this name already exits!";
+                                TempData["SuccessErrorMessage"] = "Sorry!Skills Channel with this name already exits!";
                                 return RedirectToAction("Index");
                             }
                             if (_irfService.AddIRFDetails(model).Result)
                             {
-                                TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Skills Channel edits were not saved.";
                                 return RedirectToAction("Index");
                             }
 
@@ -1470,7 +1470,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (_irfService.UpdateIRF(model))
                             {
-                                TempData["SuccessErrorMessage"] = "IRF saved Successfully";
+                                TempData["SuccessErrorMessage"] = "Skills Channel saved Successfully";
                                 return RedirectToAction("Index");
                             }
                             else
