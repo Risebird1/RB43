@@ -40,6 +40,7 @@ namespace Risebird.Entities.ViewModel
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
         public string Gender { get; set; }
+
         [Display(Name = "Annual Salary")]
         public int AnnualSalary { get; set; }
         [Display(Name = "Country")]
@@ -105,11 +106,29 @@ namespace Risebird.Entities.ViewModel
         //To add in the dropdown List
         [Display(Name = "Skills List")]
         public SelectList SkillTypeList { get; set; }
+        public SelectList GenderList { get; set; }
+        public SelectList CountryList { get; set; }
+
+        //To Skill the dropdown List
+        public SelectList SkillCategoryList { get; set; }
+        public SelectList SkillIPList { get; set; }
+        public SelectList SkillExpertiseLevelList { get; set; }
+        public SelectList SkillYearsOfExperienceList { get; set; }
+        public SelectList SkillNatureList { get; set; }
+        //=========Availability============
+        public SelectList WeekDayList { get; set; }
+        public SelectList WeekEndList { get; set; }
+
         // To add in selected from the user
         //public int[] SelectedSkillIds { get; set; }
         public SelectList CompanyTypeList { get; set; }
         public SelectList LevelList { get; set; }
         public SelectList GraduationTypeList { get; set; }
+        public SelectList EducationModeList { get; set; }
+        public SelectList DegreeList { get; set; }
+        public SelectList NatureOfProjectList { get; set; }
+
+        
         public SelectList CollegeTypeList { get; set; }
         public SelectList DayTimeSlotList { get; set; }
         public SelectList DaySlotList { get; set; }
