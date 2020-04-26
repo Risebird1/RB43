@@ -808,6 +808,7 @@ namespace Risebird.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
+
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -953,11 +954,11 @@ namespace Risebird.Web.Controllers
             //=========Availability============
 
             var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
+                          select new { ID = (int)s, Name = s.GetDescription() };
             model.WeekDayList = new SelectList(Weekday, "ID", "Name");
 
             var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
+                          select new { ID = (int)s, Name = s.GetDescription() };
             model.WeekEndList = new SelectList(Weekend, "ID", "Name");
 
             //=========Project============

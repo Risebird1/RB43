@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
 
 @{
-    ViewData["Title"] = "Add Interviewer Profile";
+    ViewData["Title"] = "Edit Interviewer Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -91,6 +91,7 @@
             </button>
         </div>
     </nav>
+
     <div class="panel-header panel-header-sm">
     </div>
     <div class="content">
@@ -101,8 +102,8 @@
 
                         @using (Html.BeginForm("AddInterviewerProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <!-- Add Interviewer personal Details Start-->
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1182,15 +1183,14 @@
 
                                 <!-- Availabality Details end-->
                                 <!-- Account Details start-->
-                                @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
-                                {
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h2>Account Details</h2>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Account Details</h2>
                                         </div>
-
+                                    </div>
+                                    @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
+                                    {
                                         <div class="col-md-2 col-sm-2 pr-1">
                                             <div class="form-group">
                                                 <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
@@ -1262,18 +1262,12 @@
                                                 @Html.TextBox("InterviewerAccDetails[0].PAN", null, new { @class = "form-control text-box single-line" })
                                             </div>
                                         </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                    }
+                                    else
                                     {
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="multiple_row">
-                                                    <h2>Account Details</h2>
-                                                </div>
-                                            </div>
+                                        @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                        {
+
 
                                             <div class="col-md-2 col-sm-2 pr-1">
                                                 <div class="form-group">
@@ -1338,29 +1332,27 @@
                                                     <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
+                                        <!-- Account Detilas End-->
                                     }
-                                    <!-- Account Detilas End-->
-                                }
+                                </div>
 
                                 <div class="card-footer-button ">
                                     <div class="row">
                                         <label class="col-md-2"></label>
-                                        <div class=" col-md-3">
-
-                                        </div>
                                         <div class="col-md-6">
-                                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                            <input type="submit" value="Update" class="btn btn-fill btn-primary" />
+                                            @*<button type="submit"  value="Submit">Submit</button>*@
                                         </div>
-                                        <div class=" col-md-3">
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         }
+                        <div class=" col-md-3">
+                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1396,233 +1388,233 @@
             </div>
         </footer>
     </div>
+</div>
 
+<script>
+    //====== Age CalculationFunctiopn======//
 
-    <script>
-        //====== Age CalculationFunctiopn======//
-
-        $(document).ready(function () {
-            $("#DOB").change(function () {
-                var BirthDate = $("#DOB").val();
-                var dob = new Date(BirthDate);
-                var today = new Date();
-                var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-                document.getElementById("txt_Age").value = age.toString();
-            });
+    $(document).ready(function () {
+        $("#DOB").change(function () {
+            var BirthDate = $("#DOB").val();
+            var dob = new Date(BirthDate);
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            document.getElementById("txt_Age").value = age.toString();
         });
-    </script>
-    <script>
+    });
+</script>
+<script>
 
 
 
-        function addProjectTableRow() {
-            var x = document.getElementById('projectTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                alert("Cannot add more than 3 Projects Details.");
-                swal("Sweet Alert Called!!!!!!");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-            // deep clone the targeted row
-
-
-            // get the total number of rows
-            //var len = x.rows.length;
-
-
-            // set the innerHTML of the first row
-            //  new_row.cells[0].innerHTML = len;
-
-            // grab the input from the first cell and update its ID and value
-            //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-            //inp1.id += len;
-            //inp1.value = '';
-
-            // grab the input from the first cell and update its ID and value
-            //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-            //inp2.id += len;
-            //inp2.value = '';
-
-            // append the new row to the table
-
+    function addProjectTableRow() {
+        var x = document.getElementById('projectTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            alert("Cannot add more than 3 Projects Details.");
+            swal("Sweet Alert Called!!!!!!");
+            return;
         }
-
-        function deleteProjectTableRow(row) {
-            var x = document.getElementById('projectTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            //console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('projectTable').deleteRow(i);
-            }
-        }
-
-        function addRowProfessionalDetails() {
-            var x = document.getElementById('professionalDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                swal("Cannot add row more than 3 Professional Details.");
-
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowProfessionalDetails(row) {
-            var x = document.getElementById('professionalDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('professionalDetailsTable').deleteRow(i);
-            }
-        }
-
-        function addRowEducationDetails() {
-            var x = document.getElementById('educationTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 2) {
-                alert("Cannot add more than 2 Educational Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowEducationDetails(row) {
-            var x = document.getElementById('educationTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('educationTable').deleteRow(i);
-            }
-        }
-
-        function addRowSkillDetails() {
-            var x = document.getElementById('skillTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Skill Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowSkillDetails(row) {
-            var x = document.getElementById('skillTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('skillTable').deleteRow(i);
-            }
-        }
-
-
-        function addAvailabilityDetails() {
-            var x = document.getElementById('availabilityDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Availability Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowAvailabilityDetails(row) {
-            var x = document.getElementById('availabilityDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('availabilityDetailsTable').deleteRow(i);
-            }
-        }
-
-        function addRowCertificateDetails() {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-
+        else {
             var new_row = x.rows[1].cloneNode(true);
             x.appendChild(new_row);
         }
+        // deep clone the targeted row
 
-        function deleteRowCertificateDetails(row) {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('certificateTable').deleteRow(i);
-            }
+
+        // get the total number of rows
+        //var len = x.rows.length;
+
+
+        // set the innerHTML of the first row
+        //  new_row.cells[0].innerHTML = len;
+
+        // grab the input from the first cell and update its ID and value
+        //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+        //inp1.id += len;
+        //inp1.value = '';
+
+        // grab the input from the first cell and update its ID and value
+        //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+        //inp2.id += len;
+        //inp2.value = '';
+
+        // append the new row to the table
+
+    }
+
+    function deleteProjectTableRow(row) {
+        var x = document.getElementById('projectTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        //console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('projectTable').deleteRow(i);
+        }
+    }
+
+    function addRowProfessionalDetails() {
+        var x = document.getElementById('professionalDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            swal("Cannot add row more than 3 Professional Details.");
+
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowProfessionalDetails(row) {
+        var x = document.getElementById('professionalDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('professionalDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowEducationDetails() {
+        var x = document.getElementById('educationTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 2) {
+            alert("Cannot add more than 2 Educational Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowEducationDetails(row) {
+        var x = document.getElementById('educationTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('educationTable').deleteRow(i);
+        }
+    }
+
+    function addRowSkillDetails() {
+        var x = document.getElementById('skillTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Skill Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowSkillDetails(row) {
+        var x = document.getElementById('skillTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('skillTable').deleteRow(i);
+        }
+    }
+
+
+    function addAvailabilityDetails() {
+        var x = document.getElementById('availabilityDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Availability Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowAvailabilityDetails(row) {
+        var x = document.getElementById('availabilityDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('availabilityDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowCertificateDetails() {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+
+        var new_row = x.rows[1].cloneNode(true);
+        x.appendChild(new_row);
+    }
+
+    function deleteRowCertificateDetails(row) {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('certificateTable').deleteRow(i);
+        }
+    }
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
         }
 
-
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("ResumeLink").value = '';
-
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("File").value = '';
-
-            }
-
-        }
-    </script>
+    }
+</script>
     addRowSkillDetails

@@ -91,6 +91,7 @@
             </button>
         </div>
     </nav>
+
     <div class="panel-header panel-header-sm">
     </div>
     <div class="content">
@@ -101,8 +102,8 @@
 
                         @using (Html.BeginForm("AddInterviewerProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
-                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <!-- Add Interviewer personal Details Start-->
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -132,7 +133,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Email ID</label>
-                                            <input class="form-control text-box single-line" id="emailID" name="emailID" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="emailID" name="emailID" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -143,7 +144,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="mobile">Mobile</label>
-                                            <input class="form-control text-box single-line" id="mobile" name="mobile" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="mobile" name="mobile" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -154,7 +155,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.Experience, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -164,7 +165,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.GitHubLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -173,7 +174,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.Blog, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
                                         @Html.EditorFor(model => model.Blog, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -182,7 +183,7 @@
                                     <div class="form-group">
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="isLeadInterviewer">Is Lead Interviewer</label>
-                                            <input class="form-control text-box single-line" id="isLeadInterviewer" name="isLeadInterviewer" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="isLeadInterviewer" name="isLeadInterviewer" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -196,7 +197,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="lastName">Last Name</label>
-                                            <input class="form-control text-box single-line" id="lastName" name="lastName" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="lastName" name="lastName" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -212,7 +213,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="alternateEmail">Alternate Email</label>
-                                            <input class="form-control text-box single-line" id="alternateEmail" name="alternateEmail" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="alternateEmail" name="alternateEmail" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.AltEmailId, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -222,7 +223,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="alterMobile">Alternate Mobile</label>
-                                            <input class="form-control text-box single-line" id="alterMobile" name="alterMobile" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="alterMobile" name="alterMobile" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.AltMobileNumber, htmlAttributes: new { @class = "control-label col-md-8 col-sm-8 col-lg-8 desp-label" })
                                         @Html.EditorFor(model => model.AltMobileNumber, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -232,7 +233,7 @@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="domain">Prefered Domain</label>
-                                            <input class="form-control text-box single-line" id="domain" name="domain" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="domain" name="domain" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.PreferredDomain, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.PreferredDomain, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -240,7 +241,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.StackOverflowLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
 
@@ -256,7 +257,7 @@
                                     <div class="form-group">
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="isActive">Is Active</label>
-                                            <input class="form-control text-box single-line" id="isActive" name="isActive" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="isActive" name="isActive" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
@@ -268,7 +269,7 @@
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="nickName">Nick Name</label>
-                                            <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="nickName" name="nickName" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.NickName, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -282,14 +283,14 @@
                                         @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
                                     </div>
                                     @*<div class="form-group">
-                                            @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
-                                            @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
-                                            @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
-                                        </div>*@
+                        @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
+                        @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
+                        @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                    </div>*@
 
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="role">Current Role</label>
-                                            <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="role" name="role" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.CurrentRole, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.CurrentRole, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -300,7 +301,7 @@
                                     <div class="form-group">
 
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="isApproved">Is Approved</label>
-                                            <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="isApproved" name="isApproved" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
                                         @Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
@@ -308,7 +309,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.LinkedinLink, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
                                         @Html.EditorFor(model => model.LinkedinLink, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -317,7 +318,7 @@
                                     </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="yearOfExp">Year of Experience</label>
-                                            <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
+                        <input class="form-control text-box single-line" id="yearOfExp" name="yearOfExp" type="text" value="">*@
 
                                         @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
                                         @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "text" } })
@@ -336,8 +337,8 @@
                                     <div style="display:none" id="linkDiv">
                                         @*@Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
+                        @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })*@
 
                                         @Html.LabelFor(model => model.CodedResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -768,11 +769,11 @@
                                                                 @*@Html.LabelFor(model => InterviewerProfessionalDetails[0].StartDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })*@
 
                                                                 @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                                                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
-                                                                    @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+                                                @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
                                                                 @*@Html.EditorFor(model => InterviewerProfessionalDetails[o].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[0].StartDate.ToString("dd/MM/yyyy"), @onblur = "checkStartDate(this.value)" } })
-                                                                    <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
-                                                                    @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+                                                <label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
+                                                @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
 
                                                                 @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[0].StartDate" type="date" value="" placeholder="drop down">*@
 
@@ -825,7 +826,7 @@
 
                                                                     @*@Html.EditorFor(m => m.InterviewerProfessionalDetails[i].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[i].StartDate } })*@
                                                                     @*<label class="text-danger col-lg-12 col-md-12 col-sm-12 col-xs-12" id="startDateCheck" style="display:none;"></label>
-                                                                        @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
+                                                    @Html.ValidationMessageFor(model => model.InterviewerProfessionalDetails[0].StartDate, "", new { @class = "text-danger" })*@
 
                                                                     @*<input class="form-control text-box single-line" id="InterviewerProjectsDetails_0_StartDate" name="InterviewerProfessionalDetails[i].StartDate" type="date" value="" placeholder="drop down">*@
 
@@ -1105,10 +1106,10 @@
                                                                 </div>
                                                             </td>
                                                             @*<td>
-                                                               @Html.DropDownList("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays",
-                                                               new[] { new SelectListItem { Text = "True", Value = "1" },
-                                                                   new SelectListItem { Text = "False", Value = "0" } }, new { @class = "form -control text-box single-line" })
-                                                            </td>*@
+                                               @Html.DropDownList("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays",
+                                               new[] { new SelectListItem { Text = "True", Value = "1" },
+                                                   new SelectListItem { Text = "False", Value = "0" } }, new { @class = "form -control text-box single-line" })
+                                            </td>*@
 
                                                             <td>
                                                                 <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -1182,15 +1183,14 @@
 
                                 <!-- Availabality Details end-->
                                 <!-- Account Details start-->
-                                @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
-                                {
-                                    <div class="row">
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="multiple_row">
-                                                <h2>Account Details</h2>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Account Details</h2>
                                         </div>
-
+                                    </div>
+                                    @if (Model.InterviewerAccDetails == null || Model.InterviewerAccDetails.Count() == 0)
+                                    {
                                         <div class="col-md-2 col-sm-2 pr-1">
                                             <div class="form-group">
                                                 <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
@@ -1262,18 +1262,12 @@
                                                 @Html.TextBox("InterviewerAccDetails[0].PAN", null, new { @class = "form-control text-box single-line" })
                                             </div>
                                         </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                    }
+                                    else
                                     {
-                                        <div class="row">
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="multiple_row">
-                                                    <h2>Account Details</h2>
-                                                </div>
-                                            </div>
+                                        @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                        {
+
 
                                             <div class="col-md-2 col-sm-2 pr-1">
                                                 <div class="form-group">
@@ -1338,29 +1332,27 @@
                                                     <label class="text-danger" id="uniqueMsg" style="color:red"></label>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
+                                        <!-- Account Detilas End-->
                                     }
-                                    <!-- Account Detilas End-->
-                                }
+                                </div>
 
                                 <div class="card-footer-button ">
                                     <div class="row">
                                         <label class="col-md-2"></label>
-                                        <div class=" col-md-3">
-
-                                        </div>
                                         <div class="col-md-6">
-                                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <input type="submit" value="Submit" class="btn btn-fill btn-primary" id="btnUpload"/>
+                                            <input type="submit" value="Submit" class="btn btn-fill btn-primary" />
                                             @*<button type="submit"  value="Submit">Submit</button>*@
                                         </div>
-                                        <div class=" col-md-3">
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         }
+                        <div class=" col-md-3">
+                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1396,233 +1388,233 @@
             </div>
         </footer>
     </div>
+</div>
 
+<script>
+    //====== Age CalculationFunctiopn======//
 
-    <script>
-        //====== Age CalculationFunctiopn======//
-
-        $(document).ready(function () {
-            $("#DOB").change(function () {
-                var BirthDate = $("#DOB").val();
-                var dob = new Date(BirthDate);
-                var today = new Date();
-                var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
-                document.getElementById("txt_Age").value = age.toString();
-            });
+    $(document).ready(function () {
+        $("#DOB").change(function () {
+            var BirthDate = $("#DOB").val();
+            var dob = new Date(BirthDate);
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            document.getElementById("txt_Age").value = age.toString();
         });
-    </script>
-    <script>
+    });
+</script>
+<script>
 
 
 
-        function addProjectTableRow() {
-            var x = document.getElementById('projectTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                alert("Cannot add more than 3 Projects Details.");
-                swal("Sweet Alert Called!!!!!!");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-            // deep clone the targeted row
-
-
-            // get the total number of rows
-            //var len = x.rows.length;
-
-
-            // set the innerHTML of the first row
-            //  new_row.cells[0].innerHTML = len;
-
-            // grab the input from the first cell and update its ID and value
-            //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-            //inp1.id += len;
-            //inp1.value = '';
-
-            // grab the input from the first cell and update its ID and value
-            //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-            //inp2.id += len;
-            //inp2.value = '';
-
-            // append the new row to the table
-
+    function addProjectTableRow() {
+        var x = document.getElementById('projectTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            alert("Cannot add more than 3 Projects Details.");
+            swal("Sweet Alert Called!!!!!!");
+            return;
         }
-
-        function deleteProjectTableRow(row) {
-            var x = document.getElementById('projectTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            //console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('projectTable').deleteRow(i);
-            }
-        }
-
-        function addRowProfessionalDetails() {
-            var x = document.getElementById('professionalDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                swal("Cannot add row more than 3 Professional Details.");
-
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowProfessionalDetails(row) {
-            var x = document.getElementById('professionalDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('professionalDetailsTable').deleteRow(i);
-            }
-        }
-
-        function addRowEducationDetails() {
-            var x = document.getElementById('educationTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 2) {
-                alert("Cannot add more than 2 Educational Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowEducationDetails(row) {
-            var x = document.getElementById('educationTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('educationTable').deleteRow(i);
-            }
-        }
-
-        function addRowSkillDetails() {
-            var x = document.getElementById('skillTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Skill Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowSkillDetails(row) {
-            var x = document.getElementById('skillTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('skillTable').deleteRow(i);
-            }
-        }
-
-
-        function addAvailabilityDetails() {
-            var x = document.getElementById('availabilityDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Availability Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowAvailabilityDetails(row) {
-            var x = document.getElementById('availabilityDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('availabilityDetailsTable').deleteRow(i);
-            }
-        }
-
-        function addRowCertificateDetails() {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-
+        else {
             var new_row = x.rows[1].cloneNode(true);
             x.appendChild(new_row);
         }
+        // deep clone the targeted row
 
-        function deleteRowCertificateDetails(row) {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('certificateTable').deleteRow(i);
-            }
+
+        // get the total number of rows
+        //var len = x.rows.length;
+
+
+        // set the innerHTML of the first row
+        //  new_row.cells[0].innerHTML = len;
+
+        // grab the input from the first cell and update its ID and value
+        //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+        //inp1.id += len;
+        //inp1.value = '';
+
+        // grab the input from the first cell and update its ID and value
+        //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+        //inp2.id += len;
+        //inp2.value = '';
+
+        // append the new row to the table
+
+    }
+
+    function deleteProjectTableRow(row) {
+        var x = document.getElementById('projectTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        //console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('projectTable').deleteRow(i);
+        }
+    }
+
+    function addRowProfessionalDetails() {
+        var x = document.getElementById('professionalDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 3) {
+            swal("Cannot add row more than 3 Professional Details.");
+
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowProfessionalDetails(row) {
+        var x = document.getElementById('professionalDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('professionalDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowEducationDetails() {
+        var x = document.getElementById('educationTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 2) {
+            alert("Cannot add more than 2 Educational Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowEducationDetails(row) {
+        var x = document.getElementById('educationTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('educationTable').deleteRow(i);
+        }
+    }
+
+    function addRowSkillDetails() {
+        var x = document.getElementById('skillTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Skill Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowSkillDetails(row) {
+        var x = document.getElementById('skillTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('skillTable').deleteRow(i);
+        }
+    }
+
+
+    function addAvailabilityDetails() {
+        var x = document.getElementById('availabilityDetailsTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+        if (rowLen > 14) {
+            alert("Cannot add more than 14 Availability Detaiils.");
+            return;
+        }
+        else {
+            var new_row = x.rows[1].cloneNode(true);
+            x.appendChild(new_row);
+        }
+    }
+
+    function deleteRowAvailabilityDetails(row) {
+        var x = document.getElementById('availabilityDetailsTable');
+        // get the total number of rows
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('availabilityDetailsTable').deleteRow(i);
+        }
+    }
+
+    function addRowCertificateDetails() {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length:: " + rowLen);
+
+        var new_row = x.rows[1].cloneNode(true);
+        x.appendChild(new_row);
+    }
+
+    function deleteRowCertificateDetails(row) {
+        var x = document.getElementById('certificateTable');
+        var rowLen = x.rows.length;
+        console.log("Row Length to delete:: " + rowLen);
+        if (rowLen == 2) {
+            alert('Must have atleast one Row');
+            return false;
+        }
+        else {
+            var i = row.parentNode.parentNode.rowIndex;
+            document.getElementById('certificateTable').deleteRow(i);
+        }
+    }
+
+
+    function RadioChanged(val) {
+        if (val == 'Upload') {
+            document.getElementById("uploadDiv").style.display = "block";
+            document.getElementById("linkDiv").style.display = "none";
+            document.getElementById("ResumeLink").value = '';
+
+        }
+        else {
+            document.getElementById("uploadDiv").style.display = "none";
+            document.getElementById("linkDiv").style.display = "block";
+            document.getElementById("File").value = '';
+
         }
 
-
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("ResumeLink").value = '';
-
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("File").value = '';
-
-            }
-
-        }
-    </script>
+    }
+</script>
     addRowSkillDetails
