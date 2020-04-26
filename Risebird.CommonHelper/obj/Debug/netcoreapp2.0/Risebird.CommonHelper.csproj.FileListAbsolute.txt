@@ -152,3 +152,16 @@ D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird
 D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
 D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 D:\RiseBird\Repo\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.deps.json
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csprojAssemblyReference.cache
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\00_Rohit\RiseBird\Code\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb

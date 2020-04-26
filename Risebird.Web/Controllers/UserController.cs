@@ -1049,26 +1049,201 @@ namespace Risebird.Web.Controllers
                 return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
         }
 
-        #endregion
-
-        #region QCInterviewer Functions
-        public IActionResult QCInterviewers()
+        [HttpGet]
+        public async Task<IActionResult> AddEmployerDetails(int Id)
         {
             try
             {
-                if (TempData["SuccessErrorMessageInterviewer"] != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
-                    TempData.Remove("SuccessErrorMessageInterviewer");
+                    InterviewerProfessional model = new InterviewerProfessional();
+                    //TransInterviewerProfessional model = _userService.GetInterviewerProfileById(Id);
 
+                    GetAllEmployerSelectList();
+
+                    return View("AddEmployerDetails", model);
                 }
-                return View(_userService.GetQCInterviewers());
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Interviewers");
             }
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+
+                    if (_userService.AddEmployerProfile(interviewerProfessional).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+                        return RedirectToAction("Interviewers");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("Interviewers");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Interviewers");
+            }
+        }
+        private void GetAllEmployerSelectList()
+        {
+            ViewBag.ExperienceRange = new SelectList(_userService.GetExperienceRange(), "id", "Name");
+            ViewBag.JobFunction = new SelectList(_userService.GetJobFunction(), "id", "Name");
+            ViewBag.Industry = new SelectList(_userService.GetIndustry(), "id", "Name");
+
+            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+                               select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+            var CompanyStageTypes = from CompanyStage s in Enum.GetValues(typeof(CompanyStage))
+                                    select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompanyStageList = new SelectList(CompanyStageTypes, "ID", "Name");
+            var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
+                                   select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
+            var RoleTypes = from Role s in Enum.GetValues(typeof(Role))
+                            select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.RoleList = new SelectList(RoleTypes, "ID", "Name");
+            var SeniorityLevelTypes = from SeniorityLevel s in Enum.GetValues(typeof(SeniorityLevel))
+                                      select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.SeniorityLevelList = new SelectList(SeniorityLevelTypes, "ID", "Name");
+            var WorkNatureTypes = from WorkNature s in Enum.GetValues(typeof(WorkNature))
+                                  select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.WorkNatureList = new SelectList(WorkNatureTypes, "ID", "Name");
+            var PrimaryResponsibilityTypes = from PrimaryResponsibility s in Enum.GetValues(typeof(PrimaryResponsibility))
+                                             select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.PrimaryResponsibilityList = new SelectList(PrimaryResponsibilityTypes, "ID", "Name");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditEmployerDetails(int Id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    InterviewerProfessional ModelProfessional = _userService.GetEmployerById(Id);
+                    // Get all the select Lists
+                    GetAllEmployerSelectList();
+
+                    return View("EditEmployerDetails", ModelProfessional);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditEmployerDetails(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.EditEmployerProfile(interviewerProfessional).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+        public async Task<IActionResult> DeleteEmployerDetails(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteEmployerProfile(interviewerProfessional.id).Result)
+
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+
+
+            #endregion
+
+            #region QCInterviewer Functions
+            public IActionResult QCInterviewers()
+            {
+                try
+                {
+                    if (TempData["SuccessErrorMessageInterviewer"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterviewer");
+
+                    }
+                    return View(_userService.GetQCInterviewers());
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
 
         [HttpGet]
         public async Task<IActionResult> AddQCInterviewer()

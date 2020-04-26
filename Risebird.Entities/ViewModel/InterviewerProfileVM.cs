@@ -38,7 +38,6 @@ namespace Risebird.Entities.ViewModel
         public string AltEmailId { get; set; }
         [Display(Name = "Date Of Birth")]
         public DateTime DOB { get; set; }
-
         [Display(Name = "Gender")]
         public string Gender { get; set; }
 
@@ -98,7 +97,7 @@ namespace Risebird.Entities.ViewModel
         // creating List items 
         public IList<TransInterviewerSkill> InterviewerSkill { get; set; }
         public IList<TransInterviewerEducation> InterviewerEducationDetails { get; set; }
-        public IList<TransInterviewerProfessional> InterviewerProfessionalDetails { get; set; }
+        public IList<InterviewerProfessional> InterviewerProfessionalDetails { get; set; }
         public IList<TransInterviewerProjects> InterviewerProjectsDetails { get; set; }
         public IList<TransInterviewerAvailability> InterviewerAvailabilityDetails { get; set; }
         public IList<TransInterviewerAccDetails> InterviewerAccDetails { get; set; }

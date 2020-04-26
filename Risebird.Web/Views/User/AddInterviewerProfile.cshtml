@@ -63,8 +63,8 @@
     }
 
     .myTextArea-form-control {
-        resize: vertical;
-        border: none;
+        resize: vertical; 
+        border: none; 
         border-radius: 0;
         line-height: 2;
     }
@@ -130,7 +130,6 @@
                                         @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { id = "DOB", placeholder = "MM/dd/yyyy", @class = "form-control text-box single-line", type = "date" } })
                                         @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
 
-                                    </div>
                                     <div class="form-group">
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="emailID">Email ID</label>
                         <input class="form-control text-box single-line" id="emailID" name="emailID" type="text" value="">*@
