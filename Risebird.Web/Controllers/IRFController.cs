@@ -50,10 +50,14 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter")
+                if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "Recruiter" || profileName == "CuratedUser")
                 {
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    if(profileName == "CuratedUser")
+                    {
+                        irfList = irfList.Where(x => x.CuratedLink);
+                    }
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
                     model.IRFList = irfList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.IRFList)
@@ -159,6 +163,10 @@ namespace Risebird.Web.Controllers
 
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
+                    if (profileName == "CuratedUser")
+                    {
+                        irfList = irfList.Where(x => x.CuratedLink);
+                    }
                     irfList.ToList().ForEach(x => x.ArchiveStatus = ((ArchiveStatus)Convert.ToInt16(x.IsDeleted)).GetDescription());
                     if (filter.StartDate != null && filter.EndDate != null)
                     {

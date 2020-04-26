@@ -49,12 +49,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetRiseTubeMeetings()
+        public List<MeetingVM> GetRiseTubeMeetings(int clientId)
         {
             try
             {
 
-                return _meetingRespository.GetRiseTubeMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetRiseTubeMeetings(clientId).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
