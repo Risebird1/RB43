@@ -65,7 +65,7 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
 
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
-        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings();
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId);
         //string VedioLikeAsync(string value, string vedioid, string email);
         Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email);
         string AddTotalViewCount(int id);

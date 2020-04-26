@@ -170,6 +170,7 @@ namespace Risebird.Entities.ViewModel
         public List<VedioComments> Comments { get; set; }
         public int ShortListCount { get; set; }
         public int IsShortlisted { get; set; }
+        public bool CuratedLink { get; set; }
     }
     public class VedioComments
     {
