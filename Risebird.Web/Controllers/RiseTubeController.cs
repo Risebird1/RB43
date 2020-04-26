@@ -457,6 +457,7 @@ namespace Risebird.Web.Controllers
                         NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         NewModel.ShortListCount = model.ShortListCount;
                         NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
@@ -497,6 +498,7 @@ namespace Risebird.Web.Controllers
                         NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         NewModel.ShortListCount = model.ShortListCount;
                         NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
 
                         if (NewModel.IreportModel.QuestionsCollection == null)                        {                            ViewBag.QuestionsDiscussedCount = 0;                        }                        else                        {                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();                        }                        bool isQC = false;                        NewModel.IreportModel.IsQC = isQC;
                         ViewBag.VedioStatus = "Public";
@@ -633,6 +635,7 @@ namespace Risebird.Web.Controllers
                         NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
                         NewModel.ShortListCount = model.ShortListCount;
                         NewModel.IsShortlisted = model.IsShortlisted;
+                        NewModel.ThumbnailImage = model.ThumbnailImage;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
