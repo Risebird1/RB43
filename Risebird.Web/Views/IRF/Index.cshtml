@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "IRF";
+    ViewData["Title"] = "Skills Channel";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -17,7 +17,7 @@
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
 {
     filter = JsonConvert.DeserializeObject<IRFFilter>
-(HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
+    (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
@@ -25,524 +25,526 @@
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
 
-}
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<style>
-    .spanclass {
-        color: black;
-        font-size: 11px;
     }
-
-    .desc {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
-    }
-
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
-    }
-
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
-
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-
-
-    /*.list-group-item-text span {
-        float: left;
-        font-weight: 700;
-        padding-right: 5px;
-    }*/
-
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
-    }
-
-    .list-group {
-        margin-bottom: 150px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-
-
-    /* Modal */
-    .modal-wrap .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: 500;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-
-    .mdc-card .modal .form-control:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid;
-    }
-</style>
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-</style>
-
-<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
-<style>
-
-
-    .card-body {
-        margin: 0px;
-        padding: 5px;
-    }
-
-    #irf-card-footer {
-        padding-left: 0px;
-        padding-top: 5px;
-    }
-
-
-    .card-header-buttons {
-        padding: 5px 5px 0px 0px;
-        text-align: right;
-    }
-
-    .card-blue .card-header {
-        padding: .5rem 1.25rem 0.3rem 1.25rem;
-    }
-
-        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
-            margin-top: 0px;
-            margin-bottom: 5px;
-        }
-
-    .card-content-holder {
-        background-color: white;
-    }
-
-    .list-group-item-text {
-        line-height: 80%;
-    }
-
-        .list-group-item-text span {
-            font-weight: bold;
-            padding-right: 7px;
-        }
-
-    .pskill {
-        display: inline-block;
-        width: 200px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .clientName {
-        display: inline-block;
-        float: left;
-        padding-bottom: 3px;
-        width: 240px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-
-    .card-blue {
-        border: 1px #6fb6ff59 solid !important;
-        border-radius: 4px;
-        background-color: #fff;
-        background-color: var(--mdc-theme-surface, #fff);
-        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    }
-
-
-        .card-blue .card-header h6 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            line-height: 20px;
-            color: #0c2642;
-            padding: 0;
-            margin: 0;
-        }
-
-        .card-blue .card-body {
-            margin: 0px;
-            padding: 12px 5px 10px 5px;
-        }
-
-            .card-blue .card-body .client-field {
-                color: #1b4775;
-                display: block;
-                float: left;
-                font-weight: bold;
-                padding-right: 4px;
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+            .spanclass {
+                color: black;
+                font-size: 11px;
+            }
+
+            .desc {
+                display: inline-block;
+                width: 120px;
+                white-space: nowrap;
+                overflow: hidden !important;
+                text-overflow: ellipsis;
+            }
+
+            .multiple_row > h2 {
+                font-size: 18px;
+                background-color: #5f95b1;
+                padding: 8px 10px;
+                text-align: left;
+                color: #ffffff;
+                margin-top: 35px;
+                margin-bottom: 35px;
+            }
+
+            @@media (min-width: 1200px) {
+                .container {
+                    width: 1125px;
+                }
+            }
+
+            .thumbnail {
+                border-top: 5px solid #443f3f;
+            }
+
+            .list-group-item-heading {
+                font-size: 13px;
+                font-weight: 700;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 15px;
             }
 
 
 
-        .card-blue:hover {
-            box-shadow: 0 0 25px #134e8c45;
+            /*.list-group-item-text span {
+            float: left;
+            font-weight: 700;
+            padding-right: 5px;
+        }*/
+
+            .icon span {
+                padding-top: 15px;
+                font-size: 19px;
+                color: #5f95b1;
+                padding-left: 5px;
+            }
+
+            .list-group {
+                margin-bottom: 150px;
+            }
+
+
+
+            .panel-header-sm {
+                height: 85px;
+                padding-top: 65px;
+                background: none !important;
+            }
+
+
+
+
+
+            .multiselect-selected-text {
+                text-transform: capitalize;
+                font-weight: normal;
+                letter-spacing: normal;
+                color: #807e7e;
+                font-size: 12px;
+            }
+
+
+
+
+            /* Modal */
+            .modal-wrap .modal-header {
+                background: #42a5f5 !important;
+                padding-top: 10px !important;
+                padding-bottom: 10px !important;
+                color: #fff;
+            }
+
+
+            /* Modal */
+
+
+
+
+            .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+                background-color: #4e9bea !important;
+                border-color: #4e9bea;
+                color: #FFFFFF;
+            }
+
+
+
+            .card .card-header .card-title, .card .card-header h4.card-title {
+                margin: 0 0px 10px 0;
+            }
+
+            .border-rv {
+                border-right: 1px dotted #ccc;
+            }
+
+            .control-label {
+                color: #5f5c5c !important;
+                font-weight: 500;
+            }
+
+
+            .mdc-card-wrapper__text-section {
+                padding: 16px;
+            }
+
+            .demo-card__title {
+                font-family: Roboto, sans-serif;
+                -moz-osx-font-smoothing: grayscale;
+                -webkit-font-smoothing: antialiased;
+                font-size: 1.25rem;
+                line-height: 2rem;
+                font-weight: 500;
+                letter-spacing: .0125em;
+                text-decoration: inherit;
+                text-transform: inherit;
+            }
+
+
+            .mdc-fab {
+                width: 30px !important;
+                height: 30px !important;
+                background-color: #53a5f5 !important;
+            }
+
+            .sidebar:after, .off-canvas-sidebar:after {
+                background: #42a5f5 !important;
+            }
+
+
+
+
+            .mdc-card {
+                border-top: 3px #53a5f5 solid;
+            }
+
+            .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+                background: #42a5f5 !important;
+                font-family: Roboto, sans-serif;
+                font-size: 12px;
+                text-decoration: none;
+            }
+
+            .mdc-button--outlined:not(:disabled) {
+                border-color: #42a5f5 !important;
+                color: #42a5f5 !important;
+            }
+
+            .mdc-fab-secondary {
+                background: #fff !important;
+                color: #53a5f5 !important;
+            }
+
+
+            .mdc-card .modal .form-control:focus {
+                border-bottom: 2px rgb(80, 158, 235) solid;
+            }
+    </style>
+    <style>
+        .caret {
+            display: none !important;
         }
 
-    .card-header-buttons button.btn-danger {
-        background: #FF3636 !important;
-    }
+        .multiselect-container {
+            width: 100% !important;
+        }
 
-
-    .card-blue .card-footer {
-        text-align: center;
-        padding: 8px 0px 8px 0px;
-    }
-
+        .modal-lg {
+            max-width: 690px !important;
+        }
 
 
 
-        .card-blue .card-footer .stats-bttm-btn {
-            padding: 0px 25px 0px 0px;
+        #StartDate, #EndDate {
+            width: 270px;
+        }
+    </style>
+
+    <!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
+    <style>
+
+
+        .card-body {
+            margin: 0px;
+            padding: 5px;
+        }
+
+        #irf-card-footer {
+            padding-left: 0px;
+            padding-top: 5px;
+        }
+
+
+        .card-header-buttons {
+            padding: 5px 5px 0px 0px;
             text-align: right;
         }
 
-
-
-
-    .mdc-card .modal .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .mdc-card .modal .form-control, .modal .form-control{
-    border: 0;
-    border-radius: 4px 4px 0 0;
-    background: whitesmoke;
-    height: 40px;
-    font-size: 0.8rem;
-    border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus,.modal .form-control:focus{
-        border-bottom: 2px rgb(80, 158, 235) solid;
+        .card-blue .card-header {
+            padding: .5rem 1.25rem 0.3rem 1.25rem;
         }
 
-    .mdc-card .modal .modal-header,.mdc-card .modal .modal-header{
-    background: #42a5f5 !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
-    color: #fff;
-    }
+            .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
+                margin-top: 0px;
+                margin-bottom: 5px;
+            }
+
+        .card-content-holder {
+            background-color: white;
+        }
+
+        .list-group-item-text {
+            line-height: 80%;
+        }
+
+            .list-group-item-text span {
+                font-weight: bold;
+                padding-right: 7px;
+            }
+
+        .pskill {
+            display: inline-block;
+            width: 200px;
+            white-space: nowrap;
+            overflow: hidden !important;
+            text-overflow: ellipsis;
+        }
+
+        .clientName {
+            display: inline-block;
+            float: left;
+            padding-bottom: 3px;
+            width: 240px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        .card-blue {
+            border: 1px #6fb6ff59 solid !important;
+            border-radius: 4px;
+            background-color: #fff;
+            background-color: var(--mdc-theme-surface, #fff);
+            box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+
+            .card-blue .card-header h6 {
+                font-size: 14px;
+                font-weight: 600;
+                text-transform: uppercase;
+                line-height: 20px;
+                color: #0c2642;
+                padding: 0;
+                margin: 0;
+            }
+
+            .card-blue .card-body {
+                margin: 0px;
+                padding: 12px 5px 10px 5px;
+            }
+
+                .card-blue .card-body .client-field {
+                    color: #1b4775;
+                    display: block;
+                    float: left;
+                    font-weight: bold;
+                    padding-right: 4px;
+                }
 
 
 
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
+            .card-blue:hover {
+                box-shadow: 0 0 25px #134e8c45;
+            }
 
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
+        .card-header-buttons button.btn-danger {
+            background: #FF3636 !important;
+        }
 
-        .modal .form-group .btn {
+
+        .card-blue .card-footer {
+            text-align: center;
+            padding: 8px 0px 8px 0px;
+        }
+
+
+
+
+            .card-blue .card-footer .stats-bttm-btn {
+                padding: 0px 25px 0px 0px;
+                text-align: right;
+            }
+
+
+
+
+        .mdc-card .modal .modal-content .modal-body {
+            padding-top: 10px;
+        }
+
+        .mdc-card .modal .form-control, .modal .form-control {
+            border: 0;
+            border-radius: 4px 4px 0 0;
+            background: whitesmoke;
+            height: 40px;
+            font-size: 0.8rem;
+            border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+        }
+
+            .mdc-card .modal .form-control:focus, .modal .form-control:focus {
+                border-bottom: 2px rgb(80, 158, 235) solid;
+            }
+
+        .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+            background: #42a5f5 !important;
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            color: #fff;
+        }
+
+
+
+        .modal-content .modal-body {
+            padding-top: 10px;
+        }
+
+        .modal .form-group {
+            margin-bottom: 10px;
+        }
+
+            .modal .form-group .btn {
+                margin: 0px;
+            }
+
+
+        .modal-wrap .modal-content {
+            width: 690px;
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            font-size: 12px;
+            margin-top: -53px;
+        }
+
+
+
+
+        .dropdown-toggle {
+            border: 0;
+            border-radius: 4px 4px 0 0;
+            background: whitesmoke !important;
+            height: 40px;
+            font-size: 0.8rem;
+            border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+        }
+
+            .dropdown-toggle::after {
+                color: rgba(0, 0, 0, 0.29);
+                position: absolute;
+                right: 30px;
+                top: 14px;
+            }
+
+        .mdc-card button.dropdown-toggle:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid !important;
+        }
+
+        #StartDate, #EndDate {
+            width: 270px;
+        }
+
+
+
+        .border-rv {
+            border-right: 1px dotted #ccc;
+        }
+
+        .card label {
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #9A9A9A;
+            padding: 0px 20px;
+        }
+
+
+        .modal-wrap .text-danger {
             margin: 0px;
-        }
-
-
-    .modal-wrap .modal-content {
-        width: 690px;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px;
-    }
-
-
-
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
             position: absolute;
-            right: 30px;
-            top: 14px;
+            line-height: 14px;
         }
 
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
+        .modal-wrap input[type=button] {
+            background: #4fa4fb !important;
+            color: #fff;
+            -webkit-box-shadow: 0 3px #3884d2 !important;
+            -moz-box-shadow: 0 3px #3884d2 !important;
+            box-shadow: 0 3px #3884d2 !important;
+            -webkit-transition: none;
+            -moz-transition: none;
+            transition: none;
+            border-radius: 5px 5px 5px 5px;
+            box-shadow: 0 3px #3884d2;
+        }
 
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .card label {
-        font-size: 12px;
-        margin-bottom: 5px;
-        color: #9A9A9A;
-        padding: 0px 20px;
-    }
+        .border-bottom {
+            border-bottom: 1px #cccccc63 solid;
+        }
 
 
-    .modal-wrap .text-danger {
-        margin: 0px;
-        position: absolute;
-        line-height: 14px;
-    }
+        .modal-wrap input[type=button]:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
 
-    .modal-wrap input[type=button] {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-    .border-bottom {
-        border-bottom: 1px #cccccc63 solid;
-    }
+        .trash-btn {
+            background: #d20505 !important;
+        }
 
 
-    .modal-wrap input[type=button]:hover {
-        background: #4fa4fb;
-        box-shadow: 0 4px #3884d2 !important;
-        top: 0px;
-    }
+        .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+            border-color: #53a5f5 !important;
+            background-color: #53a5f5 !important;
+        }
 
-    .trash-btn {
-        background: #d20505 !important;
-    }
+        .mdc-checkbox {
+            display: inline-block;
+            position: relative;
+            flex: 0 0 18px;
+            box-sizing: content-box;
+            width: 18px;
+            height: 18px;
+            line-height: 0;
+            white-space: nowrap;
+            cursor: pointer;
+            vertical-align: bottom;
+            padding: 15px 11px;
+        }
 
+        .mc-button-area {
+            text-align: right;
+        }
+    </style>
 
-    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-        border-color: #53a5f5 !important;
-        background-color: #53a5f5 !important;
-    }
-    .mdc-checkbox {
-        display: inline-block;
-        position: relative;
-        flex: 0 0 18px;
-        box-sizing: content-box;
-        width: 18px;
-        height: 18px;
-        line-height: 0;
-        white-space: nowrap;
-        cursor: pointer;
-        vertical-align: bottom;
-        padding: 15px 11px;
-    }
-    .mc-button-area {
-        text-align: right;
-    }
-</style>
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-<div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
-        <div class="container-fluid">
-            <div class="navbar-wrapper">
-                <div class="navbar-toggle">
-                    <button type="button" class="navbar-toggler">
-                        <span class="navbar-toggler-bar bar1"></span>
-                        <span class="navbar-toggler-bar bar2"></span>
-                        <span class="navbar-toggler-bar bar3"></span>
-                    </button>
+    <div class="main-panel" id="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <div class="navbar-toggle">
+                        <button type="button" class="navbar-toggler">
+                            <span class="navbar-toggler-bar bar1"></span>
+                            <span class="navbar-toggler-bar bar2"></span>
+                            <span class="navbar-toggler-bar bar3"></span>
+                        </button>
+                    </div>
+                    <a class="navbar-brand">
+                        Skills Channel
+                    </a>
                 </div>
-                <a class="navbar-brand">
-                    Interview Request Forms
-                </a>
             </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="panel-header panel-header-sm">
         </div>
-    </nav>
-    <!-- End Navbar -->
-    <div class="panel-header panel-header-sm">
-    </div>
-    <div class="content">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="mdc-card card">
-                    <div class="mdc-card-wrapper__text-section">
+        <div class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mdc-card card">
+                        <div class="mdc-card-wrapper__text-section">
 
-                        <div class="row">
+                            <div class="row">
 
 
-                            <div class="card-header">
-                                <div class="pull-left"> <h4 class="card-title"> Interview Request Forms</h4></div>
+                                <div class="card-header">
+                                    <div class="pull-left"> <h4 class="card-title"> Skills Channel</h4></div>
 
-                                <div class="pull-right">
-                                    <div>
+                                    <div class="pull-right">
+                                        <div>
 
 
-                                         @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
-                                        {
+                                            @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                                            {
 
 
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
@@ -551,15 +553,15 @@
 
 
                                             <!--
-                                        <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
-                                          -->
+                                            <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
+                                              -->
 
 
 
 
 
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span>
+                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skills Channel" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skills Channel</font></span>
                                             </button>
 
 
@@ -567,180 +569,179 @@
 
 
                                             <!--<button type="button" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span></button -->
+                                            }
+                                            <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>-->
 
-                                        }
-                                        <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>-->
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                            </button>
 
-                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
-                                        </button>
-
+                                        </div>
                                     </div>
                                 </div>
+
+
+
                             </div>
+                            <div class="modal  fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                            <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form action="@Url.Action(" Index","IRF")" method="post" id="form">
 
-
-
-                        </div>
-                        <div class="modal  fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <form action="@Url.Action("Index","IRF")" method="post" id="form">
-
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <div class="col-md-6 col-sm-6 border-rv">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
-                                                            Start Date
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                                Start Date
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
-                                                            End Date
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                                End Date
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 col-sm-6 border-rv">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
-                                                                {
+                                                    <div class="col-md-6 col-sm-6 border-rv">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.IRFId).Distinct().ToList())
+                                                                    {
                                                                     @if (item != null && item != "")
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                    <option value="@item">@item</option>
                                                                     }
-                                                                }
-                                                            </select>
+                                                                    }
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    @if (!Model.IsClientUser)
-                                                    {
+                                                        @if (!Model.IsClientUser)
+                                                        {
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                    <option value="@item">@item</option>
+                                                                    }
                                                                     }
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                    }
+                                                        }
 
 
 
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
 
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.IRFList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                                {
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                                    {
                                                                     @if (item != null && item != "")
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                    <option value="@item">@item</option>
                                                                     }
-                                                                }
-                                                            </select>
+                                                                    }
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
+                                                        <div class="form-group col-md-12">
 
 
 
 
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-sm-12">
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-sm-12">
 
 
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                    <font style="font-size:12px;"> Reset Filter</font>
-                                                                </button>
-
-
-
-
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
 
 
 
 
 
 
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                    <font style="font-size:12px;"> Apply Filter</font>
-                                                                </button>
+
+
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
 
 
 
 
 
 
+
+                                                                </div>
 
                                                             </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
                                                         </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
                                                     </div>
-
-
                                                 </div>
-                                            </div>
 
-                                        </div>
-                                    </form>
+                                            </div>
+                                        </form>
+                                    </div>
                                 </div>
+
                             </div>
 
-                        </div>
 
 
-
-                        <div class="row">
-                            @foreach (var item in Model.IRFList)
-                            {
+                            <div class="row">
+                                @foreach (var item in Model.IRFList)
+                                {
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
                                     <div class="card-content-holder border card-blue">
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class=" col-md-6 col-sm-6" style="padding:0px">
-                                                    <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
+                                                    <h6> @item.IRFId <span class="pskill" title="@item.JDTiltle.Split(" |")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
                                                 </div>
 
                                                 <div class="col-md-6 col-sm-6 card-header-buttons action">
@@ -748,31 +749,29 @@
                                                     {
 
 
-                                                        <!--  <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-info btn-icon btn-sm">
+                                                    <!--  <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-info btn-icon btn-sm">
                                                         <i class="now-ui-icons fa fa-edit"></i>
                                                     </button>-->
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                        <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                    </button>
 
 
 
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
-                                                            <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
+                                                        <span onclick="location.href='@Url.Action(" InterviewPlanner", "IRF" , new { irfId=item.id, irfName=item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
+                                                    </button>
 
 
 
-                                                        <!-- <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
+                                                    <!-- <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
                                                         <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
                                                     </button>-->
-
-
-                                                        <!--
+                                                    <!--
                                                     <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');"
                                                             class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
                                                         <i class="now-ui-icons fa fa-money"></i>
@@ -781,47 +780,47 @@
 
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
-                                                            <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
+                                                        <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
+                                                    </button>
 
 
 
 
 
 
-                                                        if (!item.IsDeleted)
-                                                        {
+                                                    if (!item.IsDeleted)
+                                                    {
 
 
 
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
-                                                                <span onclick="javascript:DeleteIRF('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
-                                                            </button>
-
-
-
-
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            <!--
-                                                        <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-info btn-icon btn-sm" title="UnArchive">
-                                                            <i class="now-ui-icons fa fa-undo"></i>
-                                                        </button>-->
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                        <span onclick="javascript:DeleteIRF('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                    </button>
 
 
 
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="UnArchive">
-                                                                <span onclick="javascript:UnArchiveIRF('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
-                                                            </button>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                    <!--
+                                                    <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-info btn-icon btn-sm" title="UnArchive">
+                                                        <i class="now-ui-icons fa fa-undo"></i>
+                                                    </button>-->
 
 
 
-                                                        }
+
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="UnArchive">
+                                                        <span onclick="javascript:UnArchiveIRF('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                    </button>
+
+
+
+                                                    }
 
                                                     }
 
@@ -850,9 +849,9 @@
 
                                                         @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                         {
-                                                            <div class="row">
-                                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
-                                                            </div> <br />
+                                                        <div class="row">
+                                                            <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
+                                                        </div> <br />
                                                         }
 
                                                         <div class="row">
@@ -874,15 +873,15 @@
 
                                                     @if (@item.IRFStatus == "Active")
                                                     {
-                                                        <h6 style="color: green;"> @item.IRFStatus</h6>
+                                                    <h6 style="color: green;"> @item.IRFStatus</h6>
                                                     }
                                                     else if (@item.IRFStatus == "Paused")
                                                     {
-                                                        <h6 style="color: grey;"> @item.IRFStatus</h6>
+                                                    <h6 style="color: grey;"> @item.IRFStatus</h6>
                                                     }
                                                     else
                                                     {
-                                                        <h6 style="color: black;"> @item.IRFStatus</h6>
+                                                    <h6 style="color: black;"> @item.IRFStatus</h6>
                                                     }
                                                 </div>
 
@@ -892,23 +891,23 @@
 
 
 
-                                                        <!--<button type="button" onclick="javascript:AddComments('@item.id');"
+                                                    <!--<button type="button" onclick="javascript:AddComments('@item.id');"
                                                             class="btn btn-info btn-icon btn-sm" title="Questions">
                                                         <i class="now-ui-icons fa fa-comments"></i>
                                                     </button> --->
 
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Questions">
-                                                            <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Questions">
+                                                        <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                    </button>
 
 
                                                     }
                                                     <!--
-                                                <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                                    <i class="now-ui-icons fa fa-list"></i>
-                                                </button>--->
+                                                    <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                                        <i class="now-ui-icons fa fa-list"></i>
+                                                    </button>--->
 
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Questions">
@@ -919,20 +918,20 @@
 
                                                     @if (Model.Profile != "Recruiter")
                                                     {
-                                                        <!--
+                                                    <!--
                                                     <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');"
                                                             class="btn btn-info btn-icon btn-sm" title="Meetings">
                                                         <i class="now-ui-icons fa fa-meetup"></i>
                                                     </button>--->
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Meetings">
-                                                            <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Meetings">
+                                                        <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                    </button>
 
 
 
 
-                                                        <!--
+                                                    <!--
 
                                                     <button type="button"
                                                             onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"
@@ -942,20 +941,20 @@
 
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Selected Candidates">
-                                                            <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Selected Candidates">
+                                                        <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
+                                                    </button>
 
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Schedule Meeting">
-                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Schedule Meeting">
+                                                        <span onclick="location.href='@Url.Action(" ShowCalendly", "IRF" , new
+                                                              {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                    </button>
 
 
 
-                                                        <!--
+                                                    <!--
                                                            <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
                                                     {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
                                                                    class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
@@ -963,24 +962,24 @@
                                                            </button>--->
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Stats">
-                                                            <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
-                                                        </button>
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Stats">
+                                                        <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                    </button>
 
 
-                                                        if (item.IsPaused)
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Play">
-                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
-                                                            </button>
-                                                        }
-                                                        else
-                                                        {
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Play">
-                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
-                                                            </button>
+                                                    if (item.IsPaused)
+                                                    {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Play">
+                                                        <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                    </button>
+                                                    }
+                                                    else
+                                                    {
+                                                    <button class="mdc-fab app-fab--absolute" aria-label="Play">
+                                                        <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                    </button>
 
-                                                        }
+                                                    }
                                                     }
 
                                                 </div>
@@ -989,31 +988,31 @@
 
                                     </div>
                                 </div>
-                            }
+                                }
+                            </div>
+
+
+                            <!-- end content-->
                         </div>
-
-
-                        <!-- end content-->
                     </div>
+
+
+
+
+
+
+                    <!--  end card  -->
                 </div>
-
-
-
-
-
-
-                <!--  end card  -->
+                <!-- end col-md-12 -->
             </div>
-            <!-- end col-md-12 -->
-        </div>
 
-        <!-- Start Card -->
-        <!-- End Card-->
-
-       
+            <!-- Start Card -->
+            <!-- End Card-->
 
 
-                <div id="myModal" class="modal modal-wrap" style="        display: none; /* Hidden by default */
+
+
+            <div id="myModal" class="modal modal-wrap" style="        display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1025,8 +1024,8 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     ">
-                    <!-- Modal content -->
-                    <div class="modal-content" style="
+                <!-- Modal content -->
+                <div class="modal-content" style="
         position: relative;
         background-color: #fefefe;
         margin: auto;
@@ -1036,165 +1035,165 @@
         font-size: 12px;
         margin-top: -53px
     ">
-                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                            <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
-                            <span style="cursor:pointer" class="close" id="invoicePopUp">&times;</span>
+                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                        <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
+                        <span style="cursor:pointer" class="close" id="invoicePopUp">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                        Start Date
+                                    </label>
+                                    <div>
+                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                        End Date
+                                    </label>
+                                    <div>
+                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6 border-rv">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                            Start Date
-                                        </label>
-                                        <div>
-                                            <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                            <label class="text-danger" id="stDate_Error" style="color:red"></label>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                        SR Number
+                                    </label>
+                                    <div>
+                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
 
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                            End Date
-                                        </label>
-                                        <div>
-                                            <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                            <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6 border-rv">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                            SR Number
-                                        </label>
-                                        <div>
-                                            <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                            <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                            PO Number
-                                        </label>
-                                        <div>
-                                            <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                            <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                        </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                        PO Number
+                                    </label>
+                                    <div>
+                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6 border-rv">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                            Request Number
-                                        </label>
-                                        <div>
-                                            <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                            <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                            Project Code
-                                        </label>
-                                        <div>
-                                            <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                            <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                        Request Number
+                                    </label>
+                                    <div>
+                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 col-sm-6 border-rv">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                            Client Address
-                                        </label>
-                                        <div>
-                                            <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                            <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                            Discount
-                                        </label>
-                                        <div>
-                                            <input id="discountId" name="discountId" type="text" class="form-control">
-                                            <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                        </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                        Project Code
+                                    </label>
+                                    <div>
+                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-
-
-                                <div class="col-md-6 col-sm-6 border-rv">
-                                    <div class="form-group">
-                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                            Currency Code
-                                        </label>
-                                        <div>
-                                            <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                            <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                        </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                        Client Address
+                                    </label>
+                                    <div>
+                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 col-sm-6">
-                                    <div class="form-group">
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                        Discount
+                                    </label>
+                                    <div>
+                                        <input id="discountId" name="discountId" type="text" class="form-control">
+                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
 
-                                        <div style="margin-top:20px;">
+
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                        Currency Code
+                                    </label>
+                                    <div>
+                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="form-group">
+
+                                    <div style="margin-top:20px;">
 
 
 
-                                            <div class="mdc-form-field">
-                                                <div class="mdc-checkbox">
-                                                    <input type="checkbox"
-                                                           name="gstCheckId" class="mdc-checkbox__native-control"
-                                                           id="gstCheck" />
+                                        <div class="mdc-form-field">
+                                            <div class="mdc-checkbox">
+                                                <input type="checkbox"
+                                                       name="gstCheckId" class="mdc-checkbox__native-control"
+                                                       id="gstCheck" />
 
-                                                    <div class="mdc-checkbox__background">
-                                                        <svg class="mdc-checkbox__checkmark"
-                                                             viewBox="0 0 24 24">
-                                                            <path class="mdc-checkbox__checkmark-path"
-                                                                  fill="none"
-                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                                        </svg>
-                                                        <div class="mdc-checkbox__mixedmark"></div>
-                                                    </div>
-                                                    <div class="mdc-checkbox__ripple"></div>
-                                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                                <div class="mdc-checkbox__background">
+                                                    <svg class="mdc-checkbox__checkmark"
+                                                         viewBox="0 0 24 24">
+                                                        <path class="mdc-checkbox__checkmark-path"
+                                                              fill="none"
+                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                    </svg>
+                                                    <div class="mdc-checkbox__mixedmark"></div>
                                                 </div>
-                                                <label for="gstCheck"> Apply GST</label>
+                                                <div class="mdc-checkbox__ripple"></div>
+                                                <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
                                             </div>
-
-
-                                            <!--
-                        <label class="control-label  desp-label" for="gstCheck" style="margin-top:26px; padding-right:10px;">
-                            Apply GST
-                        </label>
-
-
-                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px; width:150px;">
-                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>-->
+                                            <label for="gstCheck"> Apply GST</label>
                                         </div>
+
+
+                                        <!--
+                                        <label class="control-label  desp-label" for="gstCheck" style="margin-top:26px; padding-right:10px;">
+                                            Apply GST
+                                        </label>
+
+
+                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px; width:150px;">
+                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>-->
                                     </div>
                                 </div>
-                        
+                            </div>
+
                             <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
 
@@ -1206,19 +1205,19 @@
 
 
 
-                            <div class="card-footer" style="background:none; padding-bottom:0px;">
-                                <div class="row">
-                                    <div class="col-md-12 mc-button-area">
-                                        <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice" style="border-bottom:0px;" />
-                                    </div>
+                        <div class="card-footer" style="background:none; padding-bottom:0px;">
+                            <div class="row">
+                                <div class="col-md-12 mc-button-area">
+                                    <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice" style="border-bottom:0px;" />
                                 </div>
-
-
                             </div>
+
 
                         </div>
 
                     </div>
+
+                </div>
 
 
 
@@ -1226,26 +1225,7 @@
             </div>
             <footer class="footer">
                 <div class=" container-fluid ">
-                    <nav>
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    Risebird
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    About Us
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    Blog
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="copyright" id="copyright">
+                 <div class="copyright" id="copyright">
                         &copy;
                         <script>
                             document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
@@ -1265,7 +1245,7 @@
 
             @if (Model.Message != null)
             {
-                <script type="text/javascript">
+            <script type="text/javascript">
 
         function my_code() {
             var msg = '@Model.Message';
@@ -1305,7 +1285,7 @@
         }
 
         window.onload = my_code();
-                </script>
+            </script>
 
             }
 
