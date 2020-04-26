@@ -594,7 +594,7 @@
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
-                                        <form action="@Url.Action(" Index","IRF")" method="post" id="form">
+                                        <form action="@Url.Action("Index","IRF")" method="post" id="form">
 
                                             <div class="modal-body">
                                                 <div class="row">
@@ -683,40 +683,13 @@
                                                                         <font style="font-size:12px;"> Reset Filter</font>
                                                                     </button>
 
-
-
-
-
-
-
-
-
-
                                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                                                                         <font style="font-size:12px;"> Apply Filter</font>
                                                                     </button>
 
-
-
-
-
-
-
                                                                 </div>
 
                                                             </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
                                                         </div>
 
@@ -747,73 +720,30 @@
                                                 <div class="col-md-6 col-sm-6 card-header-buttons action">
                                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                     {
-
-
-                                                    <!--  <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-info btn-icon btn-sm">
-                                                        <i class="now-ui-icons fa fa-edit"></i>
-                                                    </button>-->
-
-
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Edit">
                                                         <span onclick="javascript:EditIRF('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                     </button>
 
-
-
-
-
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interrview Planner">
-                                                        <span onclick="location.href='@Url.Action(" InterviewPlanner", "IRF" , new { irfId=item.id, irfName=item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
+                                                        <span onclick="location.href='@Url.Action("InterviewPlanner", "IRF" , new { irfId=item.id, irfName=item.IRFId })'" title="Interview Planner" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" /></svg></span>
                                                     </button>
-
-
-
-                                                    <!-- <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.IRFId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
-                                                        <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
-                                                    </button>-->
-                                                    <!--
-                                                    <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');"
-                                                            class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
-                                                        <i class="now-ui-icons fa fa-money"></i>
-                                                    </button>-->
-
-
-
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Interview Invoice">
                                                         <span onclick="javascript:InvoicePopUp('@item.id', '@item.IRFId');" title="Interview Invoice" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" /></svg></span>
                                                     </button>
 
 
-
-
-
-
                                                     if (!item.IsDeleted)
                                                     {
-
-
 
                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
                                                         <span onclick="javascript:DeleteIRF('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
                                                     </button>
 
-
-
-
-
-
                                                     }
                                                     else
                                                     {
-                                                    <!--
-                                                    <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-info btn-icon btn-sm" title="UnArchive">
-                                                        <i class="now-ui-icons fa fa-undo"></i>
-                                                    </button>-->
-
-
-
-
+                                                    
                                                     <button class="mdc-fab app-fab--absolute" aria-label="UnArchive">
                                                         <span onclick="javascript:UnArchiveIRF('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
                                                     </button>
@@ -889,26 +819,13 @@
                                                     @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                     {
 
-
-
-                                                    <!--<button type="button" onclick="javascript:AddComments('@item.id');"
-                                                            class="btn btn-info btn-icon btn-sm" title="Questions">
-                                                        <i class="now-ui-icons fa fa-comments"></i>
-                                                    </button> --->
-
-
-
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Questions">
                                                         <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                     </button>
 
 
                                                     }
-                                                    <!--
-                                                    <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                                        <i class="now-ui-icons fa fa-list"></i>
-                                                    </button>--->
-
+               
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Questions">
                                                         <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
@@ -918,26 +835,12 @@
 
                                                     @if (Model.Profile != "Recruiter")
                                                     {
-                                                    <!--
-                                                    <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');"
-                                                            class="btn btn-info btn-icon btn-sm" title="Meetings">
-                                                        <i class="now-ui-icons fa fa-meetup"></i>
-                                                    </button>--->
+                                                   
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Meetings">
                                                         <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
                                                     </button>
 
-
-
-
-                                                    <!--
-
-                                                    <button type="button"
-                                                            onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"
-                                                            class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
-                                                        <i class="now-ui-icons fa fa-check"></i>
-                                                    </button>--->
 
 
 
@@ -948,18 +851,10 @@
 
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Schedule Meeting">
-                                                        <span onclick="location.href='@Url.Action(" ShowCalendly", "IRF" , new
+                                                        <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
                                                               {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
                                                     </button>
 
-
-
-                                                    <!--
-                                                           <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                                    {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
-                                                                   class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                                               <i class="now-ui-icons  fa fa-calendar"></i>
-                                                           </button>--->
 
 
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Stats">
