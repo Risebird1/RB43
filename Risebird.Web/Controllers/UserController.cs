@@ -1003,7 +1003,7 @@ namespace Risebird.Web.Controllers
 
                     GetAllEmployerSelectList();
 
-                    return View("AddInterviewerProfile", model);
+                    return View("AddEmployerDetails", model);
                 }
                 else
                 {
@@ -1024,9 +1024,9 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    
+
                     if (_userService.AddEmployerProfile(interviewerProfessional).Result)
-                        {
+                    {
                         TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
                         return RedirectToAction("Interviewers");
                     }
@@ -1076,52 +1076,116 @@ namespace Risebird.Web.Controllers
             ViewBag.PrimaryResponsibilityList = new SelectList(PrimaryResponsibilityTypes, "ID", "Name");
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> EditEmployerDetails(int Id)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            InterviewerProfileVM model = _userService.GetInterviewerProfileById(Id);
-        //            // Get all the select Lists
-        //            GetAllEmployerSelectList();
-
-        //            return View("AddInterviewerProfile", model);
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-        //        return RedirectToAction("Interviewers");
-        //    }
-        //}
-
-        #endregion
-
-        #region QCInterviewer Functions
-        public IActionResult QCInterviewers()
+        [HttpGet]
+        public async Task<IActionResult> EditEmployerDetails(int Id)
         {
             try
             {
-                if (TempData["SuccessErrorMessageInterviewer"] != null)
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
-                    TempData.Remove("SuccessErrorMessageInterviewer");
+                    InterviewerProfessional ModelProfessional = _userService.GetEmployerById(Id);
+                    // Get all the select Lists
+                    GetAllEmployerSelectList();
 
+                    return View("EditEmployerDetails", ModelProfessional);
                 }
-                return View(_userService.GetQCInterviewers());
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
             }
         }
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> EditEmployerDetails(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.EditEmployerProfile(interviewerProfessional).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+        public async Task<IActionResult> DeleteEmployerDetails(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteEmployerProfile(interviewerProfessional.id).Result)
+
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        return RedirectToAction("AddEmployerDetails");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+
+
+
+            #endregion
+
+            #region QCInterviewer Functions
+            public IActionResult QCInterviewers()
+            {
+                try
+                {
+                    if (TempData["SuccessErrorMessageInterviewer"] != null)
+                    {
+                        ViewBag.Message = TempData["SuccessErrorMessageInterviewer"].ToString();
+                        TempData.Remove("SuccessErrorMessageInterviewer");
+
+                    }
+                    return View(_userService.GetQCInterviewers());
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
 
         [HttpGet]
         public async Task<IActionResult> AddQCInterviewer()

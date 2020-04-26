@@ -621,7 +621,7 @@ namespace Risebird.Web.Controllers
                 var interviewers = _irfRepository.GetInterviewers();
                 model.JoinabilityTypeList = new SelectList(_irfService.GetJoinabilityMatrix(), "id", "Name");
                 model.SkillGeneralTypeList = new SelectList(_irfService.GetGeneralSkillMatrix(), "id", "Name");
-                model.SelectabilityTypeList = new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
+                model.SelectabilityTypeList =   new SelectList(_irfService.GetSelectabilityMatrix(), "id", "Name");
                 var priorityTypes = from PriorityLevel s in Enum.GetValues(typeof(PriorityLevel))
                                     select new { ID = (int)s, Name = s.GetDescription() };
                 model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");

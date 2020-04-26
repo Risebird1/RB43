@@ -16,8 +16,8 @@ namespace Risebird.Entities.ViewModel
         public string Type { get; set; }
         public string CompanyStage { get; set; }
         public string Size { get; set; }
-        public string JobFunction { get; set; }
-        public string Industry { get; set; }
+        public int JobFunctionId { get; set; }
+        public int IndustryId { get; set; }
         public string Headquarters { get; set; }
         public string Role { get; set; }
 
@@ -28,7 +28,7 @@ namespace Risebird.Entities.ViewModel
 
         [Required(ErrorMessage = "Please enter Years of Experience")]
         [Display(Name = "Years of Experience")]
-        public string Experience { get; set; }
+        public int ExperienceId { get; set; }
         public string WorkNature { get; set; }
         public string PrimaryResponsibility { get; set; }
         public string CompanyLinkedinPage { get; set; }

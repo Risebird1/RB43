@@ -307,6 +307,30 @@ namespace Risebird.Business
                 return false;
             }
         }
+        public async Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional)
+        {
+            try
+            {
+                return _userRepository.EditEmployerProfile(interviewerProfessional).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> DeleteEmployerProfile(int id)
+        {
+            try
+            {
+                return _userRepository.DeleteEmployerProfile(id).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
 
         #endregion
 
@@ -607,25 +631,21 @@ namespace Risebird.Business
             }
 
         }
-        //public InterviewerProfileVM GetEmployerDetails(int id)
-        //{
-        //    try
-        //    {
-        //        var EmployerList = _userRepository.GetInterviewerProfileById(userid).Result;
-        //        InterviewerProfileVM ProfileModel = EmployerList.FirstOrDefault();
+        public InterviewerProfessional GetEmployerById(int id)
+        {
+            try
+            {
+                var EmployerList = _userRepository.GetEmployerById(id).Result;
 
-                
+                return EmployerList;
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
 
-        //        return ProfileModel;
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return null;
-        //    }
-
-        //}
+        }
         public List<LevelTech> GetLevelTech()
         {
             try

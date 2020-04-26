@@ -47,6 +47,9 @@ namespace Risebird.Repository.Interface
 
         Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
+        Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
+        Task<bool> DeleteEmployerProfile(int id);
+
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
         IEnumerable<LevelTech> GetLevelTech();
@@ -54,6 +57,7 @@ namespace Risebird.Repository.Interface
         List<JobFunction> GetJobFunction();
         List<Industry> GetIndustry();
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid);
+        Task<InterviewerProfessional> GetEmployerById(int id);
         Task<IEnumerable<TransInterviewerSkill>> GetSkills(int ProfileId);
         Task<IEnumerable<TransInterviewerCertificate>> GetCertificateList(int ProfileId);
         Task<IEnumerable<TransInterviewerEducation>> GetEducationList(int ProfileId);
