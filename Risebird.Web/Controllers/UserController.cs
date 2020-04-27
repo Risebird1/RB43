@@ -1107,9 +1107,9 @@ namespace Risebird.Web.Controllers
         }
         private void GetAllEmployerSelectList()
         {
-            ViewBag.ExperienceRange = new SelectList(_userService.GetExperienceRange(), "id", "Name");
-            ViewBag.JobFunction = new SelectList(_userService.GetJobFunction(), "id", "Name");
-            ViewBag.Industry = new SelectList(_userService.GetIndustry(), "id", "Name");
+            ViewBag.ExperienceRange = new SelectList(_userService.GetExperienceRange(), "id", "Description");
+            ViewBag.JobFunction = new SelectList(_userService.GetJobFunction(), "id", "Description");
+            ViewBag.Industry = new SelectList(_userService.GetIndustry(), "id", "Description");
 
             var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
                                select new { ID = (int)s, Name = s.GetDescription() };
