@@ -780,492 +780,492 @@ namespace Risebird.Web.Controllers
 
         #endregion
 
-        #region Interviewer Profile Functions
+        //#region Interviewer Profile Functions
 
-        [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    InterviewerProfileVM model = new InterviewerProfileVM();
-                    // Get all the select Lists
-                    GetAllSelectList(model);
+        //[HttpGet]
+        //public async Task<IActionResult> AddInterviewerProfile()
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            InterviewerProfileVM model = new InterviewerProfileVM();
+        //            // Get all the select Lists
+        //            GetAllSelectList(model);
 
-                    return View("AddInterviewerProfile", model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Interviewers");
-            }
-        }
+        //            return View("AddInterviewerProfile", model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        {
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        //{
 
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    string uploadedFileURL = string.Empty;
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            string uploadedFileURL = string.Empty;
 
-                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
-                    {
-                        if (interviewerProfile.ResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+        //            if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+        //            {
+        //                if (interviewerProfile.ResumeFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                    var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+        //                    uploadedFileURL = blob.Uri.ToString();
+        //                    interviewerProfile.ResumeLink = uploadedFileURL;
 
-                        }
-                        else if (interviewerProfile.CodedResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.CodedResumeLink = uploadedFileURL;
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("ResumeLink", "Please add a Resume File");
-                        InterviewerProfileVM model = new InterviewerProfileVM();
-                        // Get all the select Lists
-                        GetAllSelectList(model);
-                        return View("AddInterviewerProfile", model);
-                    }
+        //                }
+        //                else if (interviewerProfile.CodedResumeFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                    var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+        //                    uploadedFileURL = blob.Uri.ToString();
+        //                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                ModelState.AddModelError("ResumeLink", "Please add a Resume File");
+        //                InterviewerProfileVM model = new InterviewerProfileVM();
+        //                // Get all the select Lists
+        //                GetAllSelectList(model);
+        //                return View("AddInterviewerProfile", model);
+        //            }
 
-                    if (_userService.AddInterviewerProfile(interviewerProfile).Result)
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
-                        return RedirectToAction("Interviewers");
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                        return RedirectToAction("Interviewers");
-                    }
+        //            if (_userService.AddInterviewerProfile(interviewerProfile).Result)
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+        //                return RedirectToAction("Interviewers");
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+        //                return RedirectToAction("Interviewers");
+        //            }
 
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> EditInterviewerProfile(int userId)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
-                    // Get all the select Lists
-                    GetAllSelectList(model);
+        //[HttpGet]
+        //public async Task<IActionResult> EditInterviewerProfile(int userId)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            InterviewerProfileVM model = _userService.GetInterviewerProfileById(userId);
+        //            // Get all the select Lists
+        //            GetAllSelectList(model);
 
-                    return View("AddInterviewerProfile", model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Interviewers");
-            }
-        }
+        //            return View("AddInterviewerProfile", model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    string uploadedFileURL = string.Empty;
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            string uploadedFileURL = string.Empty;
 
-                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
-                    {
-                        if (interviewerProfile.ResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
+        //            if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+        //            {
+        //                if (interviewerProfile.ResumeFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                    var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+        //                    uploadedFileURL = blob.Uri.ToString();
+        //                    interviewerProfile.ResumeLink = uploadedFileURL;
 
-                        }
-                        else if (interviewerProfile.CodedResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.CodedResumeLink = uploadedFileURL;
-                        }
-                    }
+        //                }
+        //                else if (interviewerProfile.CodedResumeFile != null)
+        //                {
+        //                    await _azureStorageHelper.InsertBlob(interviewerProfile.CodedResumeFile.FileName, "resumes", interviewerProfile.CodedResumeFile);
+        //                    var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+        //                    var blob = containerRef.GetBlockBlobReference(interviewerProfile.CodedResumeFile.FileName);
+        //                    uploadedFileURL = blob.Uri.ToString();
+        //                    interviewerProfile.CodedResumeLink = uploadedFileURL;
+        //                }
+        //            }
 
-                    if (_userService.EditInterviewerProfile(interviewerProfile).Result)
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
-                        return RedirectToAction("Interviewers");
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                        return RedirectToAction("Interviewers");
-                    }
+        //            if (_userService.EditInterviewerProfile(interviewerProfile).Result)
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer is added Successfully";
+        //                return RedirectToAction("Interviewers");
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+        //                return RedirectToAction("Interviewers");
+        //            }
 
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
-        private void GetAllSelectList(InterviewerProfileVM model)
-        {
-            //=========Availability============
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
+        //private void GetAllSelectList(InterviewerProfileVM model)
+        //{
+        //    //=========Availability============
 
-            var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.WeekDayList = new SelectList(Weekday, "ID", "Name");
+        //    var Weekday = from Weekday s in Enum.GetValues(typeof(Weekday))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.WeekDayList = new SelectList(Weekday, "ID", "Name");
 
-            var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+        //    var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.WeekEndList = new SelectList(Weekend, "ID", "Name");
 
-            //=========Project============
+        //    //=========Project============
 
-            var NatureOfProject = from NatureOfProject s in Enum.GetValues(typeof(NatureOfProject))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-            model.NatureOfProjectList = new SelectList(NatureOfProject, "ID", "Name");
+        //    var NatureOfProject = from NatureOfProject s in Enum.GetValues(typeof(NatureOfProject))
+        //                          select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.NatureOfProjectList = new SelectList(NatureOfProject, "ID", "Name");
 
-            //=========Education============
+        //    //=========Education============
 
-            var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
-                                 select new { ID = (int)s, Name = s.GetDescription() };
-            model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
+        //    var graduationType = from GraduationType s in Enum.GetValues(typeof(GraduationType))
+        //                         select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.GraduationTypeList = new SelectList(graduationType, "ID", "Name");
 
-            var EducationMode = from EducationMode s in Enum.GetValues(typeof(EducationMode))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            model.EducationModeList = new SelectList(EducationMode, "ID", "Name");
+        //    var EducationMode = from EducationMode s in Enum.GetValues(typeof(EducationMode))
+        //                        select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.EducationModeList = new SelectList(EducationMode, "ID", "Name");
 
-            var Degree = from Degree s in Enum.GetValues(typeof(Degree))
-                         select new { ID = (int)s, Name = s.GetDescription() };
-            model.DegreeList = new SelectList(Degree, "ID", "Name");
+        //    var Degree = from Degree s in Enum.GetValues(typeof(Degree))
+        //                 select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.DegreeList = new SelectList(Degree, "ID", "Name");
 
-            var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
+        //    var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
+        //                      select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
 
-            //=========Skills============
+        //    //=========Skills============
 
-            var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
-                                select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillCategoryList = new SelectList(SkillCategory, "ID", "Name");
-            var SkillExpertiseLevel = from SkillExpertiseLevel s in Enum.GetValues(typeof(SkillExpertiseLevel))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
-            var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
-            var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
-                                         select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillYearsOfExperienceList = new SelectList(SkillYearsOfExperience, "ID", "Name");
-            var SkillNature = from SkillNature s in Enum.GetValues(typeof(SkillNature))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.SkillNatureList = new SelectList(SkillNature, "ID", "Name");
+        //    var SkillCategory = from SkillCategory s in Enum.GetValues(typeof(SkillCategory))
+        //                        select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.SkillCategoryList = new SelectList(SkillCategory, "ID", "Name");
+        //    var SkillExpertiseLevel = from SkillExpertiseLevel s in Enum.GetValues(typeof(SkillExpertiseLevel))
+        //                              select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.SkillExpertiseLevelList = new SelectList(SkillExpertiseLevel, "ID", "Name");
+        //    var SkillIP = from SkillIP s in Enum.GetValues(typeof(SkillIP))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.SkillIPList = new SelectList(SkillIP, "ID", "Name");
+        //    var SkillYearsOfExperience = from SkillYearsOfExperience s in Enum.GetValues(typeof(SkillYearsOfExperience))
+        //                                 select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.SkillYearsOfExperienceList = new SelectList(SkillYearsOfExperience, "ID", "Name");
+        //    var SkillNature = from SkillNature s in Enum.GetValues(typeof(SkillNature))
+        //                      select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.SkillNatureList = new SelectList(SkillNature, "ID", "Name");
 
-            //=========Personal============
+        //    //=========Personal============
 
-            var Country = from Country s in Enum.GetValues(typeof(Country))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.CountryList = new SelectList(Country, "ID", "Name");
-            var GenderType = from Gender s in Enum.GetValues(typeof(Gender))
-                             select new { ID = (int)s, Name = s.GetDescription() };
-            model.GenderList = new SelectList(GenderType, "ID", "Name");
-            model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
-            model.LevelList = new SelectList(_userService.GetLevelTech(), "id", "Name");
-            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                               select new { ID = (int)s, Name = s.GetDescription() };
-            model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+        //    var Country = from Country s in Enum.GetValues(typeof(Country))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.CountryList = new SelectList(Country, "ID", "Name");
+        //    var GenderType = from Gender s in Enum.GetValues(typeof(Gender))
+        //                     select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.GenderList = new SelectList(GenderType, "ID", "Name");
+        //    model.SkillTypeList = new SelectList(_skillService.GetSkills(), "id", "Name");
+        //    model.LevelList = new SelectList(_userService.GetLevelTech(), "id", "Name");
+        //    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+        //                       select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
 
 
-            var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
-                              select new { ID = (int)s, Name = s.GetDescription() };
-            model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
-            var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            model.DaySlotList = new SelectList(daySlot, "ID", "Name");
-        }
-        public JsonResult IsNickNameExists(string NickName, int UserId)
-        {
-            //check if the NickName exists
-            IEnumerable<string> NickNamesList = _userService.GetNickNames(UserId);
-            if (NickNamesList.Contains(NickName))
-            {
-                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
-            }
-            else
-                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
-        }
+        //    var dayTimeSlot = from DayTimeSlot s in Enum.GetValues(typeof(DayTimeSlot))
+        //                      select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.DayTimeSlotList = new SelectList(dayTimeSlot, "ID", "Name");
+        //    var daySlot = from DaySlot s in Enum.GetValues(typeof(DaySlot))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    model.DaySlotList = new SelectList(daySlot, "ID", "Name");
+        //}
+        //public JsonResult IsNickNameExists(string NickName, int UserId)
+        //{
+        //    //check if the NickName exists
+        //    IEnumerable<string> NickNamesList = _userService.GetNickNames(UserId);
+        //    if (NickNamesList.Contains(NickName))
+        //    {
+        //        return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
+        //    }
+        //    else
+        //        return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
+        //}
 
-        public JsonResult IsEmailIdExists(string EmailId, int UserId)
-        {
-            //check if the Email Id exists
-            IEnumerable<string> EmailIdList = _userService.GetEmailIds(UserId);
-            if (EmailIdList.Contains(EmailId))
-            {
-                return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
-            }
-            else
-                return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
-        }
+        //public JsonResult IsEmailIdExists(string EmailId, int UserId)
+        //{
+        //    //check if the Email Id exists
+        //    IEnumerable<string> EmailIdList = _userService.GetEmailIds(UserId);
+        //    if (EmailIdList.Contains(EmailId))
+        //    {
+        //        return Json(false, new Newtonsoft.Json.JsonSerializerSettings());
+        //    }
+        //    else
+        //        return Json(true, new Newtonsoft.Json.JsonSerializerSettings());
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> AddEmployerDetails()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    InterviewerProfessional model = new InterviewerProfessional();
-                    //TransInterviewerProfessional model = _userService.GetInterviewerProfileById(Id);
+        //[HttpGet]
+        //public async Task<IActionResult> AddEmployerDetails()
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            InterviewerProfessional model = new InterviewerProfessional();
+        //            //TransInterviewerProfessional model = _userService.GetInterviewerProfileById(Id);
 
-                    GetAllEmployerSelectList();
+        //            GetAllEmployerSelectList();
 
-                    return View("AddEmployerDetails", model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Interviewers");
-            }
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
+        //            return View("AddEmployerDetails", model);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> AddEmployerDetails(InterviewerProfessional interviewerProfessional)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
 
-                    if (_userService.AddEmployerProfile(interviewerProfessional).Result)
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
-                        return RedirectToAction("Interviewers");
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                        return RedirectToAction("Interviewers");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("Interviewers");
-            }
-        }
-        private void GetAllEmployerSelectList()
-        {
-            ViewBag.ExperienceRange = new SelectList(_userService.GetExperienceRange(), "id", "Description");
-            ViewBag.JobFunction = new SelectList(_userService.GetJobFunction(), "id", "Description");
-            ViewBag.Industry = new SelectList(_userService.GetIndustry(), "id", "Description");
+        //            if (_userService.AddEmployerProfile(interviewerProfessional).Result)
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+        //                return RedirectToAction("Interviewers");
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+        //                return RedirectToAction("Interviewers");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
+        //private void GetAllEmployerSelectList()
+        //{
+        //    ViewBag.ExperienceRange = new SelectList(_userService.GetExperienceRange(), "id", "Description");
+        //    ViewBag.JobFunction = new SelectList(_userService.GetJobFunction(), "id", "Description");
+        //    ViewBag.Industry = new SelectList(_userService.GetIndustry(), "id", "Description");
 
-            var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                               select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
-            var CompanyStageTypes = from CompanyStage s in Enum.GetValues(typeof(CompanyStage))
-                                    select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CompanyStageList = new SelectList(CompanyStageTypes, "ID", "Name");
-            var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
-                                   select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
-            var Country = from Country s in Enum.GetValues(typeof(Country))
-                          select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.CountryList = new SelectList(Country, "ID", "Name");
-            var RoleTypes = from Role s in Enum.GetValues(typeof(Role))
-                            select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.RoleList = new SelectList(RoleTypes, "ID", "Name");
-            var SeniorityLevelTypes = from SeniorityLevel s in Enum.GetValues(typeof(SeniorityLevel))
-                                      select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.SeniorityLevelList = new SelectList(SeniorityLevelTypes, "ID", "Name");
-            var WorkNatureTypes = from WorkNature s in Enum.GetValues(typeof(WorkNature))
-                                  select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.WorkNatureList = new SelectList(WorkNatureTypes, "ID", "Name");
-            var PrimaryResponsibilityTypes = from PrimaryResponsibility s in Enum.GetValues(typeof(PrimaryResponsibility))
-                                             select new { ID = (int)s, Name = s.GetDescription() };
-            ViewBag.PrimaryResponsibilityList = new SelectList(PrimaryResponsibilityTypes, "ID", "Name");
-        }
+        //    var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
+        //                       select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+        //    var CompanyStageTypes = from CompanyStage s in Enum.GetValues(typeof(CompanyStage))
+        //                            select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.CompanyStageList = new SelectList(CompanyStageTypes, "ID", "Name");
+        //    var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
+        //                           select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
+        //    var Country = from Country s in Enum.GetValues(typeof(Country))
+        //                  select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.CountryList = new SelectList(Country, "ID", "Name");
+        //    var RoleTypes = from Role s in Enum.GetValues(typeof(Role))
+        //                    select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.RoleList = new SelectList(RoleTypes, "ID", "Name");
+        //    var SeniorityLevelTypes = from SeniorityLevel s in Enum.GetValues(typeof(SeniorityLevel))
+        //                              select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.SeniorityLevelList = new SelectList(SeniorityLevelTypes, "ID", "Name");
+        //    var WorkNatureTypes = from WorkNature s in Enum.GetValues(typeof(WorkNature))
+        //                          select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.WorkNatureList = new SelectList(WorkNatureTypes, "ID", "Name");
+        //    var PrimaryResponsibilityTypes = from PrimaryResponsibility s in Enum.GetValues(typeof(PrimaryResponsibility))
+        //                                     select new { ID = (int)s, Name = s.GetDescription() };
+        //    ViewBag.PrimaryResponsibilityList = new SelectList(PrimaryResponsibilityTypes, "ID", "Name");
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> EditEmployerDetails(int Id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    InterviewerProfessional ModelProfessional = _userService.GetEmployerById(Id);
-                    // Get all the select Lists
-                    GetAllEmployerSelectList();
+        //[HttpGet]
+        //public async Task<IActionResult> EditEmployerDetails(int Id)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            InterviewerProfessional ModelProfessional = _userService.GetEmployerById(Id);
+        //            // Get all the select Lists
+        //            GetAllEmployerSelectList();
 
-                    return View("EditEmployerDetails", ModelProfessional);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> EditEmployerDetails(InterviewerProfessional interviewerProfessional)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    if (_userService.EditEmployerProfile(interviewerProfessional).Result)
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
-                        return RedirectToAction("AddEmployerDetails");
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                        return RedirectToAction("AddEmployerDetails");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
+        //            return View("EditEmployerDetails", ModelProfessional);
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
+        //[Authorize]
+        //[HttpPost]
+        //public async Task<IActionResult> EditEmployerDetails(InterviewerProfessional interviewerProfessional)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            if (_userService.EditEmployerProfile(interviewerProfessional).Result)
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+        //                return RedirectToAction("AddEmployerDetails");
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+        //                return RedirectToAction("AddEmployerDetails");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
 
-        [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile_EmployerDetails(int UserId)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    List<InterviewerProfessional> EmployerList = _userRepository.GetEmployerListById(UserId).Result;
+        //[HttpGet]
+        //public async Task<IActionResult> AddInterviewerProfile_EmployerDetails(int UserId)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            List<InterviewerProfessional> EmployerList = _userRepository.GetEmployerListById(UserId).Result;
 
-                    return View(EmployerList);
+        //            return View(EmployerList);
                                       
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
-        public async Task<IActionResult> DeleteEmployerDetails(int Id)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    if (_userService.DeleteEmployerProfile(Id).Result)
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
+        //public async Task<IActionResult> DeleteEmployerDetails(int Id)
+        //{
+        //    try
+        //    {
+        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //        {
+        //            if (_userService.DeleteEmployerProfile(Id).Result)
 
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
-                        return RedirectToAction("AddEmployerDetails");
-                    }
-                    else
-                    {
-                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
-                        return RedirectToAction("AddEmployerDetails");
-                    }
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            catch (Exception ex)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
-                return RedirectToAction("Interviewers");
-            }
-        }
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";
+        //                return RedirectToAction("AddEmployerDetails");
+        //            }
+        //            else
+        //            {
+        //                TempData["SuccessErrorMessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+        //                return RedirectToAction("AddEmployerDetails");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return RedirectToAction("SignOut", "Session");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //        TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+        //        return RedirectToAction("Interviewers");
+        //    }
+        //}
 
 
 
-        #endregion
+        //#endregion
 
-        #region Interviewer My Profile
-        public IActionResult InterviewerMyProfile()
-        {
-            return View();
-        }
-        public async Task<IActionResult> InterviewerMyProfile(InterviewerProfessional interviewerProfessional)
-        {
-            return View();
-        }
-        #endregion
+        //#region Interviewer My Profile
+        //public IActionResult InterviewerMyProfile()
+        //{
+        //    return View();
+        //}
+        //public async Task<IActionResult> InterviewerMyProfile(InterviewerProfessional interviewerProfessional)
+        //{
+        //    return View();
+        //}
+        //#endregion
 
         #region QCInterviewer Functions
         public IActionResult QCInterviewers()

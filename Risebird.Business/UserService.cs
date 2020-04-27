@@ -265,74 +265,74 @@ namespace Risebird.Business
 
         #endregion
 
-        #region Interviewer Profile Service Functions
+        //#region Interviewer Profile Service Functions
 
-        public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        {
-            try
-            {
-                //Add Method
-                return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+        //public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        //{
+        //    try
+        //    {
+        //        //Add Method
+        //        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
 
 
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        {
-            try
-            {
-                //Edit Method
-                return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
-        {
-            try
-            {
-                return _userRepository.AddEmployerProfile(interviewerProfessional).Result;
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public async Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional)
-        {
-            try
-            {
-                return _userRepository.EditEmployerProfile(interviewerProfessional).Result;
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        public async Task<bool> DeleteEmployerProfile(int id)
-        {
-            try
-            {
-                return _userRepository.DeleteEmployerProfile(id).Result;
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        //public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        //{
+        //    try
+        //    {
+        //        //Edit Method
+        //        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        //public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
+        //{
+        //    try
+        //    {
+        //        return _userRepository.AddEmployerProfile(interviewerProfessional).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        //public async Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional)
+        //{
+        //    try
+        //    {
+        //        return _userRepository.EditEmployerProfile(interviewerProfessional).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
+        //public async Task<bool> DeleteEmployerProfile(int id)
+        //{
+        //    try
+        //    {
+        //        return _userRepository.DeleteEmployerProfile(id).Result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return false;
+        //    }
+        //}
 
-        #endregion
+        //#endregion
 
         #region QCInterviewer Service Functions
 
@@ -563,137 +563,137 @@ namespace Risebird.Business
             }
         }
 
-        // Added to retrieve the Nick names
-        public IEnumerable<string> GetNickNames(int UserId)
-        {
-            try
-            {
-                return _userRepository.GetNickNames(UserId);
-            }
+        //// Added to retrieve the Nick names
+        //public IEnumerable<string> GetNickNames(int UserId)
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetNickNames(UserId);
+        //    }
 
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        // Added to retrieve the EmailIds
-        public IEnumerable<string> GetEmailIds(int UserId)
-        {
-            try
-            {
-                return _userRepository.GetEmailIds(UserId);
-            }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+        //// Added to retrieve the EmailIds
+        //public IEnumerable<string> GetEmailIds(int UserId)
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetEmailIds(UserId);
+        //    }
 
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
 
-        public InterviewerProfileVM GetInterviewerProfileById(int userid)
-        {
-            try
-            {
-                var interviewerProfile = _userRepository.GetInterviewerProfileById(userid).Result;
-                InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
+        //public InterviewerProfileVM GetInterviewerProfileById(int userid)
+        //{
+        //    try
+        //    {
+        //        var interviewerProfile = _userRepository.GetInterviewerProfileById(userid).Result;
+        //        InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
 
-                int ProfileId = ProfileModel.id;
+        //        int ProfileId = ProfileModel.id;
 
-                // Get all the List from DB
+        //        // Get all the List from DB
 
-                List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
-                List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
-                List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
-                List<InterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
-                List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
-                List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
-                List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
+        //        List<TransInterviewerSkill> SkillList = _userRepository.GetSkills(ProfileId).Result.ToList();
+        //        List<TransInterviewerCertificate> CertificateList = _userRepository.GetCertificateList(ProfileId).Result.ToList();
+        //        List<TransInterviewerEducation> EducationList = _userRepository.GetEducationList(ProfileId).Result.ToList();
+        //        List<InterviewerProfessional> ProfessionalList = _userRepository.GetProfessionalList(ProfileId).Result.ToList();
+        //        List<TransInterviewerProjects> ProjectsList = _userRepository.GetProjectsList(ProfileId).Result.ToList();
+        //        List<TransInterviewerAvailability> AvailabilityList = _userRepository.GetAvailabilityList(ProfileId).Result.ToList();
+        //        List<TransInterviewerAccDetails> AccDetailsList = _userRepository.GetAccDetailsList(ProfileId).Result.ToList();
 
-                // Assign the Lists to model
+        //        // Assign the Lists to model
 
-                ProfileModel.InterviewerSkill = SkillList;
-                ProfileModel.InterviewerCertificateDetails = CertificateList;
-                ProfileModel.InterviewerEducationDetails = EducationList;
-                ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
-                ProfileModel.InterviewerProjectsDetails = ProjectsList;
-                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
-                ProfileModel.InterviewerAccDetails = AccDetailsList;
+        //        ProfileModel.InterviewerSkill = SkillList;
+        //        ProfileModel.InterviewerCertificateDetails = CertificateList;
+        //        ProfileModel.InterviewerEducationDetails = EducationList;
+        //        ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
+        //        ProfileModel.InterviewerProjectsDetails = ProjectsList;
+        //        ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+        //        ProfileModel.InterviewerAccDetails = AccDetailsList;
 
-                return ProfileModel;
+        //        return ProfileModel;
 
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
 
-        }
-        public InterviewerProfessional GetEmployerById(int id)
-        {
-            try
-            {
-                var EmployerList = _userRepository.GetEmployerById(id).Result;
+        //}
+        //public InterviewerProfessional GetEmployerById(int id)
+        //{
+        //    try
+        //    {
+        //        var EmployerList = _userRepository.GetEmployerById(id).Result;
 
-                return EmployerList;
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
+        //        return EmployerList;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
 
-        }
-        public List<LevelTech> GetLevelTech()
-        {
-            try
-            {
-                return _userRepository.GetLevelTech().ToList();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public List<ExperienceRange> GetExperienceRange()
-        {
-            try
-            {
-                return _userRepository.GetExperienceRange();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public List<JobFunction> GetJobFunction()
-        {
-            try
-            {
-                return _userRepository.GetJobFunction();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
-        public List<Industry> GetIndustry()
-        {
-            try
-            {
-                return _userRepository.GetIndustry();
-            }
-            catch (Exception e)
-            {
-                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return null;
-            }
-        }
+        //}
+        //public List<LevelTech> GetLevelTech()
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetLevelTech().ToList();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+        //public List<ExperienceRange> GetExperienceRange()
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetExperienceRange();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+        //public List<JobFunction> GetJobFunction()
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetJobFunction();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
+        //public List<Industry> GetIndustry()
+        //{
+        //    try
+        //    {
+        //        return _userRepository.GetIndustry();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        //        return null;
+        //    }
+        //}
 
     }
 }
