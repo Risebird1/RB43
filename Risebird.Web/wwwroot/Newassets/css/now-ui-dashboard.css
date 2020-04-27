@@ -2501,8 +2501,10 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
 .navbar .navbar-brand {
     text-transform: uppercase;
     font-size: 0.8571em;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+    /* padding-top: 0.5rem;
+    padding-bottom: 0.5rem;*/
     line-height: 1.625rem;
 }
 
@@ -10786,8 +10788,8 @@ select.selectpicker {
 }
 
 .click {
-    color: #53a5f5;
-    text-decoration: underline;
+    color: #53a5f5 !important;
+    text-decoration: underline !important;
 }
 #dupmeeting_filter input {
     outline: none;
@@ -11148,8 +11150,7 @@ select.selectpicker {
     background: #E3E3E3;
 }
 
-
-    .action .btn {
+  .action .btn {
     width: 32px !important;
     height: 30px !important;
 }
