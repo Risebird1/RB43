@@ -13273,19 +13273,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rnegi26\\.nuget\\packages\\": {}
+    "C:\\Users\\Prabha\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
-      "packagesPath": "C:\\Users\\rnegi26\\.nuget\\packages\\",
-      "outputPath": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.CommonHelper\\obj\\",
+      "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "packagesPath": "C:\\Users\\Prabha\\.nuget\\packages\\",
+      "outputPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rnegi26\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Prabha\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -13298,8 +13298,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\00_Rohit\\RiseBird\\Code\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             }
           }
         }
@@ -13366,7 +13366,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   },
