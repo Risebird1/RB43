@@ -163,7 +163,7 @@
 
     .panel-header-sm {
         height: 85px;
-        padding-top: 50px;
+        padding-top: 65px;
         background:none!important;
     }
 
@@ -198,7 +198,7 @@
         position: relative;
         padding: 5px 15px;
         left: -10px;
-        top: 7px;
+        top: 8px;
         font-size: 14px;
         font-family: arial;
         color: #53a5f5;
@@ -286,9 +286,9 @@
     }
 
 
-   
 
-    #resumeId {
+
+    #resumeId, #zoomlinkId {
         background: #e2f0ff;
         color: #1d3b5e;
         padding: 5px 10px;
@@ -486,9 +486,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-
-
-                    <div class="mdc-card-wrapper__text-section">
+                 <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
@@ -506,9 +504,7 @@
                                                 <!--- <button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
 
 
-
-
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
@@ -522,12 +518,7 @@
                                                     <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interview" onclick="location.href='@Url.Action("Add", "Interview")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Interview</font></span>
                                                 </button>
 
-
-
-
-
-
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-plus-clone" data-toggle="tooltip" data-placement="top" title="Multiple Candidate Invite" onclick="location.href='@Url.Action("MultipleCandidateInvites", "Interview")'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Multiple Candidate Invites</font></span>
                                                 </button>
 
@@ -707,14 +698,14 @@
 
                                                                         <!--  <button type="button" id="ResetFilter" style="float:right;margin-top: 30px;" class="btn btn-primary">Reset Filter</button>-->
 
+
+
+
+
+
                                                                         <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
                                                                             <font style="font-size:12px;"> Reset Filter</font>
                                                                         </button>
-
-
-
-
-
 
 
 
