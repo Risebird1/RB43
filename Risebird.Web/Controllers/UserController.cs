@@ -13,6 +13,7 @@ using Risebird.Entities.ViewModel;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Risebird.CommonHelper;
+using Risebird.Repository.Interface;
 
 namespace Risebird.Web.Controllers
 {
@@ -25,8 +26,9 @@ namespace Risebird.Web.Controllers
         private IAzureStorageHelper _azureStorageHelper;
         private ISkillService _skillService;
         private IProfileService _profileService;
+        private IUserRepository _userRepository;
         public UserController(IUserService userService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService)
+                                ISkillService skillService, IProfileService profileService, IUserRepository userRepository)
 
         {
             _userService = userService;
@@ -35,6 +37,7 @@ namespace Risebird.Web.Controllers
             _azureStorageHelper = azureStorageHelper;
             _skillService = skillService;
             _profileService = profileService;
+            _userRepository = userRepository;
         }
 
         #region User Fucntions
@@ -1050,7 +1053,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddEmployerDetails(int Id)
+        public async Task<IActionResult> AddEmployerDetails()
         {
             try
             {
@@ -1120,6 +1123,9 @@ namespace Risebird.Web.Controllers
             var CompanySizeTypes = from CompanySize s in Enum.GetValues(typeof(CompanySize))
                                    select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.CompanySizeList = new SelectList(CompanySizeTypes, "ID", "Name");
+            var Country = from Country s in Enum.GetValues(typeof(Country))
+                          select new { ID = (int)s, Name = s.GetDescription() };
+            ViewBag.CountryList = new SelectList(Country, "ID", "Name");
             var RoleTypes = from Role s in Enum.GetValues(typeof(Role))
                             select new { ID = (int)s, Name = s.GetDescription() };
             ViewBag.RoleList = new SelectList(RoleTypes, "ID", "Name");
@@ -1191,13 +1197,37 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteEmployerDetails(InterviewerProfessional interviewerProfessional)
+        [HttpGet]
+        public async Task<IActionResult> AddInterviewerProfile_EmployerDetails(int UserId)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (_userService.DeleteEmployerProfile(interviewerProfessional.id).Result)
+                    List<InterviewerProfessional> EmployerList = _userRepository.GetEmployerListById(UserId).Result;
+
+                    return View(EmployerList);
+                                      
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
+        }
+        public async Task<IActionResult> DeleteEmployerDetails(int Id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    if (_userService.DeleteEmployerProfile(Id).Result)
 
                     {
                         TempData["SuccessErrorMessageInterviewer"] = "Interviewer Employer Details is added Successfully";

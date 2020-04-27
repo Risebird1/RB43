@@ -163,6 +163,7 @@
                                                     <span onclick="location.href = '@Url.Action("EditInterviewer", "User", new { id = item.id})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                     <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "User", new { userId = item.userId})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("AddInterviewerProfile_EmployerDetails", "User", new { userId = item.userId})'" title="Click here to Add interviewer Employer Details" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-suitcase"></i></span>
                                                 </td>
                                             </tr>
                                         }

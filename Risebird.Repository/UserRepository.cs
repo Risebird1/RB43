@@ -1234,7 +1234,34 @@ namespace Risebird.Repository
 
         }
 
+        public async Task<List<InterviewerProfessional>> GetEmployerListById(int UserId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
 
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "SELECT [TIP].[Id], [InterviewerProfileId], [CompanyName],[Type], [CompanyStage], [Size], [JobFunctionId], [IndustryId]," +
+                                                "[Headquarters], [Role], [Domain], [SeniorityLevel], [ExperienceId], [WorkNature], [PrimaryResponsibility]," +
+                                                "[CompanyLinkedinPage], [CompanyWebsite] from [TransInterviewerProfessional] TIP join InterviewerProfile IP on TIP.InterviewerProfileId = IP.Id where IP.UserId = @UserId; ",
+                        parameters, commandType: Text);
+                    return result.ToList();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
         #endregion
 
         #region QCInterviewer Repository Functions

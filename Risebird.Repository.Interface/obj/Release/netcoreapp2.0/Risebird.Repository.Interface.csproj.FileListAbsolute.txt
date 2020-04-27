@@ -34,3 +34,14 @@ D:\RiseBird\Repo\Risebird\Risebird.Repository.Interface\obj\Release\netcoreapp2.
 D:\RiseBird\Repo\Risebird\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
 D:\RiseBird\Repo\Risebird\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.dll
 D:\RiseBird\Repo\Risebird\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.deps.json
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.dll
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\bin\Release\netcoreapp2.0\Risebird.Entities.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csprojAssemblyReference.cache
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfoInputs.cache
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.AssemblyInfo.cs
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\00_Rohit\RiseBird\Code\Risebird.Repository.Interface\obj\Release\netcoreapp2.0\Risebird.Repository.Interface.pdb

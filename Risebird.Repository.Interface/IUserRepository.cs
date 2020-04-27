@@ -49,7 +49,7 @@ namespace Risebird.Repository.Interface
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> DeleteEmployerProfile(int id);
-
+        Task<List<InterviewerProfessional>> GetEmployerListById(int UserId);
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
         IEnumerable<LevelTech> GetLevelTech();
