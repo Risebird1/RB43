@@ -86,7 +86,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Meeting Status")]
         public SelectList MeetingStatusList { get; set; }
 
-        [Display(Name = "Upload Audio")]
+        [Display(Name = "Upload Image")]
         public IFormFile AudioFile { get; set; }
 
         [Display(Name = "Upload Video")]

@@ -15,7 +15,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> GetAllOpenInterviews(string emailId);
         Task<IEnumerable<Meeting>> GetAllQCInterviews(string emailId);
         Task<IEnumerable<MeetingVM>> GetAllClientInterviews(string emailId);
-        
+
         string AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
         Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId);
@@ -29,7 +29,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Skill> GetSkills();
         Task<bool> AddInterviewReport(InterviewReport reportDetails);
         IEnumerable<TransSelectability> GetTransSelectability(int id);
-        IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId=0);
+        IEnumerable<InterviewReport> GetInterviewReportById(int id, int irfId = 0);
 
         IEnumerable<JoinabilityReport> GetJoinabilityReport(int id);
         IEnumerable<SelectabilityReport> GetSelectabilityReport(int id);
@@ -65,14 +65,14 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<MeetingVM>> GetClientHRContactList();
 
         Task<MeetingVM> GetMeetingbyid(int id, string Email);
-        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings();
+        Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId);
         //string VedioLikeAsync(string value, string vedioid, string email);
         Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email);
         string AddTotalViewCount(int id);
         Task<string> VedioShare(string value, string vedioid);
-         Task<string> VedioComment(string value, string vedioid,string email);
+        Task<string> VedioComment(string value, string vedioid, string email);
         List<VedioComments> GetvedioComments(int id);
-
+        int GetvedioShortList(string vedioid, string email);
 
     }
 }

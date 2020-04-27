@@ -174,5 +174,6 @@ namespace Risebird.Entities.ViewModel
         public float TotalBudgetConsumed { get; set; }
         public string ImageUrl { get; set; }
         public string IRFStatus { get; set; }
+        public bool CuratedLink { get; set; }
     }
 }

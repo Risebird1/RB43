@@ -464,81 +464,6 @@
                                     </div>
                                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                <!--  <div class="card-header">
-                                    <div class="pull-left">
-                                        <h4 class="card-title">RiseTube</h4>
-                                        </div>
-
-
-
-
-                                         <div class="col-md-7" style="margin-left:70px">
-                                    <section class="newsletter">
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="content">
-                                                        <div class="input-group" id="myForm">
-                                                            <input type="text" id="txtsearch" value="@ViewBag.searchvalue" class="form-control" placeholder="Please enter Skills (or) Name Of candidate">
-                                                            <span class="input-group-btn">
-                                                                <button type="button" id="btnSearch" class="btn " style="margin-top: 10px;"><span data-toggle="tooltip" data-placement="top" ><font style="font-family:arial; font-size:12px;">  Search </font></span></button>
-
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                </div>
-
-                                <div class="col-auto">
-                                    <button type="button" class="buttons button-2 button-2b " data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;">  Filter </font></span></button>
-                                </div>
-
-
-
-
-                                    </div>
-
-
-
-                                  -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             </div>
                             <div class="modal modal-wrap fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-lg" role="document">
@@ -804,6 +729,10 @@
                                                 <div class="video-card-image">
                                                     @if (item.VideoLink.Contains(".mp4"))
                                                     {
+                                                        @if (item.ThumbnailImage != null)
+                                                        {
+                                                            <img src="@item.ThumbnailImage" style="height: 179px; position: absolute; z-index: auto; " />
+                                                        }
                                                         <video controls style="height: 179px !important; background:black;width:100% ">
                                                             <source src="@item.VideoLink" type="video/mp4">
                                                         </video>
@@ -866,35 +795,7 @@
         </div>
 
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+   
 </div>
 
 

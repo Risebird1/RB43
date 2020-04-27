@@ -49,12 +49,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetRiseTubeMeetings()
+        public List<MeetingVM> GetRiseTubeMeetings(int clientId)
         {
             try
             {
 
-                return _meetingRespository.GetRiseTubeMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetRiseTubeMeetings(clientId).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -1020,7 +1020,7 @@ namespace Risebird.Business
         {
             try
             {
-                var meeting = _meetingRespository.GetMeetingbyid(id,Email);
+                var meeting = _meetingRespository.GetMeetingbyid(id, Email);
                 if (meeting == null)
                     return null;
                 else
@@ -1114,6 +1114,22 @@ namespace Risebird.Business
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
+            }
+
+        }
+        public int GetvedioShortList(string vedioid, string email)
+        {
+            try
+            {
+                var meeting = _meetingRespository.GetvedioShortList(vedioid, email);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return 0;
             }
 
         }
