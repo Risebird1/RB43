@@ -12697,19 +12697,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rnegi26\\.nuget\\packages\\": {}
+    "C:\\Users\\Prabha\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.Entities\\Risebird.Entities.csproj",
+      "projectUniqueName": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
       "projectName": "Risebird.Entities",
-      "projectPath": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.Entities\\Risebird.Entities.csproj",
-      "packagesPath": "C:\\Users\\rnegi26\\.nuget\\packages\\",
-      "outputPath": "C:\\00_Rohit\\RiseBird\\Code\\Risebird.Entities\\obj\\",
+      "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
+      "packagesPath": "C:\\Users\\Prabha\\.nuget\\packages\\",
+      "outputPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Entities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rnegi26\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Prabha\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12758,7 +12758,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

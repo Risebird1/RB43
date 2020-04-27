@@ -1224,10 +1224,21 @@ namespace Risebird.Web.Controllers
 
 
 
-            #endregion
+        #endregion
 
-            #region QCInterviewer Functions
-            public IActionResult QCInterviewers()
+        #region Interviewer My Profile
+        public IActionResult InterviewerMyProfile()
+        {
+            return View();
+        }
+        public async Task<IActionResult> InterviewerMyProfile(InterviewerProfessional interviewerProfessional)
+        {
+            return View();
+        }
+        #endregion
+
+        #region QCInterviewer Functions
+        public IActionResult QCInterviewers()
             {
                 try
                 {
