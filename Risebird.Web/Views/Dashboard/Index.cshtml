@@ -4,9 +4,12 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 
 
+<script src="~/Newassets/js/enjoyhint/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css"  rel="stylesheet"/>
 <style>
     .statistics {
         margin-bottom: 10%
@@ -73,13 +76,32 @@
     .card {
         margin-bottom: 20px;
     }
+
+    img {
+        position: relative;
+        left: 115px;
+        width: 214px;
+        bottom: 24px;
+    }
+
+    .class {
+        position: relative;
+        bottom: 83px;
+        font-family: monospace
+    }
+
+    .bttn {
+        position: relative;
+        left: 190px;
+        bottom: 43px;
+    }
 </style>
 
 
 
 
 
-<div class="main-panel" id="main-panel">
+<div class="main-panel" id="main-panel hello-hopscotch">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
@@ -92,8 +114,10 @@
                     </button>
                 </div>
                 <a class="navbar-brand">Dashboard</a>
+                @*<button id="startTourBtn" class="btn btn-large btn-primary">Take a tour</button>*@
+
             </div>
-           
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -161,7 +185,7 @@
 
                 <h2>Invites</h2>
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body" id="second-element-introduction">
                         <p class="card-text">Total Invites : <span style="color: black">@ViewBag.Totinvites</span></p>
                         @*<h4 class="card-title">@ViewBag.Totinvites </h4>*@
                         <div class="col-lg-6 col-md-6 col-sm-6">
@@ -232,10 +256,35 @@
 
 
 
+<div id="MyPopup" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="~/images/risebird.png" />
+
+            </div>
+            <div class="modal-body">
+                <p class="class">Tap into world's largest online interviewers community and get secure, hands-on, live, video- evaluations done in few clicks.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bttn" onclick="closed()">
+                    Start
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
 
+
+@*<script type="text/javascript">
+
+            $("#MyPopup").modal("show");
+
+    </script>*@
 
 
 
@@ -421,4 +470,27 @@
     }
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+
+
+
+
+<script>
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+        {
+            'next .navbar-brand': 'Welcome to RiseBird! Let me guide you through its features.',
+            'nextButton': { className: "myNext", text: "Sure" },
+            'skipButton': { className: "mySkip", text: "Nope!" }
+        },
+        //{
+        //    'key #mySearchButton': "Insert your search request and press 'Enter'",
+        //    'keyCode': 13
+       
+    ];
+
+    enjoyhint_instance.set(enjoyhint_script_steps);
+    enjoyhint_instance.run();
+</script>
 
