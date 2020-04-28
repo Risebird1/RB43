@@ -52,13 +52,14 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    if (TempData["SuccessErrorMessageUser"] != null)
+                    if (TempData["MessageInterviewer"] != null)
                     {
                         ViewBag.Message = TempData["MessageInterviewer"].ToString();
                         TempData.Remove("MessageInterviewer");
+
                     }
-                    //return View(_userService.GetRisebirdUsers());
-                    return View();
+
+                    return View(_interviewerService.GetInterviewers());
                 }
                 else
                 {

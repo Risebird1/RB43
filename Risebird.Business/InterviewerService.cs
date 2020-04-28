@@ -24,6 +24,17 @@ namespace Risebird.Business
 
         #region Interviewer Profile Service Functions
 
+        public List<InterviewerProfileVM> GetInterviewers()
+        {
+            try
+            {
+                return _interviewerRepository.GetInterviewers().Result.ToList();
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
         public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
             try

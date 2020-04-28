@@ -32,6 +32,27 @@ namespace Risebird.Repository
 
         #region Interviewer Profile Repository function
 
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewers()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "[dbo].[usp_GetInterviewerDetails]", null,
+                        commandType: StoredProcedure);
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
         public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
         {
             try

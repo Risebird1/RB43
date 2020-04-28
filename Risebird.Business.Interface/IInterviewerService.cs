@@ -7,6 +7,7 @@ namespace Risebird.Business.Interface
 {
     public interface IInterviewerService
     {
+        List<InterviewerProfileVM> GetInterviewers();
         Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
         Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
