@@ -429,7 +429,7 @@
     }
 
     .card-text-label {
-        font-size: 14px !important;
+        font-size: 13px !important;
     }
 
     .comment-area textarea {
@@ -591,6 +591,28 @@
     .upload-label {
         background: #57adf80f;
         padding: 5px 15px !important;
+    }
+    .bolder{font-weight:bold;}
+
+    .btnShortlist {
+        background: none !important;
+        border: 0px !important;
+      
+        float: right;
+        width: 100px;
+        padding: 0;
+        font-weight: bold;
+        font-size: 13px !important;
+    }
+
+
+    .fa-check:before {
+        content: "\f00c";
+        box-shadow: 0 0 #53a5f5;
+        position: relative;
+        top: 8px;
+        color: #53a5f5;
+        font-size: 21px;
     }
 </style>
 
@@ -1047,7 +1069,7 @@
                                                         }
 
                                                         <h1 class="title style-scope name-video-primary-info-renderer">
-                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 600;padding-top:-50px">@Model.interviewDate</span>
+                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
                                                         </h1>
 
                                                         <div class="row">
@@ -1073,18 +1095,18 @@
 
                                                                 }
                                                             </div>
-                                                            <div class="col-md-4" style="text-align: end;margin-top: -30px;">
+                                                            <div class="col-md-4" style="text-align: end;margin-top: -35px;">
                                                                 @if (ViewBag.VedioStatus != "Public")
                                                                 {
                                                                     //if shortlist or shortlisted
                                                                     @if (Model.IsShortlisted > 0)
                                                                     {
-                                                                        <input type="button" class="form-control" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                   <i class="fa fa-check"></i>     <input type="button" class="form-control btnShortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                     }
                                                                     else
                                                                     {
-                                                                        <input type="button" class="form-control" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                       <i class="fa fa-check"></i>    <input type="button" class="form-control btnShortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
                                                                     }
                                                                 }
                                                             </div>
@@ -1184,8 +1206,8 @@
                                                                         </div>
                                                                         <div class="interviewer-comment">
 
-                                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
+                                                                            <div class="form-group" style="margin-bottom:0px; ">
+                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
                                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -1203,7 +1225,7 @@
                                                                                 @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
                                                                                 @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                 @Html.ValidationMessageFor(model => model.IreportModel.JobLevelName, "", new { @class = "text-danger" })
                                                                             </div>
@@ -1215,7 +1237,7 @@
                                                                     <div class="row">
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
 
                                                                                 @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
@@ -1850,8 +1872,8 @@
                                                                                     <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
                                                                                 <div class="video-page text-success">
-                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
-    font-weight: 600;
+                                                                                    &nbsp;<i  class="fas fa-calendar-alt"></i> <span style="    color: #606060;
+    font-weight: 500;
     font-size: 12px;">@videolist.interviewDate</span>
 
     @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@

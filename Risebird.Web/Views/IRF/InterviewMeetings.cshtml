@@ -19,17 +19,19 @@
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
         background-color: darkgray;
     }
-    table {
-        white-space: nowrap !important;
-    }
+
     table {
         white-space: nowrap !important;
     }
 
-    
-    table.dataTable > thead > tr > th {
-        padding: 5px;
+    table {
+        white-space: nowrap !important;
     }
+
+
+        table.dataTable > thead > tr > th {
+            padding: 5px;
+        }
 
 
     .table > tfoot > tr > th {
@@ -45,8 +47,8 @@
         padding: 7px;
         font-weight: normal !important;
     }
+
     td.wordwrap {
-       
         max-width: 250px !important;
         min-width: 250px !important;
         overflow: hidden !important;
@@ -73,52 +75,52 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
 
-   
 
-  thead,  tfoot {
-        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
-        background: #3f9eff; /* Old browsers */
-        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
-        COLOR: #FFF;
+    table {
+        border: 1px #ccc solid !important;
     }
 
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #fff;
+        table td {
+            color: #504e4e;
+        }
+
+        table th {
+            color: #000000e0;
+        }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-     .table-striped tbody tr:nth-of-type(even) {
-        background-color: rgb(233,247,247,0.2);
-    }
 
-   table.dataTable thead .sorting:after {
-        opacity: 1;
-        content: "\f0dc";
-        color: #fff;
-    }
+
+
 
     .btn-call {
-        width: 32px !important;
-        height: 32px;
+        width: 30px !important;
+        height: 30px;
         border-radius: 15px;
         text-align: center;
         font-size: 12px;
         BORDER: 0px;
         line-height: 1.42857;
-        background: #4a93de;
+        background: #53a4f4;
         display: inline-block;
     }
 
         .btn-call .fa {
             color: #fff;
-            font-size: 17px;
-            padding: 6px;
+            font-size: 14px;
+            padding: 0px;
+            top: 8px;
+            position: relative;
         }
 
     .call i {
@@ -126,14 +128,14 @@
     }
 
     .call-txt {
-        border: 1px #4a93de solid;
+        border: 1px #53a5f5 solid;
         position: relative;
-        padding: 6px 15px;
+        padding: 5px 15px;
         left: -10px;
-        top: 1px;
+        top: 8px;
         font-size: 14px;
         font-family: arial;
-        color: #1675de;
+        color: #53a5f5;
         border-left: 0px;
         border-top-right-radius: 13px;
         border-bottom-right-radius: 13px;
@@ -206,176 +208,78 @@
         color: #999;
     }
 
-    .card .card-header {
-        padding: 0px 0px 0;
-        border: 0;
-        border-bottom: 1px dashed #dcd0d0;
-        margin: 0px 20px;
-        width: 100%;
-    }
 
-    .buttons {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 20px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
 
-        .buttons:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .button-2 {
-        background: #4fa4fb;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2;
-        -moz-box-shadow: 0 3px #3884d2;
-        box-shadow: 0 3px #3884d2;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-    }
-
-    .button-2b {
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-        .button-2b:hover {
-            box-shadow: 0 4px #3884d2;
-            top: 0px;
-        }
-
-        .button-2b:active {
-            outline: 0;
-            border: 0;
-        }
 
     .multiselect-selected-text {
         text-transform: capitalize;
         font-weight: normal;
         letter-spacing: normal;
-        color: #9A9A9A;
-        font-size: 13px;
-    }
-
-
-    .modal .btn {
+        color: #807e7e;
         font-size: 12px;
-        padding: 11px 8px;
-    }
-
-    .btn-group .btn:after {
-        content: '';
-        position: absolute;
-        z-index: 1;
-        top: 16px;
-        color: #9A9A9A;
-    }
-
-    .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #84c0ff;
-        color: #fff;
-        font-weight: bold;
-        box-shadow: 0 3px #5794d4;
     }
 
 
-    .action .btn-warning, .action .btn-warning:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #fff;
-        color: #56a9ff;
-        font-weight: bold;
-        border: 1px #deedfd solid;
-        box-shadow: 0 3px #5794d4;
+
+
+    #resumeId, #zoomlinkId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
     }
 
 
-    .action .btn {
-        width: 32px !important;
-        height: 30px !important;
-    }
-
-    .action span {
-        -webkit-transition: -webkit-transform .8s ease-in-out;
-        transition: transform .8s ease-in-out;
-        font-weight: bold;
-    }
-
-        .action span:hover {
-            -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-
-
-    #resumeId, #zoomlinkId{
-    background: #e2f0ff;
-    color: #1d3b5e;
-    padding: 5px 10px;
-    border-radius: 10px;
-    }
     #reportId {
         background: #b3d2f1;
         color: #1d3b5e;
         padding: 5px 10px;
-        border-radius: 10px;
+        border-radius: 16px;
     }
+
     #jdlinkId {
         background: #fff;
         color: #1d3b5e;
         padding: 4px 10px;
-        border-radius: 10px;
-        border: 1px #56a9ff solid;
+        border-radius: 16px;
+        border: 1px #79c0f3 solid;
     }
 
     #videoId {
-        background: #56a9ff63;
+        background: #53a5f53d;
         color: #1d3b5e;
         padding: 5px 10px;
-        border-radius: 10px;
+        border-radius: 16px;
     }
 
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
 
-
+    /* Modal */
     .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
         color: #fff;
     }
 
-    .modal input, .modal .dropdown-toggle {
-        background: #99d1fc0f !important;
-        border: 1px #3b74b3fa dotted !important;
-    }
 
-    .modal .talktext {
-        padding: 8px 8px 8px 8px;
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
         text-align: left;
         line-height: 1.5em;
     }
 
-   
+
 
     .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
         background-color: #4e9bea !important;
@@ -385,77 +289,108 @@
 
 
 
-    #style-4::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: #cee0f3;
-    }
-
-    #style-4::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-    .btn {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 0px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
-
-        .btn:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .btn-primary, .btn-fill {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-
-        .btn-primary:hover, .btn-fill:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-        }
-
     .card .card-header .card-title, .card .card-header h4.card-title {
         margin: 0 0px 10px 0;
     }
 
-   
-</style>
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
 
+    .control-label {
+        color: #5f5c5c !important;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+</style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -480,17 +415,14 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                  
-                    
-                    <div class="card-body">
-                        
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
 
-                           
+
                             <div class="toolbar">
 
                                 <div class="row">
@@ -501,10 +433,10 @@
 
                                         <div class="pull-right">
                                             <div>
-                                                <div class="form-group" style="width:100px;float:left;">
+                                                <div class="form-group" style="width:100px;float:left;    margin-right: 5px;">
                                                     @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                                 </div>
-                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             </div>
                                         </div>
                                     </div>
@@ -512,9 +444,9 @@
 
 
 
-                              
+
                                 </div>
-                           
+
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -561,59 +493,59 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                @if (item.QCInterview > 0)
-                                                {
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Report</td>
-                                                }
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName </td>
+                                                    @if (item.QCInterview > 0)
+                                                    {
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.ClientHrContact </td>
-                                                @if (item.zoomLink != null && item.zoomLink != "")
-                                                {
-                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Interview Link</td>
-                                                }
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                @if (item.QCInterview > 0)
-                                                {
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                }
-                                                else
-                                                {
-                                                <td>  </td>
-                                                }
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                            </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                    @if (item.QCInterview > 0)
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -624,7 +556,7 @@
                         </div>
 
                     </div>
-                      
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -686,7 +618,7 @@
 
 <script>
     function FilterInterviews(filterValue) {
-        
+
         var id = '@ViewBag.IRFintId';
         var irfId ='@ViewBag.IRF'
         $.ajax({
