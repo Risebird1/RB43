@@ -164,3 +164,5 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcorea
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
