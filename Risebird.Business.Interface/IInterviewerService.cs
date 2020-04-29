@@ -23,5 +23,6 @@ namespace Risebird.Business.Interface
         List<ExperienceRange> GetExperienceRange();
         List<JobFunction> GetJobFunction();
         List<Industry> GetIndustry();
+        Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
     }
 }

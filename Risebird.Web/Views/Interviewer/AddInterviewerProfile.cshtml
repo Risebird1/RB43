@@ -5,14 +5,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/assets/validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
-
-<script src="sweetalert2.all.min.js"></script>
-<script src="sweetalert2.min.js"></script>
-<link rel="stylesheet" href="sweetalert2.min.css">
+@*
+    <script src="sweetalert2.all.min.js"></script>
+    <script src="sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="sweetalert2.min.css">*@
 
 <style>
     .multiple_row > h2 {
@@ -100,7 +100,7 @@
                 <div class="card">
                     <div class="card-body">
 
-                        @using (Html.BeginForm("AddInterviewerProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("AddInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -240,22 +240,22 @@
                                         @Html.LabelFor(model => model.ResumeFile, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.TextBoxFor(model => model.ResumeFile, new { id = "txt_ResumeFile", type = "file", @class = "form-control", @accept = ".doc, .docx, .pdf, .txt" })
                                     </div>
-                                    <div>
-                                        @if (Model.ResumeLink != null)
-                                        {
-                                            <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
-                                        }
-                                    </div>
-                                    <div>
-                                        @if (Model.CodedResumeLink != null)
-                                        {
-                                            <a id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink>Coded Resume</a>
-                                        }
-                                    </div>
+                                    @*<div>
+                                            @if (Model.ResumeLink != null)
+                                            {
+                                                <a id="resumeId" target="_blank" title="Resume" href=@Model.ResumeLink>Resume  </a>
+                                            }
+                                        </div>
+                                        <div>
+                                            @if (Model.CodedResumeLink != null)
+                                            {
+                                                <a id="codedResumeId" target="_blank" title="CodedResume" href=@Model.CodedResumeLink>Coded Resume</a>
+                                            }
+                                        </div>*@
                                     @Html.Hidden("ResumeLink", Model.ResumeLink, htmlAttributes: new { id = "hdn_ResumeLink" })
                                     @Html.Hidden("CodedResumeLink", Model.CodedResumeLink, htmlAttributes: new { id = "hdn_CodedResumeLink" })
                                     @*@Html.HiddenFor(m => m.ResumeLink, Model.ResumeLink)
-                    @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
+                                        @Html.HiddenFor(m => m.CodedResumeLink, Model.CodedResumeLink)*@
                                 </div>
                                 <!-- INterviewer personal Details End-->
                                 <!-- Interviewer Skill Details Start-->
@@ -308,36 +308,36 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerSkill.Count(); i++)
+                                                    @*else
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Ip, (SelectList)Model.SkillIPList, new { id = "drp_Ip", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.SkillExpertiseLevelList, new { id = "drp_Level", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillExperience, (SelectList)Model.SkillYearsOfExperienceList, new { id = "drp_SkillExperience", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Nature, (SelectList)Model.SkillNatureList, new { id = "drp_Nature", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                                                            for (int i = 0; i < Model.InterviewerSkill.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].Ip, (SelectList)Model.SkillIPList, new { id = "drp_Ip", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.SkillExpertiseLevelList, new { id = "drp_Level", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillExperience, (SelectList)Model.SkillYearsOfExperienceList, new { id = "drp_SkillExperience", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerSkill[i].Nature, (SelectList)Model.SkillNatureList, new { id = "drp_Nature", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
                                                 </tbody>
                                             </table>
                                             <label class="text-danger" id="SkillCollection_WeightageError" style="color:red; margin-left:815px"></label>
@@ -378,7 +378,7 @@
                                                                 @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
+                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { id = "Expiry_Date", @class = "form-control text-box single-line", type = "date" })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -386,30 +386,30 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerCertificateDetails.Count(); i++)
+                                                    @*else
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                                                            for (int i = 0; i < Model.InterviewerCertificateDetails.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
 
                                                 </tbody>
                                             </table>
@@ -474,44 +474,44 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerEducationDetails.Count(); i++)
+                                                    @*else
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationType, (SelectList)Model.GraduationTypeList, new { id = "drp_EducationType", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Degree, (SelectList)Model.DegreeList, new { id = "drp_Degree", @class = "form-control text-box single-line" })
-                                                                </td>
+                                                            for (int i = 0; i < Model.InterviewerEducationDetails.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationType, (SelectList)Model.GraduationTypeList, new { id = "drp_EducationType", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Degree, (SelectList)Model.DegreeList, new { id = "drp_Degree", @class = "form-control text-box single-line" })
+                                                                    </td>
 
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationMode, (SelectList)Model.EducationModeList, new { id = "drp_EducationMode", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { id = "drp_CollegeType", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].UniversityName, null, new { id = "txt_UniversityName", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].PassOutYear, null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(x => x.InterviewerEducationDetails[i].AnyGap, new { id = Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap) })
-                                                                        <label for="@Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap)">Any Gap</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationMode, (SelectList)Model.EducationModeList, new { id = "drp_EducationMode", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { id = "drp_CollegeType", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].UniversityName, null, new { id = "txt_UniversityName", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].PassOutYear, null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="checkbox checkbox-danger">
+                                                                            @Html.CheckBoxFor(x => x.InterviewerEducationDetails[i].AnyGap, new { id = Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap) })
+                                                                            <label for="@Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap)">Any Gap</label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
 
                                                 </tbody>
                                             </table>
@@ -525,78 +525,78 @@
                                 <!-- Educational Details End-->
                                 <!-- Previous Company Details start-->
                                 @*<div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="multiple_row">
-                            <h2>Professional Details</h2>
-                        </div>
-                    </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="table-responsive">
-                            <table class="table table-bordered mbn" id="professionalDetailsTable">
-                                <thead class="tableHeaderClass">
-                                    <tr>
-                                        <th width="18%" class="table_heading">Company Name </th>
-                                        <th width="18%" class="table_heading">Comapny Type</th>
-                                        <th width="18%" class="table_heading">Domain</th>
-                                        <th width="18%" class="table_heading">Start Date</th>
-                                        <th width="18%" class="table_heading">End Date</th>
-                                        <th width="10%" class="table_heading">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Model.InterviewerProfessionalDetails == null || Model.InterviewerProfessionalDetails.Count() == 0)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.TextBox("InterviewerProfessionalDetails[0].CompanyName", null, new { @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBox("InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" })
-                                            </td>
-                                            <td>
-                                                @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
-                                            </td>
-                                            <td>
-                                                <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                            </td>
-                                        </tr>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Professional Details</h2>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mbn" id="professionalDetailsTable">
+                                                    <thead class="tableHeaderClass">
+                                                        <tr>
+                                                            <th width="18%" class="table_heading">Company Name </th>
+                                                            <th width="18%" class="table_heading">Comapny Type</th>
+                                                            <th width="18%" class="table_heading">Domain</th>
+                                                            <th width="18%" class="table_heading">Start Date</th>
+                                                            <th width="18%" class="table_heading">End Date</th>
+                                                            <th width="10%" class="table_heading">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.InterviewerProfessionalDetails == null || Model.InterviewerProfessionalDetails.Count() == 0)
+                                                        {
+                                                            <tr>
+                                                                <td>
+                                                                    @Html.TextBox("InterviewerProfessionalDetails[0].CompanyName", null, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownList("InterviewerProfessionalDetails[0].CompanyType", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("InterviewerProfessionalDetails[0].Domain", null, new { @class = "form-control text-box single-line" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("InterviewerProfessionalDetails[0].StartDate", null, new { @class = "form-control text-box single-line", type = "date" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("InterviewerProfessionalDetails[0].EndDate", null, new { @class = "form-control text-box single-line", type = "date" })
+                                                                </td>
+                                                                <td>
+                                                                    <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                </td>
+                                                            </tr>
 
-                                    }
-                                    else
-                                    {
-                                        for (int i = 0; i < Model.InterviewerProfessionalDetails.Count(); i++)
-                                        {
-                                            <tr>
-                                                <td>
-                                                    @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].CompanyName, null, new { @class = "form-control text-box single-line" })
-                                                </td>
-                                                <td>
-                                                    @Html.DropDownListFor(m => m.InterviewerProfessionalDetails[i].CompanyName, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
-                                                </td>
-                                                <td>
-                                                    @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].Domain, null, new { @class = "form-control text-box single-line" })
-                                                </td>
-                                                <td>
-                                                    <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                    <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                </td>
-                                            </tr>
-                                        }
-                                    }
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.InterviewerProfessionalDetails.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].CompanyName, null, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerProfessionalDetails[i].CompanyName, (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.InterviewerProfessionalDetails[i].Domain, null, new { @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addRowProfessionalDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteRowProfessionalDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
 
-                                </tbody>
-                            </table>
-                            <label class="text-danger" id="SkillCollection_WeightageError" style=" color: red; margin-left: 815px"></label>
-                        </div>
-                    </div>
-                </div>*@
+                                                    </tbody>
+                                                </table>
+                                                <label class="text-danger" id="SkillCollection_WeightageError" style=" color: red; margin-left: 815px"></label>
+                                            </div>
+                                        </div>
+                                    </div>*@
                                 <!-- Previoud Comany Detils End-->
                                 <!-- Project Details start-->
                                 <div class="row">
@@ -623,8 +623,8 @@
                                                     {
                                                         <tr>
                                                             @*<td>
-                                                @Html.TextBox("InterviewerProjectsDetails[0].TechnologyEnvironment", null, new { @class = "form-control text-box single-line" })
-                                            </td>*@
+                                                                    @Html.TextBox("InterviewerProjectsDetails[0].TechnologyEnvironment", null, new { @class = "form-control text-box single-line" })
+                                                                </td>*@
                                                             <td>
                                                                 <div class="checkbox checkbox-danger">
                                                                     @Html.CheckBox("InterviewerProjectsDetails[0].IsPrimarySkillUsed", new { id = Html.Name("InterviewerProjectsDetails[0].IsPrimarySkillUsed") })
@@ -649,40 +649,40 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerProjectsDetails.Count(); i++)
+                                                    @*else
                                                         {
-                                                            <tr>
-                                                                @*<td>
-                                                    @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].TechnologyEnvironment, null, new { @class = "form-control text-box single-line" })
-                                                </td>*@
-                                                                <td>
-                                                                    <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed) })
-                                                                        <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { id = "txt_Description", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject) })
-                                                                        <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(M => M.InterviewerProjectsDetails[i].NatureOfProject, (SelectList)Model.NatureOfProjectList, new { id = "drp_NatureOfProjectList", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                            for (int i = 0; i < Model.InterviewerProjectsDetails.Count(); i++)
+                                                            {
+                                                                <tr>*@
+                                                    @*<td>
+                                                            @Html.TextBoxFor(m => m.InterviewerProjectsDetails[i].TechnologyEnvironment, null, new { @class = "form-control text-box single-line" })
+                                                        </td>*@
+                                                    @*<td>
+                                                                        <div class="checkbox checkbox-danger">
+                                                                            @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed) })
+                                                                            <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { id = "txt_Description", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="checkbox checkbox-danger">
+                                                                            @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject) })
+                                                                            <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(M => M.InterviewerProjectsDetails[i].NatureOfProject, (SelectList)Model.NatureOfProjectList, new { id = "drp_NatureOfProjectList", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
 
 
                                                 </tbody>
@@ -735,30 +735,30 @@
                                                             </td>
                                                         </tr>
                                                     }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                    @*else
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { id = "drp_Weekday", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { id = "drp_Weekend", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays, new { id = Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays) })
-                                                                        <label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
-                                                        }
-                                                    }
+                                                            for (int i = 0; i < Model.InterviewerAvailabilityDetails.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { id = "drp_Weekday", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { id = "drp_Weekend", @class = "form-control text-box single-line" })
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="checkbox checkbox-danger">
+                                                                            @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays, new { id = Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays) })
+                                                                            <label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }*@
 
 
                                                 </tbody>
@@ -810,44 +810,45 @@
                                             </div>
                                         </div>
                                     }
-                                    else
-                                    {
-                                        @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                    @*else
                                         {
-                                            <div class="col-md-2 col-sm-2 pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
+                                            @for (int i = 0; i < Model.InterviewerAccDetails.Count(); i++)
+                                            {
+                                                <div class="col-md-2 col-sm-2 pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountName, null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 px-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line" })
+                                                <div class="col-md-2 col-sm-2 px-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum">Account number</label>
+                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].AccountNumber, null, new { id = "txt_AccountNumber", @class = "form-control text-box single-line" })
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
+                                                <div class="col-md-2 col-sm-2pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="ifsce">IFSC Code</label>
+                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].IFSCCode, null, new { id = "txt_IFSCCode", @class = "form-control text-box single-line" })
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2 px-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
+                                                <div class="col-md-2 col-sm-2 px-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountNum"> UPI ID</label>
+                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].UPIId, null, new { id = "txt_UPIId", @class = "form-control text-box single-line" })
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-2 col-sm-2pr-1">
-                                                <div class="form-group">
-                                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
-                                                    @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { id = "txt_", @class = "form-control text-box single-line" })
-                                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                <div class="col-md-2 col-sm-2pr-1">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="bankLocation">PAN</label>
+                                                        @Html.TextBoxFor(m => m.InterviewerAccDetails[i].PAN, null, new { id = "txt_", @class = "form-control text-box single-line" })
+                                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        }
-                                        <!-- Account Detilas End-->
-                                    }
+                                            }
+
+                                        }*@
+                                    <!-- Account Detilas End-->
                                 </div>
                                 <!-- Account Details End-->
                                 <div class="card-footer-button ">
@@ -862,10 +863,10 @@
                                 </div>
                             </div>
                         }
-                            <div class=" col-md-3">
-                                @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                            </div>
+                        <div class=" col-md-3">
+                            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                         </div>
+                    </div>
                 </div>
             </div>
 

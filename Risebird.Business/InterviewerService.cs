@@ -232,6 +232,21 @@ namespace Risebird.Business
                 return null;
             }
         }
+
+        public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                //Add Method
+                return _interviewerRepository.AddInterviewerMyProfile(interviewerProfile).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         #endregion
     }
 }
