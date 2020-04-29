@@ -1805,8 +1805,8 @@ namespace Risebird.Repository
                 
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
-                parameters.Add("@Name", obj.Name );
-                parameters.Add("@EmailId", obj.EmailId);
+                parameters.Add("@Name", obj.Name?.Trim());
+                parameters.Add("@EmailId", obj.EmailId?.Trim());
                 parameters.Add("@ResumeLink", obj.ResumeLink );
                 parameters.Add("@Type", obj.Type );
                 parameters.Add("@Location", obj.Location );

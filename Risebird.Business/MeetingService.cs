@@ -87,12 +87,12 @@ namespace Risebird.Business
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
                 if (clientDetails.RoleId == 1)
                 {
-                    meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
+                    meetings = meetings.Where(x => x.ClientHrContact?.ToLower() == emailId?.ToLower()).ToList();
                 }
 
                 else if (clientDetails.RoleId == 4)
                 {
-                    meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
+                    meetings = meetings.Where(x => x.staffingAgency?.ToLower() == emailId?.ToLower()).ToList();
                 }
                 else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
                 {
