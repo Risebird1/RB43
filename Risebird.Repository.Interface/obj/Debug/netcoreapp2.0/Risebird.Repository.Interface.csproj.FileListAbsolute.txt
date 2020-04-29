@@ -151,3 +151,5 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.csproj.CopyComplete
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.dll
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository.Interface\obj\Debug\netcoreapp2.0\Risebird.Repository.Interface.pdb
