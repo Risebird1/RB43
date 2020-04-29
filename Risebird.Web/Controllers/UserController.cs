@@ -1222,18 +1222,76 @@ namespace Risebird.Web.Controllers
             }
         }
 
-
-
         #endregion
-
         #region Interviewer My Profile
-        public IActionResult InterviewerMyProfile()
+        [HttpGet]
+        public async Task<IActionResult> AddInterviewerMyProfileIndex()
         {
-            return View();
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    InterviewerProfileVM model = new InterviewerProfileVM();
+                    // Get all the select Lists
+                    GetAllSelectList(model);
+
+                    return View("AddInterviewerMyProfileIndex", model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Interviewers");
+            }
         }
-        public async Task<IActionResult> InterviewerMyProfile(InterviewerProfessional interviewerProfessional)
+        [HttpPost]
+        public async Task<IActionResult> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
         {
-            return View();
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    string uploadedFileURL = string.Empty;
+
+                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                    {
+                        if (interviewerProfile.ResumeFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            interviewerProfile.ResumeLink = uploadedFileURL;
+                        }
+                    }
+
+                    if (_userService.AddInterviewerMyProfile(interviewerProfile).Result)
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer My Profile is added Successfully";
+                        return RedirectToAction("Interviewers");
+                    }
+                    else
+                    {
+                        TempData["SuccessErrorMessageInterviewer"] = "Interviewer My Profile addition is Failed while adding to the System";
+                        return RedirectToAction("Interviewers");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer Profile addition is Failed";
+                return RedirectToAction("Interviewers");
+            }
         }
         #endregion
 

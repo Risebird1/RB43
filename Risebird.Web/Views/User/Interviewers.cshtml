@@ -102,6 +102,7 @@
                             <div class="toolbar">
                                 <div class="text-right">
                                     <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
+                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewerMyProfileIndex", "User")'" data-original-title="Tooltip on top"> Add Interviewer My Profile</span></button>
                                 </div>
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -163,6 +164,8 @@
                                                     <span onclick="location.href = '@Url.Action("EditInterviewer", "User", new { id = item.id})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.EmailId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                     <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "User", new { userId = item.userId})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("AddInterviewerMyProfileIndex", "User", new { userId = item.userId})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+
                                                 </td>
                                             </tr>
                                         }

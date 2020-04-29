@@ -50,6 +50,9 @@ namespace Risebird.Business.Interface
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> DeleteEmployerProfile(int id);
 
+        // add interviewer my Profile
+        Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
+
         //To retrieve the NickNames
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);

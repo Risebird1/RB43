@@ -50,6 +50,8 @@ namespace Risebird.Repository.Interface
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> DeleteEmployerProfile(int id);
 
+        Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
+
         IEnumerable<string> GetNickNames(int UserId);
         IEnumerable<string> GetEmailIds(int UserId);
         IEnumerable<LevelTech> GetLevelTech();
