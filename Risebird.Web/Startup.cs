@@ -159,7 +159,9 @@ namespace Risebird.Web
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISettingsRepository, SettingsRepository>();
             services.AddScoped<ISettingsService, SettingsService>();
-            
+            services.AddScoped<IInterviewerService, InterviewerService>();
+            services.AddScoped<IInterviewerRepository, InterviewerRepository>();
+
         }
     }
      //Global level antiforgery token security to stop malicious scripts

@@ -44,11 +44,11 @@ namespace Risebird.Business.Interface
         bool DeleteRecruiter(int userId);
 
         // Interviewe Profile services
-        Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
-        Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
-        Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
-        Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
-        Task<bool> DeleteEmployerProfile(int id);
+        //Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        //Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        //Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
+        //Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
+        //Task<bool> DeleteEmployerProfile(int id);
 
         // add interviewer my Profile
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);

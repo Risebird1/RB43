@@ -255,9 +255,9 @@ D:\RiseBird\Repo\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 D:\RiseBird\Repo\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.genruntimeconfig.cache
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\web.config
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.Development.json
+C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.json
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\bundleconfig.json
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\Properties\launchSettings.json
-C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\appsettings.json
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
 C:\00_Rohit\RiseBird\Code\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
