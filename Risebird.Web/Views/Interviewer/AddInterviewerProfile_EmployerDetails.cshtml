@@ -98,7 +98,7 @@
                         <div class="dataloading">
                             <div class="toolbar">
                                 <div class="text-right">
-                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddEmployerDetails","Interviewer")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
+                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddEmployerDetails", "Interviewer", new { ProfileId = Model.FirstOrDefault().InterviewerProfileId, UserId = ViewBag.UserId })'" data-original-title="Tooltip on top"> Add Employer</span></button>
                                 </div>
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -156,9 +156,9 @@
                                                     <td>@item.NoOfInterview</td>
                                                     <td>@item.SuccessRate</td>*@
                                                 <td class="text-right">
-                                                    <span onclick="location.href = '@Url.Action("AddEmployerDetails", "Interviewer")'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>
-                                                    <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                                    @*<span onclick="location.href = '@Url.Action("AddEmployerDetails", "Interviewer")'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>*@
+                                                    <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, UserId = ViewBag.UserId})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName, @ViewBag.UserId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                 </td>
                                             </tr>
                                         }
@@ -231,6 +231,7 @@
                 swal({
                     title: 'Successful',
                     text: '@ViewBag.Message',
+                    data: { 'UserId': ViewBag.UserId },
                     type: 'success',
                     showConfirmButton: true
 
@@ -238,7 +239,7 @@
                     function (value) //confirm
                     {
                         //if Yes do this
-                        window.location.href = '/User/Interviewers';
+                        window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
                     }
                 )
 
@@ -247,13 +248,14 @@
                 swal({
                     title: 'Failed',
                     text: '@ViewBag.Message',
+                    data: { 'UserId': ViewBag.UserId },
                     type: 'error',
                     showConfirmButton: true
 
                 },
                     function ()
                     {
-                        window.location.href = '/User/Interviewers';
+                        window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
                     }
                 )
             }
@@ -292,7 +294,7 @@
 
     });
 
-    function DeleteEntityfromEnvironment(id, CompanyName) {
+    function DeleteEntityfromEnvironment(id, CompanyName, UserId) {
 
         //var confirmMessageBox = confirm('Are you sure you want to delete interviewer ' + EmailId + ' ?');
         //if (confirmMessageBox) {
@@ -322,8 +324,9 @@
                     //var IdIRF = dataID;
                     $.ajax({
                         url: '/Interviewer/DeleteEmployerDetails',
-                        data: { 'id': id },
-                        type: 'get',
+                        data: "Id=" + id + "&UserId=" + UserId,
+                        //data: { 'Id': id, 'UserId': UserId },
+                        type: 'Delete',
                         success: function (result) {
                             resolve(result)
 
@@ -347,7 +350,7 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/Interviewer/";
+                    window.location = "/Interviewer/Index";
                 })
             }
             else if (result.dismiss === 'cancel') {

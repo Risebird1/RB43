@@ -305,7 +305,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerProfessional", Params,
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_GetInterviewerProfileByUserId]", Params,
                    commandType: CommandType.StoredProcedure);
 
                 }
@@ -520,12 +520,13 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@userid", userid);
+                parameters.Add("@UserId", userid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfiletByUserId",
+                    var ProfileList = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfileByUserId",
                         parameters, commandType: CommandType.StoredProcedure);
+                    return ProfileList;
                 }
             }
 
@@ -578,8 +579,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    //Id, InterviewerProfileId,  SkillId, Level, SkillName
                     return await SqlMapper.QueryAsync<TransInterviewerSkill>(
-                        con, "select Id, InterviewerProfileId,  SkillId, Level, SkillName from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerSkill] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -606,8 +608,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    //Id, InterviewerProfileId,  CertificateID, CertificateName
                     return await SqlMapper.QueryAsync<TransInterviewerCertificate>(
-                        con, "select Id, InterviewerProfileId,  CertificateID, CertificateName from [dbo].[TransInterviewerCertificate] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerCertificate] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -634,8 +637,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    //Id, InterviewerProfileId,  Graduation, CollegeType, Specialization, Score
                     return await SqlMapper.QueryAsync<TransInterviewerEducation>(
-                        con, "select Id, InterviewerProfileId,  Graduation, CollegeType, Specialization, Score from [dbo].[TransInterviewerEducation] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerEducation] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -690,8 +694,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    //Id, InterviewerProfileId,  ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions
                     return await SqlMapper.QueryAsync<TransInterviewerProjects>(
-                        con, "select Id, InterviewerProfileId,  ProjectName, ClientName, StartDate, EndDate, Role, ProjectDescriptions from [dbo].[TransInterviewerProjects] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerProjects] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -718,8 +723,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    // Id, InterviewerProfileId,  DayTimeSlot, DaySlot, StartTime, EndTime
                     return await SqlMapper.QueryAsync<TransInterviewerAvailability>(
-                        con, "select Id, InterviewerProfileId,  DayTimeSlot, DaySlot, StartTime, EndTime from [dbo].[TransInterviewerAvailability] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerAvailability] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }
@@ -746,8 +752,9 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    //Id, InterviewerProfileId,  AccountHolderName, AccountNumber, IFSCCode, Location, UPIId
                     return await SqlMapper.QueryAsync<TransInterviewerAccDetails>(
-                        con, "select Id, InterviewerProfileId,  AccountHolderName, AccountNumber, IFSCCode, Location, UPIId from [dbo].[TransInterviewerAccDetails] where InterviewerProfileId = @ProfileId",
+                        con, "select * from [dbo].[TransInterviewerAccDetails] where InterviewerProfileId = @ProfileId",
                         parameters, commandType: Text);
                 }
             }

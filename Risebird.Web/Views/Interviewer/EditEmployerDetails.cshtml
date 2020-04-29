@@ -40,7 +40,7 @@
                 <div class="card">
                     <div class="card-body">
 
-                        @using (Html.BeginForm("EditEmployerDetails", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("EditEmployerDetails", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @Html.AntiForgeryToken()
@@ -57,7 +57,7 @@
 
                                         @Html.Hidden("Id", Model.id)
                                         @Html.Hidden("InterviewerProfileId", Model.InterviewerProfileId)
-
+                                        @{TempData["UserId"] = ViewBag.UserId;}
                                     </div>
 
                                     <div class="form-group">
@@ -147,11 +147,11 @@
 
                                         </div>
                                         <div class="col-md-6">
-                                            @Html.ActionLink("Cancel", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { UserId = ViewBag.UserId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                             <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
 
-                                            @Html.ActionLink("Delete", "DeleteEmployerDetails", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @*@Html.ActionLink("Delete", "DeleteEmployerDetails", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })*@
                                         </div>
                                         <div class=" col-md-3">
 
