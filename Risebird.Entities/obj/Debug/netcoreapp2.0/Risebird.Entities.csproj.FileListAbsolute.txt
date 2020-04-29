@@ -107,3 +107,10 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.deps.json
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csproj.CoreCompileInputs.cache
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
+C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
