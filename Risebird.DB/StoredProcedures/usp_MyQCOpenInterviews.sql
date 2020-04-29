@@ -19,8 +19,6 @@ inner join IRF irf on InterviewMeetings.IRFId=irf.IRFId left join InterviewComme
 where IRF.id in (select IRFId from TransQualityController tqc join UserList ul on tqc.UserId= ul.id where EmailId = @emailID)
 and InterviewMeetings.confirmationStatus=1 and ic.MeetingStatus=4 and InterviewMeetings.interviewer!=@emailID
 END
-
-END   
 GO
 
 
