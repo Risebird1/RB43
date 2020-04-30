@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Risebird.Entities.ViewModel
@@ -11,6 +12,7 @@ namespace Risebird.Entities.ViewModel
         public string CertificateID { get; set; }
         public string CertificateName { get; set; }
         public string Version { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? Expirydate { get; set; }
     }
 }

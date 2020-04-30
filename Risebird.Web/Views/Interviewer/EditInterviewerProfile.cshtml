@@ -124,7 +124,8 @@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.DOB, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
                                         @*@Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control text-box single-line", type = "date" } })*@
-                                        @Html.TextBox("DOB", "DOB", new { @class = "form-control text-box single-line", type = "date" })
+                                        @*@Html.TextBox("DOB", "DOB", new { @class = "form-control text-box single-line", type = "date" })*@
+                                        @Html.EditorFor(m => m.DOB, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.DOB } })
                                         @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -286,7 +287,7 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].SkillName", (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
@@ -315,7 +316,7 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillName, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillId, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
                                                                     @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
@@ -379,7 +380,8 @@
                                                                 @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
+                                                                @*@Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerCertificateDetails[0].Expirydate })*@
+                                                                @Html.EditorFor(m => m.InterviewerCertificateDetails[0].Expirydate, null, new { htmlAttributes = new { @class = "form-control text-box single-line", type = "date"} })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -391,24 +393,27 @@
                                                     {
                                                         for (int i = 0; i < Model.InterviewerCertificateDetails.Count(); i++)
                                                         {
-                                                            <tr>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })
-                                                                </td>
-                                                                <td>
-                                                                    <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-                                                                </td>
-                                                            </tr>
+                                                <tr>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
+                                                    </td>
+                                                    <td>
+                                                        @*@Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })*@
+                                                        @Html.EditorFor(m => m.InterviewerCertificateDetails[i].Expirydate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerCertificateDetails[0].Expirydate } })
+                                                        @*@Html.EditorFor(m => m.InterviewerProfessionalDetails[i].StartDate, new { htmlAttributes = new { @class = "form-control text-box single-line", @Value = Model.InterviewerProfessionalDetails[i].StartDate } })*@
+
+                                                    </td>
+                                                    <td>
+                                                        <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                        <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                    </td>
+                                                </tr>
                                                         }
                                                     }
 

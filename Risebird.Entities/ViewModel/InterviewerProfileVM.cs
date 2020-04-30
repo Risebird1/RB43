@@ -37,6 +37,8 @@ namespace Risebird.Entities.ViewModel
         ErrorMessage = "Please Enter Correct Email Address")]
         public string AltEmailId { get; set; }
         [Display(Name = "Date Of Birth")]
+        [Required(ErrorMessage = "Please Enter Date Of Birth")]
+        [DataType(DataType.Date)]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
         public string Gender { get; set; }
