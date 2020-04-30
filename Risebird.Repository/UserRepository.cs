@@ -521,7 +521,81 @@ namespace Risebird.Repository
 
         #endregion
 
-        //#region Interviewer Profile Repository function
+        #region Interviewer My Profile Repository function
+        public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                int ProfileId;
+                DynamicParameters parameters = SetSPParametersForInterviewMyProfile(interviewerProfile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    //Just added to get Id this way
+                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    //   commandType: CommandType.StoredProcedure);
+                    //int ProfileId = result.FirstOrDefault();
+
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddOrEdiInterviewerMyProfile]", parameters,
+                       commandType: CommandType.StoredProcedure);
+
+                    var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
+                        con, "select id, EmailId, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    ProfileId = ProfileList.Where(x => x.EmailId == interviewerProfile.EmailId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                }
+
+                foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@SlotTime", item.SlotTime);
+                    Params.Add("@SlotDay", item.SlotDay);
+                    Params.Add("@StartDate", item.StartDate);
+                    Params.Add("@EndDate", item.EndDate);
+
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerMyProfileAvailability]", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+
+                foreach (var item in interviewerProfile.InterviewerAccDetails)
+                {
+                    DynamicParameters Params = new DynamicParameters();
+                    Params.Add("@InterviewerProfileId", ProfileId);
+                    Params.Add("@AccountName", item.AccountNumber);
+                    Params.Add("@AccountNumber", item.AccountNumber);
+                    Params.Add("@IFSCCode", item.IFSCCode);
+                    Params.Add("@AccountLocation", item.AccountLocation);
+
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerMyProfileAccDetails]", Params,
+                       commandType: CommandType.StoredProcedure);
+
+                    }
+                }
+                return true;
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        #endregion
+
+
+        #region Interviewer Profile Repository function
 
         //public async Task<bool> AddOrEditInterviewerProfile(InterviewerProfileVM interviewerProfile)
         //{
@@ -692,12 +766,26 @@ namespace Risebird.Repository
         //        return false;
         //    }
 
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        private DynamicParameters SetSPParametersForInterviewMyProfile(InterviewerProfileVM entity)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@UserId", entity.UserId);
+            parameters.Add("@FirstName", entity.FirstName);
+            parameters.Add("@LastName", entity.LastName);
+            parameters.Add("@EmailId", "samraj@gmail.com");
+            parameters.Add("@AltEmailId", entity.AltEmailId);
+            parameters.Add("@City", entity.City);
+            parameters.Add("@MobileNumber", entity.MobileNumber);
+            parameters.Add("@AltMobileNumber", entity.AltMobileNumber);
+            parameters.Add("@ResumeLink", entity.ResumeLink);
+            parameters.Add("@InterviewerProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
 
         //private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
         //{
@@ -979,37 +1067,42 @@ namespace Risebird.Repository
         //        }
         //    }
 
-        //    catch (Exception e)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return null;
-        //    }
-        //}
-        //public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
-        //{
-        //    try
-        //    {
-        //        DynamicParameters parameters = new DynamicParameters();
-        //        parameters.Add("@userid", userid);
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public List<Industry> GetIndustry()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return SqlMapper.Query<Industry>(con, "Select Id, Description from IndustryCodes",
+                        null, commandType: Text).ToList();
+                }
+            }
 
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //            return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfiletByUserId",
-        //                parameters, commandType: CommandType.StoredProcedure);
-        //        }
-        //    }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileById(int userid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@userid", userid);
 
-        //    catch (SqlException e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return null;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return null;
-        //    }
-        //}
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "[dbo].[usp_GetInterviewerProfileByUserId]",
+                        parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
 
         //public async Task<InterviewerProfessional> GetEmployerById(int id)
         //{

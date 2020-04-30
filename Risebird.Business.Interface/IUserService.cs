@@ -50,15 +50,18 @@ namespace Risebird.Business.Interface
         //Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
         //Task<bool> DeleteEmployerProfile(int id);
 
-        ////To retrieve the NickNames
-        //IEnumerable<string> GetNickNames(int UserId);
-        //IEnumerable<string> GetEmailIds(int UserId);
-        //InterviewerProfileVM GetInterviewerProfileById(int userid);
-        //InterviewerProfessional GetEmployerById(int Id);
-        //List<LevelTech> GetLevelTech();
-        //List<ExperienceRange> GetExperienceRange();
-        //List<JobFunction> GetJobFunction();
-        //List<Industry> GetIndustry();
+        // add interviewer my Profile
+        Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
+
+        //To retrieve the NickNames
+        IEnumerable<string> GetNickNames(int UserId);
+        IEnumerable<string> GetEmailIds(int UserId);
+        InterviewerProfileVM GetInterviewerProfileById(int userid);
+        InterviewerProfessional GetEmployerById(int Id);
+        List<LevelTech> GetLevelTech();
+        List<ExperienceRange> GetExperienceRange();
+        List<JobFunction> GetJobFunction();
+        List<Industry> GetIndustry();
 
     }
 }

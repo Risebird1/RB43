@@ -334,6 +334,22 @@ namespace Risebird.Business
 
         //#endregion
 
+        #region Interviewer Profile Service Functions
+        public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
+        {
+            try
+            {
+                //Add Method
+                return _userRepository.AddInterviewerMyProfile(interviewerProfile).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        #endregion
+
         #region QCInterviewer Service Functions
 
         public List<QCInterviewerVM> GetQCInterviewers()
