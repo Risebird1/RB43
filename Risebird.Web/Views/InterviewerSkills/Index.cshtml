@@ -1,0 +1,1102 @@
+﻿@model Risebird.Entities.ViewModel.InterviewerSkillsViewModel
+
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Interviewer Skills";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    dynamic filter = null;
+    string strtDte = String.Empty;
+    string endDte = String.Empty;
+    string[] RFID = new string[] { };
+    string[] ArchiveStatus = new string[] { };
+    string[] ClientName = new string[] { };
+    string[] ClientRole = new string[] { };
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("InterviewerSkillsFilter") != null)
+{
+    filter = JsonConvert.DeserializeObject<IRFFilter>
+(HttpContextAccessor.HttpContext.Session.GetString("InterviewerSkillsFilter"));
+    strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
+    endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    RFID = filter.RFID != null ? filter.RFID : new string[] { };
+    ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
+    ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+
+}
+<style>
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
+
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+
+
+    /*.list-group-item-text span {
+        float: left;
+        font-weight: 700;
+        padding-right: 5px;
+    }*/
+
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
+
+    .list-group {
+        margin-bottom: 150px;
+    }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+    .dropdown-toggle {
+        background-color: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+</style>
+
+<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
+<style>
+
+    .card-footer {
+        text-align: center;
+        padding: 0px;
+    }
+
+    .card-body {
+        margin: 0px;
+        padding: 5px;
+    }
+
+    #irf-card-footer {
+        padding-left: 20px;
+        padding-top: 15px;
+    }
+
+    .card-header-buttons {
+        margin: -15px;
+        margin-left: 15px;
+    }
+
+    .card-content-holder {
+        background-color: white;
+    }
+
+    .list-group-item-text {
+        line-height: 80%;
+    }
+
+        .list-group-item-text span {
+            font-weight: bold;
+            padding-right: 7px;
+        }
+
+    .pskill {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .clientName {
+        display: inline-block;
+        width: 240px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">
+                    Interview Request Forms
+                </a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Interview Request Forms</h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 ml-md-auto">
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                            {
+                            <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>
+                            <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"> Add IRF</span></button>
+
+                            }
+                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="@Url.Action("Index","IRF")" method="post" id="form">
+
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        Start Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        End Date
+                                                    </label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
+                                                            {
+                                                            @if (item != null && item != "")
+                                                                {
+                                                            <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                @if (!Model.IsClientUser)
+                                                {
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.ClientName).Distinct().ToList())
+                                                                {
+                                                            @if (item != null && item != "")
+                                                                    {
+                                                            <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                }
+
+
+
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                            @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                            {
+                                                            @if (item != null && item != "")
+                                                                {
+                                                            <option value="@item">@item</option>
+                                                                }
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- end content-->
+                </div>
+                <!--  end card  -->
+            </div>
+            <!-- end col-md-12 -->
+        </div>
+
+        <!-- Start Card -->
+
+        <div class="row">
+            @foreach (var item in Model.InterviewerSkillsModelList)
+            {
+            <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                <div class="card-content-holder border border-dark">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class=" col-md-7 col-sm-7">
+                                <h6> @item.InterviewerSkillId <span class="pskill" title="@item.JDTiltle.Split("|")[0]">(@item.JDTiltle.Split("|")[0])</span></h6>
+                            </div>
+
+                            <div class="col-md-5 col-sm-5 card-header-buttons">
+                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+                                <button type="button" onclick="javascript:EditIRF('@item.id');" title="Edit" class="btn btn-info btn-icon btn-sm">
+                                    <i class="now-ui-icons fa fa-edit"></i>
+                                </button>
+
+                                <button type="button" onclick="location.href='@Url.Action("InterviewPlanner", "IRF", new { irfId = item.id, irfName = item.InterviewerSkillId })'" title="Interview Planner" class="btn btn-info btn-icon btn-sm">
+                                    <i class="now-ui-icons  fa fa-calendar-minus-o"></i>
+                                </button>
+                                <button type="button" onclick="javascript:InvoicePopUp('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Interview Invoice">
+                                    <i class="now-ui-icons fa fa-money"></i>
+                                </button>
+                                        if (!item.IsDeleted)
+                                        {
+                                <button type="button" onclick="javascript:DeleteIRF('@item.id');" class="btn btn-danger btn-icon btn-sm" title="Archive">
+                                    <i class="now-ui-icons fa fa-archive"></i>
+                                </button>
+                                        }
+                                        else
+                                        {
+                                <button type="button" onclick="javascript:UnArchiveIRF('@item.id');" class="btn btn-info btn-icon btn-sm" title="UnArchive">
+                                    <i class="now-ui-icons fa fa-undo"></i>
+                                </button>
+                                        }
+
+                                    }
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- irf body-->
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-2  col-sm-2">
+                                <img id="statusImage" src="@Url.Content(@item.ImageUrl)" class="img-responsive">
+                            </div>
+                            <div class="col-lg-10col-sm-10">
+                                <div class="group inner list-group-item-text">
+
+                                    <div class="row">
+                                        <span>Client Name:</span> <div class="clientName" title="@item.ClientCompName (@item.ClientName)">@item.ClientCompName (@item.ClientName)</div>
+                                    </div> <br />
+
+                                    <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
+
+                                    <div class="row">
+                                        <span>Total Interviews:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
+                                    </div> <br />
+
+                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                        {
+                                    <div class="row">
+                                        <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null? item.ScheduledMeetings : 0)
+                                    </div>  <br />
+                                        }
+
+                                    <div class="row">
+                                        <span>Selected Interviews:</span> @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)
+                                    </div> <br />
+                                    <div class="row">
+                                        <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="row">
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 " id="irf-card-footer">
+
+                                @if (@item.IRFStatus == "Active") {
+                                <h6 style="color: green;"> @item.IRFStatus</h6>
+                                    }
+                                    else if(@item.IRFStatus == "Paused"){
+                                <h6 style="color: grey;"> @item.IRFStatus</h6>
+                                    }
+                                    else{
+                                <h6 style="color: black;"> @item.IRFStatus</h6>
+                                    }
+                            </div>
+
+                            <div class="stats text-center col-lg-8 col-md-8 col-sm-8 col-xs-8 ">
+                                @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                    {
+
+                                <button type="button" onclick="javascript:AddComments('@item.id');"
+                                        class="btn btn-info btn-icon btn-sm" title="Questions">
+                                    <i class="now-ui-icons fa fa-comments"></i>
+                                </button>
+
+
+                                    }
+                                <button type="button" onclick="javascript:Candidates('@item.id', '@item.InterviewerSkillId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+                                    <i class="now-ui-icons fa fa-list"></i>
+                                </button>
+                                @if (Model.Profile != "Recruiter")
+                                    {
+                                <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Meetings">
+                                    <i class="now-ui-icons fa fa-meetup"></i>
+                                </button>
+                                <button type="button"
+                                        onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                                    <i class="now-ui-icons fa fa-check"></i>
+                                </button>
+                                <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
+                                         {irfName=item.InterviewerSkillId, calendlyLink=item.CalendlyLink})'"
+                                        class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                    <i class="now-ui-icons  fa fa-calendar"></i>
+                                </button>
+
+                                <button type="button" onclick="javascript:stats('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Stats">
+                                    <i class="now-ui-icons fa fa-industry"></i>
+                                </button>
+                                        if (item.IsPaused)
+                                        {
+                                <button type="button" onclick="PlayIRF('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Play">
+                                    <i class="now-ui-icons fa fa-play"></i>
+                                </button>
+                                        }
+                                        else
+                                        {
+                                <button type="button" onclick="PauseIRF('@item.id', '@item.InterviewerSkillId');"
+                                        class="btn btn-info btn-icon btn-sm" title="Pause">
+                                    <i class="now-ui-icons fa fa-pause"></i>
+                                </button>
+
+                                        }
+                                    }
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- End Card-->
+        <div id="myModal" class="modal" style="    display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    ">
+            <!-- Modal content -->
+            <div class="modal-content" style="        width: 70%;
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        font-size: 12px;
+        margin-top: -53px
+    ">
+                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                    <h5>Invoice</h5>
+                    <span class="close" id="invoicePopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
+                                    Start Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
+                                    End Date
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
+                                    SR Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
+                                    PO Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
+                                    Request Number
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
+                                    Project Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
+                                    Client Address
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
+                                    Discount
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="discountId" name="discountId" type="text" class="form-control">
+                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
+                                    Currency Code
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
+                                    Apply GST
+                                </label>
+                                <div class="col-md-6 col-sm-6">
+                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
+                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+
+                    <div class="">
+                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
+                    </div>
+                </div>
+                <div class="modal-footer" style="padding: 2px 16px;
+                                 background-color: #14406e;
+                                                 color: white;">
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- end row -->
+    </div>
+    <footer class="footer">
+        <div class=" container-fluid ">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#">
+                            Risebird
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            About Us
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="copyright" id="copyright">
+                &copy;
+                <script>
+                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                </script> Risebird All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+
+
+
+    @if (Model.Message != null)
+    {
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@Model.Message';
+
+
+
+            if (msg.includes("Success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@Model.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        window.location.href = '/IRF/Index';
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@Model.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function () {
+                        window.location.href = '/IRF/Index';
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+    }
+
+
+    <script type="text/javascript">
+
+        function DeleteIRF(dataID) {
+
+            var IdIRF = dataID;
+            swal.fire({
+                title: 'Are you sure?',
+                text: "It will be archived!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, archive it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        var IdIRF = dataID;
+                        $.ajax({
+                            url: '/IRF/DeleteIRF?id=' + IdIRF,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error archiving!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Archived!',
+                        type: 'success',
+                        html: '<p>IRF has been archived.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been archived! :)',
+                        'error'
+                    )
+                }
+            })
+
+
+        }
+
+
+        function AddComments(id) {
+
+            var url = '/IRF/SampleQuestions?id=' + id;
+            window.location.href = url;
+        };
+        function SelectedInterviewMeetings(id, IRFid) {
+
+            var url = '/IRF/SelectedInterviewMeetings?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        function InterviewMeetings(id, IRFid) {
+
+            var url = '/IRF/InterviewMeetings?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        //Candidates
+        function Candidates(id, IRFid) {
+
+            var url = '/IRF/Candidates?id=' + id + '&irfName=' + IRFid;
+            window.location.href = url;
+        };
+        function EditIRF(id) {
+
+            var url = '/IRF/EditIRF?id=' + id;
+            window.location.href = url;
+        };
+        function stats(id, IRFid) {
+
+            var url = '/IRF/Stats?id=' + id + '&irfId=' + IRFid;
+            window.location.href = url;
+        };
+        function UnArchiveIRF(id) {
+
+            var url = '/IRF/UnArchiveIRF?id=' + id;
+            window.location.href = url;
+        };
+
+        function PauseIRF(irfId, irfName) {
+
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The IRF will be paused!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, pause it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/PauseIRF?irfId=' + irfId + '&irfName=' + irfName,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error pausing!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Paused!',
+                        type: 'success',
+                        html: '<p>IRF has been paused.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been paused! :)',
+                        'error'
+                    )
+                }
+            })
+
+            changeColor('red');
+        }
+
+        function PlayIRF(irfId, irfName) {
+
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The IRF will be enabled!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, play it!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        $.ajax({
+                            url: '/IRF/PlayIRF?irfId=' + irfId + '&irfName=' + irfName,
+                            success: function (result) {
+                                resolve(result)
+
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error playing!", "Please try again", "error");
+                            }
+                        })
+                    })
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Played!',
+                        type: 'success',
+                        html: '<p>IRF has been enabled.</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/IRF/Index";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Cancelled',
+                        'IRF has not been enabled! :)',
+                        'error'
+                    )
+                }
+            })
+            changeColor("yellow");
+        }
+
+        //UnArchiveIRF
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#stDateInvoice").val("");
+            $("#EndDateInvoice").val("");
+            $("#srNumberId").val("");
+            $("#poNumberId").val("");
+            $("#requestNumberId").val("");
+            $("#currencyCodeId").val("");
+            $("#projectCodeId").val("");
+            $("#discountId").val("");
+            $("#clientAddressId").val("");
+            document.getElementById("gstCheckId").checked = false;
+            $("#ResetFilter").click(function () {
+                ResetFilter();
+            })
+            if ('@filter' != "") {
+                ApplySessionFilter();
+            }
+
+            $("#RFID").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#ClientName").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#ArchiveStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+            $("#ClientRole").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+
+        });
+
+        function ResetFilter() {
+
+            $.ajax({
+                type: "POST",
+                url: "/IRF/Index",
+                success: function (data) {
+                    window.location.href = "/IRF/ResetIRFFilter";
+                }
+            });
+        }
+        function ApplySessionFilter() {
+            var strtDte = '@strtDte';
+            var endDte = '@endDte';
+            var rFID =  @Html.Raw(Json.Serialize(RFID));
+            var clientName =  @Html.Raw(Json.Serialize(ClientName));
+            var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
+
+
+            $('input[name=StartDate]').val(strtDte);
+            $('input[name=EndDate]').val(endDte);
+            $("#RFID").val(rFID);
+            $("#ClientName").val(clientName);
+            $("#ArchiveStatus").val(archiveStatus);
+            $("#ClientRole").val(clientRole);
+            var form = $("#form").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/IRF/Index",
+                data: form,
+                success: function (data) {
+                }
+            });
+        }
+
+    </script>
+    <script>
+        var irfId = "";
+        var irfName = "";
+        var span = document.getElementById("invoicePopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+
+    </script>
+    <script>
+        function InvoicePopUp(id, irfName) {
+
+            irfId = id;
+            irfName = irfName;
+
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+
+
+        }
+
+
+        function SavePopUp() {
+            var sDate = $("#stDateInvoice").val();
+            //var stDate = document.getElementById("stDateInvoice").value;
+            var endDate = document.getElementById("EndDateInvoice").value;
+
+            var srNumber = $("#srNumberId").val();
+            var poNumber = $("#poNumberId").val();
+            var reqNumber = $("#requestNumberId").val();
+            var currencyCode = $("#currencyCodeId").val();
+            var projectCode = $("#projectCodeId").val();
+            var discount = $("#discountId").val();
+            var clientAddress = $("#clientAddressId").val();
+            var isGST = document.getElementById("gstCheckId").checked
+            if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
+                document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
+                return;
+            }
+            else {
+                document.getElementById("popUp_Error").innerHTML = "";
+
+            }
+
+
+            var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
+            window.location.href = url;
+        }
+
+        function changeColor(tileColor) {
+            localStorage.removeItem("localStorageforColorName");
+            localStorage.setItem('localStorageforColorName', 'localStorageforColor');
+            let value = localStorage.getItem('localStorageforColorName');
+            console.log("Inside the changeColor()-- color is::" + tileColor);
+
+            if (value) {
+                console.log("local storge value is::" + value);
+                $(document).ready(function () {
+                    $("#divTile").css({ "backgroundColor": tileColor });
+                    alert("Color Changed!!!!");
+                });
+            }
+
+            // console.log("Div Value::"+document.getElementById("divTile"));
+            //document.getElementById("divTile").style.backgroundColor = tileColor;
+            // divTile.style.backgroundColor = color;
+        }
+    </script>
