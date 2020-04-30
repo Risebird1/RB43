@@ -265,90 +265,90 @@ namespace Risebird.Business
 
         #endregion
 
-        //#region Interviewer Profile Service Functions
+        ////#region Interviewer Profile Service Functions
 
-        //public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        //{
-        //    try
-        //    {
-        //        //Add Method
-        //        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+        ////public async Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        ////{
+        ////    try
+        ////    {
+        ////        //Add Method
+        ////        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
 
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-        //public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
-        //{
-        //    try
-        //    {
-        //        //Edit Method
-        //        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-        //public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
-        //{
-        //    try
-        //    {
-        //        return _userRepository.AddEmployerProfile(interviewerProfessional).Result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-        //public async Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional)
-        //{
-        //    try
-        //    {
-        //        return _userRepository.EditEmployerProfile(interviewerProfessional).Result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
-        //public async Task<bool> DeleteEmployerProfile(int id)
-        //{
-        //    try
-        //    {
-        //        return _userRepository.DeleteEmployerProfile(id).Result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
+        ////public async Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile)
+        ////{
+        ////    try
+        ////    {
+        ////        //Edit Method
+        ////        return _userRepository.AddOrEditInterviewerProfile(interviewerProfile).Result;
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
+        ////public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
+        ////{
+        ////    try
+        ////    {
+        ////        return _userRepository.AddEmployerProfile(interviewerProfessional).Result;
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
+        ////public async Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional)
+        ////{
+        ////    try
+        ////    {
+        ////        return _userRepository.EditEmployerProfile(interviewerProfessional).Result;
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
+        ////public async Task<bool> DeleteEmployerProfile(int id)
+        ////{
+        ////    try
+        ////    {
+        ////        return _userRepository.DeleteEmployerProfile(id).Result;
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
 
-        //#endregion
+        ////#endregion
 
-        #region Interviewer Profile Service Functions
-        public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
-        {
-            try
-            {
-                //Add Method
-                return _userRepository.AddInterviewerMyProfile(interviewerProfile).Result;
-            }
-            catch (Exception e)
-            {
-                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return false;
-            }
-        }
-        #endregion
+        ////#region Interviewer Profile Service Functions
+        ////public async Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
+        ////{
+        ////    try
+        ////    {
+        ////        //Add Method
+        ////        return _userRepository.AddInterviewerMyProfile(interviewerProfile).Result;
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+        ////        return false;
+        ////    }
+        ////}
+        ////#endregion
 
         #region QCInterviewer Service Functions
 
