@@ -154,7 +154,7 @@ namespace Risebird.Repository
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "TransInterviewerEducation", Params,
+                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerEducation]", Params,
                        commandType: CommandType.StoredProcedure);
 
                     }
@@ -232,7 +232,7 @@ namespace Risebird.Repository
         private DynamicParameters SetSPParametersForInterviewProfile(InterviewerProfileVM entity)
         {
             var parameters = new DynamicParameters();
-
+            // For Add case, UserId will be null and for edit case, it will have some value
             parameters.Add("@UserId", entity.UserId);
             parameters.Add("@FirstName", entity.FirstName);
             parameters.Add("@LastName", entity.LastName);
@@ -547,7 +547,7 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("id", id);
+                parameters.Add("@id", id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {

@@ -11,6 +11,6 @@ namespace Risebird.Entities.ViewModel
         public string CertificateID { get; set; }
         public string CertificateName { get; set; }
         public string Version { get; set; }
-        public DateTime Expirydate { get; set; }
+        public DateTime? Expirydate { get; set; }
     }
 }
