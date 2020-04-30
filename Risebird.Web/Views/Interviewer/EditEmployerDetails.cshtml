@@ -57,7 +57,7 @@
 
                                         @Html.Hidden("Id", Model.id)
                                         @Html.Hidden("InterviewerProfileId", Model.InterviewerProfileId)
-                                        @{TempData["UserId"] = ViewBag.UserId;}
+                                        @*@{TempData["UserId"] = ViewBag.UserId;}*@
                                     </div>
 
                                     <div class="form-group">
@@ -147,7 +147,7 @@
 
                                         </div>
                                         <div class="col-md-6">
-                                            @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { UserId = ViewBag.UserId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                            @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                             <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
 

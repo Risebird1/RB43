@@ -296,6 +296,34 @@ namespace Risebird.Repository
             return parameters;
         }
 
+        public async Task<bool> DeleteInterviewerProfile(int UserId)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@UserId", UserId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerProfile]", parameters,
+                   commandType: CommandType.StoredProcedure);
+
+                }
+                return true;
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+
         public async Task<bool> AddEmployerProfile(InterviewerProfessional item)
         {
             try
@@ -305,7 +333,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_GetInterviewerProfileByUserId]", Params,
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerProfessional]", Params,
                    commandType: CommandType.StoredProcedure);
 
                 }
@@ -359,8 +387,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "Delete from TransInterviewerProfessional where id = @Id", parameters,
-                   commandType: Text);
+                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_DeleteInterviewerEmployer]", parameters,
+                   commandType: CommandType.StoredProcedure);
 
                 }
                 return true;
@@ -771,18 +799,18 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<List<InterviewerProfessional>> GetEmployerListById(int UserId)
+        public async Task<List<InterviewerProfessional>> GetEmployerListById(int id)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@UserId", UserId);
+                parameters.Add("@IProfileId", id);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "SELECT [TIP].[Id], [InterviewerProfileId], [CompanyName],[Type], [CompanyStage], [Size], [JobFunctionId], [IndustryId]," +
+                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "SELECT [Id], [InterviewerProfileId], [CompanyName],[Type], [CompanyStage], [Size], [JobFunctionId], [IndustryId]," +
                                                 "[Headquarters], [Role], [Domain], [SeniorityLevel], [ExperienceId], [WorkNature], [PrimaryResponsibility]," +
-                                                "[CompanyLinkedinPage], [CompanyWebsite] from [TransInterviewerProfessional] TIP join InterviewerProfile IP on TIP.InterviewerProfileId = IP.Id where IP.UserId = @UserId; ",
+                                                "[CompanyLinkedinPage], [CompanyWebsite] from [TransInterviewerProfessional] where InterviewerProfileId = @IProfileId",
                         parameters, commandType: Text);
                     return result.ToList();
                 }
@@ -807,30 +835,34 @@ namespace Risebird.Repository
             try
             {
                 int ProfileId;
-                DynamicParameters parameters = SetSPParametersForInterviewMyProfile(interviewerProfile);
+
+                DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddOrEdiInterviewerMyProfile]", parameters,
+                    //Just added to get Id this way
+                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    //   commandType: CommandType.StoredProcedure);
+                    //int ProfileId = result.FirstOrDefault();
+
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
-                        con, "select id, EmailId, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
-                    ProfileId = ProfileList.Where(x => x.EmailId == interviewerProfile.EmailId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                        con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
+                    ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                 }
 
                 foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)
                 {
                     DynamicParameters Params = new DynamicParameters();
                     Params.Add("@InterviewerProfileId", ProfileId);
-                    //Params.Add("@SlotTime", item.SlotTime);
-                    //Params.Add("@SlotDay", item.SlotDay);
-                    //Params.Add("@StartDate", item.StartDate);
-                    //Params.Add("@EndDate", item.EndDate);
-
+                    Params.Add("@Weekday", item.Weekday);
+                    Params.Add("@Weekend", item.Weekend);
+                    Params.Add("@IsAvailableOnPublicHolidays", item.IsAvailableOnPublicHolidays);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerMyProfileAvailability]", Params,
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAvailability", Params,
                        commandType: CommandType.StoredProcedure);
 
                     }
@@ -843,16 +875,17 @@ namespace Risebird.Repository
                     Params.Add("@AccountName", item.AccountNumber);
                     Params.Add("@AccountNumber", item.AccountNumber);
                     Params.Add("@IFSCCode", item.IFSCCode);
-                    //Params.Add("@AccountLocation", item.AccountLocation);
+                    Params.Add("@UPIId", item.UPIId);
+                    Params.Add("@PAN", item.PAN);
 
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        await SqlMapper.QueryAsync<int>(con, "[dbo].[usp_AddInterviewerMyProfileAccDetails]", Params,
+                        await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerAccDetails", Params,
                        commandType: CommandType.StoredProcedure);
 
                     }
                 }
-                return true;
+                    return true;
             }
 
             catch (SqlException e)

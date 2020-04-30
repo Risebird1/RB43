@@ -145,8 +145,8 @@
                                                 }
                                             <td class="text-right">
                                                 <span onclick="location.href = '@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId})'" title="Click here to edit interviewer Profile" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                <span onclick="location.href = '@Url.Action("AddInterviewerProfile_EmployerDetails", "Interviewer", new { UserId = item.UserId})'" title="Click here to Add interviewer Employer Details" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-suitcase"></i></span>
-                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.FirstName');" title="Click here to delete interviewer Profile" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                                <span onclick="location.href = '@Url.Action("AddInterviewerProfile_EmployerDetails", "Interviewer", new { id = item.id})'" title="Click here to Add interviewer Employer Details" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-suitcase"></i></span>
+                                                <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.FirstName');" title="Click here to delete interviewer Profile" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                             </td>
                                             </tr>
                                         }
@@ -278,7 +278,7 @@
 
     });
 
-    function DeleteEntityfromEnvironment(Id, FirstName) {
+    function DeleteEntityfromEnvironment(UserId, FirstName) {
 
         //var confirmMessageBox = confirm('Are you sure you want to delete interviewer ' + EmailId + ' ?');
         //if (confirmMessageBox) {
@@ -296,7 +296,7 @@
 
 
         swal.fire({
-            title: 'Are you sure you want to delete interviewer' + FirstName + '?',
+            title: 'Are you sure you want to delete interviewer ' + FirstName + '?',
             text: "It will be permanently deleted !",
             type: 'warning',
             showCancelButton: true,
@@ -305,10 +305,9 @@
             confirmButtonText: 'Yes, delete it!',
             preConfirm: function () {
                 return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Interviewer/DeleteInterviewer',
-                        data: { 'id': Id },
+                        url: '/Interviewer/DeleteInterviewerProfile',
+                        data: { 'UserId': UserId },
                         type: 'Delete',
                         success: function (result) {
                             resolve(result)

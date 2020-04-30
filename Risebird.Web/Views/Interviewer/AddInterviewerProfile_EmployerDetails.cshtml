@@ -98,7 +98,7 @@
                         <div class="dataloading">
                             <div class="toolbar">
                                 <div class="text-right">
-                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddEmployerDetails", "Interviewer", new { ProfileId = Model.FirstOrDefault().InterviewerProfileId, UserId = ViewBag.UserId })'" data-original-title="Tooltip on top"> Add Employer</span></button>
+                                    <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddEmployerDetails", "Interviewer", new { IProfileId = ViewBag.IProfileId})'" data-original-title="Tooltip on top"> Add Employer</span></button>
                                 </div>
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -109,12 +109,12 @@
                                             <th>Company Type</th>
                                             <th>Industry</th>
                                             @*<th>Mobile Number</th>
-                                                <th>Primary Skills</th>
-                                                <th>Resume Link</th>
-                                                <th>Approved</th>
-                                                <th>Slots</th>
-                                                <th>No Of Interview</th>
-                                                <th>SuccessRate</th>*@
+                    <th>Primary Skills</th>
+                    <th>Resume Link</th>
+                    <th>Approved</th>
+                    <th>Slots</th>
+                    <th>No Of Interview</th>
+                    <th>SuccessRate</th>*@
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -124,12 +124,12 @@
                                             <th>Company Type</th>
                                             <th>Industry</th>
                                             @*<th>Mobile Number</th>
-                                                <th>Primary Skills</th>
-                                                <th>Resume Link</th>
-                                                <th>Approved</th>
-                                                <th>Slots</th>
-                                                <th>No Of Interview</th>
-                                                <th>SuccessRate</th>*@
+                    <th>Primary Skills</th>
+                    <th>Resume Link</th>
+                    <th>Approved</th>
+                    <th>Slots</th>
+                    <th>No Of Interview</th>
+                    <th>SuccessRate</th>*@
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
                                     </tfoot>
@@ -141,29 +141,30 @@
                                                 <td>@item.Type</td>
                                                 <td>@item.IndustryId</td>
                                                 @*<td>@item.MobileNumber</td>
-                                                    <td><textarea>@item.PrimarySkill</textarea></td>
-                                                    <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                        <td><textarea>@item.PrimarySkill</textarea></td>
+                        <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
 
-                                                    @if (@item.IsApproved == true)
-                                                    {
-                                                        <td>Approved</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Not Approved</td>
-                                                    }
-                                                    <td><textarea>@item.Slots</textarea></td>
-                                                    <td>@item.NoOfInterview</td>
-                                                    <td>@item.SuccessRate</td>*@
+                        @if (@item.IsApproved == true)
+                        {
+                            <td>Approved</td>
+                        }
+                        else
+                        {
+                            <td>Not Approved</td>
+                        }
+                        <td><textarea>@item.Slots</textarea></td>
+                        <td>@item.NoOfInterview</td>
+                        <td>@item.SuccessRate</td>*@
                                                 <td class="text-right">
                                                     @*<span onclick="location.href = '@Url.Action("AddEmployerDetails", "Interviewer")'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>*@
-                                                    <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, UserId = ViewBag.UserId})'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName, @ViewBag.UserId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                                    <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName, @ViewBag.IProfileId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
+                                @Html.ActionLink("Back To Index", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                             </div>
                         </div>
                         @*<div>
@@ -236,11 +237,11 @@
                     showConfirmButton: true
 
                 },
-                    function (value) //confirm
-                    {
-                        //if Yes do this
-                        window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
-                    }
+                    //function (value) //confirm
+                    //{
+                    //    //if Yes do this
+                    //    window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
+                    //}
                 )
 
             }
@@ -253,10 +254,10 @@
                     showConfirmButton: true
 
                 },
-                    function ()
-                    {
-                        window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
-                    }
+                    //function ()
+                    //{
+                    //    window.location.href = '/Interviewer/AddInterviewerProfile_EmployerDetails';
+                    //}
                 )
             }
 
@@ -294,7 +295,7 @@
 
     });
 
-    function DeleteEntityfromEnvironment(id, CompanyName, UserId) {
+    function DeleteEntityfromEnvironment(id, CompanyName, IProfileId) {
 
         //var confirmMessageBox = confirm('Are you sure you want to delete interviewer ' + EmailId + ' ?');
         //if (confirmMessageBox) {
@@ -324,8 +325,7 @@
                     //var IdIRF = dataID;
                     $.ajax({
                         url: '/Interviewer/DeleteEmployerDetails',
-                        data: "Id=" + id + "&UserId=" + UserId,
-                        //data: { 'Id': id, 'UserId': UserId },
+                        data: { 'Id': id, 'IProfileId': IProfileId},
                         type: 'Delete',
                         success: function (result) {
                             resolve(result)

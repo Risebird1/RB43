@@ -63,6 +63,20 @@ namespace Risebird.Business
                 return false;
             }
         }
+
+        public async Task<bool> DeleteInterviewerProfile(int UserId)
+        {
+            try
+            {
+                return _interviewerRepository.DeleteInterviewerProfile(UserId).Result;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
         public async Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional)
         {
             try

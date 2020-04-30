@@ -10,6 +10,7 @@ namespace Risebird.Business.Interface
         List<InterviewerProfileVM> GetInterviewers();
         Task<bool> AddInterviewerProfile(InterviewerProfileVM interviewerProfile);
         Task<bool> EditInterviewerProfile(InterviewerProfileVM interviewerProfile);
+        Task<bool> DeleteInterviewerProfile(int id);
         Task<bool> AddEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> EditEmployerProfile(InterviewerProfessional interviewerProfessional);
         Task<bool> DeleteEmployerProfile(int id);
