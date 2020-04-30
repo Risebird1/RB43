@@ -100,7 +100,7 @@
                 <div class="card">
                     <div class="card-body">
 
-                        @using (Html.BeginForm("EditInterviewerProfile", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        @using (Html.BeginForm("EditInterviewerProfile", "Interviewer", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -863,12 +863,12 @@
                             </div>
                         }
                         <div class=" col-md-3">
-                            @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                         </div>
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="hdn_AddInterviewerProfile_Redirect" value="@Url.Action("AddInterviewerProfile", "User")" />
+            @*<input type="hidden" id="hdn_AddInterviewerProfile_Redirect" value="@Url.Action("AddInterviewerProfile", "User")" />*@
 
             <footer class="footer">
                 <div class=" container-fluid ">

@@ -169,6 +169,46 @@ namespace Risebird.Business
             }
 
         }
+
+        public InterviewerProfileVM GetInterviewerMyProfileById(int userid)
+        {
+            try
+            {
+                var interviewerProfile = _interviewerRepository.GetInterviewerProfileById(userid).Result;
+                InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
+
+                int ProfileId = ProfileModel.id;
+
+                // Get all the List from DB
+
+                //List<TransInterviewerSkill> SkillList = _interviewerRepository.GetSkills(ProfileId).Result.ToList();
+                //List<TransInterviewerCertificate> CertificateList = _interviewerRepository.GetCertificateList(ProfileId).Result.ToList();
+                //List<TransInterviewerEducation> EducationList = _interviewerRepository.GetEducationList(ProfileId).Result.ToList();
+                ////List<InterviewerProfessional> ProfessionalList = _interviewerRepository.GetProfessionalList(ProfileId).Result.ToList();
+                //List<TransInterviewerProjects> ProjectsList = _interviewerRepository.GetProjectsList(ProfileId).Result.ToList();
+                List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
+                List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
+
+                // Assign the Lists to model
+
+                //ProfileModel.InterviewerSkill = SkillList;
+                //ProfileModel.InterviewerCertificateDetails = CertificateList;
+                //ProfileModel.InterviewerEducationDetails = EducationList;
+                ////ProfileModel.InterviewerProfessionalDetails = ProfessionalList;
+                //ProfileModel.InterviewerProjectsDetails = ProjectsList;
+                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+                ProfileModel.InterviewerAccDetails = AccDetailsList;
+
+                return ProfileModel;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
         public InterviewerProfessional GetEmployerById(int id)
         {
             try

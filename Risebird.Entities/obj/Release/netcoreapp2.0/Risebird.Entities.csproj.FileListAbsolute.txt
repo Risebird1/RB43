@@ -28,8 +28,8 @@ D:\RiseBird\Repo\Risebird\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.E
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\bin\Release\netcoreapp2.0\Risebird.Entities.deps.json
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\bin\Release\netcoreapp2.0\Risebird.Entities.dll
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\bin\Release\netcoreapp2.0\Risebird.Entities.pdb
-C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.AssemblyInfoInputs.cache
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.dll
 C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.pdb
+C:\00_Rohit\RiseBird\Code\Risebird.Entities\obj\Release\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
