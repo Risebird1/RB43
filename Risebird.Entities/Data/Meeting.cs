@@ -77,7 +77,7 @@ namespace Risebird.Entities.Data
         public bool IsEmergency { get; set; }
 
         public int CandidateMasterId { get; set; }
-
+        public string Status { get; set; }
 
 
     }

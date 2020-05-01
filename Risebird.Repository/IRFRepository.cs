@@ -45,7 +45,7 @@ namespace Risebird.Repository
                     }
                     string ids = string.Join<int>(",", idList);
                     clients = SqlMapper.Query<Users>(
-                        con, "select * from UserList where id in ("+ids+")", null, commandType: Text);
+                        con, "select * from UserList where id in (" + ids + ")", null, commandType: Text);
                     return clients;
                 }
             }
@@ -80,7 +80,7 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    client= SqlMapper.Query<Client>(
+                    client = SqlMapper.Query<Client>(
                         con, "select * from Client", null, commandType: Text);
                 }
                 return client;
@@ -101,16 +101,16 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     SqlCommand cmd = new SqlCommand();
-                    interviewers =  SqlMapper.Query<Interviewer>(
+                    interviewers = SqlMapper.Query<Interviewer>(
                         con, "select * from Interviewer where IsApproved=1", null, commandType: Text);
                     var idList = new List<int>();
-                    foreach(var item in interviewers)
+                    foreach (var item in interviewers)
                     {
                         idList.Add(item.UserId);
                     }
                     string ids = string.Join<int>(",", idList);
                     interviewersVm = SqlMapper.Query<InterviewerVM>(
-                        con, "select * from UserList where id in ("+ ids + ")", null, commandType: Text);
+                        con, "select * from UserList where id in (" + ids + ")", null, commandType: Text);
                     return interviewersVm;
                 }
             }
@@ -400,7 +400,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<string> GetResumeEvaluatorsMailIds( int irfId)
+        public IEnumerable<string> GetResumeEvaluatorsMailIds(int irfId)
         {
             try
             {
@@ -460,7 +460,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        
+
         public string GetQCSkills(int userId)
         {
             try
@@ -485,7 +485,7 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select [Name] from ClientRole where id =(select RoleId from ClientUser where UserId = @UserId)" ;
+                var query = "select [Name] from ClientRole where id =(select RoleId from ClientUser where UserId = @UserId)";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@UserId", userId);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -543,9 +543,9 @@ namespace Risebird.Repository
             catch (SqlException ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return false; 
+                return false;
             }
-           
+
         }
         public IRF GetIRFbyId(int id)
         {
@@ -637,19 +637,19 @@ namespace Risebird.Repository
         {
             try
             {
-               
+
                 DynamicParameters parameters = SetStoredProcedureParameterForIRF(irfDetails);
                 parameters.Add("@CreatedOn", irfDetails.CreatedOn);
                 //parameters.Add("@id", irfDetails.id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                     await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
-                        commandType: CommandType.StoredProcedure);
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddIRFDetails", parameters,
+                       commandType: CommandType.StoredProcedure);
 
-                    var irfList =  SqlMapper.QueryAsync<IRFVm>(
+                    var irfList = SqlMapper.QueryAsync<IRFVm>(
                         con, "select * from IRF orderby ", null, commandType: Text).Result.AsList();
                     var irfID = irfList.Where(x => x.IRFId == irfDetails.IRFId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
-                    
+
                     foreach (var item in irfDetails.Joinability)
                     {
                         string sqlJoinability = "INSERT INTO TransJoinability (IRFId, LevelId, Type, Value, Weightage) Values (@IRFId, @LevelId, @Type, @Value, @Weightage);";
@@ -691,7 +691,7 @@ namespace Risebird.Repository
                             Weightage = item.Weightage
                         }).Result;
                     }
-                    
+
                     //update tech skill table
                     foreach (var item in irfDetails.SkillCollection)
                     {
@@ -714,7 +714,7 @@ namespace Risebird.Repository
                         param.Add("@InterviewerUserId", item.UserId);
                         var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewer", param,
                                 commandType: CommandType.StoredProcedure);
-                        
+
                     }
                     //update trans emergency interviewer table
                     foreach (var item in irfDetails.EmergencyInterviewerCollection)
@@ -783,7 +783,7 @@ namespace Risebird.Repository
 
                     return true;
                 }
-                
+
             }
 
             catch (SqlException e)
@@ -811,9 +811,9 @@ namespace Risebird.Repository
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateIRFDetails", parameters,
                        commandType: CommandType.StoredProcedure);
 
-                    
 
-                    if (irfDetails.Joinability!=null)
+
+                    if (irfDetails.Joinability != null)
                     {
                         foreach (var item in irfDetails.Joinability)
                         {
@@ -881,8 +881,8 @@ namespace Risebird.Repository
                             });
                         }
                     }
-                   
-                    
+
+
 
                     //update trans interviewer table
 
@@ -929,7 +929,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    
+
 
                     //update trans QC table
 
@@ -946,7 +946,7 @@ namespace Risebird.Repository
                         }
                     }
 
-                    if(irfDetails.ResumeEvaluatorCollection!=null)
+                    if (irfDetails.ResumeEvaluatorCollection != null)
                     {
                         foreach (var item in irfDetails.ResumeEvaluatorCollection)
                         {
@@ -958,7 +958,7 @@ namespace Risebird.Repository
 
                         }
                     }
-                    if (irfDetails.HRCollection!=null)
+                    if (irfDetails.HRCollection != null)
                     {
                         foreach (var item in irfDetails.HRCollection)
                         {
@@ -1012,9 +1012,9 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<TransSkill>(query, dynamicParameters);
-                    return results ;
+                    return results;
                 }
-                
+
             }
             catch (SqlException ex)
             {
@@ -1097,7 +1097,7 @@ namespace Risebird.Repository
                                             commandType: CommandType.StoredProcedure);
                     return result;
                 }
-                                
+
 
             }
             catch (SqlException ex)
@@ -1180,7 +1180,7 @@ namespace Risebird.Repository
             try
             {
                 //"select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id where IRFId = @IRFId";
-                var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";                                     
+                var query = "select a.*, ClientRole.[Name] as [Role] from (select TransClientUser.*, UserList.EmailId from TransClientUser inner join UserList on TransClientUser.ClientUserId = UserList.id) as a inner join ClientRole on ClientRole.id =a.ClientRoleId where IRFId =  @IRFId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1300,14 +1300,14 @@ namespace Risebird.Repository
 
                     foreach (var item in obj.SkillCollection)
                     {
-                        
+
                         string sqlJoinability = "INSERT INTO TechSkillComments (IRFId, Skill, Comment) Values (@IRFId, @Skill, @Comment);";
                         var affectedRows = con.Execute(sqlJoinability, new
                         {
                             IRFId = obj.IRFId,
                             Skill = Convert.ToInt16(item.Skill),
                             Comment = item.Comment
-                           
+
                         });
                     }
                     return true;
@@ -1316,13 +1316,13 @@ namespace Risebird.Repository
             }
             catch (SqlException e)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
 
             catch (Exception e)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
             }
         }
@@ -1359,10 +1359,10 @@ namespace Risebird.Repository
                 parameters.Add("@IRFId", IRFId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                   var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteIRF", parameters,
-                       commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteIRF", parameters,
+                        commandType: CommandType.StoredProcedure);
                     return true;
-                    
+
                 }
 
             }
@@ -1387,7 +1387,7 @@ namespace Risebird.Repository
                 var query = "update IRF set IsDeleted=0 where id = @IRFId;";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@IRFId", IRFId);
-                
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.QueryAsync<int>(query, dynamicParameters);
@@ -1412,20 +1412,20 @@ namespace Risebird.Repository
                 parameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result =  SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
+                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetIRFInterviewMeetings", parameters,
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
             catch (SqlException e)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
 
             catch (Exception e)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
             }
         }
@@ -1461,7 +1461,7 @@ namespace Risebird.Repository
         private DynamicParameters SetStoredProcedureParameterForIRF(IRFVm entity)
         {
             var parameters = new DynamicParameters();
-            
+
             parameters.Add("@IRFId", entity.IRFId);
             parameters.Add("@ClientName", entity.ClientName);
             parameters.Add("@JDTiltle", entity.JDTiltle);
@@ -1481,7 +1481,7 @@ namespace Risebird.Repository
             parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
-            
+
             return parameters;
         }
 
@@ -1499,8 +1499,8 @@ namespace Risebird.Repository
                 parameters.Add("@IRFID", irfId); // Normal parametersmeters 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                   var result =  await SqlMapper.QueryAsync<string>(con, "usp_ListOfIRFInterviwer", parameters,
-                        commandType: CommandType.StoredProcedure);
+                    var result = await SqlMapper.QueryAsync<string>(con, "usp_ListOfIRFInterviwer", parameters,
+                         commandType: CommandType.StoredProcedure);
                     return result;
                 }
             }
@@ -1610,9 +1610,9 @@ namespace Risebird.Repository
                     clientUsers = con.Query<ClientUserDTO>(query, dynamicParameters);
                     if (clientUsers == null || clientUsers.Count() == 0)
                         return clients;
-                   
+
                     //clientUsers = SqlMapper.Query<ClientUserDTO>(
-                        //con, "select * from ClientUser", null, commandType: Text);
+                    //con, "select * from ClientUser", null, commandType: Text);
                     var idList = new List<int>();
                     foreach (var item in clientUsers)
                     {
@@ -1716,6 +1716,7 @@ namespace Risebird.Repository
         {
             try
             {
+               
                 var query = "select Candidate.*,IRF.EndDate, IRF.StartDate, IRF.ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFName,IRF.CalendlyLink, Client.[Name] as ClientCompName from Candidate join IRF on Candidate.IRFId=IRF.id join Client on IRF.ClientId = Client.id where Candidate.EmailId = @EmailId";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@EmailId", emailId);
@@ -1724,6 +1725,7 @@ namespace Risebird.Repository
                     var results = con.Query<Candidate>(query, dynamicParameters);
                     return results;
                 }
+
             }
             catch (SqlException ex)
             {
@@ -1802,14 +1804,14 @@ namespace Risebird.Repository
         {
             try
             {
-                
+
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
-                parameters.Add("@Name", obj.Name );
+                parameters.Add("@Name", obj.Name);
                 parameters.Add("@EmailId", obj.EmailId);
-                parameters.Add("@ResumeLink", obj.ResumeLink );
-                parameters.Add("@Type", obj.Type );
-                parameters.Add("@Location", obj.Location );
+                parameters.Add("@ResumeLink", obj.ResumeLink);
+                parameters.Add("@Type", obj.Type);
+                parameters.Add("@Location", obj.Location);
                 parameters.Add("@Skill", obj.Skill);
                 parameters.Add("@WorkAuth", obj.WorkAuth);
                 parameters.Add("@CurrentLocation", obj.CurrentLocation);
@@ -1818,8 +1820,8 @@ namespace Risebird.Repository
                 parameters.Add("@TotalExperience", obj.TotalExperience);
                 parameters.Add("@CurrentSalary", obj.CurrentSalary);
                 parameters.Add("@ExpectedSalary", obj.ExpectedSalary);
-                parameters.Add("@Notice", obj.Notice );
-                parameters.Add("@AddedByUserId", obj.AddedByUserId );
+                parameters.Add("@Notice", obj.Notice);
+                parameters.Add("@AddedByUserId", obj.AddedByUserId);
 
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -1879,7 +1881,7 @@ namespace Risebird.Repository
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
 
-                    if(candidateList !=null && candidateList.Count()>0)
+                    if (candidateList != null && candidateList.Count() > 0)
                     {
                         foreach (var obj in candidateList)
                         {
@@ -1901,10 +1903,10 @@ namespace Risebird.Repository
                             parameters.Add("@Notice", obj.Notice);
                             parameters.Add("@AddedByUserId", userId);
                             SqlMapper.Query<string>(con, "usp_AddCandidate", parameters, commandType: CommandType.StoredProcedure);
-                            
+
                         }
                     }
-                    
+
 
                     return "Candidates imported successfully.";
                 }
@@ -1934,7 +1936,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = await con.QueryAsync<int>(query, dynamicParameters);                  
+                    var results = await con.QueryAsync<int>(query, dynamicParameters);
                     return true;
                 }
             }
@@ -2082,8 +2084,8 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "select InterviewId, InterviewStatus, MeetingStatus, OfferStatus, JoiningStatus, IsSelected, IsApproved from InterviewComments  where InterviewId in (" + idList +")";
-                
+                var query = "select InterviewId, InterviewStatus, MeetingStatus, OfferStatus, JoiningStatus, IsSelected, IsApproved from InterviewComments  where InterviewId in (" + idList + ")";
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var result = con.Query<InterviewComments>(query);
@@ -2100,7 +2102,7 @@ namespace Risebird.Repository
 
         public int GetUserId(string emailId, string profile)
         {
-            int result=0;
+            int result = 0;
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
@@ -2169,11 +2171,11 @@ namespace Risebird.Repository
         }
 
         public IEnumerable<IRFVm> GetUpComingIRFList()
-        {         
+        {
             try
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
-                {                   
+                {
                     var result = SqlMapper.Query<IRFVm>(con, "usp_ComingDaysIRF", null,
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -2214,7 +2216,7 @@ namespace Risebird.Repository
             }
         }
 
-        
+
         public async Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string IRFId)
         {
             try
@@ -2373,5 +2375,70 @@ namespace Risebird.Repository
         //    return false;
         //}
 
+        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SubscribeIRF", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_UnSubscribeIRF]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+
+        }
     }
 }
