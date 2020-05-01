@@ -2373,5 +2373,70 @@ namespace Risebird.Repository
         //    return false;
         //}
 
+        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_SubscribeIRF", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+
+        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@IRFId", id);
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profile);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<int>(con, "[usp_UnSubscribeIRF]", parameters,
+                        commandType: CommandType.StoredProcedure);
+                    return true;
+
+                }
+
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+
+
+        }
     }
 }

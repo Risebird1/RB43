@@ -126,3 +126,15 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debu
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
 C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.deps.json
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
