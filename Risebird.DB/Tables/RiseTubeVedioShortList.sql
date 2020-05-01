@@ -5,6 +5,8 @@ CREATE TABLE [dbo].[RiseTubeVedioShortList](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewId] [int] NULL,
 	[UserId] [int] NULL,
+	[ShortListedOn] [datetime] NULL,
+	[Status] [varchar](20) NULL,
  CONSTRAINT [PK_RiseTubeVedioShortList] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC				

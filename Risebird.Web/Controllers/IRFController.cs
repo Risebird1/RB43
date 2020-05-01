@@ -54,7 +54,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new IRFViewModel();
                     var irfList = _irfService.GetAllIRFs(emailid, profileName);
-                    if(profileName == "CuratedUser")
+                    if (profileName == "CuratedUser")
                     {
                         irfList = irfList.Where(x => x.CuratedLink);
                     }
@@ -2989,11 +2989,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-
                         var irfList = _irfService.GetCandidateIRFInvites(emailid)?.ToList();
-
                         return View(irfList);
-
                     }
                     else
                     {
@@ -3012,6 +3009,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [HttpGet]
         public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
         {

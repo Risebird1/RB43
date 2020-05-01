@@ -118,7 +118,6 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debu
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfoInputs.cache
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.AssemblyInfo.cs
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
@@ -126,3 +125,4 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debu
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
 C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\Users\rumab\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\PS250550\Source\Repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache

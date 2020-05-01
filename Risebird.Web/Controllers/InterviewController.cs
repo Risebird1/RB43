@@ -3815,11 +3815,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (model.VideoFile != null)
                         {
-                            
+
                             //Start:Generate Thumbnail from Vedio
-                          
-                               string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
-                           
+
+                            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+
 
                             using (var stream = new FileStream(path, FileMode.Create))
                             {
@@ -3855,7 +3855,7 @@ namespace Risebird.Web.Controllers
                             }
 
 
-                          
+
                         }
 
 
@@ -5363,7 +5363,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CandidateInterviews()
+        public async Task<IActionResult> CandidateInterviews(string status)
         {
             try
             {
@@ -5375,7 +5375,8 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetCandidateInterviews(emailid);
+                        var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
+
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5769,7 +5770,34 @@ namespace Risebird.Web.Controllers
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
-
+        [HttpPost]
+        public JsonResult Intrestreaction(string vedioid, string Status)
+        {
+            _meetingService.Intrestreaction(vedioid, Status);
+            return Json("Success");
+        }
+        [HttpPost]
+        public JsonResult ShortListreaction(string vedioid, string Status)
+        {
+            _meetingService.ShortListreaction(vedioid, Status);
+            return Json("Success");
+        }
+        [HttpPost]
+        public JsonResult ShortListList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model=_meetingService.ShortListedClient(emailid, IRFID);
+            return Json(model);
+        }
+        [HttpPost]
+        public JsonResult InterestList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model = _meetingService.InterestListClient(emailid, IRFID);
+            return Json(model);
+        }
     }
 
 }
