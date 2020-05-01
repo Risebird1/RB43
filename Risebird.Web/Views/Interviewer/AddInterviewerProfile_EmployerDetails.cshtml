@@ -327,8 +327,8 @@
                     //var IdIRF = dataID;
                     $.ajax({
                         url: '/Interviewer/DeleteEmployerDetails',
-                        data: { 'id': id },
-                        @*data: { 'Id': id, 'IProfileId': @ViewBag.IProfileId },*@
+                        //data: { 'id': id },
+                        data: { 'Id': id, 'IProfileId': @ViewBag.IProfileId },
                         type: 'Get',
                         success: function (result) {
                             resolve(result)
