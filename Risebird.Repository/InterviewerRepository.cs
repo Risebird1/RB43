@@ -579,10 +579,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "SELECT [Id], [InterviewerProfileId], [CompanyName],[Type], [CompanyStage], [Size], [JobFunctionId], [IndustryId]," +
-                                                "[Headquarters], [Role], [Domain], [SeniorityLevel], [ExperienceId], [WorkNature], [PrimaryResponsibility]," +
-                                                "[CompanyLinkedinPage], [CompanyWebsite] FROM[dbo].[TransInterviewerProfessional] where Id = @id",
-                        parameters, commandType: Text);
+                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "[dbo].[usp_GetEmployerById]",
+                        parameters, commandType: CommandType.StoredProcedure);
                     return result.ToList().FirstOrDefault();
                 }
             }
@@ -808,10 +806,8 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "SELECT [Id], [InterviewerProfileId], [CompanyName],[Type], [CompanyStage], [Size], [JobFunctionId], [IndustryId]," +
-                                                "[Headquarters], [Role], [Domain], [SeniorityLevel], [ExperienceId], [WorkNature], [PrimaryResponsibility]," +
-                                                "[CompanyLinkedinPage], [CompanyWebsite] from [TransInterviewerProfessional] where InterviewerProfileId = @IProfileId",
-                        parameters, commandType: Text);
+                    IEnumerable<InterviewerProfessional> result = await SqlMapper.QueryAsync<InterviewerProfessional>(con, "[dbo].[usp_GetEmployerListById]",
+                        parameters, commandType: CommandType.StoredProcedure);
                     return result.ToList();
                 }
             }

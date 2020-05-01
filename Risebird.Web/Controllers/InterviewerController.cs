@@ -394,6 +394,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("InterviewerEmployerMessage");
                     }
                     ViewBag.IProfileId = id;
+
                     return View(EmployerList);
 
                 }
