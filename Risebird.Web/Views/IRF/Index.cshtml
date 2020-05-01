@@ -12,6 +12,7 @@
     string[] RFID = new string[] { };
     string[] ArchiveStatus = new string[] { };
     string[] ClientName = new string[] { };
+    string[] SubscriptionStatus = new string[] { };
     string[] ClientRole = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
@@ -22,6 +23,7 @@
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
+    SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
 
@@ -559,45 +561,48 @@
 
                                 <div class="pull-right">
                                     <div>
-
-
-                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                            <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF" )'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Interviewer Search</font></span>
-                                        </button>
-
-
-                                        <!--<button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa-amazon " data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF" )'" data-original-title="Tooltip on top"> Interviewer Search</span></button>-->
-
-                                        @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                                        @if (Model.Profile != "CuratedUser")
                                         {
 
-
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span>
+                                                <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Interviewer Search</font></span>
                                             </button>
 
 
-                                            <!--
-                    <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
-                      -->
+                                            <!--<button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa-amazon " data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"> Interviewer Search</span></button>-->
+
+                                            @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
+                                            {
+
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span>
+                                                </button>
+
+
+                                                <!--
+            <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
+              -->
 
 
 
 
 
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span>
-                                            </button>
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span>
+                                                </button>
 
 
 
 
 
-                                            <!--<button type="button" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span></button -->
+                                                <!--<button type="button" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span></button -->
+
+                                            }
+                                            <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>-->
+
 
                                         }
-                                        <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>-->
-
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                             <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
@@ -659,7 +664,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    @if (!Model.IsClientUser)
+                                                    @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
                                                     {
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
@@ -677,7 +682,23 @@
                                                         </div>
                                                     }
 
-
+                                                    @if (Model.Profile=="CuratedUser")
+                                                    {
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    }
 
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
@@ -774,7 +795,7 @@
                                                 </div>
 
                                                 <div class="col-md-6 col-sm-6 card-header-buttons action">
-                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter" && Model.Profile!= "CuratedUser")
                                                     {
 
 
@@ -871,30 +892,38 @@
                                                 </div>
                                                 <div class="col-lg-10 col-sm-10 pull-left">
                                                     <div class="group inner list-group-item-text">
-
-                                                        <div class="row">
-                                                            <div class="client-field"> Client Name:</div>  <div class="clientName" title="@item.ClientCompName (@item.ClientName)">@item.ClientCompName (@item.ClientName)</div>
-                                                        </div> <br />
-
-                                                        <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
-
-                                                        <div class="row">
-                                                            <span>Total Interviews:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
-                                                        </div> <br />
-
-                                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                        @if (Model.Profile != "CuratedUser")
                                                         {
                                                             <div class="row">
-                                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
+                                                                <div class="client-field"> Client Name:</div>  <div class="clientName" title="@item.ClientCompName (@item.ClientName)">@item.ClientCompName (@item.ClientName)</div>
                                                             </div> <br />
+
+                                                            <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
+
+                                                            <div class="row">
+                                                                <span>Total Interviews:</span> @(item.TotalMeetings != null ? item.TotalMeetings : 0)
+                                                            </div> <br />
+
+                                                            @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                            {
+                                                                <div class="row">
+                                                                    <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
+                                                                </div> <br />
+                                                            }
                                                         }
+
 
                                                         <div class="row">
                                                             <span>Selected Interviews:</span> @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)
                                                         </div> <br />
-                                                        <div class="row">
-                                                            <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
-                                                        </div>
+                                                        @if (Model.Profile != "CuratedUser")
+                                                        {
+                                                            <div class="row">
+                                                                <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
+                                                            </div>
+
+                                                        }
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -921,131 +950,153 @@
                                                 </div>
 
                                                 <div class="stats-bttm-btn  col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
-                                                    @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+
+                                                    @if (Model.Profile != "CuratedUser")
                                                     {
+                                                        @if (!@item.IsClientUser && Model.Profile != "Recruiter")
+                                                        {
 
 
 
-                                                        <!--<button type="button" onclick="javascript:AddComments('@item.id');"
-                                        class="btn btn-info btn-icon btn-sm" title="Questions">
-                                    <i class="now-ui-icons fa fa-comments"></i>
-                                </button> --->
+                                                            <!--<button type="button" onclick="javascript:AddComments('@item.id');"
+                    class="btn btn-info btn-icon btn-sm" title="Questions">
+                <i class="now-ui-icons fa fa-comments"></i>
+            </button> --->
 
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Questions">
+                                                                <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                            </button>
+
+
+                                                        }
+                                                        <!--
+        <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
+            <i class="now-ui-icons fa fa-list"></i>
+        </button>--->
 
 
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Questions">
-                                                            <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
+                                                            <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
                                                         </button>
+
+
+
+                                                        @if (Model.Profile != "Recruiter")
+                                                        {
+                                                            <!--
+            <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');"
+                    class="btn btn-info btn-icon btn-sm" title="Meetings">
+                <i class="now-ui-icons fa fa-meetup"></i>
+            </button>--->
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Meetings">
+                                                                <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                            </button>
+
+
+
+
+                                                            <!--
+
+            <button type="button"
+                    onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"
+                    class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
+                <i class="now-ui-icons fa fa-check"></i>
+            </button>--->
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Selected Candidates">
+                                                                <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
+                                                            </button>
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Schedule Meeting">
+                                                                <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
+                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                            </button>
+
+
+
+                                                            <!--
+                   <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
+            {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
+                           class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                       <i class="now-ui-icons  fa fa-calendar"></i>
+                   </button>--->
+
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Stats">
+                                                                <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
+                                                            </button>
+
+
+
+                                                            <!--
+            <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');"
+                    class="btn btn-info btn-icon btn-sm" title="Stats">
+                <i class="now-ui-icons fa fa-industry"></i>
+            </button>--->
+                                                            if (item.IsPaused)
+                                                            {
+
+                                                                <!--
+                <button type="button" onclick="PlayIRF('@item.id', '@item.IRFId');"
+                        class="btn btn-info btn-icon btn-sm" title="Play">
+                    <i class="now-ui-icons fa fa-play"></i>
+                </button>--->
+
+
+
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Play">
+                                                                    <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                                </button>
+
+
+
+
+
+
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <!--
+                <button type="button" onclick="PauseIRF('@item.id', '@item.IRFId');"
+                        class="btn btn-info btn-icon btn-sm" title="Pause">
+                    <i class="now-ui-icons fa fa-pause"></i>
+                </button>--->
+
+
+
+                                                                <button class="mdc-fab app-fab--absolute" aria-label="Pause">
+                                                                    <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                </button>
+
+
+                                                            }
+                                                        }
 
 
                                                     }
-                                                    <!--
-                            <button type="button" onclick="javascript:Candidates('@item.id', '@item.IRFId');" class="btn btn-info btn-icon btn-sm" title="Candidates List">
-                                <i class="now-ui-icons fa fa-list"></i>
-                            </button>--->
-
-
-                                                    <button class="mdc-fab app-fab--absolute" aria-label="Questions">
-                                                        <span onclick="javascript:Candidates('@item.id', '@item.IRFId');" title="Candidates List" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" /></svg></span>
-                                                    </button>
-
-
-
-                                                    @if (Model.Profile != "Recruiter")
+                                                    @if (Model.Profile == "CuratedUser")
                                                     {
-                                                        <!--
-                                <button type="button" onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');"
-                                        class="btn btn-info btn-icon btn-sm" title="Meetings">
-                                    <i class="now-ui-icons fa fa-meetup"></i>
-                                </button>--->
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Meetings">
-                                                            <span onclick="javascript:InterviewMeetings('@item.id', '@item.IRFId');" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                        </button>
-
-
-
-
-                                                        <!--
-
-                                <button type="button"
-                                        onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');"
-                                        class="btn btn-info btn-icon btn-sm" title="Selected Candidates">
-                                    <i class="now-ui-icons fa fa-check"></i>
-                                </button>--->
-
-
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Selected Candidates">
-                                                            <span onclick="javascript:SelectedInterviewMeetings('@item.id', '@item.IRFId');" title="Selected Candidates" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Schedule Meeting">
-                                                            <span onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                                 {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        <!--
-                                       <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "IRF" , new
-                                {irfName=item.IRFId, calendlyLink=item.CalendlyLink})'"
-                                               class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                           <i class="now-ui-icons  fa fa-calendar"></i>
-                                       </button>--->
-
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Stats">
-                                                            <span onclick="javascript:stats('@item.id', '@item.IRFId');" title="Stats" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z" /></svg></span>
-                                                        </button>
-
-
-
-                                                        <!--
-                                <button type="button" onclick="javascript:stats('@item.id', '@item.IRFId');"
-                                        class="btn btn-info btn-icon btn-sm" title="Stats">
-                                    <i class="now-ui-icons fa fa-industry"></i>
-                                </button>--->
-                                                        if (item.IsPaused)
+                                                        @if (item.SubId != null)
                                                         {
-
-                                                            <!--
-                                    <button type="button" onclick="PlayIRF('@item.id', '@item.IRFId');"
-                                            class="btn btn-info btn-icon btn-sm" title="Play">
-                                        <i class="now-ui-icons fa fa-play"></i>
-                                    </button>--->
-
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Play">
-                                                                <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Unsubscribe">
+                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8" /></svg></span>
                                                             </button>
-
-
-
-
-
-
                                                         }
                                                         else
                                                         {
-
-                                                            <!--
-                                    <button type="button" onclick="PauseIRF('@item.id', '@item.IRFId');"
-                                            class="btn btn-info btn-icon btn-sm" title="Pause">
-                                        <i class="now-ui-icons fa fa-pause"></i>
-                                    </button>--->
-
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Pause">
-                                                                <span onclick="PauseIRF('@item.id', '@item.IRFId');" title="Pause" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Subscribe">
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8" /></svg></span>
                                                             </button>
-
-
                                                         }
+
                                                     }
 
                                                 </div>
@@ -1339,6 +1390,108 @@
 
 
                         }
+                        function Subscribe(irfId, irfName) {
+
+                            swal.fire({
+                                title: 'Subscribe!',
+                                text: "Subscribe to " + irfName,
+                                type: 'primary',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes',
+                                preConfirm: function () {
+                                    return new Promise(function (resolve, reject) {
+                                        $.ajax({
+                                            url: '/IRF/Subscribe?id=' + irfId,
+                                            success: function (result) {
+                                                resolve(result)
+
+                                            },
+                                            error: function () {
+                                                //reject("error message")
+                                                swal.fire("Error subscribing!", "Please try again.", "error");
+                                            }
+                                        })
+                                    })
+                                },
+                                allowOutsideClick: false
+                            }).then(function (result) {
+                                if (result.dismiss !== 'cancel') {
+                                    swal.fire({
+                                        title: 'Subscribed!',
+                                        type: 'success',
+                                        html: '<p>Subscribed to ' + irfName + '.</p>',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        confirmButtonText: 'Close!',
+                                        allowOutsideClick: false
+                                    }).then(function () {
+                                        window.location = "/IRF/Index";
+                                    })
+                                }
+                                else if (result.dismiss === 'cancel') {
+                                    swal.fire(
+                                        'Cancelled',
+                                        '',
+                                        'error'
+                                    )
+                                }
+                            })
+
+
+                        }
+                        function UnSubscribe(irfId, irfName) {
+
+                            swal.fire({
+                                title: 'Unsubscribe!',
+                                text: "Are you sure you want to unsubscribe " + irfName,
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes',
+                                preConfirm: function () {
+                                    return new Promise(function (resolve, reject) {
+                                        $.ajax({
+                                            url: '/IRF/UnSubscribe?id=' + irfId,
+                                            success: function (result) {
+                                                resolve(result)
+
+                                            },
+                                            error: function () {
+                                                //reject("error message")
+                                                swal.fire("Error unsubscribing!", "Please try again.", "error");
+                                            }
+                                        })
+                                    })
+                                },
+                                allowOutsideClick: false
+                            }).then(function (result) {
+                                if (result.dismiss !== 'cancel') {
+                                    swal.fire({
+                                        title: 'Unsubscribed!',
+                                        type: 'success',
+                                        html: '<p>Unsubscribed ' + irfName + '.</p>',
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#3085d6',
+                                        confirmButtonText: 'Close!',
+                                        allowOutsideClick: false
+                                    }).then(function () {
+                                        window.location = "/IRF/Index";
+                                    })
+                                }
+                                else if (result.dismiss === 'cancel') {
+                                    swal.fire(
+                                        'Cancelled',
+                                        '',
+                                        'error'
+                                    )
+                                }
+                            })
+
+
+                        }
 
 
                         function AddComments(id) {
@@ -1520,6 +1673,12 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
+            $("#SubscriptionStatus").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
             $("#ClientRole").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
@@ -1545,6 +1704,7 @@
             var rFID =  @Html.Raw(Json.Serialize(RFID));
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
+            var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
 
 
@@ -1553,6 +1713,7 @@
             $("#RFID").val(rFID);
             $("#ClientName").val(clientName);
             $("#ArchiveStatus").val(archiveStatus);
+            $("#SubscriptionStatus").val(subscriptionStatus);
             $("#ClientRole").val(clientRole);
             var form = $("#form").serialize();
             $.ajax({
