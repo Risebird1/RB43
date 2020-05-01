@@ -1,0 +1,20 @@
+/****** Object:  Table [dbo].[Candidate]    Script Date: 25-09-2019 7.49.24 PM ******/
+IF Not EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_NAME = N'Subscribers')
+BEGIN
+CREATE TABLE [dbo].[Subscribers](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[IRFId] [int] NOT NULL,
+ CONSTRAINT [PK_Subscribers] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
+
+End
+
+GO
+
+
+

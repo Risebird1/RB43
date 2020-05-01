@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
 
         public MeetingVM()
         {
-          SubVideo_List = new List<MeetingVM>();
+            SubVideo_List = new List<MeetingVM>();
         }
         public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
@@ -75,7 +75,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Preffered Location.")]
         public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
-       
+
         public string staffingAgency { get; set; }
         [Display(Name = "Expected Per Hour Rate")]
         [Required(ErrorMessage = "Please enter Expected Per Hour Rate.")]
@@ -94,13 +94,13 @@ namespace Risebird.Entities.ViewModel
         public string VideoLink { get; set; }
         public string ThumbnailImage { get; set; }
         public string ThumbnailImagestring { get; set; }
-      
+
         public string reportLink { get; set; }
         public string fraudSyncComment { get; set; }
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
         [Display(Name = "Mobile Number")]
-       // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
+        // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
         //[Required(ErrorMessage = "Please enter a valid Mobile Number.")]
         public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }
@@ -171,6 +171,9 @@ namespace Risebird.Entities.ViewModel
         public int ShortListCount { get; set; }
         public int IsShortlisted { get; set; }
         public bool CuratedLink { get; set; }
+        public string CandidateCodedname { get; set; }
+        public string IsIntrested { get; set; }
+        public string ShortListstatus { get; set; }
     }
     public class VedioComments
     {

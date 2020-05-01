@@ -20,6 +20,9 @@
     string[] InterviewStatus = new string[] { };
     string[] CandidateName = new string[] { };
     string[] CandidateLocation = new string[] { };
+    string[] IsShortListed = new string[] { };
+    string[] IsIntrested = new string[] { };
+
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("RiseTubefilters") != null)
 {
@@ -35,6 +38,8 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
     CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
+    IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
+    IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
 <style>
     .pagination-container > ul > li {
@@ -57,17 +62,17 @@
         outline: none;
     }
 
-    #myForm input[type=email] {
-        -webkit-appearance: textfield;
-        -webkit-box-sizing: content-box;
-        font-family: inherit;
-        font-size: 100%;
-    }
+        #myForm input[type=email] {
+            -webkit-appearance: textfield;
+            -webkit-box-sizing: content-box;
+            font-family: inherit;
+            font-size: 100%;
+        }
 
-    #myForm input::-webkit-search-decoration,
-    #myForm input::-webkit-search-cancel-button {
-        display: none;
-    }
+        #myForm input::-webkit-search-decoration,
+        #myForm input::-webkit-search-cancel-button {
+            display: none;
+        }
 
 
         #myForm input[type=email] {
@@ -101,37 +106,41 @@
             }
 
 
-    #myForm input:-moz-placeholder {
-        color: #999;
-    }
-
-    #myForm input::-webkit-input-placeholder {
-        color: #999;
-    }
-    #myForm .searchbox{margin-right:10px;}
-    #myForm .searchbox .input-group-btn {
-        float: left;
-        padding: 0;
-        margin: 0px 0px 0px 0px;
-    }
-        #myForm .searchbox .input-group-btn .btn {
-            background: #53a5f5; 
-            padding: 5px;
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            margin: 0;
-            border: 1px #53a5f5 solid;
+        #myForm input:-moz-placeholder {
+            color: #999;
         }
 
-
-      .newsletter .input-group {
-            margin-bottom:0px;
+        #myForm input::-webkit-input-placeholder {
+            color: #999;
         }
 
+    #myForm .searchbox {
+        margin-right: 10px;
+    }
 
-    .video-block{
-  margin-top:15px;
+        #myForm .searchbox .input-group-btn {
+            float: left;
+            padding: 0;
+            margin: 0px 0px 0px 0px;
+        }
 
+            #myForm .searchbox .input-group-btn .btn {
+                background: #53a5f5;
+                padding: 5px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+                margin: 0;
+                border: 1px #53a5f5 solid;
+            }
+
+
+    .newsletter .input-group {
+        margin-bottom: 0px;
+    }
+
+
+    .video-block {
+        margin-top: 15px;
     }
 
 
@@ -345,7 +354,7 @@
 
     .newsletter {
         padding: 0;
-        float:left;
+        float: left;
     }
 
 
@@ -366,9 +375,9 @@
     .newsletter .video-title span {
         color: #606060;
         font-weight: 500;
-        
         font-size: 13px;
     }
+
     .video-block .video-title {
         margin-bottom: 5px;
         min-height: 40px;
@@ -417,7 +426,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-   
+
     <div class="content video">
         <div class="row">
             <div class="col-md-12">
@@ -452,7 +461,7 @@
 
                                             </div>
 
-                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded"  data-toggle="modal" data-target="#filterModal">
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" data-toggle="modal" data-target="#filterModal">
 
                                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                 <div class="mdc-button__ripple"></div>
@@ -532,78 +541,81 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
-                                                                Selection Status
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                    {
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
+                                                                    Selection Status
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
-                                                                Client HR
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.ClientHrContactList)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                                    Client HR
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.ClientHrContactList)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
+                                                            <input type="text" id="txtsearch" name="SearchFillter" value="@ViewBag.searchvalue" hidden />
 
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.ClientNameList)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                        </div>
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.ClientNameList)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
 
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
-                                                                Offer Status
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.OfferStatusList)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                                    Offer Status
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.OfferStatusList)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
+
+
+
                                                         </div>
-
-
-
-                                                    </div>
+                                                    }
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateLocation">
@@ -621,44 +633,91 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
-                                                                Approval Status
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.NextLevelApprovalStatusList)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                        @if (ViewBag.ProfileName != "CuratedUser")
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                    Approval Status
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.NextLevelApprovalStatusList)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
-                                                                Joining Status
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.JoiningStatusList)
-                                                                    {
-                                                                        @if (item != null && item != "")
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                    IsShortList
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.IsShortListed)
                                                                         {
-                                                                            <option value="@item">@item</option>
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
                                                                         }
-                                                                    }
-                                                                </select>
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                        </div>
-
-
+                                                        }
                                                     </div>
+                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                    Joining Status
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.JoiningStatusList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                    Interested
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="InterestStatus" name="InterestStatus" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.IsIntrested)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                    }
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group col-md-12">
 
@@ -711,7 +770,7 @@
                                 </div>
 
                             </div>
-                        
+
                             <div class="video-block section-padding" id="VideoList">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -749,11 +808,7 @@
                                                 <div class="video-card-body">
                                                     <div class="video-title">
                                                         <a onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;">@item.candidateName </a>
-
-                                                      <span style="  color: #606060;
-        font-weight: 500;
-        
-        font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
+                                                        <span style="  color: #606060; font-weight: 500;font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
                                                     <div class="video-page text-success">
@@ -765,11 +820,11 @@
     color: #888888;" class="fas fa-calendar-alt"></i> <span style="color: #606060;
     font-weight: 600;
     font-size: 12px;">@item.interviewDate</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
+</div>
+</div>
+</div>
+</div>
+}
 
 
                                 </div>
@@ -795,7 +850,7 @@
         </div>
 
     </div>
-   
+
 </div>
 
 
@@ -910,6 +965,19 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
+         $("#ShortListStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+         });
+          $("#InterestStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
+
             $(document).ready(function(){
   $("#search").on("keyup", function() {
     var value = $(this).val().toLowerCase();
@@ -943,7 +1011,9 @@
             var offerStatus = @Html.Raw(Json.Serialize(OfferStatus));
             var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
-            var candidateLocation=  @Html.Raw(Json.Serialize(CandidateLocation));
+            var candidateLocation =  @Html.Raw(Json.Serialize(CandidateLocation));
+            var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
+            var IsIntrested=  @Html.Raw(Json.Serialize(IsIntrested));
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#PrimarySkill").val(primarySkillsArr);
@@ -955,7 +1025,8 @@
             $("#CandidateName").val(candidateName);
             $("#ClientName").val(clientName);
             $("#CandidateLocation").val(candidateLocation);
-
+            $("#ShortListStatus").val(IsShortListed);
+            $("#InterestStatus").val(IsIntrested);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",

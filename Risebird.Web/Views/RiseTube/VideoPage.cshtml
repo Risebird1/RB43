@@ -17,6 +17,8 @@
     string[] InterviewStatus = new string[] { };
     string[] CandidateName = new string[] { };
     string[] CandidateLocation = new string[] { };
+    string[] IsShortListed = new string[] { };
+    string[] IsIntrested = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("VideoPagefilters") != null)
 {
@@ -32,6 +34,8 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
     CandidateLocation = filter.CandidateLocation != null ? filter.CandidateLocation : new string[] { };
+    IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
+    IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
 <style>
     .canvasjs-chart-credit {
@@ -429,7 +433,7 @@
     }
 
     .card-text-label {
-        font-size: 14px !important;
+        font-size: 13px !important;
     }
 
     .comment-area textarea {
@@ -591,6 +595,30 @@
     .upload-label {
         background: #57adf80f;
         padding: 5px 15px !important;
+    }
+
+    .bolder {
+        font-weight: bold;
+    }
+
+    .btnShortlist {
+        background: none !important;
+        border: 0px !important;
+        float: right;
+        width: 100px;
+        padding: 0;
+        font-weight: bold;
+        font-size: 13px !important;
+    }
+
+
+    .fa-check:before {
+        content: "\f00c";
+        box-shadow: 0 0 #53a5f5;
+        position: relative;
+        top: 8px;
+        color: #53a5f5;
+        font-size: 21px;
     }
 </style>
 
@@ -836,111 +864,151 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-6 col-sm-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
-                                                            Selection Status
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
+                                                @if (ViewBag.ProfileName != "CuratedUser")
+                                                {
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
+                                                                Selection Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
-                                                            Client HR
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                                Client HR
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                </div>
-                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6 border-rv">
 
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
-                                                            Approval Status
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                Approval Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </select>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                Joining Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="col-md-6 col-sm-6">
+
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                                Offer Status
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
-                                                            Joining Status
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
+                                                }
+                                                else
+                                                {
+                                                    <div class="col-md-6 col-sm-6">
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
+                                                                IsShortList
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.ShortListstatus).Distinct().ToList())
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-
-                                                </div>
-                                                <div class="col-md-6 col-sm-6">
-
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
-                                                            Offer Status
-                                                        </label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateLocation">
+                                                                Interested
+                                                            </label>
+                                                            <div class="col-md-6 col-sm-6">
+                                                                <select id="InterestStatus" name="InterestStatus" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.SubVideo_List.Select(x => x.IsIntrested).Distinct().ToList())
                                                                     {
-                                                                        <option value="@item">@item</option>
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
                                                                     }
-                                                                }
-                                                            </select>
+                                                                </select>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.SubVideo_List.Select(x => x.ClientName).Distinct().ToList())
-                                                                {
-                                                                    @if (item != null && item != "")
-                                                                    {
-                                                                        <option value="@item">@item</option>
-                                                                    }
-                                                                }
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
 
+                                                    </div>
+                                                }
                                                 @*<div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
@@ -1047,7 +1115,7 @@
                                                         }
 
                                                         <h1 class="title style-scope name-video-primary-info-renderer">
-                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 600;padding-top:-50px">@Model.interviewDate</span>
+                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
                                                         </h1>
 
                                                         <div class="row">
@@ -1073,18 +1141,37 @@
 
                                                                 }
                                                             </div>
-                                                            <div class="col-md-4" style="text-align: end;margin-top: -30px;">
+                                                            <div class="col-md-2" style="text-align: end;margin-top: -35px;padding:0px">
                                                                 @if (ViewBag.VedioStatus != "Public")
                                                                 {
-                                                                    //if shortlist or shortlisted
-                                                                    @if (Model.IsShortlisted > 0)
+                                                                    @if (ViewBag.ProfileName == "CuratedUser")
                                                                     {
-                                                                        <input type="button" class="form-control" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                        @if (Model.IsShortlisted > 0)
+                                                                        {
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                        }
                                                                     }
-                                                                    else
+                                                                }
+                                                            </div>
+                                                            <div class="col-md-2" style="text-align: end;margin-top: -35px;padding:0px">
+                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                {
+                                                                    @if (ViewBag.ProfileName == "CuratedUser")
                                                                     {
-                                                                        <input type="button" class="form-control" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                        @if (Model.IsIntrested == "Intrested")
+                                                                        {
+                                                                            <input type="button" class="form-control" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important;" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="button" class="form-control" id="btnIntrest" value="Show Intrest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;" />
+
+                                                                        }
                                                                     }
                                                                 }
                                                             </div>
@@ -1184,8 +1271,8 @@
                                                                         </div>
                                                                         <div class="interviewer-comment">
 
-                                                                            <div class="form-group" style="margin-bottom:0px;">
-                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
+                                                                            <div class="form-group" style="margin-bottom:0px; ">
+                                                                                @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
                                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
@@ -1203,7 +1290,7 @@
                                                                                 @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                                             </div>
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label bolder" })
                                                                                 @Html.TextBoxFor(m => m.IreportModel.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                                                 @Html.ValidationMessageFor(model => model.IreportModel.JobLevelName, "", new { @class = "text-danger" })
                                                                             </div>
@@ -1215,7 +1302,7 @@
                                                                     <div class="row">
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                @Html.LabelFor(model => model.IreportModel.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
 
                                                                                 @Html.TextBoxFor(m => m.IreportModel.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
@@ -1230,21 +1317,21 @@
 
                                                                     </div>
                                                                     @*<div class="row">
-                                                                        <div class="col-md-6 col-sm-6">
-                                                                            <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            <div class="col-md-6 col-sm-6">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="col-md-6 col-sm-6">
-                                                                            <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                            <div class="col-md-6 col-sm-6">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
 
-                                                                    </div>*@
+                                                                        </div>*@
                                                                     <div class="row">
                                                                         <div class="col-md-6 col-sm-6">
                                                                             <div class="form-group">
@@ -1284,31 +1371,60 @@
 
 
                                                                     </div>
-                                                                    <div class="row">
-                                                                        <div class="col-md-12 col-sm-12">
-                                                                            <div class="form-group">
-                                                                                @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                    @if (ViewBag.ProfileName != "CuratedUser")
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
-                                                                                @{
-                                                                                    if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                    {
-                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
+                                                                                    @{
+                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                        {
+                                                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
+                                                                                        }
                                                                                     }
-                                                                                }
 
+                                                                                </div>
                                                                             </div>
+                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                            {
+                                                                                <div class="col-md-6 col-sm-6">
+
+                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+
+                                                                                </div>
+
+                                                                            }
                                                                         </div>
-                                                                        @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                        {
-                                                                            <div class="col-md-6 col-sm-6">
+                                                                    }
+                                                                    @if (Model.IsIntrested == "Accept" && ViewBag.ProfileName == "CuratedUser")
+                                                                    {
+                                                                        <div class="row">
+                                                                            <div class="col-md-12 col-sm-12">
+                                                                                <div class="form-group">
+                                                                                    @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
-                                                                                <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                                                    @{
+                                                                                        if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                        {
+                                                                                            <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
+                                                                                        }
+                                                                                    }
 
+                                                                                </div>
                                                                             </div>
+                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                            {
+                                                                                <div class="col-md-6 col-sm-6">
 
-                                                                        }
-                                                                    </div>
+                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
 
+                                                                                </div>
+
+                                                                            }
+                                                                        </div>
+                                                                    }
                                                                 </div>
                                                                 <div class="tab-pane" id="link3">
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -1851,7 +1967,7 @@
                                                                                 </div>
                                                                                 <div class="video-page text-success">
                                                                                     &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 12px;">@videolist.interviewDate</span>
 
     @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
@@ -1919,7 +2035,38 @@
 
         </div>
     </div>
-    
+
+</div>
+
+
+
+<div id="myModalComment" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
+        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-content" style="width:50%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
+        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+            <h5 style="margin-left:40%;font-size:20px">User Intersted</h5>
+            <span class="close" id="CommentPopUp">&times;</span>
+        </div>
+        <div class="modal-body" style="padding: 2px 16px;">
+            <div class="row" style="padding:10px">
+                <textarea rows="2" id="txtintrestecomment" placeholder="Please enter comment" style="width:100%"></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-offset-4 col-md-2">
+                    <input type="button" onclick="SendNotification()" id="btnintrested" style="margin-right:10%" class="btn btn-fill btn-danger" value="Intersted">
+                </div>
+                <div class="col-md-6">
+                    <input type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="btn btn-fill btn-danger" value="Close">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer" style="padding: 2px 16px; background-color: #14406e;color: white;">
+
+        </div>
+    </div>
+
 </div>
 
 <!-- Bootstrap core JavaScript-->
@@ -2836,6 +2983,18 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
+             $("#ShortListStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+         });
+          $("#InterestStatus").multiselect({
+                    includeSelectAllOption: true,
+                    selectedClass: 'active1',
+                    buttonWidth: '270px',
+                    maxHeight: 200
+                });
 
     });
     function ResetFilter() {
@@ -2860,6 +3019,8 @@
             var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var candidateLocation=  @Html.Raw(Json.Serialize(CandidateLocation));
+             var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
+            var IsIntrested =  @Html.Raw(Json.Serialize(IsIntrested));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -2871,6 +3032,8 @@
             $("#CandidateName").val(candidateName);
             $("#ClientName").val(clientName);
             $("#CandidateLocation").val(candidateLocation);
+              $("#ShortListStatus").val(IsShortListed);
+            $("#InterestStatus").val(IsIntrested);
     }
 
 
@@ -2943,6 +3106,7 @@
 
 <script>
 
+
     jQuery(document).ready(function ($) {
 
         $("#btnShortlist").on('click', function () {
@@ -2958,10 +3122,13 @@
                 });
 
             }
-            else {
+        });
+        $("#btnIntrest").on('click', function () {
+            if ($(this).attr('Shortvalue') == 1) {
+                var modal = document.getElementById("myModalComment");
+                modal.style.display = "block";
 
             }
-
         });
         $("#btnComment").on('click', function () {
             if ($("#txtComment").val().trim() != "") {
@@ -3067,5 +3234,28 @@
         });
     });
 
+    function SendNotification() {
+        if ($("#txtintrestecomment").val().trim() != "") {
+            $.ajax({
+                type: "POST",
+                url: "/RiseTube/CandidateSuitable",
+                data: { vedioid: $("#txtVedioId").val(), Comment: $("#txtintrestecomment").val() },
+                success: function (data) {
+                    if (data == "Success") {
+                        $("#btnIntrest").css("background-color", "yellow");
+                        $("#btnIntrest").attr('Shortvalue', "2");
+                        var modal = document.getElementById("myModalComment");
+                        modal.style.display = "none";
+                    }
+                }
+            });
+        } else {
+            alert("Please Enter Comment");
+        }
+    }
+    function closeCommentPopUp() {
+        var modal = document.getElementById("myModalComment");
+        modal.style.display = "none";
+    }
 </script>
 
