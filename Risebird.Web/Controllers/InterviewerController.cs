@@ -388,6 +388,8 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
                     List<InterviewerProfessional> EmployerList = _interviewerRepository.GetEmployerListById(id).Result;
+                    GetAllEmployerSelectList();
+
                     if (TempData["InterviewerEmployerMessage"] != null)
                     {
                         ViewBag.Message = TempData["InterviewerEmployerMessage"].ToString();

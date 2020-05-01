@@ -114,7 +114,7 @@
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.ExperienceId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
                                         @Html.DropDownListFor(m => m.ExperienceId, (SelectList)ViewBag.ExperienceRange, new { @class = "form-control text-box single-line" })
-                                            @Html.ValidationMessageFor(model => model.ExperienceId, "", new { @class = "text-danger" })
+                                        @Html.ValidationMessageFor(model => model.ExperienceId, "", new { @class = "text-danger" })
 
                                     </div>
 
@@ -139,26 +139,26 @@
                                     </div>
 
                                 </div>
+                            </div>
+                            <div class="card-footer-button ">
+                                <div class="row">
+                                    <label class="col-md-2"></label>
+                                    <div class=" col-md-3">
 
-                                <div class="card-footer-button ">
-                                    <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class=" col-md-3">
+                                    </div>
+                                    <div class="col-md-6">
+                                        @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
-                                        </div>
-                                        <div class="col-md-6">
-                                            @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
 
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                        @*@Html.ActionLink("Delete", "DeleteEmployerDetails", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })*@
+                                    </div>
+                                    <div class=" col-md-3">
 
-                                            @*@Html.ActionLink("Delete", "DeleteEmployerDetails", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })*@
-                                        </div>
-                                        <div class=" col-md-3">
-
-                                        </div>
                                     </div>
                                 </div>
                             </div>
+
                         }
 
                     </div>

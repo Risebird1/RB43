@@ -107,14 +107,17 @@
                                         <tr>
                                             <th>Company Name</th>
                                             <th>Company Type</th>
+                                            <th>Company Stage</th>
+                                            <th>Company Size</th>
+                                            <th>JobFunction</th>
                                             <th>Industry</th>
-                                            @*<th>Mobile Number</th>
-                    <th>Primary Skills</th>
-                    <th>Resume Link</th>
-                    <th>Approved</th>
-                    <th>Slots</th>
-                    <th>No Of Interview</th>
-                    <th>SuccessRate</th>*@
+                                            <th>Headquarters</th>
+                                            <th>Role</th>
+                                            <th>Domain</th>
+                                            <th>Seniority Level</th>
+                                            <th>Experience</th>
+                                            <th>Work Nature</th>
+                                            <th>Primary Responsibility</th>
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
                                     </thead>
@@ -122,14 +125,17 @@
                                         <tr>
                                             <th>Company Name</th>
                                             <th>Company Type</th>
+                                            <th>Company Stage</th>
+                                            <th>Company Size</th>
+                                            <th>JobFunction</th>
                                             <th>Industry</th>
-                                            @*<th>Mobile Number</th>
-                    <th>Primary Skills</th>
-                    <th>Resume Link</th>
-                    <th>Approved</th>
-                    <th>Slots</th>
-                    <th>No Of Interview</th>
-                    <th>SuccessRate</th>*@
+                                            <th>Headquarters</th>
+                                            <th>Role</th>
+                                            <th>Domain</th>
+                                            <th>Seniority Level</th>
+                                            <th>Experience</th>
+                                            <th>Work Nature</th>
+                                            <th>Primary Responsibility</th>
                                             <th class="disabled-sorting text-right">Actions</th>
                                         </tr>
                                     </tfoot>
@@ -138,27 +144,23 @@
                                         {
                                             <tr id=@item.id>
                                                 <td>@item.CompanyName</td>
-                                                <td>@item.Type</td>
-                                                <td>@item.IndustryId</td>
-                                                @*<td>@item.MobileNumber</td>
-                        <td><textarea>@item.PrimarySkill</textarea></td>
-                        <td class="text-center"><a id="resumeId" target="_blank" title="Resume" href=@item.ResumeLink>Resume</a></td>
+                                                <td>@Html.DropDownList("item.Type", (SelectList)ViewBag.CompanyTypeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.CompanyStage", (SelectList)ViewBag.CompanyStageList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.Size", (SelectList)ViewBag.CompanySizeList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.JobFunctionId", (SelectList)ViewBag.JobFunction, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.IndustryId", (SelectList)ViewBag.Industry, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.Headquarters", (SelectList)ViewBag.CountryList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.Role", (SelectList)ViewBag.RoleList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@item.Domain</td>
+                                                <td>@Html.DropDownList("item.SeniorityLevel", (SelectList)ViewBag.SeniorityLevelList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.ExperienceId", (SelectList)ViewBag.ExperienceRange, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.WorkNature", (SelectList)ViewBag.WorkNatureList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
+                                                <td>@Html.DropDownList("item.PrimaryResponsibility", (SelectList)ViewBag.PrimaryResponsibilityList, new { id = "drp_CompanyType", @class = "form-control text-box single-line", @disabled = "disabled" })</td>
 
-                        @if (@item.IsApproved == true)
-                        {
-                            <td>Approved</td>
-                        }
-                        else
-                        {
-                            <td>Not Approved</td>
-                        }
-                        <td><textarea>@item.Slots</textarea></td>
-                        <td>@item.NoOfInterview</td>
-                        <td>@item.SuccessRate</td>*@
                                                 <td class="text-right">
                                                     @*<span onclick="location.href = '@Url.Action("AddEmployerDetails", "Interviewer")'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-plus-square" aria-hidden="true"></i></span>*@
                                                     <span onclick="location.href = '@Url.Action("EditEmployerDetails", "Interviewer", new { id = item.id, IProfileId = @ViewBag.IProfileId })'" title="Click here to edit interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName, @ViewBag.IProfileId');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
+                                                    <span onclick="javascript:DeleteEntityfromEnvironment('@item.id, @item.CompanyName');" title="Click here to delete interviewer" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>
                                                 </td>
                                             </tr>
                                         }
@@ -295,7 +297,7 @@
 
     });
 
-    function DeleteEntityfromEnvironment(id, CompanyName, IProfileId) {
+    function DeleteEntityfromEnvironment(id, CompanyName) {
 
         //var confirmMessageBox = confirm('Are you sure you want to delete interviewer ' + EmailId + ' ?');
         //if (confirmMessageBox) {
@@ -325,8 +327,9 @@
                     //var IdIRF = dataID;
                     $.ajax({
                         url: '/Interviewer/DeleteEmployerDetails',
-                        data: { 'Id': id, 'IProfileId': IProfileId},
-                        type: 'Delete',
+                        data: { 'id': id },
+                        @*data: { 'Id': id, 'IProfileId': @ViewBag.IProfileId },*@
+                        type: 'Get',
                         success: function (result) {
                             resolve(result)
 
