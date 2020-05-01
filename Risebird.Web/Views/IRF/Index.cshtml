@@ -586,7 +586,7 @@
 
 
                             <div class="card-header">
-                                <div class="pull-left"> <h4 class="card-title"> Interview Request Forms</h4></div>
+                                <div class="pull-left"> <h4 class="card-title"> Skills Channel</h4></div>
 
                                 <div class="pull-right">
                                     <div>
@@ -602,35 +602,16 @@
 
                                             @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                             {
-
-
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span>
                                                 </button>
-
-
-                                                <!--
-            <button type="button" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Interview Dashboard</font></span></button>
-              -->
-
-
-
-
-
+                                                                                               
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span>
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                                 </button>
 
-
-
-
-
-                                                <!--<button type="button" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "IRF")'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add IRF</font></span></button -->
-
                                             }
-                                            <!-- <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial;"> Filter</font></span></button>-->
-
-
+          
                                         }
                                         <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
