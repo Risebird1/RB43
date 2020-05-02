@@ -593,13 +593,6 @@
                                         @if (Model.Profile != "CuratedUser")
                                         {
 
-                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                <span class="fa fa-search" data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"> <font style="font-family:arial;">Interviewer Search</font></span>
-                                            </button>
-
-
-                                            <!--<button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa-amazon " data-toggle="tooltip" data-placement="top" title="Interviewer Search" onclick="location.href='@Url.Action("InterviewerDetail", "IRF")'" data-original-title="Tooltip on top"> Interviewer Search</span></button>-->
-
                                             @if (Model.IsClientUser == false && Model.Profile != "Recruiter")
                                             {
                                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">

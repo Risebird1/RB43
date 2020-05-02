@@ -1014,7 +1014,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="@Url.Action(" VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
+                                    <form action="@Url.Action("VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
 
                                         <div class="modal-body">
                                             <div class="row">
@@ -1187,7 +1187,7 @@
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
-                                                                IsShortList
+                                                                ShortListed
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
@@ -2110,12 +2110,12 @@
                                                                                     <video controls style=" background:black!important;width:100%; height:100% ">
                                                                                         <source src="@videolist.VideoLink" type="video/mp4">
                                                                                     </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
                                                                                 else
                                                                                 {
                                                                                     <img src="~/RiseTube/img/video-icon.png" />
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action(" VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                 }
 
 
@@ -2124,7 +2124,7 @@
                                                                             <div class="video-card-body">
 
                                                                                 <div class="video-title">
-                                                                                    <a onclick="location.href='@Url.Action(" VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+                                                                                    <a onclick="location.href='@Url.Action("VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
                                                                                     <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
                                                                                 </div>
