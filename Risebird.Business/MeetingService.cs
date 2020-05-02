@@ -1117,7 +1117,7 @@ namespace Risebird.Business
             }
 
         }
-        public int GetvedioShortList(string vedioid, string email)
+        public EmailDetails GetvedioShortList(string vedioid, string email)
         {
             try
             {
@@ -1129,7 +1129,7 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return 0;
+                return null;
             }
 
         }
