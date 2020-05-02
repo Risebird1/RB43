@@ -1087,13 +1087,13 @@
                                                         @if (item.SubId != null)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Unsubscribe">
-                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                             </button>
                                                         }
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');" title="Subscribe" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg></span>
                                                             </button>
                                                         }
 
@@ -1390,11 +1390,11 @@
 
 
                         }
-                        function Subscribe(irfId, irfName) {
+                        function Subscribe(irfId, irfName, primarySkill) {
 
                             swal.fire({
                                 title: 'Subscribe!',
-                                text: "Subscribe to " + irfName,
+                                text: "Subscribe to " + irfName + '(' + primarySkill+')',
                                 type: 'primary',
                                 showCancelButton: true,
                                 confirmButtonColor: '#3085d6',
@@ -1421,7 +1421,7 @@
                                     swal.fire({
                                         title: 'Subscribed!',
                                         type: 'success',
-                                        html: '<p>Subscribed to ' + irfName + '.</p>',
+                                        html: '<p>Subscribed to ' + irfName + '(' + primarySkill + ')' + '.</p>',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
                                         confirmButtonText: 'Close!',
@@ -1441,11 +1441,11 @@
 
 
                         }
-                        function UnSubscribe(irfId, irfName) {
+                        function UnSubscribe(irfId, irfName, primarySkill) {
 
                             swal.fire({
                                 title: 'Unsubscribe!',
-                                text: "Are you sure you want to unsubscribe " + irfName,
+                                text: "Are you sure you want to unsubscribe " + irfName + '(' + primarySkill + ')',
                                 type: 'warning',
                                 showCancelButton: true,
                                 confirmButtonColor: '#3085d6',
@@ -1472,7 +1472,7 @@
                                     swal.fire({
                                         title: 'Unsubscribed!',
                                         type: 'success',
-                                        html: '<p>Unsubscribed ' + irfName + '.</p>',
+                                        html: '<p>Unsubscribed ' + irfName + '(' + primarySkill + ')' + '.</p>',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
                                         confirmButtonText: 'Close!',
