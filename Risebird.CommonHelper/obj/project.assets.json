@@ -13271,25 +13271,20 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PS250550\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\rumab\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
       "projectName": "Risebird.CommonHelper",
-      "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
-      "packagesPath": "C:\\Users\\PS250550\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\obj\\",
+      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj",
+      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
-      ],
       "configFilePaths": [
-        "C:\\Users\\PS250550\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.0"
@@ -13301,8 +13296,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             }
           }
         }
@@ -13369,7 +13364,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
       }
     }
   },

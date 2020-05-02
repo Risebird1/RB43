@@ -3465,167 +3465,178 @@
         modal.style.display = "none";
     }
 </script>
-@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
-        console.log("video")
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "Client")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            console.log("Client")
 
-        var enjoyhint_instance = new EnjoyHint({});
+            var enjoyhint_instance = new EnjoyHint({});
 
-        var enjoyhint_script_steps = [
-            {
-                'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btnvideo': "You can see video here'",
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btn2': 'These are LIKE and UNLIKE buttons',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            //{
-            //    'next .btn3': 'If you want to click on unlike button click here',
-            //    'nextButton': { className: "myNext", text: "next" },
-            //    'skipButton': { className: "mySkip", text: "exit!" }
-            //},
-            {
-                'click .item1': "This tab provides Interview Report Details,'click On the Tab'",
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btnvideo': "You can see video here'",
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btn2': 'These are LIKE and UNLIKE buttons',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                //{
+                //    'next .btn3': 'If you want to click on unlike button click here',
+                //    'nextButton': { className: "myNext", text: "next" },
+                //    'skipButton': { className: "mySkip", text: "exit!" }
+                //},
+                {
+                    'click .item1': "This tab provides Interview Report Details,'click On the Tab'",
 
-            },
-            {
-                'click .item2': "This tab provides you Canditate Details,'click on the Tab'",
+                },
+                {
+                    'click .item2': "This tab provides you Canditate Details,'click on the Tab'",
 
-            },
-            {
-                'click .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
+                },
+                {
+                    'click .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
 
-            },
-            {
-                'click .item4': "This tab provides you Questions Discussed,'click on the Tab'",
+                },
+                {
+                    'click .item4': "This tab provides you Questions Discussed,'click on the Tab'",
 
-            },
-            {
-                'click .item5': "This tab provides you General Skill Details,'click on the Tab'",
+                },
+                {
+                    'click .item5': "This tab provides you General Skill Details,'click on the Tab'",
 
-            },
-            {
-                'click .item6': "This tab provides you Joinability  Details,'click on the Tab'",
+                },
+                {
+                    'click .item6': "This tab provides you Joinability  Details,'click on the Tab'",
 
-            },
-            {
-                'click .item7': "This tab provides you Selectability Details,'click on the Tab'",
+                },
+                {
+                    'click .item7': "This tab provides you Selectability Details,'click on the Tab'",
 
-            },
+                },
 
-            {
-                'next .comment2': 'You can give any comments if any!',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            },
-            {
-                'next .post': 'You can post you comments here !',
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Skip" }
-            }
+                {
+                    'next .comment2': 'You can give any comments if any!',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .post': 'You can post you comments here !',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                }
 
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 10000)
-    </script>
-}
-@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
-{
-    <script src="~/Newassets/js/enjoyhint.min.js"></script>
-    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-    <script>
-        console.log("cdsfdsfds")
-        var enjoyhint_instance = new EnjoyHint({});
-
-        var enjoyhint_script_steps = [
-            {
-                'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btnvideo': "You can see video here'",
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .btn2': 'These are LIKE and UNLIKE buttons',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .showinter': 'If you want to click on unlike button click here',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            {
-                'next .shortlist': 'If you want to click on unlike button click here',
-                'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "exit!" }
-            },
-            //{
-            //    'click .item2': "This tab provides you Canditate Details,'click on the Tab'",
-
-            //},
-            //{
-            //    'click .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
-
-            //},
-            //{
-            //    'click .item4': "This tab provides you Questions Discussed,'click on the Tab'",
-
-            //},
-            //{
-            //    'click .item5': "This tab provides you General Skill Details,'click on the Tab'",
-
-            //},
-            //{
-            //    'click .item6': "This tab provides you Joinability  Details,'click on the Tab'",
-
-            //},
-            //{
-            //    'click .item7': "This tab provides you Selectability Details,'click on the Tab'",
-
-            //},
-
-            //{
-            //    'next .comment2': 'You can give any comments if any!',
-            //    'nextButton': { className: "myNext", text: "Next" },
-            //    'skipButton': { className: "mySkip", text: "Skip" }
-            //},
-            //{
-            //    'next .post': 'You can post you comments here !',
-            //    'nextButton': { className: "myNext", text: "Next" },
-            //    'skipButton': { className: "mySkip", text: "Skip" }
-            //}
-
-        ];
-        setTimeout(function () {
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
-        }, 10000)
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
         </script>
     }
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "Client")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            console.log("Client")
+
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btnvideo': "You can see video here'",
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                {
+                    'next .btn2': 'These are LIKE and UNLIKE buttons',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+                },
+                //{
+                //    'next .btn3': 'If you want to click on unlike button click here',
+                //    'nextButton': { className: "myNext", text: "next" },
+                //    'skipButton': { className: "mySkip", text: "exit!" }
+                //},
+                {
+                    'click .item1': "This tab provides Interview Report Details,'click On the Tab'",
+
+                },
+                {
+                    'click .item2': "This tab provides you Canditate Details,'click on the Tab'",
+
+                },
+                {
+                    'click .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
+
+                },
+                {
+                    'click .item4': "This tab provides you Questions Discussed,'click on the Tab'",
+
+                },
+                {
+                    'click .item5': "This tab provides you General Skill Details,'click on the Tab'",
+
+                },
+                {
+                    'click .item6': "This tab provides you Joinability  Details,'click on the Tab'",
+
+                },
+                {
+                    'click .item7': "This tab provides you Selectability Details,'click on the Tab'",
+
+                },
+
+                {
+                    'next .comment2': 'You can give any comments if any!',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .post': 'You can post you comments here !',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                }
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
+        </script>
+    }
+}
