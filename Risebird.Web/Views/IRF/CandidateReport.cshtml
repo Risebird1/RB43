@@ -8,54 +8,46 @@
 
 
 <style>
-    .canvasjs-chart-credit {
-        display: none;
+    body {
+        font-family: Roboto, sans-serif;
+    }
+
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
     }
 
 
-    . #AudioFile {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
+    textarea::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: var(--mdc-theme-primary, #018786) !important;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
     }
 
 
 
-    #PageVideoLink {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
     }
 
-
-    #VideoFile {
-        margin: 0px 10px 10px 10px;
-        width: calc(100% - 20px);
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
     }
-
-
-
-    .table {
-        white-space: nowrap;
-    }
-
-    .canvasjs-chart-credit {
-        display: none;
-    }
-
-    #ProctoringTable .label-type {
-        background: #e8f5ff;
-        padding: 8px 10px;
-        border: 0;
-    }
-
 
     .multiple_row > h2 {
-        font-size: 18px;
-        background: #3f9eff; /* Old browsers */
-        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
-        padding: 6px 10px;
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
         margin-top: 0px;
@@ -63,74 +55,148 @@
     }
 
 
-    .btn {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        font-size: 12px;
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+    }
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
         display: inline-block;
-        margin: 0px 5px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
         position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
+        font-size: 13px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
     }
 
-        .btn:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
         }
 
-    .btn-primary, .btn-fill {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
     }
 
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
 
-        .btn-primary:hover, .btn-fill:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
         }
 
-
-    #btnPlus, #btnMinus {
-        padding: 2px;
+    .mc-button-area {
+        text-align: right;
     }
 
-    #btnMinus {
-        margin-left: 12px;
-        background: #d61d1d;
-        color: #fff;
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
     }
 
-    #btnPlus {
-        background: #84c0ff;
-        color: #fff;
-        font-weight: bold;
-        box-shadow: 0 3px #5794d4;
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
     }
+
+
+
+
+
 
     .glyphicon {
         top: -1px;
@@ -139,19 +205,26 @@
         line-height: 0;
     }
 
-    #resumeID {
-        color: #214268;
-        text-decoration: underline;
+    .table-responsive {
+        overflow: hidden;
     }
 
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
+    #AudioFile {
+        margin: 0px 0px 15px 0px;
     }
 
-    .top-gap {
-        padding-top: 40px;
-        display: block
+
+
+    #PageVideoLink {
+        margin: 0px 0px 10px 0px;
     }
+
+
+    #VideoFile {
+        margin: 0px 0px 10px 0px;
+    }
+
+
     #Clienform textarea {
         min-height: 100px;
         width: 100%;
@@ -179,18 +252,69 @@
             border: 12px solid;
             border-color: #eff7ff transparent transparent #eff7ff;
         }
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #ProctoringTable .label-type {
+        background: #e8f5ff;
+        padding: 8px 10px;
+        border: 0;
+    }
+
+    .video-choose {
+        position: relative;
+        top: -28px;
+    }
+
+    .trash-btn {
+        background: #d20505 !important;
+    }
+
+    .click {
+        color: #53a5f5;
+        text-decoration: underline;
+    }
+
+    .file-lable {
+        color: #000 !important;
+        font-size: 14px !important;
+    }
+    .upload-label {
+        background: #57adf80f;
+        padding: 5px 15px !important;
+    }
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important
+    }
+
+    .card-text-label {
+        font-size: 13px !important;
+    }
 </style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="top-gap">&nbsp;</div>
+       
             <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
@@ -204,7 +328,7 @@
                         Candidate Report
                     </a>
                 </div>
-                <div class="pull-right"> <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
             </div>
 
         </div>
@@ -216,9 +340,9 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                       
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
                         <form action="/IRF/CandidateReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
@@ -300,12 +424,12 @@
 
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                             @{
                                                 if (Model.ResumeLink != null && Model.ResumeLink != "")
                                                 {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.ResumeLink.ToString().Replace(" ", "%20") class="click col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
                                                 }
                                             }
 
@@ -323,7 +447,7 @@
                                     </div>
 
                                     <div class="col-md-6 col-sm-6">
-                                        
+
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="col-lg-6 col-md-6 col-sm-6">
@@ -398,14 +522,18 @@
                                                 </tbody>
                                             </table>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                            </div>
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
 
+                                                        @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                    </div>
+                                                </div>
 
-                                        </div>
-                                    </div><!--end of col-md-12-->
+                                                </div>
+                                                </div>
+                                            </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -472,14 +600,20 @@
                                                 </tbody>
                                             </table>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.HRReport.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.HRReport.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                @Html.TextAreaFor(m => m.HRReport.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+
+                                                        @Html.TextAreaFor(m => m.HRReport.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                    </div>
+                                                </div>
                                             </div>
 
 
-                                        </div>
-                                    </div><!--end of col-md-12-->
+                                                </div>
+                                            </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -545,16 +679,22 @@
                                             </table>
                                         </div>
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                            @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
+
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                </div>
+                                            </div>
                                         </div>
 
 
 
-                                    </div><!--end of col-md-12-->
+                                            </div><!--end of col-md-12-->
 
-                                </div>
+                                        </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -618,14 +758,19 @@
                                             </table>
 
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
-                                                @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+
+                                                        @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                    </div>
+                                                </div>
                                             </div>
 
 
-                                        </div>
-                                    </div><!--end of col-md-12-->
+                                                </div>
+                                            </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -642,7 +787,7 @@
                                             <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                 <thead>
                                                     <tr>
-                                                        <th width="30%">File</th>                                                        
+                                                        <th width="30%">File</th>
                                                         <th width="35%">Play</th>
                                                     </tr>
                                                 </thead>
@@ -658,7 +803,7 @@
                                                                         @Model.CandidateAudioCollection[i].AudioFileLink.Split('/').Last()
                                                                     </a>
                                                                 </td>
-                                                               
+
 
                                                                 <td>
                                                                     <audio src='@Model.CandidateAudioCollection[i].AudioFileLink' controls></audio>
@@ -687,20 +832,20 @@
                                 @Html.HiddenFor(m => m.IsEdited)
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-5"></label>
-                                        <div class="col-md-7">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
+                                        <div class="col-md-12 mc-button-area">
+
+                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
 
                                             @if (ViewBag.Profile != "Client")
                                             {
                                                 @if (Model.IsEdited)
                                                 {
-                                                    <button type="submit" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">Save</button>
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
                                                 }
                                                 else
                                                 {
-                                                    <button type="submit" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Submit">Submit</button>
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                                 }
 
                                             }
@@ -785,8 +930,7 @@
         if (skillName == 'TechSkillEvaluatorReportCollection') {
             index = id.charAt(35);
         }
-        else if (skillName == 'SkillGeneralEvaluatorReportCollection')
-        {
+        else if (skillName == 'SkillGeneralEvaluatorReportCollection') {
             index = id.charAt(38);
         }
         else {
@@ -882,7 +1026,7 @@
         document.getElementById("SelectabilityScore").value = selectabilityTotal;
 
 
-        var objTech= { y: "", legendText: "", label: "" }
+        var objTech = { y: "", legendText: "", label: "" }
         //TechSkills actual weightage total
         var techItems = $('[id^="TechSkillEvaluatorReportCollection"][id$="WeightageActual"]');
         var techTotal = 0;
