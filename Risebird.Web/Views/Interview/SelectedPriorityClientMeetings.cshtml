@@ -35,7 +35,7 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
 }
-    <style>
+<style>
 
     body {
         font-family: Roboto, sans-serif;
@@ -64,14 +64,16 @@
         width: 2px;
         height: 6px;
         background-color: none;
-        overflow:hidden;
+        overflow: hidden;
     }
+
     .mdc-card .modal textarea::-webkit-scrollbar {
         width: 2px;
         height: 6px;
         background-color: none;
         overflow: hidden;
     }
+
     .no-sort::after {
         display: none !important;
     }
@@ -426,8 +428,9 @@
             resize: none;
             border: 0;
             background: #fff;
-            padding: 5px;width:100%;
-            overflow-x:hidden;
+            padding: 5px;
+            width: 100%;
+            overflow-x: hidden;
         }
 
     .mdc-card {
@@ -511,6 +514,7 @@
         .modal .form-group .btn {
             margin: 0px;
         }
+
     .control-labeled {
         color: #5f5c5c !important;
         font-size: 12px;
@@ -521,23 +525,23 @@
 
     .text-areadiv {
         height: auto;
-        padding: 0px 10px!important;
+        padding: 0px 10px !important;
     }
 
         .text-areadiv textarea {
             width: 100%;
             border: 0;
             background: #f5f5f5;
-            padding:5px 0px 0px 0px;
+            padding: 5px 0px 0px 0px;
         }
-   @@media screen and (max-width: 767px) {
 
-    .table > tbody > tr > td {
-        padding: 12px 5px !important;
+    @@media screen and (max-width: 767px) {
+
+        .table > tbody > tr > td {
+            padding: 12px 5px !important;
+        }
     }
-}
-
-    </style>
+</style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
@@ -584,19 +588,19 @@
 
 
                                     <div class="card-header">
-                                        <div class="pull-left"> <h4 class="card-title">  Selected Candidate Priority View</h4></div>
+                                        <div class="pull-left first"> <h4 class="card-title">  Selected Candidate Priority View</h4></div>
 
                                         <div class="pull-right">
                                             <div>
 
 
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
                                                 </button>
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="margin-top: 2px;">
                                                     <span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Meeting Details</font></span>
                                                 </button>
 
@@ -606,9 +610,9 @@
                                                     <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
                                                 </button>
 
-                                              <!-- <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                    <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
-                                                </button>--> 
+                                                <!-- <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                      <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
+                                                  </button>-->
 
 
                                             </div>
@@ -871,7 +875,7 @@
 
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
+                                <div id="tableID" class="second">
                                     <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
@@ -883,9 +887,9 @@
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
-                                            
-                                               
-                                            
+
+
+
                                                 <th>Report Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -906,9 +910,9 @@
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
-                                            
-                                            
-                                                
+
+
+
                                                 <th>Report Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -947,8 +951,8 @@
                                                         </div>
                                                     </td>
                                                     <td>  </td>
-                                                
-                                              
+
+
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                     <td>@item.NextLevelApprovalStat</td>
                                                     <td>@item.FinalSelectionStat</td>
@@ -1062,13 +1066,14 @@
                                                     <div id="selectionComments">
                                                         <div class="form-group">
                                                             <label class="control-labeled">Final Comments</label>
-                                                  
+
                                                             <div class="form-control text-areadiv">
-                                                                <textarea name="selecComments" class="text-box single-line" id="selecComments"></textarea></div>
-
-
-                                                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                                                                <textarea name="selecComments" class="text-box single-line" id="selecComments"></textarea>
                                                             </div>
+
+
+                                                            @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1087,13 +1092,14 @@
                                                             <label class="control-labeled">Offer Comments</label>
 
                                                             <div class="form-control text-areadiv">
-                                                                <textarea name="offComments" class="text-box single-line" id="offComments" ></textarea></div>
-
-
+                                                                <textarea name="offComments" class="text-box single-line" id="offComments"></textarea>
                                                             </div>
 
-                                                            @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+
                                                         </div>
+
+                                                        @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -1112,11 +1118,11 @@
 
                                                             <div class="form-control text-areadiv">
                                                                 <textarea name="joinComments" class="text-box single-line" id="joinComments"></textarea>
-                                                                </div>
-
-                                                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
                                                             </div>
+
+                                                            @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
                                                         </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -1182,10 +1188,10 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-  
 
-            <!-- end row -->
-        </div>
+
+        <!-- end row -->
+    </div>
 
 </div>
 <style>
@@ -1201,7 +1207,7 @@
         max-width: 690px !important;
     }
 
-   
+
     #StartDate, #EndDate {
         width: 270px;
     }
@@ -1691,6 +1697,41 @@
 
 </script>
 <!-- Keep the Page Content Here.-->
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+{
+<script src="~/Newassets/js/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+<script>
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+        {
+            'next .first': 'Here you will get All priority Selected canditate Info ! ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+        {
+            'next .second': 'This is the all Selected canditate detials ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+        {
+            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+        {
+            'click .four': "Click to see all Canditate meeting details"
+        }
+
+
+    ];
+    setTimeout(function () {
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+    }, 2000)
+</script>
+}
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->
