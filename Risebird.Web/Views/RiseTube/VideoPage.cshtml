@@ -203,6 +203,7 @@
                 border: 1px #53a5f5 solid;
             }
 
+            .wrapper{height:auto!important;}
 
     .newsletter .input-group {
         margin-bottom: 0px;
@@ -1132,37 +1133,37 @@
 
                                                         <div>
                                                             <ul class="nav nav-pills nav-pills-primary" role="tablist">
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item1" style="margin-top: 18px;">
                                                                     <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist" style="font-size: 10px;">
                                                                         Report Details
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item2" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link2" role="tablist" style="font-size: 10px;">
                                                                         Candidate Details
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item3" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link3" role="tablist" style="font-size: 10px;">
                                                                         Tech Skill Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item4" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link4" role="tablist" style="font-size: 10px;">
                                                                         Questions Discussed
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item5" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link5" role="tablist" style="font-size: 10px;">
                                                                         General Skill Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item6" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link6" role="tablist" style="font-size: 10px;">
                                                                         Joinability Report
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item" style="margin-top: 18px;">
+                                                                <li class="nav-item item7" style="margin-top: 18px;">
                                                                     <a class="nav-link" data-toggle="tab" href="#link7" role="tablist" style="font-size: 10px;">
                                                                         Selectability Report
                                                                     </a>
@@ -1722,7 +1723,7 @@
 
                                                                                 </tbody>
                                                                             </table>
-                                                                            <div class="form-group">
+                                                                            <div class="form-group comment">
                                                                                 @Html.LabelFor(model => model.IreportModel.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
 
@@ -1749,9 +1750,9 @@
                                                                     <form>
                                                                         <div class="form-group comment-area">
 
-<textarea class="form-control status-box" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                            <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
                                                                             <div class="button-group pull-right">
-                                                                                <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded " id="btnComment">POST</a>
+                                                                                <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a>
                                                                             </div>
                                                                         </div>
                                                                     </form>
@@ -3075,7 +3076,7 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .card-title': 'Welcome to RISEBIRD! Selected Candidate Videos will be available over here.',
+            'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
             'nextButton': { className: "myNext", text: "Sure" },
             'skipButton': { className: "mySkip", text: "Nope!" }
         },
@@ -3085,37 +3086,63 @@
             'skipButton': { className: "mySkip", text: "Nope!" }
         },
         {
-            'next .btnvideo': "After enter the search results click on search button 'Enter'",
+            'next .btnvideo': "You can see video here'",
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "Nope!" }
         },
         {
-            'next .btn2': 'Filters here based on avialble attributes and reset filters if applied earlier',
+            'next .btn2': 'If you like the video click on like button!',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "Nope!" }
         },
         {
-            'next .btn3': 'Filters here based on avialble attributes and reset filters if applied earlier',
+            'next .btn3': 'If you want to click on unlike button click here',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "Nope!" }
+        },
+        {
+            'click .item1': "This tab provides Interview Report Details,'click On the Tab'",
+            
+        },
+        {
+            'click .item2': "This tab provides you Canditate Details,'click on the Tab'",
+            
+        },
+          {
+              'click .item3': "This tab provides you Teck Skill Details,'click on the Tab'" ,
+            
+        },
+        {
+            'click .item4': "This tab provides you Questions Discussed,'click on the Tab'",
+            
+        },
+        {
+            'click .item5': "This tab provides you General Skill Details,'click on the Tab'",
+            
+        },
+        {
+            'click .item6': "This tab provides you Joinability  Details,'click on the Tab'",
+           
+        },
+        {
+            'click .item7': "This tab provides you Selectability Details,'click on the Tab'",
+        
+        },
+        {
+            'next .btn4': 'You can give selectability comments here!',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .comment2': 'You can give any comments if any!',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .post': 'You can post you comments here !',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         }
-        //{
-        //    'next .btn4': 'Click here to get filtered Data!',
-        //    'nextButton': { className: "myNext", text: "Next" },
-        //    'skipButton': { className: "mySkip", text: "Skip" }
-        //},
-        //{
-        //    'next .btn5': 'Click here to Reset the Filters!',
-        //    'nextButton': { className: "myNext", text: "Next" },
-        //    'skipButton': { className: "mySkip", text: "Skip" }
-        //},
-        //{
-        //    'next .contact': 'Your feedback will be appreciated',
-        //    'shape': 'circle',
-        //    'radius': 70,
-        //    'showSkip': false,
-        //    'nextButton': { className: "myNext", text: "Got it!" }
-        //}
 
     ];
     setTimeout(function () {

@@ -91,7 +91,6 @@
     }
 
     td.wordwrap {
-    
         max-width: 250px !important;
         min-width: 250px !important;
         overflow: hidden !important;
@@ -104,6 +103,7 @@
         text-overflow: clip !important;
         white-space: normal !important;
     }
+
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
@@ -458,6 +458,7 @@
         padding: 5px 10px;
         border-radius: 10px;
     }
+
     #reportId {
         background: #b3d2f1;
         color: #1d3b5e;
@@ -479,7 +480,7 @@
         padding: 5px 10px;
         border-radius: 10px;
     }
-  
+
 
     #meeting_length, #meeting_filter {
         margin: 10px 0px
@@ -548,7 +549,7 @@
         color: #999;
     }
 
-    
+
     .card .card-header .card-title, .card .card-header h4.card-title {
         margin: 0 0px 10px 0;
     }
@@ -556,6 +557,7 @@
     .control-label {
         color: #5f5c5c !important;
     }
+
     .modal-header {
         border-bottom: 3px solid #316b9e !important;
         background: #419dff !important;
@@ -566,8 +568,8 @@
 
     .modal input, .modal .dropdown-toggle {
         background: #99d1fc0f !important;
-   
     }
+
     .border-rv {
         border-right: 1px dotted #ccc;
     }
@@ -598,7 +600,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                   
+
                     <div class="card-body">
 
                         <div class="loader text-center">
@@ -615,12 +617,12 @@
 
 
                                     <div class="card-header">
-                                        <div class="pull-left"> <h4 class="card-title">   Selected Candidate Interviews @*list for <b>@ViewBag.IRF</b>*@</h4></div>
+                                        <div class="pull-left first"> <h4 class="card-title">   Selected Candidate Interviews @*list for <b>@ViewBag.IRF</b>*@</h4></div>
 
                                         <div class="pull-right">
                                             <div>
                                                 @Html.ActionLink("Back to List", "SelectedPriorityClientMeetings", "Interview", htmlAttributes: new { @class = "btn btn-fill buttons btn-label", @role = "button", @style = "margin-top:3px" })
-                                                <button type="button" class="btn btn-primary buttons" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:Arial;font-size:12px;"> Filter </font></span></button>
+                                                <button type="button" class="btn btn-primary buttons three" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:Arial;font-size:12px;"> Filter </font></span></button>
 
                                             </div>
                                         </div>
@@ -645,7 +647,7 @@
 
 
 
-                                
+
 
 
                             </div>
@@ -832,7 +834,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-md-12">
-                                                        
+
 
                                                             <div class="row">
                                                                 <div class="col-md-12 col-sm-12">
@@ -863,7 +865,7 @@
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
+                                <div id="tableID" class="second">
                                     <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
@@ -912,48 +914,48 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.ClientName </td>
-                                                <td> @item.JDTiltle.Split("|")[0] </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
-                                                @if (item.VideoLink != null && item.VideoLink != "")
-                                                {
-                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Video</td>
-                                                }
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName </td>
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.ClientName </td>
+                                                    <td> @item.JDTiltle.Split("|")[0] </td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClientSelected = true})'>Report</a> </td>
+                                                    @if (item.VideoLink != null && item.VideoLink != "")
+                                                    {
+                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Video</td>
+                                                    }
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td class="wordwrap"> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                                <td>@item.NextLevelApprovalStat</td>
-                                                <td>@item.FinalSelectionStat</td>
-                                                <td>@item.OfferStatusStatDesc</td>
-                                                <td>@item.JoiningStatusStatDesc</td>
-                                            </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td class="wordwrap"> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td>@item.NextLevelApprovalStat</td>
+                                                    <td>@item.FinalSelectionStat</td>
+                                                    <td>@item.OfferStatusStatDesc</td>
+                                                    <td>@item.JoiningStatusStatDesc</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -973,7 +975,7 @@
 
         <!-- end row -->
     </div>
-   
+
 </div>
 <style>
     .caret {
@@ -1083,7 +1085,7 @@
         var table = $('#meeting').DataTable();
     });
     function ResetFilter() {
-           
+
              $.ajax({
             type: "POST",
             url: "/Interview/ClientSelectedMeetings",
@@ -1235,6 +1237,35 @@
     }
 </script>
 <!-- Keep the Page Content Here.-->
+<script src="~/Newassets/js/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+<script>
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+        {
+            'next .first': 'Here you will get All priority Client selected canditates Meetings ! ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+        {
+            'next .second': 'This is the all Canditate details detials ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+        {
+            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+      
+
+    ];
+    setTimeout(function () {
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+    }, 2000)
+</script>
 
 <loading></loading>
 
