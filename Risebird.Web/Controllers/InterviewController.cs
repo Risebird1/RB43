@@ -5789,7 +5789,7 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
                 bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>candidate "+ email + " is "+ Status + " your interest.</p>");
+                bulider.Append("<p>Candidate "+ email + " has "+ Status + " your interest.</p>");
                 bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
                 bulider.Append("<br/><p>Thanks,</p>RiseBird");
                 _mail.Body = bulider.ToString();

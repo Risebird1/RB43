@@ -46,8 +46,8 @@ namespace Risebird.Web.Controllers
                    HttpContext.Session.SetString("profileName", JsonConvert.SerializeObject(menus.FirstOrDefault()?.profileName));
                    HttpContext.Session.SetString("NavigationShow", JsonConvert.SerializeObject(menus.FirstOrDefault()?.NavigationShow == null? true:false));
                    HttpContext.Session.SetString("email", JsonConvert.SerializeObject(emailId));
-                    HttpContext.Session.SetString("UserLogedIn", "Yes");
-                    HttpContext.Session.SetString("UserLogedInVedioId", "");
+                   HttpContext.Session.SetString("UserLogedIn", "Yes");
+                   HttpContext.Session.SetString("UserLogedInVedioId", "");
                     var menuAccess = menus.Where(x => x.dAccess)?.FirstOrDefault();
                     if (menuAccess == null)
                     {

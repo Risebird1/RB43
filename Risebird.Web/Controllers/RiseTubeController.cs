@@ -63,10 +63,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
-                        {
-                            var emailid = HttpContext.Session.GetString("email")?.Trim();
-                            emailid = emailid.Replace("\"", "");
+                        {                           
                             ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
                             isClientUser = true;
                         }
@@ -79,15 +79,15 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid).ToList();
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).ToList();
                         }
                         else
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList();
                         }
 
                         ViewBag.CandidateList = modelList.Select(x => x.candidateName).Distinct().ToList();
@@ -236,10 +236,10 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
-                        {
-                            var emailid = HttpContext.Session.GetString("email")?.Trim();
-                            emailid = emailid.Replace("\"", "");
+                        {                           
                             ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
                             isClientUser = true;
                         }
@@ -256,15 +256,15 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailid).ToList();
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList().Where(x => x.CuratedLink).ToList();
                         }
                         else
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailid).ToList();
                         }
 
                         if (filter.StartDate != null && filter.EndDate != null)
@@ -427,13 +427,11 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
-                        var Email = HttpContext.Session.GetString("email")?.Trim();
-                        Email = Email.Replace("\"", "");
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
-                        {
-                            //var emailid = HttpContext.Session.GetString("email")?.Trim();
-                            //emailid = emailid.Replace("\"", "");
-                            ClientId = _userRepository.GetClientUserDetails(Email).ClientId;
+                        {                           
+                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -446,17 +444,17 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(ClientId, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList1 = _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId).ToList();
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).ToList();
                         }
                         else
                         {
-                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
                         }
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, Email);
+                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
 
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         modelList1 = modelList1.Select(x =>
@@ -672,12 +670,11 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
-                        var Email = HttpContext.Session.GetString("email")?.Trim();
-                        Email = Email.Replace("\"", "");
+                        var emailId = HttpContext.Session.GetString("email")?.Trim();
+                        emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
                         {
-
-                            ClientId = _userRepository.GetClientUserDetails(Email).ClientId;
+                            ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
                             isClientUser = true;
                         }
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -694,17 +691,17 @@ namespace Risebird.Web.Controllers
 
                         if (isClientUser)
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(ClientId, profileName, emailId).ToList();
                         }
                         else if (profileName == "CuratedUser")
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList().Where(x => x.CuratedLink).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).ToList();
                         }
                         else
                         {
-                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, HttpContext.Session.GetString("email")).ToList();
+                            modelList = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
                         }
-                        MeetingVM model = _meetingService.GetMeetingbyid(id, Email);
+                        MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
