@@ -1073,7 +1073,7 @@
     //// script for loader ends here
 </script>
 
-@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
 
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
@@ -1086,21 +1086,22 @@
             {
                 'next .card-title': 'Welcome to RISEBIRD! Selected Candidate Videos will be available over here.',
                 'nextButton': { className: "myNext", text: "Sure" },
-                'skipButton': { className: "mySkip", text: "Nope!" }
+                'skipButton': { className: "mySkip", text: "exit" }
             },
             {
-                'key #txtsearch1': "Search here based on skill or candidate name and 'Enter'",
-                'keyCode': 13
+                'click #txtsearch1': "Search here based on skill or candidate name and 'Enter'",
+                'nextButton': { className: "myNext", text: "next" },
+                'skipButton': { className: "mySkip", text: "exit" }
             },
             {
                 'next .btn1': "After enter the search results click on search button 'Enter'",
                 'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "Nope!" }
+                'skipButton': { className: "mySkip", text: "exit" }
             },
             {
                 'next .btn2': 'Filters here based on avialble attributes and reset filters if applied earlier',
                 'nextButton': { className: "myNext", text: "next" },
-                'skipButton': { className: "mySkip", text: "Nope!" }
+                'skipButton': { className: "mySkip", text: "exit" }
             },
             {
                 'click .video-card': 'Click here see the video!.',

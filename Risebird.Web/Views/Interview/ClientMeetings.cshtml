@@ -548,12 +548,12 @@
                             <div class="toolbar">
                                 <div class="row">
                                     <div class="card-header">
-                                        <div class="pull-left"> <h4 class="card-title"> All Interviews</h4></div>
+                                        <div class="pull-left first"> <h4 class="card-title"> All Interviews</h4></div>
 
                                         <div class="pull-right">
                                             <div>
 
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
@@ -963,7 +963,7 @@
         max-width: 690px !important;
     }
 
-  
+
 
     #StartDate, #EndDate {
         width: 270px;
@@ -1204,6 +1204,8 @@
     }
 </script>
 <!-- Keep the Page Content Here.-->
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+{
 <script src="~/Newassets/js/enjoyhint.min.js"></script>
 <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
 <script>
@@ -1225,7 +1227,7 @@
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
-  
+
 
 
     ];
@@ -1234,6 +1236,7 @@
         enjoyhint_instance.run();
     }, 2000)
 </script>
+}
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->

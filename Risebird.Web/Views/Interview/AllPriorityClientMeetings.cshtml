@@ -563,7 +563,7 @@
 
 
 
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
@@ -571,7 +571,7 @@
 
 
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="margin-top: 2px;">
                                                     <span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Click here to get all the meetings' details." onclick="location.href='@Url.Action("ClientMeetings", "Interview", new { irfId = ViewBag.IRFId, irfName = ViewBag.IRFName})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Meeting Details</font></span>
                                                 </button>
 
@@ -1287,6 +1287,8 @@
     }
 </script>
 <!-- Keep the Page Content Here.-->
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+{
 <script src="~/Newassets/js/enjoyhint.min.js"></script>
 <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
 <script>
@@ -1309,9 +1311,9 @@
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'click .four' : "Click to see all client meeting details"
+            'click .four': "Click to see all client meeting details"
         }
-        
+
 
     ];
     setTimeout(function () {
@@ -1319,6 +1321,7 @@
         enjoyhint_instance.run();
     }, 2000)
 </script>
+}
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->
