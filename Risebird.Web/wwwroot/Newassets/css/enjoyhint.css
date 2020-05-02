@@ -51,11 +51,10 @@
 .enjoyhint_next_btn {
     position: absolute;
     box-sizing: content-box;
-    border: 2px solid #1ecd97;
-    -webkit-border-radius: 40px;
-    border-radius: 40px;
-    color: #1ecd97;
-    background: rgba(0,0,0,0);
+    border: 2px solid #53a5f5;
+    BACKGROUND: #53a5f5; -webkit-border-radius: 40px;
+    border-radius: 40px;color:#fff;
+
     -webkit-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -moz-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -o-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
@@ -63,13 +62,13 @@
 }
 
     .enjoyhint_next_btn:hover {
-        color: rgba(255,255,255,1);
-        background: #1ecd97
+        color: #fff;
+        background: #53a5f5;
     }
 
     .enjoyhint_next_btn:active {
-        border: 2px solid rgba(33,224,163,1);
-        background: rgba(33,224,163,1);
+        border: 2px solid #53a5f5;
+        BACKGROUND: #53a5f5;
         -webkit-transition: none;
         -moz-transition: none;
         -o-transition: none;
@@ -78,11 +77,11 @@
 
 .enjoyhint_skip_btn {
     box-sizing: content-box;
-    border: 2px solid #1ecd97;
+    border: 2px solid rgb(83, 165, 245);
     -webkit-border-radius: 40px;
     border-radius: 40px;
-    color: #1ecd97;
-    background: rgba(0,0,0,0);
+    color: #53a5f5;
+    background: #fff;
     -webkit-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -moz-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -o-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
@@ -96,13 +95,12 @@
     }
 
     .enjoyhint_skip_btn:hover {
-        color: rgba(255,255,255,1);
-        background: #1ecd97
+        color: #53a5f5; background: #fff;
     }
 
     .enjoyhint_skip_btn:active {
-        border: 2px solid rgba(33,224,163,1);
-        background: rgba(33,224,163,1);
+        border: 2px solid #53a5f5;
+        background: #fff;
         transition: none
     }
 
@@ -120,7 +118,7 @@
     font: 400 8em/normal Arial,Helvetica,sans-serif;
     color: rgba(0,0,0,1);
     background: rgba(0,0,0,0);
-    border: 2px solid rgba(33,224,163,1)
+    border: 2px solid #53a5f5;
 }
 
     .enjoyhint_close_btn::after, .enjoyhint_close_btn::before {
@@ -158,13 +156,12 @@
     }
 
     .enjoyhint_close_btn:hover {
-        color: rgba(255,255,255,1);
-        background: #1ecd97;
-        cursor: pointer
+        color: #fff;
+        background: #53a5f5; cursor: pointer
     }
 
     .enjoyhint_close_btn:active {
-        border: 2px solid rgba(33,224,163,1);
+        border: 2px solid #53a5f5;
         background: rgba(33,224,163,1);
         transition: none
     }
@@ -186,7 +183,7 @@
     -o-text-overflow: clip;
     text-overflow: clip;
     letter-spacing: 1px;
-    background: rgba(0,0,0,0);
+    background: #53a5f5;
     -webkit-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -moz-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
     -o-transition: background-color .3s cubic-bezier(0,0,0,0),color .3s cubic-bezier(0,0,0,0),width .3s cubic-bezier(0,0,0,0),border-width .3s cubic-bezier(0,0,0,0),border-color .3s cubic-bezier(0,0,0,0);
@@ -200,13 +197,13 @@
 }
 
 .enjoyhint_btn:hover {
-    color: rgba(255,255,255,1);
-    background: #1ecd97
+    color: #fff;
+    background: #53a5f5;
 }
 
 .enjoyhint_btn:active {
-    border: 2px solid rgba(33,224,163,1);
-    background: rgba(33,224,163,1);
+    border: 2px solid #53a5f5;
+    background: #53a5f5;
     -webkit-transition: none;
     -moz-transition: none;
     -o-transition: none;
