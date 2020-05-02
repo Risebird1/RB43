@@ -18,7 +18,7 @@ DECLARE @id int
 if @clientid = 0    
  BEGIN      
      
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage 
+select distinct im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage 
   
 as ThumbnailImage,cl.CuratedLink as CuratedLink, QCF.InterviewId as QCInterview,sc.Status as IsIntrested ,rt.Status as ShortListstatus  
 from InterviewMeetings im        
@@ -34,7 +34,7 @@ where (ic.InterviewStatus =2 or ic.InterviewStatus=4) and ic.VideoLink is not nu
 END    
 else    
  BEGIN      
-select im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage 
+select distinct im.id imid,im.* ,IRF.id as irfIntId,IRF.JDLink as JDLink,IRF.JDTiltle,IRF.ClientId, IRF.ClientName,IRF.IsBiometricEnabled,ic.VideoLink,ic.InterviewerComment,ic.IsApproved, ic.InterviewStatus,ic.MeetingStatus, cm.id as CandidateId,ic.ThumbnailImage 
   
 as ThumbnailImage,QCF.InterviewId as QCInterview,sc.Status as IsIntrested ,rt.Status as ShortListstatus  
 from InterviewMeetings im        

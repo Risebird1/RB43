@@ -445,7 +445,7 @@
 
 
                                 <div class="card-header">
-                                    <div class="pull-left"> <h4 class="card-title">RiseTube</h4></div>
+                                    <div class="pull-left"> <h4 id="risetubeid" class="card-title">RiseTube</h4></div>
 
                                     <div class="pull-right">
                                         <div>
@@ -1071,7 +1071,7 @@
     //// script for loader ends here
 </script>
 
-@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
 {
 
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
@@ -1082,20 +1082,15 @@
 
         var enjoyhint_script_steps = [
             {
-                'next .card-title': 'Welcome to RISEBIRD! Selected Candidate Videos will be available over here.',
+                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here.',
                 'nextButton': { className: "myNext", text: "Sure" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next  #txtsearch1': "Search here based on skill or candidate name and 'Enter'",
+                'next  #txtsearch1': "Search here based on skill or candidate name and click on seach",
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
-            },
-            {
-                'next .btn1': "After enter the search results click on search button 'Enter'",
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
-            },
+            },           
             {
                 'next .btn2': 'Filters here based on avialble attributes and reset filters if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
@@ -1105,24 +1100,7 @@
                 'click .video-card': 'Click here see the video!.',
                 //'nextButton': { className: "myNext", text: "Next" },
                 //'skipButton': { className: "mySkip", text: "Skip" }
-            }
-            //{
-            //    'next .btn4': 'Click here to get filtered Data!',
-            //    'nextButton': { className: "myNext", text: "Next" },
-            //    'skipButton': { className: "mySkip", text: "Skip" }
-            //},
-            //{
-            //    'next .btn5': 'Click here to Reset the Filters!',
-            //    'nextButton': { className: "myNext", text: "Next" },
-            //    'skipButton': { className: "mySkip", text: "Skip" }
-            //},
-            //{
-            //    'next .contact': 'Your feedback will be appreciated',
-            //    'shape': 'circle',
-            //    'radius': 70,
-            //    'showSkip': false,
-            //    'nextButton': { className: "myNext", text: "Got it!" }
-            //}
+            }           
 
         ];
         setTimeout(function () {
