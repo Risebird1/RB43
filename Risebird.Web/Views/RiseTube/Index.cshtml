@@ -41,6 +41,7 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
+
 <style>
     .pagination-container > ul > li {
         padding: 5px 12px !important;
@@ -355,7 +356,6 @@
     .newsletter {
         padding: 0;
         float: left;
-        margin: 0 0 10px 0;
     }
 
 
@@ -389,7 +389,6 @@
         margin: 0px 0 16px;
         font-size: 15px;
     }
-
 </style>
 
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
@@ -403,6 +402,8 @@
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -444,7 +445,7 @@
 
 
                                 <div class="card-header">
-                                    <div class="pull-left"> <h4 class="card-title">RiseTube</h4></div>
+                                    <div class="pull-left"> <h4 id="risetubeid" class="card-title">RiseTube</h4></div>
 
                                     <div class="pull-right">
                                         <div>
@@ -453,9 +454,9 @@
                                                 <div class="content">
                                                     <div class="input-group" id="myForm">
                                                         <div class="searchbox">
-                                                            <input type="email" id="txtsearch" value="@ViewBag.searchvalue" class="form-control" placeholder="Please enter Skills (or) Name Of candidate">
+                                                            <input type="email" id="txtsearch1" value="@ViewBag.searchvalue" class="form-control" placeholder="Please enter Skills (or) Name Of candidate">
                                                             <span class="input-group-btn">
-                                                                <button class="btn" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
+                                                                <button class="btn btn1" id="btnSearch" type="submit"><svg style="fill: #fff;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" /></svg></button>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -480,8 +481,8 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel" style="color:#fff;"> Filter</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <h5 class="modal-title btn3" id="filterModalLabel" style="color:#fff;"> Filter</h5>
+                                            <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -658,7 +659,7 @@
                                                         {
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
-                                                                    IsShortList
+                                                                    ShortListed
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
@@ -727,7 +728,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-12 col-sm-12">
 
-                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn4" style="margin-top: 30px;float:right;margin-left:5px;">
                                                                         <font style="font-size:12px;"> Reset Filter</font>
                                                                     </button>
 
@@ -736,7 +737,7 @@
 
 
 
-                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn5" style="margin-top: 30px;float:right">
                                                                         <font style="font-size:12px;"> Apply Filter</font>
                                                                     </button>
 
@@ -813,12 +814,12 @@
                                                         <span style="  color: #606060; font-weight: 500;font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
-                                                    <div class="video-page text-success">
-                                                        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
+    <div class="video-page text-success">
+        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
-                                                    </div>
-                                                    <div class="video-view">
-                                                        &nbsp;<i style="    font-size: 14px;
+    </div>
+    <div class="video-view">
+        &nbsp;<i style="    font-size: 14px;
     color: #888888;" class="fas fa-calendar-alt"></i> <span style="color: #606060;
     font-weight: 600;
     font-size: 12px;">@item.interviewDate</span>
@@ -867,6 +868,7 @@
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
+
 
 <script type="text/javascript">
 
@@ -1066,5 +1068,48 @@
             $("#VideoList").show();
         }, 2000);
     };
-//// script for loader ends here
+    //// script for loader ends here
 </script>
+
+@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
+{
+
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+       
+        var enjoyhint_instance = new EnjoyHint({});
+
+        var enjoyhint_script_steps = [
+            {
+                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here.',
+                'nextButton': { className: "myNext", text: "Sure" },
+                'skipButton': { className: "mySkip", text: "Exit" }
+            },
+            {
+                'next  #txtsearch1': "Search here based on skill or candidate name and click on seach",
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Exit" }
+            },           
+            {
+                'next .btn2': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Exit" }
+            },
+            {
+                'click .video-card': 'Click here see the video!.',
+                //'nextButton': { className: "myNext", text: "Next" },
+                //'skipButton': { className: "mySkip", text: "Skip" }
+            }           
+
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
+    </script>
+}
+
+
+
+

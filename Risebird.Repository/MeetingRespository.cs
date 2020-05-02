@@ -1603,7 +1603,7 @@ namespace Risebird.Repository
             return null;
 
         }
-        public int GetvedioShortList(string vedioid, string email)
+        public EmailDetails GetvedioShortList(string vedioid, string email)
         {
             try
             {
@@ -1614,7 +1614,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<int>(con, "usp_AddinterviewvedioShortList", parameters,
+                    var result = SqlMapper.Query<EmailDetails>(con, "usp_AddinterviewvedioShortList", parameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -1623,7 +1623,7 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return 0;
+            return null;
         }
         public string CandidateSuitable(int id, string email, string Comment)
         {
@@ -1655,13 +1655,18 @@ namespace Risebird.Repository
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Id", vedioid);
                 dynamicParameters.Add("@Status", Status);
-                var id = 0;
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Query(query, dynamicParameters);
-                    return "Success";
                 }
-
+                var finalquery = "Select ul.EmailId from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Id", vedioid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result=con.Query<string>(finalquery, finaldynamicParameters);
+                    return result.FirstOrDefault().ToString();
+                }
             }
             catch (SqlException ex)
             {

@@ -180,4 +180,9 @@ namespace Risebird.Entities.ViewModel
         public string Comment { get; set; }
         public string UserName { get; set; }
     }
+    public class EmailDetails
+    {
+        public int totalcount { get; set; }
+        public string Email { get; set; }
+    }
 }

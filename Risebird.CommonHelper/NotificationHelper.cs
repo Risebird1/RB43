@@ -59,7 +59,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle,string candidateName,string reportLink, string interviewStatus,string videoLink, string interviewerComments)
+        public string SendIRFBasedClientMail(List<TransClientUser> clientUsers, string meetingDate, string jdTitle, string candidateName, string reportLink, string interviewStatus, string videoLink, string interviewerComments)
         {
             try
             {
@@ -70,8 +70,8 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { meetingDate, candidateName, jdTitle, interviewStatus, reportLink,videoLink, interviewerComments };
-                mailMessage.Subject = candidateName+" Interview Completion Alert";
+                object[] parameters = new object[] { meetingDate, candidateName, jdTitle, interviewStatus, reportLink, videoLink, interviewerComments };
+                mailMessage.Subject = candidateName + " Interview Completion Alert";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ClientMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -94,7 +94,7 @@ namespace Risebird.CommonHelper
         public string SendIRFBasedInterviewerMail(List<string> interviwers, string meetingDate)
         {
             try
-            {                
+            {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
@@ -103,10 +103,10 @@ namespace Risebird.CommonHelper
                     mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
                 object[] parameters = new object[] { meetingDate };
-                mailMessage.Subject = "New Interview has been scheduled on date: "+ meetingDate;
+                mailMessage.Subject = "New Interview has been scheduled on date: " + meetingDate;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewMailTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
-               
+
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
@@ -153,7 +153,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate,string candidateEmail, string interviewer)
+        public string SendAlertHRForUnassignedInterview(List<string> hrs, string meetingDate, string candidateEmail, string interviewer)
         {
             try
             {
@@ -166,7 +166,7 @@ namespace Risebird.CommonHelper
                 }
                 mailMessage.To.Add(new MailAddress("interview@risebird.io", "Interview"));
                 mailMessage.To.Add(new MailAddress("kamini@risebird.io", "Job"));
-                mailMessage.Subject = "HR Alert!!! "+interviewer+" Interviewer has unassigned interview for candidate "+ candidateEmail+" scheduled on "+ meetingDate;
+                mailMessage.Subject = "HR Alert!!! " + interviewer + " Interviewer has unassigned interview for candidate " + candidateEmail + " scheduled on " + meetingDate;
                 StringBuilder msgBody = new StringBuilder("Dear HR,");
                 msgBody.Append("\n");
                 msgBody.AppendLine(
@@ -199,9 +199,9 @@ namespace Risebird.CommonHelper
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
-                
+
                 mailMessage.To.Add(new MailAddress(interviwers.ToLower(), null));
-                
+
                 object[] parameters = new object[] { meetingDate };
                 mailMessage.Subject = "New Interview has been assigned on date: " + meetingDate;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InterviewAssingmentMailTemplate.html");
@@ -221,21 +221,21 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        
-        public string SendCandidateInvite( string ClientName,string jdLink, List<TransClientUser> clientUsers,string primarySkill, string calendlyLink, string emailId)
+
+        public string SendCandidateInvite(string ClientName, string jdLink, List<TransClientUser> clientUsers, string primarySkill, string calendlyLink, string emailId)
         {
             try
             {
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Interview Invite");
                 mailMessage.To.Add(new MailAddress(emailId.ToLower(), "Candidate"));
-               
+
                 foreach (var clientUser in clientUsers)
                 {
                     mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { ClientName, primarySkill, jdLink,calendlyLink };
-                mailMessage.Subject = ClientName +" Video Interview "+ primarySkill;
+                object[] parameters = new object[] { ClientName, primarySkill, jdLink, calendlyLink };
+                mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
@@ -267,7 +267,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.CC.Add(new MailAddress(clientUser.EmailId.ToLower(), null));
                 }
-                object[] parameters = new object[] { ClientName, primarySkill};
+                object[] parameters = new object[] { ClientName, primarySkill };
                 mailMessage.Subject = ClientName + " Video Interview " + primarySkill;
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteCandidateTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -392,7 +392,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail,string interviewDate)
+        public string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate)
         {
             try
             {
@@ -443,8 +443,7 @@ namespace Risebird.CommonHelper
                 }
 
                 mailMessage.Subject = model.Subject;
-                //string msgBody = string.Format(model.Body);
-                string msgBody = "Hi,<br/> This is test mail.";
+                string msgBody = string.Format(model.Body);
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));

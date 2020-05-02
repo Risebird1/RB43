@@ -184,6 +184,72 @@
     .trash-btn {
         background: #d20505 !important;
     }
+
+
+    .mdc-card .modal .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .mdc-card .modal .form-control, .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .modal .form-group {
+        margin-bottom: 10px;
+    }
+
+        .modal .form-group .btn {
+            margin: 0px;
+        }
+
+    table {
+        border: 1px #ccc solid !important;
+    }
+
+    #divIntrestedShown table, #divshortlist table {
+        border: 1px #ccc solid;
+        margin: 20px;
+    }
+    #divIntrestedShown tr, #divshortlist tr {
+        border: 1px #ccc solid;
+    }
+
+    #divIntrestedShown td, #divshortlist td {
+        padding: 5px;
+    }
+
+
+    #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.05);
+    }
+
 </style>
 
 
@@ -291,12 +357,20 @@
                                             <div class="stats text-center">
 
 
-                                                <!--   <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Reschedule Meeting">
-        <i class="now-ui-icons fa fa-calendar"></i>
-    </button>-->
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="ShortList">
+                                                    <span onclick="ShortList('@item.IRFID')" title="ShortList" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                </button>
 
 
 
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Show Interest">
+                                                    <span onclick="Interested('@item.IRFID')" title="Show Interest" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10zm-3-5h-2V7h-4v3H8l4 4 4-4z" /></svg></span>
+                                                </button>
+
+
+
+                                             
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Reschedule Meeting">
                                                     <span onclick="window.open('@item.CalendlyLink')" title="Reschedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
@@ -310,11 +384,12 @@
                                                 </button>
 
 
+
                                                 @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                 {
                                                     <!--   <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
-               <i class="now-ui-icons fa fa-phone"></i>
-           </button>-->
+            <i class="now-ui-icons fa fa-phone"></i>
+        </button>-->
 
 
 
@@ -370,8 +445,8 @@
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Interviewer!</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title">Call Interviewer!</h5>
                     <span class="close" id="callPopUp">&times;</span>
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
@@ -398,287 +473,288 @@
 </div>
 <div id="myShorlList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
     <!-- Modal content -->
-    <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-            <h5 style="margin-left:40%;font-size:20px">ShortListed</h5>
-            <span class="close" id="callPopUp" onclick="closeshortlistPopUp()">&times;</span>
-        </div>
-        <div class="modal-body" style="padding: 2px 16px;">
-            <div class="row" id="divshortlist">
-
-
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" >
+            <div class="modal-header" >
+                <h5 class="modal-title">Shortlisted</h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeshortlistPopUp()">&times;</span>
             </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" id="divshortlist">
 
-            <div class="">
-                <input type="button" onclick="closeshortlistPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+
+                </div>
+
+                <div class="">
+                    <input type="button" onclick="closeshortlistPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                </div>
             </div>
-        </div>
-        <div class="modal-footer" style="padding: 2px 16px;
+            <div class="modal-footer" style="padding: 2px 16px;
         background-color: #14406e;
         color: white;">
 
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <div id="myintrestList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+        <!-- Modal content -->
+
+
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Interest shown by client(s)</h5>
+                    <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPopUp()">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row" id="divIntrestedShown">
+
+
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
-</div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
-<div id="myintrestList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
-    <!-- Modal content -->
-    <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-            <h5 style="margin-left:40%;font-size:20px">Interest shown by client(s)</h5>
-            <span class="close" id="callPopUp" onclick="closeIntrestPopUp()">&times;</span>
-        </div>
-        <div class="modal-body" style="padding: 2px 16px;">
-            <div class="row" id="divIntrestedShown">
-
-
-            </div>
-
-            <div class="">
-                <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
-            </div>
-        </div>
-        <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
-
-        </div>
-    </div>
-
-</div>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
-
-<script>
-    var interviewerMail = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
+    <script>
+        var interviewerMail = "";
+        var span = document.getElementById("callPopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            hangUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+        $(document).ready(function () {
+            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+                // Set up the Twilio Client Device with the token
+                Twilio.Device.setup(data.token);
+            });
         });
-    });
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+        /* Callback to let us know Twilio Client is ready */
+        Twilio.Device.ready(function (device) {
 
-    });
+        });
 
-    function callInterviewer(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+        function callInterviewer(phoneNumber) {
+            var params = { "phoneNumber": phoneNumber };
+            Twilio.Device.connect(params);
+        }
+        function hangUp() {
+            Twilio.Device.disconnectAll();
+        }
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
+        Twilio.Device.connect(function (connection) {
+            var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+        });
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+        function afterTimeOut() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+        Twilio.Device.disconnect(function (connection) {
+            var appendText = "Call disconnected! ";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            setTimeout(afterTimeOut, 2000);
 
-    });
+        });
 
-    function ModalButtonClick(obj) {
+        function ModalButtonClick(obj) {
 
-        //candidate = candidateObj.candidateName;
-        interviewerMail = obj.interviewer;
-        // Get the modal
-        var modal = document.getElementById("myModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + interviewerMail + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callInterviewer(obj.InterviewerPhone);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+            //candidate = candidateObj.candidateName;
+            interviewerMail = obj.interviewer;
+            // Get the modal
+            var modal = document.getElementById("myModal");
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            var appendText = "Calling... " + "<b>" + interviewerMail + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            callInterviewer(obj.InterviewerPhone);
+        }
+        function closeCallPopUp() {
+            hangUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
 
 
-</script>
-<script>
-    function CancelInterview(obj) {
+    </script>
+    <script>
+        function CancelInterview(obj) {
 
-        //var IdIRF = dataID;
-        swal.fire({
-            title: 'Are you sure?',
-            text: "The Interview will be cancelled!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, cancel interview!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
-                    $.ajax({
-                        url: '/Interview/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&candidateEmail=' + obj.candidateEmail,
-                        success: function (result) {
-                            resolve(result)
+            //var IdIRF = dataID;
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The Interview will be cancelled!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel interview!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        //var IdIRF = dataID;
+                        $.ajax({
+                            url: '/Interview/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&candidateEmail=' + obj.candidateEmail,
+                            success: function (result) {
+                                resolve(result)
 
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error cancelling!", "Please try again", "error");
-                        }
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error cancelling!", "Please try again", "error");
+                            }
+                        })
                     })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Successful!',
-                    type: 'success',
-                    html: '<p>The interview was cancelled!</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/Interview/CandidateInterviews";
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Sorry!',
-                    'The interview was not cancelled.',
-                    'error'
-                )
-            }
-        })
-    }
-
-</script>
-<script>
-    function ShortList(IRFID) {
-        $.ajax({
-            type: "POST",
-            url: "/Interview/ShortListList",
-            data: { IRFID: IRFID },
-            success: function (data) {
-                var modal = document.getElementById("myShorlList");
-                modal.style.display = "block";
-                var html = '';
-                html += '<table style="Width:100%">';
-                html += '<tr><td>Client Name</td><td>ShortList Date</td></tr>';
-                for (var i = 0; i < data.length; i++) {
-                    html += '<tr>';
-                    html += '<td>' + data[i].ClientName + '</td>';
-                    html += '<td>' + data[i].interviewDate + '</td>';
-                    html += "</tr>";
-
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Successful!',
+                        type: 'success',
+                        html: '<p>The interview was cancelled!</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/Interview/CandidateInterviews";
+                    })
                 }
-                html += "</table>";
-                if (data.length == 0) {
-                    html = 'No record found';
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Sorry!',
+                        'The interview was not cancelled.',
+                        'error'
+                    )
                 }
-                $("#divshortlist").empty().html(html);
-            }
-        });
-    }
-    function Interested(IRFID) {
-        $.ajax({
-            type: "POST",
-            url: "/Interview/InterestList",
-            data: { IRFID: IRFID },
-            success: function (data) {
-                var modal = document.getElementById("myintrestList");
-                modal.style.display = "block";
-                var html = '';
-                html += '<table style="Width:100%">';
-                html += '<tr><td>Client Name</td><td>Intersted Date</td><td>Comments</td><td>Action</td></tr>';
-                for (var i = 0; i < data.length; i++) {
-                    html += '<tr>';
-                    html += '<td>' + data[i].ClientName + '</td>';
-                    html += '<td>' + data[i].interviewDate + '</td>';
-                    html += '<td>' + data[i].ApprovalComments + '</td>';
-                    if (data[i].Status == "Accept") {
-                        html += '           <button type="button" onclick="AcceptIntrest(' + data[i].id + ')" disabled class="btn btn-info btn-icon btn-sm" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
-                        html += '               <i class="now-ui-icons fa fa-universal-access"></i>';
-                        html += '          </button>';
-                        html += '          <button type="button" onclick="RejectIntrest(' + data[i].id + ')" class="btn btn-info btn-icon btn-sm" id="btnRejectIntrest_' + data[i].id + '" title="Reject">';
-                        html += '               <i class="now-ui-icons fa fa-remove"></i>';
-                        html += '          </button>';
+            })
+        }
+
+    </script>
+    <script>
+        function ShortList(IRFID) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/ShortListList",
+                data: { IRFID: IRFID },
+                success: function (data) {
+                    var modal = document.getElementById("myShorlList");
+                    modal.style.display = "block";
+                    var html = '';
+                    html += '<table style="Width:100%">';
+                    html += '<tr><td>Client Name</td><td>Shortlisted Date</td></tr>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<tr>';
+                        html += '<td>' + data[i].clientName + '</td>';
+                        html += '<td>' + data[i].dateRequired + '</td>';
+                        html += "</tr>";
+
                     }
-                    else if (data[i].Status == "Pass") {
-                        html += '             <button type="button" onclick="AcceptIntrest(' + data[i].id + ')" class="btn btn-info btn-icon btn-sm" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
-                        html += '                 <i class="now-ui-icons fa fa-universal-access"></i>';
-                        html += '            </button>';
-                        html += '             <button type="button" onclick="RejectIntrest(' + data[i].id + ')" disabled class="btn btn-info btn-icon btn-sm" id="btnRejectIntrest_' + data[i].id + '" title="Reject">';
-                        html += '                  <i class="now-ui-icons fa fa-remove"></i>';
-                        html += '              </button>';
+                    html += "</table>";
+                    if (data.length == 0) {
+                        html = 'No record found';
                     }
-                    else {
-                        html += '             <button type="button" onclick="AcceptIntrest(' + data[i].id + ')" class="btn btn-info btn-icon btn-sm" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
-                        html += '                <i class="now-ui-icons fa fa-universal-access"></i>';
-                        html += '             </button>';
-                        html += '             <button type="button" onclick="RejectIntrest(' + data[i].id + ')" class="btn btn-info btn-icon btn-sm" id="btnRejectIntrest_' + data[i].id + '" title="Reject">';
-                        html += '                  <i class="now-ui-icons fa fa-remove"></i>';
-                        html += '              </button>';
+                    $("#divshortlist").empty().html(html);
+                }
+            });
+        }
+        function Interested(IRFID) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/InterestList",
+                data: { IRFID: IRFID },
+                success: function (data) {
+                    var modal = document.getElementById("myintrestList");
+                    modal.style.display = "block";
+                    var html = '';
+                    html += '<table style="Width:100%">';
+                    html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<tr>';
+                        html += '<td>' + data[i].clientName + '</td>';
+                        html += '<td>' + data[i].dateRequired + '</td>';
+                        html += '<td>' + data[i].approvalComments + '</td><td class="text-center">';
+                        if (data[i].Status == "Accept") {
+                            html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
+                            html += '          </button>';
+                            html += '          <button type="button"  class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '            <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '          </button>';
+                        }
+                        else if (data[i].Status == "Pass") {
+                            html += '             <button type="button" class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '               <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
+                            html += '            </button>';
+                            html += '             <button type="button"  disabled class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '                 <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '              </button>';
+                        }
+                        else {
+                            html += '             <button type="button"  class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '             <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span> ';
+                            html += '             </button>';
+                            html += '             <button type="button" class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '              <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '              </button>';
+                        }
+                        html += "</td></tr>";
+
                     }
-                    html += "</tr>";
-
+                    html += "</table>";
+                    if (data.length == 0) {
+                        html = 'No record found';
+                    }
+                    $("#divIntrestedShown").empty().html(html);
                 }
-                html += "</table>";
-                if (data.length == 0) {
-                    html = 'No record found';
+            });
+        }
+        function closeshortlistPopUp() {
+            var modal = document.getElementById("myShorlList");
+            modal.style.display = "none";
+        }
+        function closeIntrestPopUp() {
+            var modal = document.getElementById("myintrestList");
+            modal.style.display = "none";
+        }
+        function AcceptIntrest(id) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/Intrestreaction",
+                data: { vedioid: id, Status: "Accept" },
+                success: function (data) {
+                    $("#btnAcceptIntrest_" + id).attr('disabled', true);
                 }
-                $("#divIntrestedShown").empty().html(html);
-            }
-        });
-    }
-    function closeshortlistPopUp() {
-        var modal = document.getElementById("myShorlList");
-        modal.style.display = "none";
-    }
-    function closeIntrestPopUp() {
-        var modal = document.getElementById("myintrestList");
-        modal.style.display = "none";
-    }
-    function AcceptIntrest(id) {
-        $.ajax({
-            type: "POST",
-            url: "/Interview/Intrestreaction",
-            data: { vedioid: id, Status: "Accept" },
-            success: function (data) {
-                $("#btnAcceptIntrest_" + id).attr('disabled', true);
-            }
-        });
-    }
-    function RejectIntrest(id) {
-        $.ajax({
-            type: "POST",
-            url: "/Interview/Intrestreaction",
-            data: { vedioid: id, Status: "Pass" },
-            success: function (data) {
-                $("#btnRejectIntrest_" + id).attr('disabled', true);
-            }
-        });
-    }
+            });
+        }
+        function RejectIntrest(id) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/Intrestreaction",
+                data: { vedioid: id, Status: "Pass" },
+                success: function (data) {
+                    $("#btnRejectIntrest_" + id).attr('disabled', true);
+                }
+            });
+        }
 
-</script>
+    </script>
