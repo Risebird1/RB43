@@ -58,15 +58,6 @@ where ic.MeetingStatus is null and im.confirmationStatus=1 and im.interviewDate>
 group by irf.id
 
 
-DECLARE @tbl_SubscribedTo TABLE (
-    SubId int,
-    IRFId INT
-);
-INSERT INTO @tbl_SubscribedTo
-select id,IRFId from Subscribers
-where UserId= (select id from  UserList ul where ul.EmailId = @EmailId and idProfile= (select id from [Profile] where [Name]=@Profile))
-
-
 IF (@Profile = 'Client')  
 	BEGIN  
 		declare
@@ -101,20 +92,6 @@ Else if(@Profile='Recruiter')
 		irf.TotalInvites, irf.CalendlyLink, irf.TotalBudget, irf.Discount, irf.IsBiometricEnabled, irf.PriorityLevel, irf.IsPaused, irf.ClientName,
 		Client.[Name], tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings, tschm.ScheduledMeetings, (irf.PerMintuteRate*tcm.ConfirmedMeetings)
 	End
-Else if(@Profile='CuratedUser')
-	Begin
-
-		select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.IsDeleted,
-		irf.CalendlyLink, irf.IsPaused, irf.ClientName,
-		Client.[Name] as ClientCompName, tsm.SelectedMeetings, sub.SubId
-		from irf left join Client on IRF.ClientId = Client.id
-		left join @tbl_SelectedMeetings tsm on irf.id=tsm.IRFId
-		left join @tbl_SubscribedTo sub on irf.id=sub.IRFId
-		where Client.CuratedLink=1 
-		group by irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.IsDeleted,
-		irf.CalendlyLink, irf.IsPaused, irf.ClientName,
-		Client.[Name], tsm.SelectedMeetings, sub.SubId
-	End
 Else
 begin
 		select irf.id, irf.IRFId, irf.JDTiltle, irf.StartDate, irf.EndDate, irf.JDLink,irf.RisebirdHr, irf.PerMintuteRate, irf.IsDeleted,
@@ -129,7 +106,6 @@ begin
 		Client.[Name], tcm.ConfirmedMeetings, ttm.TotalMeetings, tsm.SelectedMeetings, tschm.ScheduledMeetings, (irf.PerMintuteRate*tcm.ConfirmedMeetings)
 End
 End
-
 GO
 
 

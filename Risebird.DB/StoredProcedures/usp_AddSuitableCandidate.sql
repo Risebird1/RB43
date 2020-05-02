@@ -4,10 +4,7 @@ BEGIN
     DROP PROCEDURE dbo.usp_AddSuitableCandidate
 END
 
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+
 CREATE Procedure usp_AddSuitableCandidate  
 @InterviewId int,  
 @EmailId varchar(max),  
@@ -19,4 +16,4 @@ Select @Id=id from UserList where EmailId=@EmailId
 Insert Into SuitableCandidate values(@InterviewId,@Id,'Intrested',@Comment,GetDate())  
 Select CandidateEmail from InterviewMeetings where id=@InterviewId  
 END
-GO
+

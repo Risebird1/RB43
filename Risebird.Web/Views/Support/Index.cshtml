@@ -31,10 +31,6 @@
         white-space: nowrap !important;
     }
 
-    table {
-        border: 1px #ccc solid !important;
-    }
-
     table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
         max-width: 300px !important;
     }
@@ -48,6 +44,15 @@
         font-weight: normal !important;
     }
 
+    thead, tfoot {
+        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
+        background: #3f9eff; /* Old browsers */
+        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
+        COLOR: #FFF;
+    }
 
     .table-striped tbody tr:nth-of-type(odd) {
         background-color: #fff;
@@ -99,13 +104,13 @@
         border-radius: 10px;
     }
 
-    textarea::-webkit-scrollbar {
+    #style-4::-webkit-scrollbar {
         width: 2px;
         height: 6px;
         background-color: #cee0f3;
     }
 
-    textarea::-webkit-scrollbar-thumb {
+    #style-4::-webkit-scrollbar-thumb {
         background-color: #56a9ff;
         border: 1px solid #56a9ff;
         margin: 2px;
@@ -389,6 +394,57 @@
     }
 
 
+    .btn {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 0px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
+    }
+
+        .btn:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
+        }
+
+    .btn-primary, .btn-fill {
+        background: #4fa4fb !important;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2 !important;
+        -moz-box-shadow: 0 3px #3884d2 !important;
+        box-shadow: 0 3px #3884d2 !important;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+
+        .btn-primary:hover, .btn-fill:hover {
+            background: #4fa4fb;
+            box-shadow: 0 4px #3884d2 !important;
+            top: 0px;
+        }
+
     .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
         background: #84c0ff;
         color: #fff;
@@ -423,21 +479,21 @@
         }
 
 
-    #supportList_length, #supportList_filter {
+    #meeting_length, #meeting_filter {
         margin: 10px 0px
     }
 
-    #supportList_length label {
-        font-size: 14px;
-    }
+        #meeting_length label {
+            font-size: 14px;
+        }
 
-        #supportList_length select.form-control {
+        #meeting_length select.form-control {
             padding: 8px 8px;
         }
 
-    #supportList_length select:focus {
-        border-color: #4a93de;
-    }
+        #meeting_length select:focus {
+            border-color: #4a93de;
+        }
 
     #supportList_filter input {
         outline: none;
@@ -488,12 +544,6 @@
     #supportList_filter input::-webkit-input-placeholder {
         color: #999;
     }
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
     table {
         white-space: nowrap !important;
     }
@@ -595,89 +645,22 @@
         padding-bottom: 10px !important;
         color: #fff;
     }
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
 
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
+    .modal-wrap .modal-content {
+        width: 690px;
         position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
         font-size: 12px;
-        text-decoration: none;
+        margin-top: -53px;
     }
 
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 10px 0px 10px 0;
     }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .mdc-card .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
 
 </style>
 
@@ -710,11 +693,11 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="mdc-card card">
-                 
-                    <div class="mdc-card-wrapper__text-section">
-
-                      
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Support</h4>
+                    </div>
+                    <div class="card-body">
                         <div class="toolbar">
                             <!--        Here you can write extra buttons/actions for the toolbar              -->
                             <div class="row">
@@ -726,7 +709,7 @@
                                     }
                                     @if (Model.BackController != null && Model.BackMethod != null)
                                     {
-                                        @Html.ActionLink("Back", Model.BackMethod, Model.BackController, null, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style = "margin-left:1252px" })
+                                        @Html.ActionLink("Back", Model.BackMethod ,Model.BackController,null, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style ="margin-left:1252px" })
                                     }
                                 </div>
 
@@ -738,59 +721,57 @@
                         </div>
                         <div class="dataloading">
                             <div class="toolbar">
-                                <div class="row">
-                                    <div class="card-header">
-                                        <h4 class="card-title">Support</h4>
-                                    </div>
-                                </div>
-                                </div>
 
-                            
-                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                    <div id="tableID">
-                                        <table id="supportList" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>EmailId</th>
-                                                    <!-- <th>Mobile Number</th>-->
-                                                    <th>Whatsapp Number</th>
-                                                    <th>Voice Call</th>
-                                                    <th>Whatsapp Voice Call</th>
-                                                    <th>Email Support</th>
-                                                    <th>Availability Hours</th>
-                                                    <th style="text-align:center">Call</th>
-                                                    <th class="disabled-sorting text-center">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>EmailId</th>
-                                                    <!--<th>Mobile Number</th-->
-                                                    <th>Whatsapp Number</th>
-                                                    <th>Voice Call</th>
-                                                    <th>Whatsapp Voice Call</th>
-                                                    <th>Email Support</th>
-                                                    <th>Availability Hours</th>
-                                                    <th style="text-align:center">Call</th>
-                                                    <th class="disabled-sorting text-center">Actions</th>
-                                                </tr>
-                                            </tfoot>
-                                            <tbody>
-                                                @foreach (var item in Model.Supports)
-                                                {
+                            </div>
 
-                                                    <tr id="@item.id">
-                                                        <td> @item.Name</td>
-                                                        @if (item.EmailId != null && item.EmailId != "")
-                                                        {
-                                                            <td>@item.EmailId</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>Not available</td>
-                                                        }
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <div id="tableID">
+                                    <table id="supportList" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>EmailId</th>
+                                                <!-- <th>Mobile Number</th>-->
+                                                <th>Whatsapp Number</th>
+                                                <th>Voice Call</th>
+                                                <th>Whatsapp Voice Call</th>
+                                                <th>Email Support</th>
+                                                <th>Availability Hours</th>
+                                                <th style="text-align:center">Call</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>EmailId</th>
+                                                <!--<th>Mobile Number</th-->
+                                                <th>Whatsapp Number</th>
+                                                <th>Voice Call</th>
+                                                <th>Whatsapp Voice Call</th>
+                                                <th>Email Support</th>
+                                                <th>Availability Hours</th>
+                                                <th style="text-align:center">Call</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
+                                            </tr>
+                                         </tfoot>
+                                         <tbody>
+                                             @foreach (var item in Model.Supports)
+                                             {
+
+                                             <tr id="@item.id">
+                                                 <td> @item.Name</td>
+                                                 @if (item.EmailId != null && item.EmailId != "")
+                                                 {
+                                                     <td>@item.EmailId</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>Not available</td>
+                                                 }
+
+
+                                              
 
 
 
@@ -802,86 +783,82 @@
 
 
 
+                                                 @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
+                                                 {
+                                                     <td>@item.WhatsappNumber</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>Not available</td>
+                                                 }
+
+
+                                                 @if (item.OnVoiceCall)
+                                                 {
+                                                     <td>Yes</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>No</td>
+                                                 }
+                                                 @if (item.OnWhatsapp)
+                                                 {
+                                                     <td>Yes</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>No</td>
+                                                 }
+                                                 @if (item.OnEmail)
+                                                 {
+                                                     <td>Yes</td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td>No</td>
+                                                 }
+                                                 @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
+                                                 {
+                                                     <td>
+                                                         <span style="font-size:12px;">  @item.AvailabilityHours </span>
+                                                     </td>
+                                                 }
+                                                 else
+                                                 {
+                                                     <td> </td>
+                                                 }
+
+                                                 <td>
+                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                     {
+                                                         <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
 
 
 
-                                                        @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
-                                                        {
-                                                            <td>@item.WhatsappNumber</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>Not available</td>
-                                                        }
+                                                         <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
 
 
-                                                        @if (item.OnVoiceCall)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.OnWhatsapp)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.OnEmail)
-                                                        {
-                                                            <td>Yes</td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No</td>
-                                                        }
-                                                        @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
-                                                        {
-                                                            <td>
-                                                                <span style="font-size:12px;">  @item.AvailabilityHours </span>
-                                                            </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td> </td>
-                                                        }
+                                                     }
 
-                                                        <td>
+                                                 </td>
+                                                 <td class="text-center">
+                                                     @if (ViewBag.Profile == "Admin")
+                                                     {
+                                                         <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
+                                                         <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
 
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
-                                                            {
-                                                                <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
+                                                     }
 
-
-
-                                                                <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
-
-
-                                                            }
-
-                                                        </td>
-                                                        <td class="text-center">
-                                                            @if (ViewBag.Profile == "Admin")
-                                                            {
-                                                                <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                                <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
-
-                                                            }
-
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-
+                                                 </td>
+                                             </tr>
+                                            }
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>
+
+                        </div>
                     </div>
                     <!-- end content-->
                 </div>
@@ -889,7 +866,7 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal " style="display: none; /* Hidden by default */
+        <div id="myModal" class="modal  modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -901,34 +878,31 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
-            <div class="modal-dialog modal-lg" role="document">
-
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" style="font-size:20px;">Call HR!</h5>
-                        <span class="close" id="callPopUp">&times;</span>
-                    </div>
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <label id="callingLabel" style="    margin-top: 30px;
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:20px;">Call HR!</h5>
+                    <span class="close" id="callPopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <label id="callingLabel" style="    margin-top: 30px;
     /* text-align: center; */
     font-size: 20px;
     text-align: center;
     margin: 20px auto;
     display: block"><b>Calling...</b></label>
 
-                        </div>
-
-                        <div class="">
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
-    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                        </div>
                     </div>
-                    <div class="modal-footer" style="background:#fff;"></div>
+
+                    <div class="">
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                    </div>
                 </div>
+            <div class="modal-footer" style="background:#fff;"></div>
             </div>
 
-            </div>
+        </div>
         <!-- end row -->
     </div>
    

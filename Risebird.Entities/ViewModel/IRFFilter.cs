@@ -11,7 +11,6 @@ namespace Risebird.Entities.ViewModel
         public DateTime? EndDate { get; set; }
         public string[] ClientName { get; set; }
         public string[] ArchiveStatus { get; set; }
-        public string[] SubscriptionStatus { get; set; }
         public string[] ClientRole { get; set; }
 
     }

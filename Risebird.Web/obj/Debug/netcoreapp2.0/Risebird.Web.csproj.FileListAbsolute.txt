@@ -256,3 +256,5 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Ris
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

@@ -13,41 +13,74 @@
         color: #ffffff;
         margin-top: 45px;
     }
-
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
+    .buttons {
+        border: none;
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        display: inline-block;
+        margin: 20px 5px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        outline: none;
+        position: relative;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        font-family: Arial, sans-serif;
     }
 
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
+        .buttons:after {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            -webkit-transition: all 0.3s;
+            -moz-transition: all 0.3s;
+            transition: all 0.3s;
         }
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
+
+    .button-2 {
+        background: #4fa4fb;
+        color: #fff;
+        -webkit-box-shadow: 0 3px #3884d2;
+        -moz-box-shadow: 0 3px #3884d2;
+        box-shadow: 0 3px #3884d2;
+        -webkit-transition: none;
+        -moz-transition: none;
+        transition: none;
+    }
+
+    .button-2b {
+        border-radius: 5px 5px 5px 5px;
+        box-shadow: 0 3px #3884d2;
+    }
+
+        .button-2b:hover {
+            box-shadow: 0 4px #3884d2;
+            top: 0px;
+        }
+
+        .button-2b:active {
+            outline: 0;
+            border: 0;
+        }
+
+    #btnPlus, #btnMinus {
+        padding: 2px;
+    }
+
+    #btnMinus {
+        position: absolute;
+        margin-left: 12px;
+    }
+
+    #btnPlus {
+        background-color: #4a89dc;
     }
 
     .glyphicon {
@@ -57,83 +90,10 @@
         line-height: 0;
     }
 
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
+    .table-responsive {
+        overflow: hidden;
     }
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-  
-
-        .navbar .navbar-wrapper .navbar-brand {
-            margin-right: 0.5rem;
-        }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
 </style>
-
-<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
-<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
@@ -151,8 +111,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-              /   &nbsp;<a class="navbar-brand">Sample Questions</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
+                <a class="navbar-brand">Sample Questions</a>
             </div>
 
         </div>
@@ -163,24 +123,24 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="mdc-card card">
-
-                    <div class="mdc-card-wrapper__text-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Sample Questions</h4>
+                    </div>
+                    <div class="card-body">
                         <form action="/IRF/SampleQuestions" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
 
                             <div class="row">
-                                <div class="card-header">
-                                    <h4 class="card-title">Sample Questions</h4>
-                                </div>
+
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive-sm">
+                                    <div class="table-responsive">
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">Skill Name</th>
                                                     <th class="table_heading">Questions</th>
-                                                    <th class="table_heading text-center">Action</th>
+                                                    <th class="table_heading">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -188,41 +148,22 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                         
-                                                                    @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
 
-                                                      
-                                                                    </td>
+                                                            @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
+
+                                                        </td>
 
 
 
                                                         <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                <div class="talktext">
-                                                                    <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" style="width:100%" class="valid" aria-invalid="false"></textarea>
-
-
-                                                                </div>
-                                                            </div>
-
+                                                            <textarea htmlattributes="{ class = form-control text-box single-line }" id="SkillCollection_0__Comment" name="SkillCollection[0].Comment" style="width:100%" class="valid" aria-invalid="false"></textarea>
 
                                                         </td>
 
-                                                        <td class="text-center action">
+                                                        <td>
 
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
-
-
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                            </button>
-
-
-
-                                                            
+                                                            <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
 
                                                         </td>
                                                     </tr>
@@ -239,26 +180,13 @@
                                                             </td>
 
                                                             <td>
-
-                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                    <div class="talktext">
-                                                                        @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                                                        </div></div>
-                                                                        
-                                                                        </td>
+                                                                @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                            </td>
 
                                                             <td>
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
-
-
-                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                    <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
-                                                                </button>
-
-
+                                                                <span id="btnPlus" onclick="AddRowComments()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnMinus" onclick="DeleteRow(this, 'SkillCollection','Skill','Comment')" class="btn btn-round btn-danger btn-icon btn-sm delete-comment"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -273,13 +201,10 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-
-
-                                    <div class="col-md-12 mc-button-area">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                   
-
-                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                    <label class="col-md-5"></label>
+                                    <div class="col-md-7 text-right">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "buttons button-2 button-2b", @role = "button" })
+                                        <button type="submit" class="buttons button-2 button-2b" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -297,7 +222,7 @@
             <!-- end col-md-12 -->
         </div>
     </div>
-
+  
 </div>
 
 <script>

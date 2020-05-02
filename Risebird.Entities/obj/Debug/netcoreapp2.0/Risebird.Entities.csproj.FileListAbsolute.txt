@@ -105,3 +105,5 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb

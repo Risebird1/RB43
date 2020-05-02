@@ -1117,7 +1117,7 @@ namespace Risebird.Business
             }
 
         }
-        public int GetvedioShortList(string vedioid, string email)
+        public EmailDetails GetvedioShortList(string vedioid, string email)
         {
             try
             {

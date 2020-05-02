@@ -205,6 +205,11 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
 
+                                
+
+
+
+
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                     @Html.DropDownListFor(model => model.IRFId, Model.IRFList, new { @class = "form-control", @onchange = "IRFChanged(this.value)" })

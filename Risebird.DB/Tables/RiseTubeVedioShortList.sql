@@ -14,25 +14,5 @@ CREATE TABLE [dbo].[RiseTubeVedioShortList](
 )					
 
 END
-ELSE
-BEGIN
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'ShortListedOn')
-      AND Object_ID = Object_ID(N'RiseTubeVedioShortList'))
-BEGIN
-    ALTER TABLE RiseTubeVedioShortList
-    Add ShortListedOn [datetime] null
-END
-IF NOT EXISTS(
-    SELECT *
-    FROM sys.columns
-    WHERE Name IN (N'Status')
-      AND Object_ID = Object_ID(N'RiseTubeVedioShortList'))
-BEGIN
-    ALTER TABLE RiseTubeVedioShortList
-    Add Status [varchar](20) NULL
-END
-END
+
 GO

@@ -21,6 +21,7 @@ using MediaToolkit.Model;
 using MediaToolkit;
 using MediaToolkit.Options;
 using Microsoft.AspNetCore.Http.Internal;
+using System.Text;
 
 namespace Risebird.Web.Controllers
 {
@@ -34,7 +35,9 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private IIRFService _iRFService;
         private IIRFRepository _iRFRepository;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService)
+        private INotificationHelper _notificationHelper;
+
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -43,6 +46,8 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _iRFService = iRFService;
             _settingsService = settingsService;
+            _notificationHelper = notificationHelper;
+
         }
 
 
@@ -5773,7 +5778,23 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
-            _meetingService.Intrestreaction(vedioid, Status);
+            var Email = _meetingService.Intrestreaction(vedioid, Status);
+            var email = HttpContext.Session.GetString("email");
+
+            if (Email != null)
+            {
+                Mail _mail = new Mail();
+                _mail.TO = Email;
+                email = email.Replace("\"", "");
+                email = email.Split("@")[1].Split(".")[0];
+                StringBuilder bulider = new StringBuilder();
+                bulider.Append("<p>Hi Dear,</p><br/>");
+                bulider.Append("<p>candidate "+ email + " is "+ Status + " your interest.</p>");
+                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
+                bulider.Append("<br/><p>Thanks,</p>RiseBird");
+                _mail.Body = bulider.ToString();
+                var result1 = _notificationHelper.NotifyCandidate(_mail);
+            }
             return Json("Success");
         }
         [HttpPost]
@@ -5787,7 +5808,12 @@ namespace Risebird.Web.Controllers
         {
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
-            var model=_meetingService.ShortListedClient(emailid, IRFID);
+            var model = _meetingService.ShortListedClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
             return Json(model);
         }
         [HttpPost]
@@ -5796,6 +5822,11 @@ namespace Risebird.Web.Controllers
             var emailid = HttpContext.Session.GetString("email")?.Trim();
             emailid = emailid.Replace("\"", "");
             var model = _meetingService.InterestListClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
             return Json(model);
         }
     }

@@ -53,7 +53,7 @@ namespace Risebird.Business.Interface
         string VedioShare(string value, string vedioid);
          string VedioComment(string value, string vedioid, string email);
         List<VedioComments> GetvedioComments(int id);
-        int GetvedioShortList(string vedioid, string email);
+        EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id,string email,string Comment);
         string Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);

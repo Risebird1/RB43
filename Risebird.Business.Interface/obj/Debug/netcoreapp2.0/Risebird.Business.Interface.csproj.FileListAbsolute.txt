@@ -152,3 +152,5 @@ C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\ne
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CopyComplete
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
 C:\Users\PS250550\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.dll
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
