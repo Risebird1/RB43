@@ -12713,19 +12713,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rumab\\.nuget\\packages\\": {}
+    "C:\\Users\\Harish\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
       "projectName": "Risebird.Repository.Interface",
-      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
-      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\obj\\",
+      "projectPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj",
+      "packagesPath": "C:\\Users\\Harish\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Repository.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Harish\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12738,8 +12738,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

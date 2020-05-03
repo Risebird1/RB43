@@ -12695,19 +12695,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rumab\\.nuget\\packages\\": {}
+    "C:\\Users\\Harish\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
+      "projectUniqueName": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Entities\\Risebird.Entities.csproj",
       "projectName": "Risebird.Entities",
-      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj",
-      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Entities\\obj\\",
+      "projectPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Entities\\Risebird.Entities.csproj",
+      "packagesPath": "C:\\Users\\Harish\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.Entities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Harish\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

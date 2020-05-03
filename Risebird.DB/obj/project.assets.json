@@ -676,19 +676,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rumab\\.nuget\\packages\\": {}
+    "C:\\Users\\Harish\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.DB\\Risebird.DB.csproj",
+      "projectUniqueName": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.DB\\Risebird.DB.csproj",
       "projectName": "Risebird.DB",
-      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.DB\\Risebird.DB.csproj",
-      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.DB\\obj\\",
+      "projectPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.DB\\Risebird.DB.csproj",
+      "packagesPath": "C:\\Users\\Harish\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Harish\\Source\\Repos\\Risebird5\\Risebird.DB\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Harish\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
