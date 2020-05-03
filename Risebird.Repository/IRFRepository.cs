@@ -1480,6 +1480,7 @@ namespace Risebird.Repository
             parameters.Add("@TotalBudget", entity.TotalBudget);
             parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
+            parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
             
             return parameters;

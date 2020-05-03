@@ -301,10 +301,11 @@
                                                 <th>Candidate Email</th>
                                                 @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Company Detail</th>
+                                                <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
-                                                <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
@@ -319,10 +320,11 @@
                                                 <th>Candidate Email</th>
                                                 @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Company Detail</th>
+                                                <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
-                                                <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
@@ -341,7 +343,7 @@
                                                 <td> @item.JobLevelDesc </td>
                                                 <td> @item.candidateName</td>
                                                 <td> @item.candidateEmail</td>
-                                                
+
                                                 @if (item.resumeLink != null && item.resumeLink != "")
                                                 {
                                                     <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -350,9 +352,6 @@
                                                 {
                                                     <td>No Resume</td>
                                                 }
-                                                <td>@item.MeetingStatusDesc</td>
-                                                <td>@item.InterviewStatusDesc</td>
-
                                                 @if (item.JDLink != null && item.JDLink != "")
                                                 {
                                                     <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
@@ -361,8 +360,18 @@
                                                 {
                                                     <td>No JD</td>
                                                 }
+                                                @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                {
+                                                    <td>  <a id="companylinkId" target="_blank" title="companyLink" href=@item.CompanyDetails>CompanyDetail</a></td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Company Detail</td>
+                                                }
 
                                                 <td> @item.risebirdHR</td>
+                                                <td>@item.MeetingStatusDesc</td>
+                                                <td>@item.InterviewStatusDesc</td>
                                                 <td class="text-right">
                                                     @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                     {

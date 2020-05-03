@@ -561,7 +561,7 @@
 
 
                                             <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
-                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skills Channel" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skills Channel</font></span>
+                                                <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Skill Channel" onclick="location.href='@Url.Action("Add", "IRF" )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Add Skill Channel</font></span>
                                             </button>
 
 
@@ -779,18 +779,24 @@
 
                                                         @if (!@item.IsClientUser && Model.Profile != "Recruiter")
                                                         {
-                                                        <div class="row">
-                                                            <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
-                                                        </div> <br />
+                                                            <div class="row">
+                                                                <span>Scheduled Interviews:</span> @(item.ScheduledMeetings != null ? item.ScheduledMeetings : 0)
+                                                            </div> <br />
                                                         }
 
                                                         <div class="row">
                                                             <span>Selected Interviews:</span> @(item.SelectedMeetings != null ? item.SelectedMeetings : 0)
                                                         </div> <br />
-                                                        <div class="row">
+                                                        @*<div class="row">
                                                             <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
+                                                        </div>*@
+                                                        @if (@item.CompanyDetails != null)
+                                                        {
+                                                            <div class="row">
+                                                                <span>Company Detail:</span> <p style="color: blue;"><a href="@item.CompanyDetails" target="_blank">Link</a></p>
+                                                            </div>
+                                                        }
                                                         </div>
-                                                    </div>
                                                 </div>
                                             </div>
 

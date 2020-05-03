@@ -78,7 +78,7 @@ namespace Risebird.Entities.Data
 
         public int CandidateMasterId { get; set; }
 
-
+        public string CompanyDetails { get; set; }
 
     }
 }
