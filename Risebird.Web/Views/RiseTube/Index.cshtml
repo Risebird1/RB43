@@ -658,11 +658,11 @@
                                                         else
                                                         {
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed">
                                                                     ShortListed
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in ViewBag.IsShortListed)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -702,11 +702,11 @@
                                                     {
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="IsIntrested">
                                                                     Interested
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <select id="InterestStatus" name="InterestStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in ViewBag.IsIntrested)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -814,12 +814,12 @@
                                                         <span style="  color: #606060; font-weight: 500;font-size: 14px;">(@item.JDTiltle.Split("|")[0])</span>
                                                     </div>
 
-    <div class="video-page text-success">
-        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
+                                                    <div class="video-page text-success">
+                                                        @*@item.candidateName &nbsp; <i class="fas fa-check-circle text-success"></i>*@
 
-    </div>
-    <div class="video-view">
-        &nbsp;<i style="    font-size: 14px;
+                                                    </div>
+                                                    <div class="video-view">
+                                                        &nbsp;<i style="    font-size: 14px;
     color: #888888;" class="fas fa-calendar-alt"></i> <span style="color: #606060;
     font-weight: 600;
     font-size: 12px;">@item.interviewDate</span>
@@ -969,18 +969,18 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
-         $("#ShortListStatus").multiselect({
+             $("#IsShortListed").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
                     buttonWidth: '270px',
                     maxHeight: 200
-         });
-          $("#InterestStatus").multiselect({
+            });
+            $("#IsIntrested").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
                     buttonWidth: '270px',
                     maxHeight: 200
-                });
+            });
 
             $(document).ready(function(){
   $("#search").on("keyup", function() {
@@ -1016,8 +1016,8 @@
             var candidateName =  @Html.Raw(Json.Serialize(CandidateName));
             var clientName =  @Html.Raw(Json.Serialize(ClientName));
             var candidateLocation =  @Html.Raw(Json.Serialize(CandidateLocation));
-            var IsShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
-            var IsIntrested=  @Html.Raw(Json.Serialize(IsIntrested));
+            var isShortListed =  @Html.Raw(Json.Serialize(IsShortListed));
+            var isIntrested=  @Html.Raw(Json.Serialize(IsIntrested));
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
             $("#PrimarySkill").val(primarySkillsArr);
@@ -1029,8 +1029,8 @@
             $("#CandidateName").val(candidateName);
             $("#ClientName").val(clientName);
             $("#CandidateLocation").val(candidateLocation);
-            $("#ShortListStatus").val(IsShortListed);
-            $("#InterestStatus").val(IsIntrested);
+            $("#IsShortListed").val(isShortListed);
+            $("#IsIntrested").val(isIntrested);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
@@ -1071,13 +1071,13 @@
     //// script for loader ends here
 </script>
 
-@if(HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") == "\"CuratedUser\"")
 {
 
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
     <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
     <script>
-       
+
         var enjoyhint_instance = new EnjoyHint({});
 
         var enjoyhint_script_steps = [
@@ -1090,7 +1090,7 @@
                 'next  #txtsearch1': "Search here based on skill or candidate name and click on seach",
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
-            },           
+            },
             {
                 'next .btn2': 'Filters here based on avialble attributes and reset filters if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
@@ -1100,7 +1100,7 @@
                 'click .video-card': 'Click here see the video!.',
                 //'nextButton': { className: "myNext", text: "Next" },
                 //'skipButton': { className: "mySkip", text: "Skip" }
-            }           
+            }
 
         ];
         setTimeout(function () {
