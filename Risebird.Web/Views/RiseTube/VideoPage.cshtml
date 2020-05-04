@@ -1001,18 +1001,26 @@
                                 <div class="pull-right">
                                     <div>
 
+                                        @if (ViewBag.actionstatus != "SkillChannel")
+                                        {
+                                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded btn1" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                <div class="mdc-button__ripple"></div>
+                                            </button>
 
-                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
-                                        </button>
+                                        }
 
-
-
+                                        @if (ViewBag.actionstatus == "SkillChannel")
+                                        {
+                                            <a href="/IRF/Index" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">Back to List</a>
+                                        }
+                                        else
+                                        {
+                                            @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                        }
 
                                         <!--<button type="button" class="buttons button-2 button-2b" data-toggle="modal" data-target="#filterModal" style="margin-top: 2px;"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style="font-family:arial; font-size:12px;"> Filter</font></span></button>-->
-                                        @Html.ActionLink("Back to List", "Index", "Risetube", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
 
 
                                     </div>
@@ -1342,15 +1350,16 @@
                                                         {
                                                             <span> Video deleted !!!</span>
                                                         }
-
-                                                        <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                        </h1>
-
+                                                        @if (Model.JDTiltle != null)
+                                                        {
+                                                            <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                                @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                            </h1>
+                                                        }
                                                         <div class="row counts-liks">
 
-                                                            <div class="k">
-                                                                @if (ViewBag.VedioStatus != "Public")
+                                                            <div class="k col-md-3">
+                                                                @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                                 {
                                                                     @if (Model.IsLike == "Liked")
                                                                     {
@@ -1375,43 +1384,53 @@
                                                                 }
                                                             </div>
                                                             <div class="col-md-3 shortlist" style="text-align: end;">
-                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                @if (Model.VideoLink != null)
                                                                 {
-                                                                    @if (ViewBag.ProfileName == "CuratedUser")
+                                                                    @if (ViewBag.VedioStatus != "Public")
                                                                     {
-                                                                        @if (Model.IsShortlisted > 0)
+                                                                        @if (ViewBag.ProfileName == "CuratedUser")
                                                                         {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist showinter" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                            @if (Model.IsShortlisted > 0)
+                                                                            {
+                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist showinter" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
                                                             </div>
-                                                            <div class="col-md-2" style="text-align: end;">
-                                                                @if (ViewBag.VedioStatus != "Public")
+                                                            <div class="col-md-2" style="text-align: end;padding-top:5px">
+                                                                @if (Model.VideoLink != null)
                                                                 {
-                                                                    @if (ViewBag.ProfileName == "CuratedUser")
+                                                                    @if (ViewBag.VedioStatus != "Public")
                                                                     {
-                                                                        @if (Model.IsIntrested == "Intrested")
+                                                                        @if (ViewBag.ProfileName == "CuratedUser")
                                                                         {
-                                                                            <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                            @if (Model.IsIntrested == "Intrested")
+                                                                            {
+                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
 
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
 
 
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
+
                                                             </div>
                                                             <div class="col-md-4 views" style="text-align: end;">
-                                                                <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
+                                                                @if (Model.VideoLink != null)
+                                                                {
+                                                                    <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
+                                                                }
                                                             </div>
 
 
@@ -1644,7 +1663,7 @@
                                                                             </div>
                                                                         }
                                                                     </div>
-                                                                    <div class="tab-pane" id="link3">
+                                                                    <div class="tab-pane tab_content" id="link3">
                                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                                             <div class="table-responsive-sm">
                                                                                 <table class="table table-bordered mbn" id="SkillTable">
@@ -1719,73 +1738,40 @@
                                                                     <div id="link4" class="tab_content">
                                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                                             <div class="table-responsive-sm">
-                                                                                <table class="table table-bordered mbn" id="QuestionsTable">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th width="40%">Questions</th>
-                                                                                            <th width="20%">SkillName</th>
-                                                                                            <th width="20%">Rating</th>
-                                                                                            <th width="10%">Time(Min)</th>
-                                                                                            @*
-                                                                                                <th width="10%">Action</th>*@
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
-                                                                                        {
+                                                                                @if (Model.IreportModel.QuestionsList != null)
+                                                                                {
+                                                                                    <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                        <thead>
                                                                                             <tr>
-                                                                                                <td>
-                                                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-
-
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                                                </td>
-                                                                                                <td>
-                                                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
-
-                                                                                                </td>
-
-                                                                                                <td>
-                                                                                                    <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
-
-
-                                                                                                </td>
-
+                                                                                                <th width="40%">Questions</th>
+                                                                                                <th width="20%">SkillName</th>
+                                                                                                <th width="20%">Rating</th>
+                                                                                                <th width="10%">Time(Min)</th>
                                                                                                 @*
-                                                                                                    <td>
-
-                                                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                                                                                    </td>*@
+                                                                                                    <th width="10%">Action</th>*@
                                                                                             </tr>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
                                                                                             {
                                                                                                 <tr>
                                                                                                     <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                        @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
 
                                                                                                     </td>
                                                                                                     <td>
-                                                                                                        @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                                    </td>
-                                                                                                    <td>
-
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
-
+                                                                                                        @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
 
                                                                                                     </td>
+                                                                                                    <td>
+                                                                                                        @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+
+                                                                                                    </td>
 
                                                                                                     <td>
+                                                                                                        <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" @*min="1" *@>
 
-                                                                                                        @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
 
                                                                                                     </td>
 
@@ -1797,17 +1783,53 @@
 
                                                                                                         </td>*@
                                                                                                 </tr>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
+                                                                                                {
+                                                                                                    <tr>
+                                                                                                        <td>
+                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
+
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            @Html.TextBoxFor(m => m.IreportModel.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                                        </td>
+                                                                                                        <td>
+
+                                                                                                            @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control" })
+
+
+                                                                                                        </td>
+
+                                                                                                        <td>
+
+                                                                                                            @Html.EditorFor(m => m.IreportModel.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1" } })
+
+                                                                                                        </td>
+
+                                                                                                        @*
+                                                                                                            <td>
+
+                                                                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                                                                            </td>*@
+                                                                                                    </tr>
+
+
+                                                                                                }
 
                                                                                             }
 
-                                                                                        }
 
 
 
-
-                                                                                    </tbody>
-                                                                                </table>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                }
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -2041,7 +2063,7 @@
 
 
 
-                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
                                                                 {
                                                                     <div>
                                                                         <form>
@@ -3536,7 +3558,7 @@
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
-   
+
 
                 {
                     'next .item1': "This tab provides Interview Report Details,'click On the Tab'",
@@ -3709,7 +3731,7 @@
                 },
                 {
                     'click .skillchannelmenu': 'Please go to next page to know its feartures',
-                  
+
                 }
 
             ];

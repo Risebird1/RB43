@@ -991,11 +991,29 @@
                                                     {
                                                         @if (item.SubId != null)
                                                         {
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="All">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="ALL" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:16px;" class="far fa-list-alt"></i>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="ShortListed">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="ShortListed" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:16px;" class="far fa-archive"></i>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Interest-Sent">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:16px;" class="far fa-send"></i>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute subc" aria-label="Interest-Accept">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept" class="mdc-fab__icon material-icons">
+                                                                    <i style="font-size:16px;" class="far fa-accusoft"></i>
+                                                                </span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
                                                                 <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:16px;" class="far fa-bell-slash"></i>
-
-
                                                                 </span>
                                                             </button>
                                                         }
