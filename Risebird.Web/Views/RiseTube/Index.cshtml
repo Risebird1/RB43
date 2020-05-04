@@ -658,11 +658,11 @@
                                                         else
                                                         {
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed">
                                                                     ShortListed
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <select id="ShortListStatus" name="ShortListStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in ViewBag.IsShortListed)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -702,11 +702,11 @@
                                                     {
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="IsIntrested">
                                                                     Interested
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
-                                                                    <select id="InterestStatus" name="InterestStatus" class="form-control multiselect" multiple="multiple">
+                                                                    <select id="IsIntrested" name="IsIntrested" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in ViewBag.IsIntrested)
                                                                         {
                                                                             @if (item != null && item != "")
@@ -969,13 +969,13 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
-         $("#ShortListStatus").multiselect({
+         $("#IsShortListed").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
                     buttonWidth: '270px',
                     maxHeight: 200
          });
-          $("#InterestStatus").multiselect({
+          $("#IsIntrested").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
                     buttonWidth: '270px',
@@ -1029,8 +1029,8 @@
             $("#CandidateName").val(candidateName);
             $("#ClientName").val(clientName);
             $("#CandidateLocation").val(candidateLocation);
-            $("#ShortListStatus").val(IsShortListed);
-            $("#InterestStatus").val(IsIntrested);
+            $("#IsShortListed").val(IsShortListed);
+            $("#IsIntrested").val(IsIntrested);
             var form = $("#form").serialize();
              $.ajax({
             type: "POST",
@@ -1087,25 +1087,22 @@
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next  .txtsearch1': "Search here based on skill or candidate name and click on seach",
+                'next  .txtsearch1': 'Search here based on Skill or Candidate Name',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next .btn3': 'Click here to get searched results ',
+                'next .btn3': 'Click here to get searched results',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next .btn4': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                'next .btn4': 'Filters here based on available attributes and reset filters if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'click .video-card': 'Click here see the candidate video!.',
-
-                //'nextButton': { className: "myNext", text: "Next" },
-                //'skipButton': { className: "mySkip", text: "Skip" }
+                'click .video-card': 'Click here see the candidate video and go to Video Page!.',
             }
 
         ];
@@ -1136,12 +1133,12 @@
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next .btn3': 'Click here to get searsched results ',
+                'next .btn3': 'Click here to get searched results ',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },
             {
-                'next .btn4': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                'next .btn4': 'Filters here based on available attributes and reset filters if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Exit" }
             },

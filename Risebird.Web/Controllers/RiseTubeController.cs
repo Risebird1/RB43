@@ -66,7 +66,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
-                        {                           
+                        {
                             ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
                             isClientUser = true;
                         }
@@ -239,7 +239,7 @@ namespace Risebird.Web.Controllers
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
                         if (profileName == "Client")
-                        {                           
+                        {
                             ClientId = _userRepository.GetClientUserDetails(emailid).ClientId;
                             isClientUser = true;
                         }
@@ -334,6 +334,7 @@ namespace Risebird.Web.Controllers
 
                         for (int i = 0; i < modelList.Count; i++)
                         {
+                            Page = Page == null ? 1 : Page;
                             modelList[i].interviewVediosequence = modelList.Count;
                             var totalpage = modelList.Count / 12;
                             int? initail = 12 * (Page - 1) + 1;
@@ -401,36 +402,23 @@ namespace Risebird.Web.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<IActionResult> VideoPage(int id)
+        public async Task<IActionResult> VideoPage(int id, string irfid, string actionstatus)
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-                    //Start:Save View counts of vedio
-                    if (HttpContext.Session.GetString("UserLogedIn") != null)                    {                        string values = String.Empty;                        var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();                        if (valuestatus == "Yes")                        {
-                            _meetingService.AddTotalViewCount(id);
-                            //save into database to increase view count save into main table from where data is picked
-                            HttpContext.Session.SetString("UserLogedIn", "No");                        }                        else                        {                            if (HttpContext.Session.GetString("UserLogedInVedioId") != null)                            {                                values = HttpContext.Session.GetString("UserLogedInVedioId")?.Trim();                                var _lst = values.Split(";");
-                                var flag = true;                                for (int i = 0; i < _lst.Count(); i++)                                {                                    if (_lst[i] == id.ToString())                                    {                                        flag = false;                                    }                                }                                if (flag == true)                                {
-                                    _meetingService.AddTotalViewCount(id);
-                                    //save into database to increase view count save into main table from where data is picked
-                                }                            }
-                            //not do anything
-                        }                        values = values + ";" + id;                        HttpContext.Session.SetString("UserLogedInVedioId", values);                    }
-                    //End:Save View counts of vedio
-
-
                     bool isClientUser = false;
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    ViewBag.actionstatus = "Risetube";
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
                         var emailId = HttpContext.Session.GetString("email")?.Trim();
                         emailId = emailId.Replace("\"", "");
                         if (profileName == "Client")
-                        {                           
+                        {
                             ClientId = _userRepository.GetClientUserDetails(emailId).ClientId;
                             isClientUser = true;
                         }
@@ -449,12 +437,80 @@ namespace Risebird.Web.Controllers
                         else if (profileName == "CuratedUser")
                         {
                             modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList().Where(x => x.CuratedLink).ToList();
+                            if (!String.IsNullOrEmpty(irfid))
+                            {
+                                int irf = Convert.ToInt32(irfid);
+                                modelList1 = modelList1.Where(x => x.irfIntId == irf).ToList();
+                                ViewBag.actionstatus = "SkillChannel";
+                                if (actionstatus.ToUpper() == "ALL")
+                                {
+                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                }
+                                else if (actionstatus.ToUpper() == "SHORTLIST")
+                                {
+                                    modelList1 = modelList1.Where(x => x.ShortListstatus == "ShortListed").ToList();
+                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                }
+                                else if (actionstatus.ToUpper() == "INTRESTED")
+                                {
+                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Intrested").ToList();
+                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                }
+                                else if (actionstatus.ToUpper() == "ACCEPT")
+                                {
+                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Accept").ToList();
+                                    id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
+                                }
+                            }
+
                         }
                         else
                         {
                             modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
                         }
+                        //Start:Save View counts of vedio
+                        if (HttpContext.Session.GetString("UserLogedIn") != null)
+                        {
+                            string values = String.Empty;
+                            var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
+                            if (valuestatus == "Yes")
+                            {
+                                _meetingService.AddTotalViewCount(id);
+                                //save into database to increase view count save into main table from where data is picked
+                                HttpContext.Session.SetString("UserLogedIn", "No");
+                            }
+                            else
+                            {
+                                if (HttpContext.Session.GetString("UserLogedInVedioId") != null)
+                                {
+                                    values = HttpContext.Session.GetString("UserLogedInVedioId")?.Trim();
+                                    var _lst = values.Split(";");
+                                    var flag = true;
+                                    for (int i = 0; i < _lst.Count(); i++)
+                                    {
+                                        if (_lst[i] == id.ToString())
+                                        {
+                                            flag = false;
+                                        }
+                                    }
+                                    if (flag == true)
+                                    {
+                                        _meetingService.AddTotalViewCount(id);
+                                        //save into database to increase view count save into main table from where data is picked
+                                    }
+                                }
+                                //not do anything
+                            }
+                            values = values + ";" + id;
+                            HttpContext.Session.SetString("UserLogedInVedioId", values);
+                        }
+                        //End:Save View counts of vedio
+
                         MeetingVM model = _meetingService.GetMeetingbyid(id, emailId);
+                        if (model == null)
+                        {
+                            model = new MeetingVM();
+                        }
 
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         modelList1 = modelList1.Select(x =>
@@ -533,7 +589,7 @@ namespace Risebird.Web.Controllers
 
                         if (profileName == "CuratedUser")
                         {
-                            if (model.IsIntrested != "Accept")
+                            if (model.IsIntrested != "Accept" && model.IsIntrested != null)
                             {
                                 var usernames = model.candidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -543,6 +599,10 @@ namespace Risebird.Web.Controllers
                                 }
                                 NewModel.candidateName = namemodel;
                             }
+                            else
+                            {
+                                NewModel.candidateName = model.candidateName;
+                            }
                         }
                         else
                         {
@@ -551,13 +611,19 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileName = profileName;
                         if (profileName == "CuratedUser")
                         {
-                            var usernames = IRListModel.CandidateName.Trim().Split(" ");
-                            var namemodel = String.Empty;
-                            foreach (var name in usernames)
+                            if (IRListModel != null)
                             {
-                                namemodel = namemodel + name.ToCharArray()[0];
+                                if (model.IsIntrested != "Accept")
+                                {
+                                    var usernames = IRListModel.CandidateName.Trim().Split(" ");
+                                    var namemodel = String.Empty;
+                                    foreach (var name in usernames)
+                                    {
+                                        namemodel = namemodel + name.ToCharArray()[0];
+                                    }
+                                    IRListModel.CandidateName = namemodel;
+                                }
                             }
-                            IRListModel.CandidateName = namemodel;
                         }
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
@@ -575,7 +641,7 @@ namespace Risebird.Web.Controllers
                         NewModel.reportLink = model.reportLink;
                         NewModel.resumeLink = model.resumeLink;
                         NewModel.zoomLink = model.zoomLink;
-                        NewModel.IreportModel = IRListModel;
+                        NewModel.IreportModel = IRListModel == null ? new InterviewReport() : IRListModel;
                         NewModel.IsLike = model.IsLike;
                         NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
@@ -597,7 +663,10 @@ namespace Risebird.Web.Controllers
                         NewModel.Comments = comments;
                         bool isQC = false;
                         NewModel.IreportModel.IsQC = isQC;
-                        GetStatusList(IRListModel, model.irfIntId);
+                        if (IRListModel != null)
+                        {
+                            GetStatusList(IRListModel, model.irfIntId);
+                        }
                         ViewBag.VedioStatus = "Private";
 
                         return View(NewModel);
@@ -743,7 +812,22 @@ namespace Risebird.Web.Controllers
                                 && (filter.IsShortListed.Count() > 0 ? filter.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
                         && (filter.IsIntrested.Count() > 0 ? filter.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
                         MeetingVM NewModel = new MeetingVM();
-
+                        if (profileName == "CuratedUser")
+                        {
+                            foreach (var itemmodel in modelList)
+                            {
+                                if (itemmodel.IsIntrested != "Accept")
+                                {
+                                    var usernames = itemmodel.candidateName.Trim().Split(" ");
+                                    var namemodel = String.Empty;
+                                    foreach (var name in usernames)
+                                    {
+                                        namemodel = namemodel + name.ToCharArray()[0];
+                                    }
+                                    itemmodel.candidateName = namemodel;
+                                }
+                            }
+                        }
 
                         NewModel.SubVideo_List = modelList.ToList();
                         if (profileName == "CuratedUser")
@@ -766,13 +850,16 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileName = profileName;
                         if (profileName == "CuratedUser")
                         {
-                            var usernames = IRListModel.CandidateName.Trim().Split(" ");
-                            var namemodel = String.Empty;
-                            foreach (var name in usernames)
+                            if (model.IsIntrested != "Accept")
                             {
-                                namemodel = namemodel + name.ToCharArray()[0];
+                                var usernames = IRListModel.CandidateName.Trim().Split(" ");
+                                var namemodel = String.Empty;
+                                foreach (var name in usernames)
+                                {
+                                    namemodel = namemodel + name.ToCharArray()[0];
+                                }
+                                IRListModel.CandidateName = namemodel;
                             }
-                            IRListModel.CandidateName = namemodel;
                         }
                         NewModel.CandidateId = model.CandidateId;
                         NewModel.interviewDate = model.interviewDate;
