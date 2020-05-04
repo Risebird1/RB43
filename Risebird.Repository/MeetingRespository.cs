@@ -55,17 +55,33 @@ namespace Risebird.Repository
         /// Risetube meeting
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId)
+        public async Task<IEnumerable<MeetingVM>> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                if (profile == "CuratedUser")
                 {
-                    var parameters = new DynamicParameters();
-                    parameters.Add("clientid", clientId);
-                    var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
-                        commandType: CommandType.StoredProcedure);
-                    return result;
+                    Emailid = Emailid.Replace("\"", "");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("clientid", clientId);
+                        parameters.Add("Emailid", Emailid);
+                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForCuratedUser", parameters,
+                                commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                }
+                else
+                {
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("clientid", clientId);
+                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetings", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
                 }
             }
             catch (SqlException ex)
@@ -247,7 +263,7 @@ namespace Risebird.Repository
 
         }
 
-        public async Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID)
+        public async Task<IEnumerable<Meeting>> GetCandidateInterviews(string emailID, string status)
         {
             try
             {
@@ -1587,7 +1603,7 @@ namespace Risebird.Repository
             return null;
 
         }
-        public int GetvedioShortList(string vedioid, string email)
+        public EmailDetails GetvedioShortList(string vedioid, string email)
         {
             try
             {
@@ -1598,7 +1614,7 @@ namespace Risebird.Repository
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<int>(con, "usp_AddinterviewvedioShortList", parameters,
+                    var result = SqlMapper.Query<EmailDetails>(con, "usp_AddinterviewvedioShortList", parameters,
                        commandType: CommandType.StoredProcedure);
                     return result.FirstOrDefault();
                 }
@@ -1607,7 +1623,150 @@ namespace Risebird.Repository
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
-            return 0;
+            return null;
+        }
+        public string CandidateSuitable(int id, string email, string Comment)
+        {
+            try
+            {
+                email = email.Replace("\"", "");
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", id);
+                parameters.Add("@EmailId", email);
+                parameters.Add("@Comment", Comment);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(con, "usp_AddSuitableCandidate", parameters,
+                       commandType: CommandType.StoredProcedure);
+                    return result.FirstOrDefault().ToString();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string Intrestreaction(string vedioid, string Status)
+        {
+            try
+            {
+                var query = "Update SuitableCandidate set Status=@Status where id=@Id ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Id", vedioid);
+                dynamicParameters.Add("@Status", Status);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Query(query, dynamicParameters);
+                }
+                var finalquery = "Select ul.EmailId from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Id", vedioid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result=con.Query<string>(finalquery, finaldynamicParameters);
+                    return result.FirstOrDefault().ToString();
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public string ShortListreaction(string vedioid, string Status)
+        {
+            try
+            {
+                var query = "Update RiseTubeVedioShortList set Status=@Status where id=@Id ";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@Id", vedioid);
+                dynamicParameters.Add("@Status", Status);
+                var id = 0;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    con.Query(query, dynamicParameters);
+                    return "Success";
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+        public async Task<IEnumerable<Meeting>> ShortListedClient(string emailID, string IRFID)
+        {
+            try
+            {
+
+                var query = "select id from UserList where EmailId = @EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailID);
+                var id = 0;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    id = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    // return results;
+                }
+                var finalquery = "Select ul2.EmailId as ClientName, IRF.JDTiltle, IRF.JDLink, su.id as id,su.ShortListedOn as interviewDate,IsNull(su.Status,'') as Status  from IRF inner join InterviewMeetings im on im.IRFId=IRF.IRFId inner join RiseTubeVedioShortList su on im.id=su.Interviewid inner join UserList ul on im.candidateEmail=ul.EmailId inner join UserList ul2 on ul2.id=su.userid Where ul.id=@Id and im.IRFId=@IRFID";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Id", id);
+                finaldynamicParameters.Add("@IRFID", IRFID);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Meeting>(finalquery, finaldynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+        public async Task<IEnumerable<Meeting>> InterestListClient(string emailID, string IRFID)
+        {
+            try
+            {
+
+                var query = "select id from UserList where EmailId = @EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@EmailId", emailID);
+                var id = 0;
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    id = con.Query<int>(query, dynamicParameters).FirstOrDefault();
+                    // return results;
+                }
+                var finalquery = "Select ul2.EmailId as ClientName,IRF.JDTiltle, IRF.JDLink, IRF.IRFId as IRFID,su.id as id,su.InterstedOn as interviewDate,IsNull(su.Status,'') as Status,su.Comment as ApprovalComments from IRF inner join InterviewMeetings im on im.IRFId=IRF.IRFId inner join SuitableCandidate su on im.id=su.Interviewid inner join UserList ul on im.candidateEmail=ul.EmailId inner join UserList ul2 on ul2.id=su.userid Where ul.id=@Id and im.IRFId=@IRFID";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Id", id);
+                finaldynamicParameters.Add("@IRFID", IRFID);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<Meeting>(finalquery, finaldynamicParameters);
+                    return results;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
         }
     }
 }

@@ -6,12 +6,66 @@
 }
 
 <style>
-    .spanclass {
-        color: black;
-        font-size: 11px;
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
     }
 
-    .desc {
+   
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+
+    .card-blue .card-header {
+        padding: .5rem 1.25rem 0.3rem 1.25rem;
+    }
+
+    .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
+        margin-top: 0px;
+        margin-bottom: 5px;
+    }
+
+    .card-content-holder {
+        background-color: white;
+    }
+
+    .list-group-item-text {
+        line-height: 80%;
+    }
+
+        .list-group-item-text span {
+            font-weight: bold;
+            padding-right: 7px;
+        }
+
+    .pskill {
         display: inline-block;
         width: 120px;
         white-space: nowrap;
@@ -19,56 +73,191 @@
         text-overflow: ellipsis;
     }
 
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
+    .clientName {
+        display: inline-block;
+        float: left;
+        padding-bottom: 3px;
+        width: 240px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: normal !important;
     }
 
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
+
+    .card-blue {
+        border: 1px #6fb6ff59 solid !important;
+        border-radius: 4px;
+        background-color: #fff;
+        background-color: var(--mdc-theme-surface, #fff);
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
     }
 
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
 
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-    .list-group-item-text {
-        padding-top: 20px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 20px;
-    }
-
-        .list-group-item-text span {
-            float: left;
-            font-weight: 700;
-            padding-right: 5px;
+        .card-blue .card-header h6 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 20px;
+            color: #0c2642;
+            padding: 0;
+            margin: 0;
         }
 
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
+        .card-blue .card-body {
+            margin: 0px;
+            padding: 12px 5px 10px 5px;
+        }
+
+            .card-blue .card-body .client-field {
+                color: #1b4775;
+                display: block;
+                float: left;
+                font-weight: bold;
+                padding-right: 4px;
+            }
+
+
+
+        .card-blue:hover {
+            box-shadow: 0 0 25px #134e8c45;
+        }
+
+    .card-header-buttons button.btn-danger {
+        background: #FF3636 !important;
     }
 
-    .list-group {
-        margin-bottom: 150px;
+
+    .card-blue .card-footer {
+        text-align: center;
+        padding: 8px 0px 8px 0px;
     }
+
+
+
+
+        .card-blue .card-footer .stats-bttm-btn {
+            padding: 0px 25px 0px 0px;
+            text-align: right;
+        }
+
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .card label {
+        font-size: 12px;
+        margin-bottom: 5px;
+        color: #9A9A9A;
+        padding: 0px 20px;
+    }
+
+    .can-details {
+        width: 100%;
+        float: left;
+        font-weight: normal !important;
+        padding: 0px 0px 10px 0px;
+        font-size: 14px;
+        line-height: 16px;
+    }
+
+        .can-details span {
+            font-weight: normal;
+        }
+   
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .card-blue .statistics .card-header {
+        padding: 10px 0px 10px 0;
+    }
+
+    .card-blue .statistics .card-body {
+        padding: 12px 20px 10px 20px;
+    }
+
+    .trash-btn {
+        background: #d20505 !important;
+    }
+
+
+    .mdc-card .modal .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .mdc-card .modal .form-control, .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .modal .form-group {
+        margin-bottom: 10px;
+    }
+
+        .modal .form-group .btn {
+            margin: 0px;
+        }
+
+    table {
+        border: 1px #ccc solid !important;
+    }
+
+    #divIntrestedShown table, #divshortlist table {
+        border: 1px #ccc solid;
+        margin: 20px;
+    }
+    #divIntrestedShown tr, #divshortlist tr {
+        border: 1px #ccc solid;
+    }
+
+    #divIntrestedShown td, #divshortlist td {
+        padding: 5px;
+    }
+
+
+    #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.05);
+    }
+
 </style>
+
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -94,90 +283,155 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Scheduled Interviews</h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 ml-md-auto">
-                            <div class="form-group">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
 
+                        <div class="row">
+                            <div class="card-header">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Scheduled Interviews</h4>
+                                </div>
                             </div>
                         </div>
-                        
-                    </div>
+
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+                                <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
+                                    <div class="card card-stats border  card-blue">
+                                      
+
+                                            <div class="statistics statistics-horizontal">
+                                                <div class="info info-horizontal">
+                                                  
+                                                          <div class="card-header">
+                                                            <div class="row">
+                                                                <div class="col-12 ">
+                                                                    <h6> @item.IRFID</h6>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
 
-                    <!-- end content-->
-                </div>
-                <!--  end card  -->
-            </div>
-            <!-- end col-md-12 -->
-        </div>
-        <div class="row">
-            @foreach (var item in Model)
-            {
-                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card card-stats">
-                        <div class="card-body ">
+                                               
+                                                    <div class="card-body ">
 
-                            <div class="statistics statistics-horizontal">
-                                <div class="info info-horizontal">
-                                    <div class="row">
-                                        <div class="col-12 text-center">
-                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFID</h3>
-                                        </div>
-                                    </div>
-                                    <hr>
+                                                        <div class="row" style="font-size:smaller;">
 
-                                    <div class="row" style="font-size:smaller;">
+                                                            <div class="col-12">
+                                                                <div class="group inner list-group-item-text">
+                                                                    <div class="can-details">
+                                                                        <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span>
+                                                                    </div>
+                                                                    <div class="can-details">
+                                                                        <b>Interview Date:</b> <span>@item.interviewDate  </span>
+                                                                    </div>
+                                                                    <div class="can-details">
+                                                                        <b>Primary Skills:</b> <span>@item.JDTiltle.Split('|')[0]  </span>
+                                                                    </div>
 
-                                        <div class="col-12">
-                                            <div class="group inner list-group-item-text">
-                                                <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
-                                                <span>Interview Date:</span> <p>@item.interviewDate  </p>                                                
-                                                <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
-                                                <span>JD Link:</span> <p><a href="@item.JDLink" target="_blank">Job Description</a>  </p>
-                                                <span>Job Ends on:</span> <p> @item.EndDate.ToString("dd MMM yyyy") </p>
-                                                <span>Resume:</span> <p><a href="@item.resumeLink" target="_blank">Resume</a>   </p>
+                                                                    <div class="can-details">
+                                                                        <b>JD Link:</b> <span><a href="@item.JDLink" target="_blank">Job Description</a>  </span>
+                                                                    </div>
+
+                                                                    <div class="can-details">
+
+                                                                        <b>Job Ends on:</b> <span> @item.EndDate.ToString("dd MMM yyyy") </span>
+
+                                                                    </div>
+                                                                    <div class="can-details">
+                                                                        <b>Resume:</b> <span><a href="@item.resumeLink" target="_blank">Resume</a>   </span>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                </div>
+                                       
+                                        <div class="card-footer ">
+                                            <div class="stats text-center">
+
+
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="ShortList">
+                                                    <span onclick="ShortList('@item.IRFID')" title="ShortList" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                </button>
+
+
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Show Interest">
+                                                    <span onclick="Interested('@item.IRFID')" title="Show Interest" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10zm-3-5h-2V7h-4v3H8l4 4 4-4z" /></svg></span>
+                                                </button>
+
+
+
+                                             
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Reschedule Meeting">
+                                                    <span onclick="window.open('@item.CalendlyLink')" title="Reschedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                </button>
+
+
+
+
+                                                <button class="mdc-fab app-fab--absolute" aria-label="Join Meeting">
+                                                    <span onclick="window.open('@item.zoomLink')" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                                </button>
+
+
+
+                                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+                                                {
+                                                    <!--   <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
+            <i class="now-ui-icons fa fa-phone"></i>
+        </button>-->
+
+
+
+
+                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Call Interviewer">
+                                                        <span onclick="ModalButtonClick(@jsonObject)" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                                    </button>
+
+
+
+
+
+
+
+
+
+
+                                                }
+
+
+
+                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel interview request">
+                                                    <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                </button>
 
 
                                             </div>
                                         </div>
-
                                     </div>
-
                                 </div>
-                            </div>
+                            }
                         </div>
-                        <div class="card-footer ">
-                            <div class="stats text-center">
 
-                               
-                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Reschedule Meeting">
-                                    <i class="now-ui-icons fa fa-calendar"></i>
-                                </button>
-                                <button type="button" onclick="window.open('@item.zoomLink')" class="btn btn-warning btn-icon btn-sm" title="Join Meeting">
-                                    <i class="now-ui-icons fa fa-meetup"></i>
-                                </button>
-                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
-                                {
-                                    <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
-                                        <i class="now-ui-icons fa fa-phone"></i>
-                                    </button>
-                                }
-                               
-                                <button type="button" onclick="javascript:CancelInterview(@jsonObject);" class="btn btn-round btn-danger btn-icon btn-sm like" title="Cancel interview request.">
-                                    <i class="fa fa-times"></i>
-                                </button>
 
-                            </div>
-                        </div>
+                        <!-- end content-->
                     </div>
                 </div>
-            }
+                    <!--  end card  -->
+                </div>
+            <!-- end col-md-12 -->
         </div>
+        
         <div id="myModal" class="modal" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
@@ -191,8 +445,8 @@
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Interviewer!</h5>
+                <div class="modal-header">
+                    <h5 class="modal-title">Call Interviewer!</h5>
                     <span class="close" id="callPopUp">&times;</span>
                 </div>
                 <div class="modal-body" style="padding: 2px 16px;">
@@ -215,133 +469,292 @@
         </div>
         <!-- end row -->
     </div>
- 
+
+</div>
+<div id="myShorlList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" >
+            <div class="modal-header" >
+                <h5 class="modal-title">Shortlisted</h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeshortlistPopUp()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" id="divshortlist">
+
+
+                </div>
+
+                <div class="">
+                    <input type="button" onclick="closeshortlistPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                </div>
+            </div>
+            <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #14406e;
+        color: white;">
+
+            </div>
+        </div>
+
+    </div>
 </div>
 
+    <div id="myintrestList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+        <!-- Modal content -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
-<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
-<script>
-    var interviewerMail = "";
-    var span = document.getElementById("callPopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
-    $(document).ready(function () {
-        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-            // Set up the Twilio Client Device with the token
-            Twilio.Device.setup(data.token);
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Interest shown by client(s)</h5>
+                    <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPopUp()">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row" id="divIntrestedShown">
+
+
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+    <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
+
+    <script>
+        var interviewerMail = "";
+        var span = document.getElementById("callPopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            hangUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+        $(document).ready(function () {
+            $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+                // Set up the Twilio Client Device with the token
+                Twilio.Device.setup(data.token);
+            });
         });
-    });
 
-    /* Callback to let us know Twilio Client is ready */
-    Twilio.Device.ready(function (device) {
+        /* Callback to let us know Twilio Client is ready */
+        Twilio.Device.ready(function (device) {
 
-    });
+        });
 
-    function callInterviewer(phoneNumber) {
-        var params = { "phoneNumber": phoneNumber };
-        Twilio.Device.connect(params);
-    }
-    function hangUp() {
-        Twilio.Device.disconnectAll();
-    }
+        function callInterviewer(phoneNumber) {
+            var params = { "phoneNumber": phoneNumber };
+            Twilio.Device.connect(params);
+        }
+        function hangUp() {
+            Twilio.Device.disconnectAll();
+        }
 
-    Twilio.Device.connect(function (connection) {
-        var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-    });
+        Twilio.Device.connect(function (connection) {
+            var appendText = "In call with " + "<b>" + interviewerMail + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+        });
 
-    function afterTimeOut() {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+        function afterTimeOut() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
 
-    Twilio.Device.disconnect(function (connection) {
-        var appendText = "Call disconnected! ";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        setTimeout(afterTimeOut, 2000);
+        Twilio.Device.disconnect(function (connection) {
+            var appendText = "Call disconnected! ";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            setTimeout(afterTimeOut, 2000);
 
-    });
+        });
 
-    function ModalButtonClick(obj) {
-        
-        //candidate = candidateObj.candidateName;
-        interviewerMail = obj.interviewer;
-        // Get the modal
-        var modal = document.getElementById("myModal");
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-        var appendText = "Calling... " + "<b>" + interviewerMail + "</b>";
-        document.getElementById("callingLabel").innerHTML = appendText;
-        callInterviewer(obj.InterviewerPhone);
-    }
-    function closeCallPopUp() {
-        hangUp();
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+        function ModalButtonClick(obj) {
+
+            //candidate = candidateObj.candidateName;
+            interviewerMail = obj.interviewer;
+            // Get the modal
+            var modal = document.getElementById("myModal");
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+            var appendText = "Calling... " + "<b>" + interviewerMail + "</b>";
+            document.getElementById("callingLabel").innerHTML = appendText;
+            callInterviewer(obj.InterviewerPhone);
+        }
+        function closeCallPopUp() {
+            hangUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
 
 
-</script>
-<script>
+    </script>
+    <script>
         function CancelInterview(obj) {
 
-        //var IdIRF = dataID;
-        swal.fire({
-            title: 'Are you sure?',
-            text: "The Interview will be cancelled!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, cancel interview!',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    //var IdIRF = dataID;
-                    $.ajax({
-                        url: '/Interview/CancelInterview?id=' + obj.id+ '&interviewDate=' + obj.interviewDate + '&candidateEmail='+obj.candidateEmail,
-                        success: function (result) {
-                            resolve(result)
+            //var IdIRF = dataID;
+            swal.fire({
+                title: 'Are you sure?',
+                text: "The Interview will be cancelled!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel interview!',
+                preConfirm: function () {
+                    return new Promise(function (resolve, reject) {
+                        //var IdIRF = dataID;
+                        $.ajax({
+                            url: '/Interview/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&candidateEmail=' + obj.candidateEmail,
+                            success: function (result) {
+                                resolve(result)
 
-                        },
-                        error: function () {
-                            //reject("error message")
-                            swal.fire("Error cancelling!", "Please try again", "error");
-                        }
+                            },
+                            error: function () {
+                                //reject("error message")
+                                swal.fire("Error cancelling!", "Please try again", "error");
+                            }
+                        })
                     })
-                })
-            },
-            allowOutsideClick: false
-        }).then(function (result) {
-            if (result.dismiss !== 'cancel') {
-                swal.fire({
-                    title: 'Successful!',
-                    type: 'success',
-                    html: '<p>The interview was cancelled!</p>',
-                    showCancelButton: false,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Close!',
-                    allowOutsideClick: false
-                }).then(function () {
-                    window.location = "/Interview/CandidateInterviews";
-                })
-            }
-            else if (result.dismiss === 'cancel') {
-                swal.fire(
-                    'Sorry!',
-                    'The interview was not cancelled.',
-                    'error'
-                )
-            }
-        })
-    }
+                },
+                allowOutsideClick: false
+            }).then(function (result) {
+                if (result.dismiss !== 'cancel') {
+                    swal.fire({
+                        title: 'Successful!',
+                        type: 'success',
+                        html: '<p>The interview was cancelled!</p>',
+                        showCancelButton: false,
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Close!',
+                        allowOutsideClick: false
+                    }).then(function () {
+                        window.location = "/Interview/CandidateInterviews";
+                    })
+                }
+                else if (result.dismiss === 'cancel') {
+                    swal.fire(
+                        'Sorry!',
+                        'The interview was not cancelled.',
+                        'error'
+                    )
+                }
+            })
+        }
 
-</script>
+    </script>
+    <script>
+        function ShortList(IRFID) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/ShortListList",
+                data: { IRFID: IRFID },
+                success: function (data) {
+                    var modal = document.getElementById("myShorlList");
+                    modal.style.display = "block";
+                    var html = '';
+                    html += '<table style="Width:100%">';
+                    html += '<tr><td>Client Name</td><td>Shortlisted Date</td></tr>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<tr>';
+                        html += '<td>' + data[i].clientName + '</td>';
+                        html += '<td>' + data[i].dateRequired + '</td>';
+                        html += "</tr>";
+
+                    }
+                    html += "</table>";
+                    if (data.length == 0) {
+                        html = 'No record found';
+                    }
+                    $("#divshortlist").empty().html(html);
+                }
+            });
+        }
+        function Interested(IRFID) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/InterestList",
+                data: { IRFID: IRFID },
+                success: function (data) {
+                    var modal = document.getElementById("myintrestList");
+                    modal.style.display = "block";
+                    var html = '';
+                    html += '<table style="Width:100%">';
+                    html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
+                    for (var i = 0; i < data.length; i++) {
+                        html += '<tr>';
+                        html += '<td>' + data[i].clientName + '</td>';
+                        html += '<td>' + data[i].dateRequired + '</td>';
+                        html += '<td>' + data[i].approvalComments + '</td><td class="text-center">';
+                        if (data[i].Status == "Accept") {
+                            html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
+                            html += '          </button>';
+                            html += '          <button type="button"  class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '            <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '          </button>';
+                        }
+                        else if (data[i].Status == "Pass") {
+                            html += '             <button type="button" class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '               <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
+                            html += '            </button>';
+                            html += '             <button type="button"  disabled class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '                 <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '              </button>';
+                        }
+                        else {
+                            html += '             <button type="button"  class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
+                            html += '             <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span> ';
+                            html += '             </button>';
+                            html += '             <button type="button" class="mdc-fab app-fab--absolute trash-btn" id="btnRejectIntrest_' + data[i].id + '" title="Pass">';
+                            html += '              <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
+                            html += '              </button>';
+                        }
+                        html += "</td></tr>";
+
+                    }
+                    html += "</table>";
+                    if (data.length == 0) {
+                        html = 'No record found';
+                    }
+                    $("#divIntrestedShown").empty().html(html);
+                }
+            });
+        }
+        function closeshortlistPopUp() {
+            var modal = document.getElementById("myShorlList");
+            modal.style.display = "none";
+        }
+        function closeIntrestPopUp() {
+            var modal = document.getElementById("myintrestList");
+            modal.style.display = "none";
+        }
+        function AcceptIntrest(id) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/Intrestreaction",
+                data: { vedioid: id, Status: "Accept" },
+                success: function (data) {
+                    $("#btnAcceptIntrest_" + id).attr('disabled', true);
+                }
+            });
+        }
+        function RejectIntrest(id) {
+            $.ajax({
+                type: "POST",
+                url: "/Interview/Intrestreaction",
+                data: { vedioid: id, Status: "Pass" },
+                success: function (data) {
+                    $("#btnRejectIntrest_" + id).attr('disabled', true);
+                }
+            });
+        }
+
+    </script>

@@ -22,7 +22,6 @@
     }
 
     td.wordwrap {
-       
         max-width: 250px !important;
         min-width: 250px !important;
         overflow: hidden !important;
@@ -31,28 +30,24 @@
         white-space: nowrap !important;
     }
 
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
+    table {
+        border: 1px #ccc solid !important;
     }
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
+
+        table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+            max-width: 300px !important;
+        }
+
+        table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+            padding: 7px;
+            font-weight: normal !important;
+        }
 
     .table > thead > tr > th, .table > tfoot > tr > th {
         padding: 7px;
         font-weight: normal !important;
     }
 
-    thead, tfoot {
-        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
-        background: #3f9eff; /* Old browsers */
-        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
-        COLOR: #FFF;
-    }
 
     .table-striped tbody tr:nth-of-type(odd) {
         background-color: #fff;
@@ -75,7 +70,7 @@
     }
 
 
-    #resumeId{
+    #resumeId {
         background: #e2f0ff;
         color: #1d3b5e;
         padding: 5px 10px;
@@ -104,13 +99,13 @@
         border-radius: 10px;
     }
 
-    #style-4::-webkit-scrollbar {
+    textarea::-webkit-scrollbar {
         width: 2px;
         height: 6px;
         background-color: #cee0f3;
     }
 
-    #style-4::-webkit-scrollbar-thumb {
+    textarea::-webkit-scrollbar-thumb {
         background-color: #56a9ff;
         border: 1px solid #56a9ff;
         margin: 2px;
@@ -394,57 +389,6 @@
     }
 
 
-    .btn {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 0px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
-
-        .btn:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .btn-primary, .btn-fill {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-
-        .btn-primary:hover, .btn-fill:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-        }
-
     .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
         background: #84c0ff;
         color: #fff;
@@ -479,25 +423,25 @@
         }
 
 
-    #meeting_length, #meeting_filter {
+    #supportList_length, #supportList_filter {
         margin: 10px 0px
     }
 
-        #meeting_length label {
+        #supportList_length label {
             font-size: 14px;
         }
 
-        #meeting_length select.form-control {
+        #supportList_length select.form-control {
             padding: 8px 8px;
         }
 
-        #meeting_length select:focus {
+        #supportList_length select:focus {
             border-color: #4a93de;
         }
 
-    #supportList_filter input {
-        outline: none;
-    }
+        #supportList_filter input {
+            outline: none;
+        }
 
     #meeting input[type=search] {
         -webkit-appearance: textfield;
@@ -544,6 +488,13 @@
     #supportList_filter input::-webkit-input-placeholder {
         color: #999;
     }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
     table {
         white-space: nowrap !important;
     }
@@ -552,7 +503,6 @@
 
         table.dataTable > thead > tr > th {
             padding: 5px;
-          
         }
 
 
@@ -617,8 +567,8 @@
     }
 
 
- 
-   
+
+
 
     td:hover.wordwrap {
         text-overflow: clip !important;
@@ -638,6 +588,7 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
+
     .modal-header {
         border-bottom: 3px solid #316b9e !important;
         background: #419dff !important;
@@ -646,22 +597,89 @@
         color: #fff;
     }
 
-    .modal-wrap .modal-content {
-        width: 690px;
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
         position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
         font-size: 12px;
-        margin-top: -53px;
+        text-decoration: none;
     }
 
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 10px 0px 10px 0;
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
     }
 
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
 </style>
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
@@ -693,11 +711,11 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Support</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
+
+
                         <div class="toolbar">
                             <!--        Here you can write extra buttons/actions for the toolbar              -->
                             <div class="row">
@@ -709,7 +727,7 @@
                                     }
                                     @if (Model.BackController != null && Model.BackMethod != null)
                                     {
-                                        @Html.ActionLink("Back", Model.BackMethod ,Model.BackController,null, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style ="margin-left:1252px" })
+                                        @Html.ActionLink("Back", Model.BackMethod, Model.BackController, null, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style = "margin-left:1252px" })
                                     }
                                 </div>
 
@@ -721,8 +739,13 @@
                         </div>
                         <div class="dataloading">
                             <div class="toolbar">
-
+                                <div class="row">
+                                    <div class="card-header first">
+                                        <h4 class="card-title">Support</h4>
+                                    </div>
+                                </div>
                             </div>
+
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID">
@@ -754,24 +777,21 @@
                                                 <th style="text-align:center">Call</th>
                                                 <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
-                                         </tfoot>
-                                         <tbody>
-                                             @foreach (var item in Model.Supports)
-                                             {
+                                        </tfoot>
+                                        <tbody>
+                                            @foreach (var item in Model.Supports)
+                                            {
 
-                                             <tr id="@item.id">
-                                                 <td> @item.Name</td>
-                                                 @if (item.EmailId != null && item.EmailId != "")
-                                                 {
-                                                     <td>@item.EmailId</td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td>Not available</td>
-                                                 }
-
-
-                                              
+                                                <tr id="@item.id">
+                                                    <td> @item.Name</td>
+                                                    @if (item.EmailId != null && item.EmailId != "")
+                                                    {
+                                                        <td>@item.EmailId</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Not available</td>
+                                                    }
 
 
 
@@ -783,74 +803,78 @@
 
 
 
-                                                 @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
-                                                 {
-                                                     <td>@item.WhatsappNumber</td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td>Not available</td>
-                                                 }
-
-
-                                                 @if (item.OnVoiceCall)
-                                                 {
-                                                     <td>Yes</td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td>No</td>
-                                                 }
-                                                 @if (item.OnWhatsapp)
-                                                 {
-                                                     <td>Yes</td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td>No</td>
-                                                 }
-                                                 @if (item.OnEmail)
-                                                 {
-                                                     <td>Yes</td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td>No</td>
-                                                 }
-                                                 @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
-                                                 {
-                                                     <td>
-                                                         <span style="font-size:12px;">  @item.AvailabilityHours </span>
-                                                     </td>
-                                                 }
-                                                 else
-                                                 {
-                                                     <td> </td>
-                                                 }
-
-                                                 <td>
-                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
-                                                     {
-                                                         <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
 
 
 
-                                                         <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
+                                                    @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
+                                                    {
+                                                        <td>@item.WhatsappNumber</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>Not available</td>
+                                                    }
 
 
-                                                     }
+                                                    @if (item.OnVoiceCall)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.OnWhatsapp)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.OnEmail)
+                                                    {
+                                                        <td>Yes</td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No</td>
+                                                    }
+                                                    @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
+                                                    {
+                                                        <td>
+                                                            <span style="font-size:12px;">  @item.AvailabilityHours </span>
+                                                        </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td> </td>
+                                                    }
 
-                                                 </td>
-                                                 <td class="text-center">
-                                                     @if (ViewBag.Profile == "Admin")
-                                                     {
-                                                         <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                         <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+                                                    <td>
 
-                                                     }
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                        {
+                                                            <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
 
-                                                 </td>
-                                             </tr>
+
+
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
+
+
+                                                        }
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if (ViewBag.Profile == "Admin")
+                                                        {
+                                                            <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
+                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+
+                                                        }
+
+                                                    </td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -866,7 +890,7 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal  modal-wrap" style="display: none; /* Hidden by default */
+        <div id="myModal" class="modal " style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -878,34 +902,37 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
             <!-- Modal content -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:20px;">Call HR!</h5>
-                    <span class="close" id="callPopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <label id="callingLabel" style="    margin-top: 30px;
+            <div class="modal-dialog modal-lg" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="font-size:20px;">Call HR!</h5>
+                        <span class="close" id="callPopUp">&times;</span>
+                    </div>
+                    <div class="modal-body" style="padding: 2px 16px;">
+                        <div class="row">
+                            <label id="callingLabel" style="    margin-top: 30px;
     /* text-align: center; */
     font-size: 20px;
     text-align: center;
     margin: 20px auto;
     display: block"><b>Calling...</b></label>
 
-                    </div>
+                        </div>
 
-                    <div class="">
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+                        <div class="">
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                        </div>
                     </div>
+                    <div class="modal-footer" style="background:#fff;"></div>
                 </div>
-            <div class="modal-footer" style="background:#fff;"></div>
             </div>
 
         </div>
         <!-- end row -->
     </div>
-   
+
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
@@ -1010,7 +1037,7 @@
 </script>
 <script>
     function Delete(id) {
-        
+
         swal.fire({
             title: 'Are you sure?',
             text: "The support HR will be permanently deleted!",
@@ -1124,5 +1151,28 @@
 
 
 </script>
+if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+{
+<script src="~/Newassets/js/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+<script>
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+        {
+            'next .first': 'Here you will contact to get support from follwing people! ',
+            'nextButton': { className: "myNext", text: "next" },
+            'skipButton': { className: "mySkip", text: "skip!" }
+        },
+       
+
+
+    ];
+    setTimeout(function () {
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+    }, 2000)
+</script>
+}
 
 <!-- PAGE CONTENT WRAPPER -->

@@ -2985,11 +2985,8 @@ namespace Risebird.Web.Controllers
                     emailid = emailid.Replace("\"", "");
                     if (profileName == "Candidate")
                     {
-
                         var irfList = _irfService.GetCandidateIRFInvites(emailid)?.ToList();
-
                         return View(irfList);
-
                     }
                     else
                     {
@@ -3008,6 +3005,7 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
         [HttpGet]
         public IActionResult UploadAudio(int candidateId, int irfId, string rfName)
         {

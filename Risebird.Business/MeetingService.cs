@@ -49,12 +49,12 @@ namespace Risebird.Business
             }
         }
 
-        public List<MeetingVM> GetRiseTubeMeetings(int clientId)
+        public List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid)
         {
             try
             {
 
-                return _meetingRespository.GetRiseTubeMeetings(clientId).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return _meetingRespository.GetRiseTubeMeetings(clientId, profile, Emailid).Result.OrderByDescending(x => x.interviewDate).ToList();
             }
             catch (Exception ex)
             {
@@ -397,12 +397,12 @@ namespace Risebird.Business
                 return null;
             }
         }
-        public List<Meeting> GetCandidateInterviews(string emailID)
+        public List<Meeting> GetCandidateInterviews(string emailID, string status)
         {
             try
             {
                 ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
-                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = _meetingRespository.GetCandidateInterviews(emailID, status).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)
@@ -1117,7 +1117,7 @@ namespace Risebird.Business
             }
 
         }
-        public int GetvedioShortList(string vedioid, string email)
+        public EmailDetails GetvedioShortList(string vedioid, string email)
         {
             try
             {
@@ -1129,9 +1129,79 @@ namespace Risebird.Business
             catch (Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-                return 0;
+                return null;
             }
 
+        }
+        public string CandidateSuitable(int id, string email, string Comment)
+        {
+            try
+            {
+                var meeting = _meetingRespository.CandidateSuitable(id, email, Comment);
+                return meeting;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+        public string Intrestreaction(string vedioid, string Status)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.Intrestreaction(vedioid, Status);
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public string ShortListreaction(string vedioid, string Status)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.ShortListreaction(vedioid, Status);
+                return "";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<Meeting> ShortListedClient(string emailID, string IRFID)
+        {
+            try
+            {
+                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+                var assignedMeeting = _meetingRespository.ShortListedClient(emailID, IRFID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+        public List<Meeting> InterestListClient(string emailID, string IRFID)
+        {
+            try
+            {
+                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+                var assignedMeeting = _meetingRespository.InterestListClient(emailID, IRFID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
         }
     }
 
