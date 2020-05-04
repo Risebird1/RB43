@@ -1392,7 +1392,7 @@
                                                                         {
                                                                             @if (Model.IsShortlisted > 0)
                                                                             {
-                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist showinter" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                             }
                                                                             else
@@ -1412,12 +1412,12 @@
                                                                         {
                                                                             @if (Model.IsIntrested == "Intrested")
                                                                             {
-                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
 
                                                                             }
                                                                             else
                                                                             {
-                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
 
 
                                                                             }
@@ -3533,89 +3533,85 @@
             var enjoyhint_instance = new EnjoyHint({});
 
             var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Welcome to Risetube! Selected Candidate Videos will be play over here.',
+               {
+                    'next .card-title': 'Selected Candidate Videos will be playing over here.',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                    'next .btn1': 'Filters here based on available attributes and reset filters if applied earlier',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btnvideo': "You can see video here'",
+                    'next .btnvideo': 'You will see video here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn2': 'These are LIKE and UNLIKE buttons',
+                    'next .btn2': 'Like Candidate Video by clicking here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn3': 'If you want to click on unlike button click here',
+                    'next .btn3': 'Unlike Candidate Video by clicking here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
-
-
                 {
-                    'next .item1': "This tab provides Interview Report Details,'click On the Tab'",
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item2': "This tab provides you Canditate Details,'click on the Tab'",
+                    'next .item1': 'Interviewer comment and overall matric chart will be available over here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
+                    'next .item2': 'Click here to see Canditate Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item4': "This tab provides you Questions Discussed,'click on the Tab'",
+                    'next .item3': 'Click here to see Canditate Teck Skill Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item5': "This tab provides you General Skill Details,'click on the Tab'",
+                    'next .item4': 'Click here to see list of Questions, discussed during interview',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item6': "This tab provides you Joinability  Details,'click on the Tab'",
+                    'next .item5': 'Click here to see General Skill Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item7': "This tab provides you Selectability Details,'click on the Tab'",
+                    'next .item6': 'Click here to see Joinability  Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
-
                 {
-                    'next .comment2': 'You can give any comments if any!',
+                    'next .item7': 'Click here to see Selectability Details',
+                    'nextButton': { className: "myNext", text: "next" },
+                    'skipButton': { className: "mySkip", text: "exit!" }
+
+                },
+                {
+                    'next .comment2': 'Comment Box!',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'You can post you comments here !',
+                    'next .post': 'By clicking, You can post you comments here !',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'click .skillchannelmenu': 'Please click on Icon to next page and know its feartures',
-
+                    'click .skillchannelmenu': 'Click here to navigate over SkillChannel menu and see its feartures',
                 }
 
             ];
@@ -3646,91 +3642,90 @@
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn1': 'Filters here based on avialble attributes and reset filters if applied earlier',
+                    'next .btn1': 'Filters here based on available attributes and reset filters if applied earlier',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btnvideo': "You can see video here'",
+                    'next .btnvideo': 'You will see video here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn2': 'You can like Candidate Video by clicking here',
+                    'next .btn2': 'Like Candidate Video by clicking here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .btn3': 'You can unlike Candidate Video by clicking here',
+                    'next .btn3': 'Unlike Candidate Video by clicking here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .shortlist': 'You can shortlist Candidate by clicking here',
+                    'next .shortlist': 'Shortlist Candidate by clicking here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
                 {
-                    'next .showinter': 'You can send interest to Candidate by clicking here',
+                    'next .showinter': 'Send interest to Candidate by clicking here, color coding Yellow -After Interest Send and Green - After Interest Accepted by Candidate',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
                 },
 
                 {
-                    'next .item1': "This tab provides Interview Report Details,'click On the Tab'",
+                    'next .item1': 'Interviewer comment and overall matric chart will be available over here',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item2': "This tab provides you Canditate Details,'click on the Tab'",
+                    'next .item2': 'Click here to see Canditate Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item3': "This tab provides you Teck Skill Details,'click on the Tab'",
+                    'next .item3': 'Click here to see Canditate Teck Skill Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item4': "This tab provides you Questions Discussed,'click on the Tab'",
+                    'next .item4': 'Click here to see list of Questions, discussed during interview',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item5': "This tab provides you General Skill Details,'click on the Tab'",
+                    'next .item5': 'Click here to see General Skill Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item6': "This tab provides you Joinability  Details,'click on the Tab'",
+                    'next .item6': 'Click here to see Joinability  Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
                 {
-                    'next .item7': "This tab provides you Selectability Details,'click on the Tab'",
+                    'next .item7': 'Click here to see Selectability Details',
                     'nextButton': { className: "myNext", text: "next" },
                     'skipButton': { className: "mySkip", text: "exit!" }
 
                 },
-
                 {
-                    'next .comment2': 'You can give any comments if any!',
+                    'next .comment2': 'Comment Box!',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'You can post you comments here !',
+                    'next .post': 'By clicking, You can post you comments here !',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'click .skillchannelmenu': 'Please go to next page to know its feartures',
+                    'click .skillchannelmenu': 'Click here to navigate over SkillChannel menu and see its feartures',
 
                 }
 
