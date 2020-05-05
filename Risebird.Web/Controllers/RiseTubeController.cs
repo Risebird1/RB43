@@ -1019,16 +1019,14 @@ namespace Risebird.Web.Controllers
                 result = Shortlistcount.totalcount;
                 Mail _mail = new Mail();
                 _mail.TO = Shortlistcount.Email;
+                _mail.Subject = "RiseBird: Your profile has been shortlisted";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Client Name: " + email.ToUpper());
-                bulider.Append("is Shortlisted your profile.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result1 = _notificationHelper.NotifyCandidate(_mail);
+               
+                bulider.Append("Client Name: " + email.ToUpper());
+                bulider.Append("has shortlisted your profile");
+                var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
@@ -1044,16 +1042,13 @@ namespace Risebird.Web.Controllers
             {
                 Mail _mail = new Mail();
                 _mail.TO = Status;
+                _mail.Subject = "RiseBird: A client has shown interest in your profile";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Client Name:</p>" + email.ToUpper());
-                bulider.Append("<br/><p>Shows interest in your profile.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result = _notificationHelper.NotifyCandidate(_mail);
+                bulider.Append("Client Name:</p>" + email.ToUpper());
+                bulider.Append("has showed interest in your profile");
+                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }

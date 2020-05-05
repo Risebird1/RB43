@@ -749,10 +749,10 @@
                 html += '<table style="Width:100%">';
                 html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
-                    if (data[i].Status == "Accept") {
+                    if (data[i].status == "Accept") {
                         html += '<tr id="tablerow_' + data[i].id + '" style="background-color:limegreen">';
                     }
-                    else if (data[i].Status == "Pass") {
+                    else if (data[i].status == "Pass") {
                         html += '<tr id="tablerow_' + data[i].id + '" style="background-color:red">';
                     }
                     else {
@@ -761,7 +761,7 @@
                     html += '<td>' + data[i].clientName + '</td>';
                     html += '<td>' + data[i].dateRequired + '</td>';
                     html += '<td>' + data[i].approvalComments + '</td><td class="text-center">';
-                    if (data[i].Status == "Accept") {
+                    if (data[i].status == "Accept") {
                         html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
                         html += '          </button>';
@@ -769,7 +769,7 @@
                         html += '            <span  onclick="RejectIntrest(' + data[i].id + ')" title="Pass" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span>';
                         html += '          </button>';
                     }
-                    else if (data[i].Status == "Pass") {
+                    else if (data[i].status == "Pass") {
                         html += '             <button type="button" class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '               <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
                         html += '            </button>';

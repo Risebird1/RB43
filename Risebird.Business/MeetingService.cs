@@ -1149,12 +1149,12 @@ namespace Risebird.Business
             }
 
         }
-        public string Intrestreaction(string vedioid, string Status)
+        public VedioComments Intrestreaction(string vedioid, string Status)
         {
             try
             {
                 var assignedMeeting = _meetingRespository.Intrestreaction(vedioid, Status);
-                return "";
+                return assignedMeeting;
             }
             catch (Exception ex)
             {
