@@ -1014,34 +1014,37 @@
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="All">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="ALL" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-list-alt"></i>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
                                                                 </span>
                                                             </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="ShortListed">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="ShortListed" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-archive"></i>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+                                                                  
+
+
                                                                 </span>
                                                             </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Interest-Sent">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-send"></i>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                                 </span>
                                                             </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Interest-Accept">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-accusoft"></i>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                                                                 </span>
                                                             </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
                                                                 <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons">
-                                                                    <i style="font-size:16px;" class="far fa-bell-slash"></i>
+                                                                    <i style="font-size:15px;" class="far fa-bell-slash"></i>
                                                                 </span>
                                                             </button>
                                                         }
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:15px;" class="fas fa-bell"></i></span>
                                                             </button>
                                                         }
 

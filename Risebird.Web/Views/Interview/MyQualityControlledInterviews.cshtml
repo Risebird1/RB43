@@ -77,8 +77,280 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
-</style>
 
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+    .table > thead > tr > th, .table > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+
+    table {
+        border: 1px #ccc solid !important;
+        white-space: nowrap !important;
+    }
+
+
+        table td {
+            color: #504e4e;
+        }
+
+        table th {
+            color: #000000e0;
+        }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+    .btn-call {
+        width: 30px !important;
+        height: 30px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        BORDER: 0px;
+        line-height: 1.42857;
+        background: #53a4f4;
+        display: inline-block;
+    }
+
+        .btn-call .fa {
+            color: #fff;
+            font-size: 14px;
+            padding: 0px;
+            top: 8px;
+            position: relative;
+        }
+
+    .call i {
+        color: #fff
+    }
+
+    .call-txt {
+        border: 1px #53a5f5 solid;
+        position: relative;
+        padding: 5px 15px;
+        left: -10px;
+        top: 8px;
+        font-size: 14px;
+        font-family: arial;
+        color: #53a5f5;
+        border-left: 0px;
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+    #MyInterviewList_length, #MyInterviewList_filter {
+        margin: 10px 0px
+    }
+
+        #MyInterviewList_length label {
+            font-size: 14px;
+        }
+
+        #MyInterviewList_length select.form-control {
+            padding: 8px 8px;
+        }
+
+        #MyInterviewList_length select:focus {
+            border-color: #4a93de;
+        }
+
+        #MyInterviewList_filter input {
+            outline: none;
+        }
+
+
+            #MyInterviewList_filter input::-webkit-search-decoration,
+            #MyInterviewList_filter input::-webkit-search-cancel-button {
+                display: none;
+            }
+
+
+            #MyInterviewList_filter input[type=search] {
+                background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+                border: solid 1px #ccc;
+                padding: 9px 10px 9px 32px;
+                width: 135px;
+                font-family: arial;
+                -webkit-border-radius: 10em;
+                -moz-border-radius: 10em;
+                border-radius: 10em;
+                -webkit-transition: all .5s;
+                -moz-transition: all .5s;
+                transition: all .5s;
+            }
+
+                #MyInterviewList_filter input[type=search]:focus {
+                    width: 200px;
+                    background-color: #fff;
+                    border-color: #4a93de;
+                    font-family: arial;
+                    margin: 3px;
+                    -webkit-box-shadow: 0 0 5px #4a93de;
+                    -moz-box-shadow: 0 0 5px #4a93de;
+                    box-shadow: 0 0 5px #4a93de;
+                }
+
+
+            #MyInterviewList_filter input:-moz-placeholder {
+                color: #999;
+            }
+
+            #MyInterviewList_filter input::-webkit-input-placeholder {
+                color: #999;
+            }
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+    #resumeId, #zoomlinkId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+    #reportId {
+        background: #b3d2f1;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 16px;
+        border: 1px #79c0f3 solid;
+    }
+
+    #videoId {
+        background: #53a5f53d;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .modal .form-control:focus, .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #53a5f5 !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .mdc-checkbox {
+        display: inline-block;
+        position: relative;
+        flex: 0 0 18px;
+        box-sizing: content-box;
+        width: 18px;
+        height: 18px;
+        line-height: 0;
+        white-space: nowrap;
+        cursor: pointer;
+        vertical-align: bottom;
+    }
+
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+
+    .mc-button-area {
+        text-align: right;
+    }
+</style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <div class="main-panel" id="main-panel">
@@ -109,11 +381,8 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">My QC Interviews</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="toolbar">
                             <!--        Here you can write extra buttons/actions for the toolbar              -->
                         </div>
@@ -124,22 +393,23 @@
                             <div class="toolbar">
                                 <div class="row">
 
-                                    <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
-                                            <button type="button" class="btn btn-primary " style="margin-top: -1px;margin-left:190px"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyQualityControlledInterviews" } )'" data-original-title="Tooltip on top"> Support</span></button>
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">My QC Interviews</h4></div>
 
-                                            @*<button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal" style="margin-top: 0px;float:right;margin-right:0px"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>*@
+                                        <div class="pull-right">
 
-                                            @* @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })*@
+
+                                            <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="MyQualityControlledInterviews" } )'" data-original-title="Tooltip on top"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Support</font></span>
+                                            </button>
+
                                         </div>
+
                                     </div>
-                                   
                                 </div>
 
-
-
                             </div>
-                            
+
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID">
                                     <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
@@ -193,7 +463,7 @@
                                                     <td> @item.JobLevelDesc </td>
                                                     <td> @item.candidateName</td>
                                                     <td> @item.candidateEmail</td>
-                                                    
+
                                                     @if (item.resumeLink != null && item.resumeLink != "")
                                                     {
                                                         <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
@@ -216,13 +486,31 @@
 
                                                     <td> @item.risebirdHR</td>
                                                     <td class="text-right">
-                                                        <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
-                                                        <span title="QC Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Unassign QC Interview">
+                                                            <span onclick="location.href = '@Url.Action("UnAssignQC", "Interview", new { id = item.id})'" title="Unassign QC Interview" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="QC Feedback">
+                                                            <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.id)" title="QC Feedback" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                        </button>
+
+
                                                         @*<span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="btn btn-round btn-info btn-icon btn-sm like"><i class="now-ui-icons fa fa-comments"></i></span>*@
-                                                        <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-file-pdf-o"></i></span>
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Report">
+                                                            <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId, isQC=true})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM12 17.3c-.72 0-1.3-.58-1.3-1.3 0-.72.58-1.3 1.3-1.3.72 0 1.3.58 1.3 1.3 0 .72-.58 1.3-1.3 1.3zm1-4.3h-2V7h2v6z" /></svg></span>
+                                                        </button>
+
+
+
+
 
                                                     </td>
-                                                    
+
                                                 </tr>
                                             }
                                         </tbody>
@@ -250,116 +538,456 @@
         background-color: rgb(0,0,0); /* Fallback color */
         background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
                 <!-- Modal content -->
-                <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                        <h5>QC Feedback</h5>
-                        <span class="close" id="feedbackPopUp">&times;</span>
-                    </div>
-                    <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div class="form-group">
-                                    <label for="qcDropdown"><b>QC Status</b></label>
-                                    <select class="form-control" id="qcDropdown" name="qcDropdown"></select>
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6 col-sm-6 pr-1">
-                                <div id="qualityControlComments" class="form-group">
-                                    <label>QC Comments</label>
-                                    <textarea name="qcComments" class="form-control text-box single-line" id="qcComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                </div>
-                            </div>
-
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                            <h5 class="modal-title" style="font-size:20px;">QC Feedback</h5>
+                            <span style="cursor:pointer" class="close" id="feedbackPopUp">&times;</span>
                         </div>
-                        <div class="form-horizontal">
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-6 col-sm-6 pr-1">
                                     <div class="form-group">
-                                        <label class="control-label" for="idFraudLipSync"><b>Fraud Lip Sync</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idFraudLipSync" name="idFraudLipSync">
+                                        <label for="qcDropdown">QC Status</label>
+                                        <select class="form-control" id="qcDropdown" name="qcDropdown"></select>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idQuestionsRelevance"><b>Questions' Relevance with JD</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsRelevance" name="idQuestionsRelevance">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idHandsOncoding"><b> Hands-on coding</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idHandsOncoding" name="idHandsOncoding">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idBias"><b>Bias and Candidate handling</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idBias" name="idBias">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idTechnicalCommunication"><b>Technical Communication skills</b></label>
-                                        <input class="form-control"  style="margin-top: -23px;" type="checkbox" id="idTechnicalCommunication" name="idTechnicalCommunication">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idChaptering"><b>Chaptering completed</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idChaptering" name="idChaptering">
-                                    </div>
+
                                 </div>
+
                                 <div class="col-md-6 col-sm-6 pr-1">
-                                    <div class="form-group">
-                                        <label class="control-label" for="idQuestionsFilled"><b>Questions Filled</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsFilled" name="idQuestionsFilled">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idTechSkillsMetric"><b>Tech Skills Metric</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idTechSkillsMetric" name="idTechSkillsMetric">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idSelectabilityMetric"><b>Selectability Metric</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idSelectabilityMetric" name="idSelectabilityMetric">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idJoinabilityMetric"><b>Joinability Metric</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idJoinabilityMetric" name="idJoinabilityMetric">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idGeneralSkillMetric"><b>General Skill metric</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idGeneralSkillMetric" name="idGeneralSkillMetric">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idCommentsfilled"><b>Comments filled</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idCommentsfilled" name="idCommentsfilled">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idMeaningfulAssessments"><b>Useful/meaningful assessments</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idMeaningfulAssessments" name="idMeaningfulAssessments">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idGrammar"><b>Correct English Grammar </b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idGrammar" name="idGrammar">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label" for="idProctoring"><b>Proctoring report filled</b></label>
-                                        <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idProctoring" name="idProctoring">
+                                    <div id="qualityControlComments" class="form-group">
+                                        <label>QC Comments</label>
+                                        <div class="text-areadiv  form-control"><textarea name="qcComments" class="text-box single-line" id="qcComments"></textarea> </div>
+
                                     </div>
                                 </div>
 
                             </div>
-                        </div>
-                        
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group">
 
-                        <div class="">
-                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idFraudLipSync" name="idFraudLipSync">
+
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idFraudLipSync">Fraud Lip Sync</label>
+                                            </div>
+
+
+
+
+
+
+
+                                            <!--
+                                                <label class="control-label" for="idFraudLipSync"><b>Fraud Lip Sync</b></label>
+                                                <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idFraudLipSync" name="idFraudLipSync">-->
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idQuestionsRelevance" name="idQuestionsRelevance">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idQuestionsRelevance">Questions' Relevance with JD</label>
+                                            </div>
+
+
+                                            <!--           <label class="control-label" for="idQuestionsRelevance"><b>Questions' Relevance with JD</b></label>
+                                            <input class="form-control" style="margin-top: -23px;" type="checkbox" id="idQuestionsRelevance" name="idQuestionsRelevance">-->
+                                        </div>
+                                        <div class="form-group">
+
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+
+
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idHandsOncoding" name="idHandsOncoding">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idHandsOncoding">Hands-on coding</label>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idBias" name="idBias">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idBias">Bias and Candidate handling</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idTechnicalCommunication" name="idTechnicalCommunication">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idTechnicalCommunication">Technical Communication skills</label>
+                                            </div>
+
+                                        </div>
+                                        <div class="form-group">
+
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idChaptering" name="idChaptering">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idChaptering">Chaptering completed</label>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 pr-1">
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idQuestionsFilled" name="idQuestionsFilled">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idQuestionsFilled">Questions Filled</label>
+                                            </div>
+
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idTechSkillsMetric" name="idTechSkillsMetric">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idTechSkillsMetric">Tech Skills Metric</label>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idSelectabilityMetric" name="idSelectabilityMetric">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idSelectabilityMetric">Selectability Metric</label>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idJoinabilityMetric" name="idJoinabilityMetric">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idJoinabilityMetric">Joinability Metric</label>
+                                            </div>
+
+
+
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idGeneralSkillMetric" name="idGeneralSkillMetric">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idGeneralSkillMetric">General Skill metric</label>
+                                            </div>
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idCommentsfilled" name="idCommentsfilled">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idCommentsfilled">Comments filled</label>
+                                            </div>
+
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idMeaningfulAssessments" name="idMeaningfulAssessments">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idMeaningfulAssessments">Useful/meaningful assessments</label>
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idGrammar" name="idGrammar">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idGrammar">Correct English Grammar</label>
+                                            </div>
+
+
+
+
+
+                                        </div>
+                                        <div class="form-group">
+
+
+
+
+                                            <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                <div class="mdc-checkbox" style="margin-top:-10px;">
+                                                    <input class="mdc-checkbox__native-control" type="checkbox" id="idProctoring" name="idProctoring">
+
+                                                    <div class="mdc-checkbox__background">
+                                                        <svg class="mdc-checkbox__checkmark"
+                                                             viewBox="0 0 24 24">
+                                                            <path class="mdc-checkbox__checkmark-path"
+                                                                  fill="none"
+                                                                  d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                        </svg>
+                                                        <div class="mdc-checkbox__mixedmark"></div>
+                                                    </div>
+                                                    <div class="mdc-checkbox__ripple"></div>
+
+
+                                                </div>
+                                                <label for="idProctoring">Proctoring report filled</label>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
                         </div>
-                    </div>
-                    <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
+
+                        <div class="card-footer clearfix">
+                            <div class="mc-button-area">
+                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                            </div>
+                        </div>
 
                     </div>
+
                 </div>
-
             </div>
             <!-- end row -->
         </div>
-       
+
     </div>
 </div>
 
@@ -391,6 +1019,19 @@
     .modal-content .modal-body {
         padding-top: 10px;
     }
+
+
+    .text-areadiv {
+        height: auto;
+        padding: 0px 10px !important;
+    }
+
+        .text-areadiv textarea {
+            width: 100%;
+            border: 0;
+            background: #f5f5f5;
+            padding: 5px 0px 0px 0px;
+        }
 </style>
 
 <script>
@@ -546,7 +1187,7 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-        
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -570,7 +1211,7 @@
         document.getElementById("idProctoring").checked = item.ProctoringReportFilled;
 
 
-        
+
         $.ajax({
             type: "GET",
             url: "/Interview/getQCStatusList",
@@ -591,30 +1232,30 @@
             }
         });
 
-       
+
     }
-    
+
 
     function SavePopUp() {
         var comment = document.getElementById("qcComments").value;
         var qcStatus = document.getElementById("qcDropdown").value;
 
         var FraudLipSync = document.getElementById("idFraudLipSync").checked;
-        var QuestionsRelevance = document.getElementById("idQuestionsRelevance").checked  ;
+        var QuestionsRelevance = document.getElementById("idQuestionsRelevance").checked;
         var HandsOnCoding = document.getElementById("idHandsOncoding").checked;
-        var BiasAndCandidateHandling =document.getElementById("idBias").checked;
+        var BiasAndCandidateHandling = document.getElementById("idBias").checked;
         var TechnicalCommunicationSkills = document.getElementById("idTechnicalCommunication").checked;
         var ChapteringCompleted = document.getElementById("idChaptering").checked;
         var QuestionsFilled = document.getElementById("idQuestionsFilled").checked;
-        var TechSkillsMetric =document.getElementById("idTechSkillsMetric").checked ;
+        var TechSkillsMetric = document.getElementById("idTechSkillsMetric").checked;
         var SelectabilityMetric = document.getElementById("idSelectabilityMetric").checked;
         var JoinabilityMetric = document.getElementById("idJoinabilityMetric").checked;
-        var GeneralSkillMetric = document.getElementById("idGeneralSkillMetric").checked ;
+        var GeneralSkillMetric = document.getElementById("idGeneralSkillMetric").checked;
         var CommentsFilled = document.getElementById("idCommentsfilled").checked;
-        var MeaningfulAssessments = document.getElementById("idMeaningfulAssessments").checked ;
-        var CorrectEnglishGrammar = document.getElementById("idGrammar").checked ;
-        var ProctoringReportFilled = document.getElementById("idProctoring").checked ;
-        
+        var MeaningfulAssessments = document.getElementById("idMeaningfulAssessments").checked;
+        var CorrectEnglishGrammar = document.getElementById("idGrammar").checked;
+        var ProctoringReportFilled = document.getElementById("idProctoring").checked;
+
         var id = imid;
 
         $.ajax({
@@ -673,7 +1314,7 @@
             document.getElementById("submitFilter").disabled = false;
 
         }
-        
+
 
     }
 
@@ -698,7 +1339,7 @@
 
         //start Date object creation
 
-        
+
         var yearStart = startDateValue.substring(0, 4);
         var monthStart = parseInt(startDateValue.substring(5, 7)) - 1;
         var dateStart = startDateValue.substring(8, 10);
@@ -744,7 +1385,7 @@
                     text: '@ViewBag.Message',
                     type: 'success',
                     showConfirmButton: true
-                    
+
                 },
                     function (value) //confirm
                     {
@@ -760,7 +1401,7 @@
                     text: '@ViewBag.Message',
                     type: 'error',
                     showConfirmButton: true
-                    
+
                 },
                     function ()
                     {
