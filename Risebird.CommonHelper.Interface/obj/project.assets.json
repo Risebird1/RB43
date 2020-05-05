@@ -12263,11 +12263,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectUniqueName": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "projectName": "Risebird.CommonHelper.Interface",
-      "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
+      "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj",
       "packagesPath": "C:\\Users\\PS250550\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\obj\\",
+      "outputPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
@@ -12287,8 +12287,8 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "C:\\Users\\PS250550\\Source\\Repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             }
           }
         }

@@ -14,6 +14,7 @@
     string[] ClientName = new string[] { };
     string[] SubscriptionStatus = new string[] { };
     string[] ClientRole = new string[] { };
+    string[] PrimarySkill = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
 {
@@ -26,6 +27,7 @@
     SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
 
 }
 
@@ -310,7 +312,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: normal!important;
+        font-weight: normal !important;
     }
 
 
@@ -525,6 +527,7 @@
     .mc-button-area {
         text-align: right;
     }
+
     .statusImg {
         -ms-flex: 0 0 12.666667%;
         flex: 0 0 12.666667%;
@@ -532,6 +535,7 @@
         float: left;
         padding: 0px 15px;
     }
+
     .statusInfo {
         -ms-flex: 0 0 82.333333%;
         flex: 0 0 82.333333%;
@@ -539,6 +543,7 @@
         float: left;
         padding: 0px 15px;
     }
+
     .jobs-user {
         font-size: 18px;
         font-weight: normal;
@@ -547,19 +552,21 @@
         display: block;
         width: 100%;
         padding: 0;
-        font-weight:bold;
+        font-weight: bold;
     }
-  .jobs-user span{
 
-     font-weight:normal;
-  }
+        .jobs-user span {
+            font-weight: normal;
+        }
 
-        @@media screen and (max-width: 767px) {
-            .clientName{width:170px;}
+    @@media screen and (max-width: 767px) {
+        .clientName {
+            width: 170px;
+        }
+
         .card-header-buttons {
             text-align: center;
         }
-
     }
 
     @@media screen and (max-width: 640px) {
@@ -567,7 +574,6 @@
             text-align: center;
         }
     }
-
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -735,34 +741,49 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12">
 
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-sm-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12">
 
 
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                    <font style="font-size:12px;"> Reset Filter</font>
-                                                                </button>
-
-
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                    <font style="font-size:12px;"> Apply Filter</font>
-                                                                </button>
+                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                            </button>
 
 
 
-                                                            </div>
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                            </button>
+
+
 
                                                         </div>
-
-
 
                                                     </div>
 
 
+
                                                 </div>
+
+
+
                                             </div>
 
                                         </div>
@@ -1036,7 +1057,7 @@
                         </div>
 
                         <!-- End Card-->
-                        <div id="myModal" class="modal modal-wrap" style="        display: none; /* Hidden by default */
+                        <div id="myModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1612,7 +1633,12 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
-
+             $("#PrimarySkill").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
         });
 
         function ResetFilter() {
@@ -1633,7 +1659,7 @@
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
-
+            var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -1642,6 +1668,8 @@
             $("#ArchiveStatus").val(archiveStatus);
             $("#SubscriptionStatus").val(subscriptionStatus);
             $("#ClientRole").val(clientRole);
+            $("#PrimarySkill").val(primarySkill);
+
             var form = $("#form").serialize();
             $.ajax({
                 type: "POST",
@@ -1764,7 +1792,7 @@
                                         'skipbutton': { classname: "myskip", text: "skip" }
                                     },
                                     {
-                                        'click .supportmenu':'click on the support icon to see its feartures'
+                                        'click .supportmenu': 'click on the support icon to see its feartures'
                                     }
 
                                 ];
@@ -1864,7 +1892,7 @@
                                         'nextButton': { className: "myNext", text: "next" },
                                         'skipButton': { className: "mySkip", text: "skip" }
                                     },
-                                      {
+                                    {
                                         'click .iacm': 'click on the Icon icon to see its feartures'
                                     }
                                     //{
@@ -1898,6 +1926,6 @@
                                 enjoyhint_instance.run();
 
                             </script>
-                            }
                         }
+                    }
 

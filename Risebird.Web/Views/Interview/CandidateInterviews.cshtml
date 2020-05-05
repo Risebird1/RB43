@@ -526,6 +526,64 @@
     </div>
 </div>
 
+<div id="myintrestConfirmAccept" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation for Accept Interest</h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestAccept()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding-left:50px">
+                    are you sure, do you want to Accept this intrest?
+                    <input type="text" id="txtConfirmAccept" value="" hidden />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6" style="margin-right:-25%">
+                        <input type="button" onclick="interestConfirm()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="button" onclick="closeIntrestAccept()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="myintrestConfirmPass" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+    <!-- Modal content -->
+
+
+    <div class="modal-dialog modal-lg" role="document" style="max-width:400px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmation for Pass Interest</h5>
+                <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPass()">&times;</span>
+            </div>
+            <div class="modal-body" style="padding: 2px 16px;">
+                <div class="row" style="padding-left:50px">
+                    are you sure, do you want to pass this intrest?
+                    <input tupe="text" id="txtConfirmPass" value="" hidden />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6" style="margin-right:-25%">
+                        <input type="button" onclick="interestConfirmPass()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="button" onclick="closeIntrestPass()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -747,31 +805,70 @@
         modal.style.display = "none";
     }
     function AcceptIntrest(id) {
-        if (window.confirm("are you sure, do you want to accept this intrest?")) {
-            $.ajax({
-                type: "POST",
-                url: "/Interview/Intrestreaction",
-                data: { vedioid: id, Status: "Accept" },
-                success: function (data) {
-                    $("#btnAcceptIntrest_" + id).attr('disabled', true);
-                    $("#tablerow_" + id).attr('style', 'background-color:limegreen');
-                }
-            });
-        }
+        var modal = document.getElementById("myintrestConfirmAccept");
+        modal.style.display = "block";
+        $("#txtConfirmAccept").val(id);
+        //if (window.confirm("are you sure, do you want to accept this intrest?")) {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Interview/Intrestreaction",
+        //        data: { vedioid: id, Status: "Accept" },
+        //        success: function (data) {
+        //            $("#btnAcceptIntrest_" + id).attr('disabled', true);
+        //            $("#tablerow_" + id).attr('style', 'background-color:limegreen');
+        //        }
+        //    });
+        //}
     }
     function RejectIntrest(id) {
-        if (window.confirm("are you sure, do you want to pass this intrest?")) {
-            $.ajax({
+        var modal = document.getElementById("myintrestConfirmPass");
+        modal.style.display = "block";
+        $("#txtConfirmPass").val(id);
+        //if (window.confirm("are you sure, do you want to pass this intrest?")) {
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Interview/Intrestreaction",
+        //        data: { vedioid: id, Status: "Pass" },
+        //        success: function (data) {
+        //            $("#btnRejectIntrest_" + id).attr('disabled', true);
+        //            $("#tablerow_" + id).attr('style', 'background-color:red');
+
+        //        }
+        //    });
+        //}
+    }
+    function interestConfirm() {
+        var id = $("#txtConfirmAccept").val();
+        $.ajax({
+            type: "POST",
+            url: "/Interview/Intrestreaction",
+            data: { vedioid: id, Status: "Accept" },
+            success: function (data) {
+                $("#btnAcceptIntrest_" + id).attr('disabled', true);
+                $("#tablerow_" + id).attr('style', 'background-color:limegreen');
+                closeIntrestAccept();
+            }
+        });
+    }
+    function closeIntrestAccept() {
+        var modal = document.getElementById("myintrestConfirmAccept");
+        modal.style.display = "none";
+    }
+    function closeIntrestPass() {
+        var modal = document.getElementById("myintrestConfirmPass");
+        modal.style.display = "none";
+    }
+    function interestConfirmPass() {
+        var id = $("#txtConfirmPass").val();
+             $.ajax({
                 type: "POST",
                 url: "/Interview/Intrestreaction",
                 data: { vedioid: id, Status: "Pass" },
                 success: function (data) {
                     $("#btnRejectIntrest_" + id).attr('disabled', true);
                     $("#tablerow_" + id).attr('style', 'background-color:red');
-
+                    closeIntrestPass();
                 }
             });
-        }
     }
-
 </script>

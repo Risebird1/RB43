@@ -13,6 +13,7 @@ namespace Risebird.Entities.ViewModel
         public string[] ArchiveStatus { get; set; }
         public string[] SubscriptionStatus { get; set; }
         public string[] ClientRole { get; set; }
+        public string[] PrimarySkill { get; set; }
 
     }
 }

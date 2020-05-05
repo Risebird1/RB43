@@ -412,6 +412,7 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
+                    ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
@@ -510,6 +511,8 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
+
                         }
 
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
@@ -679,6 +682,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     //Start: Share button functionaly
+                    ViewBag.ResultStatus = "VideoPresent";
                     MeetingVM model = _meetingService.GetMeetingbyid(id, "");                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;                    if (status == "Public")
                     {                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
 
@@ -725,6 +729,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    ViewBag.ResultStatus = "VideoPresent";
                     //Start:Save View counts of vedio
                     if (HttpContext.Session.GetString("UserLogedIn") != null)                    {                        string values = String.Empty;                        var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();                        if (valuestatus == "Yes")                        {
                             _meetingService.AddTotalViewCount(id);

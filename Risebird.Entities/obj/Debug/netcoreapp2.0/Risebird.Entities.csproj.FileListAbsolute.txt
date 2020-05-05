@@ -122,4 +122,3 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.AssemblyInfo.cs
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\PS250550\Source\Repos\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.0\Risebird.Entities.csprojAssemblyReference.cache
