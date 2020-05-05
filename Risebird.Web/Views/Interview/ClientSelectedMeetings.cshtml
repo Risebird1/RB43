@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Selected Candidate Interviews";
+    ViewData["Title"] = "Selected Candidates Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -513,7 +513,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor">Selected Candidate Interviews</a>
+                <a class="navbar-brand breadcrumscolor">Selected Candidates Interview</a>
                 @*<a class="navbar-brand">Client Interview Meetings</a>*@
             </div>
 
@@ -543,7 +543,7 @@
 
 
                                     <div class="card-header">
-                                        <div class="pull-left first"> <h4 class="card-title">   Selected Candidate Interviews @*list for <b>@ViewBag.IRF</b>*@</h4></div>
+                                        <div class="pull-left first"> <h4 class="card-title">Selected Candidates Interviews @*list for <b>@ViewBag.IRF</b>*@</h4></div>
 
                                         <div class="pull-right">
                                             <div>
@@ -1165,32 +1165,28 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .first': 'Here you will get All priority Client selected canditates Meetings ! ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .first': 'Detail view of the Selected Candidates Interview',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .second': 'This is the all Canditate details detials ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .second': 'Selected Candidates Interview Details',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .three': 'Filter here based on available attributes and reset filter if applied earlier',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'click .supportmenu': 'click on the Icon icon to see its feartures',
-            
+            'click .supportmenu': 'Click here to navigate over Support menu and see its feartures',            
         }
-
-
-
     ];
     setTimeout(function () {
         enjoyhint_instance.set(enjoyhint_script_steps);
         enjoyhint_instance.run();
-    }, 2000)
+    }, 5000)
 </script>
 }
 <loading></loading>

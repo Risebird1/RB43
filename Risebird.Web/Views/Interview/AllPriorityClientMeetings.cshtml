@@ -576,7 +576,7 @@
                                                 </button>
 
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded exportfive" style="margin-top: 2px;">
                                                     <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export All Candidate" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export All Candidate</font></span>
                                                 </button>
 
@@ -1296,25 +1296,28 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .first': 'Here you will get All priority Client Meetings ! ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .first': 'Priority view of the Candidates Interview',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .second': 'This is the all client detials ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
+            'next .three': 'Filter here based on available attributes and reset filter if applied earlier',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'click .four': "Click to see all client meeting details"
+            'next .exportfive': 'Export the Candidates Interview data over excel',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'click .four': "Click here to see detail grid view of the Candidate Interviews"
         }
-
-
     ];
     setTimeout(function () {
         enjoyhint_instance.set(enjoyhint_script_steps);

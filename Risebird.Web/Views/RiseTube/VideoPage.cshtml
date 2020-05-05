@@ -1378,7 +1378,7 @@
                                                                         }
                                                                         else
                                                                         {
-                                                                            <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                            <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
                                                                             <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                         }
 
@@ -1393,7 +1393,7 @@
                                                                             {
                                                                                 @if (Model.IsShortlisted > 0)
                                                                                 {
-                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist showinter" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                                 }
                                                                                 else
@@ -1404,7 +1404,7 @@
                                                                         }
                                                                     }
                                                                 </div>
-                                                                <div class="col-md-2" style="text-align: end;padding-top:5px">
+                                                                <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
                                                                     @if (Model.VideoLink != null)
                                                                     {
                                                                         @if (ViewBag.VedioStatus != "Public")
@@ -1413,16 +1413,16 @@
                                                                             {
                                                                                 @if (Model.IsIntrested == "Intrested")
                                                                                 {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
 
                                                                                 }
                                                                                 else if (Model.IsIntrested == "Accept")
                                                                                 {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Intrest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
                                                                                 }
                                                                             }
                                                                         }
@@ -2266,7 +2266,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Intersted</h5>
+                <h5 class="modal-title" style="color:#fff">Interested</h5>
                 <span onclick="closeCommentPopUp()" style="cursor:pointer;" class="close" id="CommentPopUp">&times;</span>
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
@@ -2279,7 +2279,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Intersted">
+                        <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
 
                         <input style="background:#ff253a!important" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
@@ -3547,69 +3547,69 @@
             var enjoyhint_script_steps = [
                 {
                     'next .card-title': 'Selected Candidate Video will be playing over here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .btn2': 'Click here to like the candidate video',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .btn2': 'Click here to like the Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .btn3': 'Click here to unlike candidate video',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .btn3': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item1': 'Interview Report Details, Interviewer Comment and Overall Score chart',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item2': 'Click here to see Canditate Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .item2': 'Click here to see the Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item3': 'Click here to see Teck Skill Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .item3': 'Click here to see Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item4': 'Click here to see Questions Discussed during interview',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item5': 'Click here to see General Skill Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item6': 'Click here to see Joinability Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item7': 'Click here to see Selectability Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
@@ -3618,7 +3618,7 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'For Post your comments click here',
+                    'next .post': 'For Post your comment click here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3630,7 +3630,7 @@
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 5000)
+            }, 10000)
         </script>
     }
 }
@@ -3650,82 +3650,71 @@
             var enjoyhint_script_steps = [
                 {
                     'next .card-title': 'Selected Candidate Video will be playing over here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .btnvideo': 'Candidate Video',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },                
                 {
                     'next .shortlist': 'Click here to Shortlist the Candidate',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .showinter': 'Click here to Send interest to the Candidate',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-
-                {
-                    'next .item1': 'Interview Report Details, Interviewer Comment and Score chart',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .item2': 'Click here to see Canditate Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item3': 'Click here to see Teck Skill Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'next .item2': 'Click here to see Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Click here to see Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item4': 'Click here to see Questions Discussed during interview',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item5': 'Click here to see General Skill Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item6': 'Click here to see Joinability Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
                     'next .item7': 'Click here to see Selectability Report',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
-                {
-                    'next .comment2': 'Write your comment here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .post': 'For Post your comments click here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                },                
                 {
                     'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
                 }
@@ -3734,7 +3723,7 @@
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 5000)
+            }, 10000)
         </script>
     }
 }
