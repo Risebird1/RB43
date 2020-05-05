@@ -2440,5 +2440,26 @@ namespace Risebird.Repository
 
 
         }
+        public IEnumerable<string> GetCuratedUserMailId(int irfId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@irfId", irfId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = SqlMapper.Query<string>(con, "usp_GetCuratedUserMailId", param,
+                                            commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
     }
 }
