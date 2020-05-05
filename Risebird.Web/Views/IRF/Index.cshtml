@@ -9,6 +9,7 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ArchiveStatus = new string[] { };
     string[] ClientName = new string[] { };
@@ -21,6 +22,7 @@
 (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
     SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
@@ -735,6 +737,23 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                    }
+                                                                }
+                                                            </select>
+
+
+                                                        </div>
+                                                    </div>
                                                     <div class="form-group col-md-12">
 
                                                         <div class="row">
@@ -992,7 +1011,7 @@
                                                         @if (item.SubId != null)
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
-                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:16px;" class="far fa-bell-slash"></i>
 
 
@@ -1002,7 +1021,7 @@
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
                                                             </button>
                                                         }
 
@@ -1018,7 +1037,7 @@
                         </div>
 
                         <!-- End Card-->
-                        <div id="myModal" class="modal modal-wrap" style="        display: none; /* Hidden by default */
+                        <div id="myModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1594,6 +1613,13 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
+            $("#PrimarySkill").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
+
 
         });
 
@@ -1615,6 +1641,7 @@
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
+            var primarySkill =  @Html.Raw(Json.Serialize(primarySkills));
 
 
             $('input[name=StartDate]').val(strtDte);
@@ -1624,6 +1651,7 @@
             $("#ArchiveStatus").val(archiveStatus);
             $("#SubscriptionStatus").val(subscriptionStatus);
             $("#ClientRole").val(clientRole);
+            $("#PrimarySkill").val(primarySkill);
             var form = $("#form").serialize();
             $.ajax({
                 type: "POST",
