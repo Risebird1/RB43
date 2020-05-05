@@ -87,6 +87,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<IRF>> GetAllIRFs(string emailID, string profileName);
         Task<bool> SubscribeIRF(int id, string emailId, string profile);
         Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
+        IEnumerable<string> GetCuratedUserMailId(int irfId);
         //bool UpdatePausedMeetingstoPlay(string meetingIds);
         //bool DeletePlayedMeetings(string meetingIds);
     }

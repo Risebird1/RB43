@@ -90,13 +90,15 @@ namespace Risebird.Web.Controllers
                         {
                             model.IRFList = irfList.Where(x => x.EndDate >= DateTime.Now);
                         }
+                        filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                         filter.RFID = filter.RFID == null ? filter.RFID = model.IRFList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                         filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = model.IRFList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                         filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = model.IRFList.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
                         filter.ClientName = filter.ClientName == null ? filter.ClientName = model.IRFList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                         filter.PrimarySkill=filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                        model.IRFList = model.IRFList.Where(c => filter.RFID.Contains(c.IRFId)
+                        model.IRFList = model.IRFList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0])
+                        && filter.RFID.Contains(c.IRFId)
                         && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                         && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
                         && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)
@@ -175,14 +177,15 @@ namespace Risebird.Web.Controllers
                     {
                         model.IsClientUser = true;
                     }
-
+                    filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = irfList.Select(x => x.JDTiltle.Split("|")[0]).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
                     filter.RFID = filter.RFID == null ? filter.RFID = irfList.Select(x => x.IRFId).ToArray() : filter.RFID = filter.RFID;
                     filter.ArchiveStatus = filter.ArchiveStatus == null ? filter.ArchiveStatus = irfList.Select(x => x.ArchiveStatus).ToArray() : filter.ArchiveStatus;
                     filter.SubscriptionStatus = filter.SubscriptionStatus == null ? filter.SubscriptionStatus = irfList.Select(x => x.SubscriptionStatus).ToArray() : filter.SubscriptionStatus;
                     filter.ClientName = filter.ClientName == null ? filter.ClientName = irfList.Select(x => x.ClientName).ToArray() : filter.ClientName = filter.ClientName;
                     filter.PrimarySkill = filter.PrimarySkill == null ? filter.PrimarySkill = model.IRFList.Select(x => x.JDTiltle).ToArray() : filter.PrimarySkill = filter.PrimarySkill;
 
-                    irfList = irfList.Where(c => filter.RFID.Contains(c.IRFId)
+                    irfList = irfList.Where(c => filter.PrimarySkill.Contains(c.JDTiltle.Split("|")[0]) 
+                    && filter.RFID.Contains(c.IRFId)
                     && (filter.ArchiveStatus.Count() > 0 ? filter.ArchiveStatus.Contains(c.ArchiveStatus) : c.ArchiveStatus == null)
                     && (filter.SubscriptionStatus.Count() > 0 ? filter.SubscriptionStatus.Contains(c.SubscriptionStatus) : c.SubscriptionStatus == null)
                     && (filter.ClientName.Count() > 0 ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)

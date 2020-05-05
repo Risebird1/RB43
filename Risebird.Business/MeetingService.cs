@@ -886,35 +886,13 @@ namespace Risebird.Business
         {
             try
             {
-                //double total = 0;
-                //foreach (var item in reportModel.TechSkillReportCollection)
-                //{
-                //    total = total + item.WeightageActual;
-                //}
-                //foreach (var item in reportModel.SkillGeneralReportCollection)
-                //{
-                //    total = total + item.WeightageActual;
-                //}
-                //foreach (var item in reportModel.JoinabilityReportCollection)
-                //{
-                //    total = total + item.WeightageActual;
-                //}
-                //foreach (var item in reportModel.SelectabilityReportCollection)
-                //{
-                //    total = total + item.WeightageActual;
-                //}
-                //reportModel.OverallScore = (total / 4);
+                
                 var result = await _meetingRespository.AddInterviewReport(reportModel);
                 if (reportModel.InterviewStatus.HasValue && !reportModel.IsEdited)
                 {
                     if (reportModel.InterviewStatus.Value == 2 || reportModel.InterviewStatus.Value == 4)
                     {
-                        // var IRFID = _irfRepository.GetIRFNameBasedOnId(reportModel.IRFId);
-                        //var JDtitle = _irfRepository.GetIRFJDTitleBasedOnId(reportModel.IRFId);
-                        //var intervieweStatusStatDesc = ((InterviewStatus)(reportModel.InterviewStatus)).ToString();
 
-                        //var interviewDate = reportModel.interviewDate;
-                        //var candidateName = reportModel.CandidateName;
                         var irfQualityControllers = _irfRepository.GetTransQualityController(reportModel.IRFId);
                         var mailIds = new List<string>();
                         foreach (var item in irfQualityControllers)
@@ -926,11 +904,13 @@ namespace Risebird.Business
                         }
                         _notificationHelper.SendQCInterviewerMail(mailIds, reportModel.interviewDate);
 
-                        //if(!reportModel.IsEdited)
-                        //{
-                        //    var reportLink = "https://portal.risebird.io/Interview/AddReport?interviewId=" + reportModel.InterviewId + "&irfId=" + reportModel.IRFId + "&isClient=" + true;
-
-                        //}
+                        if(reportModel.InterviewStatus.Value == 2)
+                        {
+                            //get curated users
+                            var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
+                            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName);
+                        }
+                        
                     }
                 }
 
