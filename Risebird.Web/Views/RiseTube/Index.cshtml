@@ -659,7 +659,7 @@
                                                         {
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed">
-                                                                    ShortListed
+                                                                    Shortlisted
                                                                 </label>
                                                                 <div class="col-md-6 col-sm-6">
                                                                     <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
@@ -776,15 +776,8 @@
 
                             <div class="video-block section-padding" id="VideoList">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="main-title">
-                                            <h6>Featured Videos</h6>
-                                        </div>
-                                    </div>
-
                                     @foreach (var item in Model)
                                     {
-
                                         var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
                                         <div class="col-xl-3 col-sm-6 mb-3">
                                             <div class="video-card">
@@ -1084,28 +1077,20 @@
             {
                 'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here',
                 'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Exit" }
-            },
-           {
-                'next  .txtsearch1': "Enter skill or candidate name for search",
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
-            },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },           
             {
-                'next .btn3': 'Click here to get searched result',
+                'next .btn3': 'Enter Skill or Candidate name and Search result',
                 'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
+                'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
                 'next .btn4': 'Filter here based on available attributes and reset filter if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
+                'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'click .video-card': 'Click here see the candidate video',
-
-                //'nextButton': { className: "myNext", text: "Next" },
-                //'skipButton': { className: "mySkip", text: "Skip" }
+                'click .video-card': 'Click here to see the Candidate Video',
             }
 
         ];
@@ -1126,27 +1111,22 @@
 
         var enjoyhint_script_steps = [
             {
-                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here.',
+                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here',
                 'nextButton': { className: "myNext", text: "Continue" },
-                'skipButton': { className: "mySkip", text: "Exit" }
-            },
-             {
-                'next  .txtsearch1': "Enter skill or candidate name for search",
-                'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
+                'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'next .btn3': 'Click here to get searched result',
+                'next .btn3': 'Enter Skill or Candidate name and Search result',
                 'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
+                'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
                 'next .btn4': 'Filter here based on available attributes and reset filter if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
-                'skipButton': { className: "mySkip", text: "Exit" }
+                'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'click .video-card': 'Click here see the video!.',
+                'click .video-card': 'Click here to see the Candidate Video',
             }
 
         ];
