@@ -55,7 +55,7 @@ namespace Risebird.Business.Interface
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id,string email,string Comment);
-        string Intrestreaction(string vedioid, string Status);
+        VedioComments Intrestreaction(string vedioid, string Status);
         string ShortListreaction(string vedioid, string Status);
         List<Meeting> ShortListedClient(string emailid, string IRFID);
         List<Meeting> InterestListClient(string emailid, string IRFID);

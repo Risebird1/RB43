@@ -606,7 +606,7 @@
 
 
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded exportfive" style="margin-top: 2px;">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
                                                 </button>
 
@@ -1706,27 +1706,22 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .first': 'Priority View of Selected Candidate Interviews',
+            'next .first': 'Here you will get All priority Selected canditate Info ! ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .second': 'By default last 30 days interviews will be available here, prior of that click on filter and select date range',
+            'next .second': 'This is the all Selected canditate detials ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .three': 'Filters here based on available attributes and reset filters if applied earlier',
+            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .exportfive': 'Export Selected Candidate Interviews data over excel',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
-        },
-        {
-            'click .four': "Click here to see details view of Selected Candidate Interviews"
+            'click .four': "Click to see all Canditate meeting details"
         }
 
 

@@ -576,7 +576,7 @@
                                                 </button>
 
 
-                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded exportfive" style="margin-top: 2px;">
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                                     <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export All Candidate" onclick="location.href='@Url.Action("AllPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export All Candidate</font></span>
                                                 </button>
 
@@ -882,6 +882,18 @@
                                                                 </div>
 
                                                             </div>
+
+
+
+
+
+
+
+
+
+
+
+
                                                         </div>
 
 
@@ -1284,27 +1296,22 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .first': 'Priority View of Candidate Interviews',
+            'next .first': 'Here you will get All priority Client Meetings ! ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .second': 'By default last 30 days interviews will be available here, prior of that click on filter and select date range',
+            'next .second': 'This is the all client detials ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .three': 'Filters here based on available attributes and reset filters if applied earlier ',
+            'next .three': 'Filters here based on avialble attributes and reset filters if applied earlier ! ',
             'nextButton': { className: "myNext", text: "next" },
             'skipButton': { className: "mySkip", text: "skip!" }
         },
         {
-            'next .exportfive': 'Export Candidate Interviews data over excel',
-            'nextButton': { className: "myNext", text: "next" },
-            'skipButton': { className: "mySkip", text: "skip!" }
-        },
-        {
-            'click .four': "Click here to see details view of Candidate Interviews"
+            'click .four': "Click to see all client meeting details"
         }
 
 

@@ -412,6 +412,7 @@ namespace Risebird.Web.Controllers
                     int ClientId = 0;
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     ViewBag.actionstatus = "Risetube";
+                    ViewBag.ResultStatus = "VideoPresent";
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Client" || profileName == "CuratedUser")
                     {
@@ -510,6 +511,8 @@ namespace Risebird.Web.Controllers
                         if (model == null)
                         {
                             model = new MeetingVM();
+                            ViewBag.ResultStatus = "VideoNotPresent";
+
                         }
 
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
@@ -679,6 +682,7 @@ namespace Risebird.Web.Controllers
                 else
                 {
                     //Start: Share button functionaly
+                    ViewBag.ResultStatus = "VideoPresent";
                     MeetingVM model = _meetingService.GetMeetingbyid(id, "");                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;                    if (status == "Public")
                     {                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
 
@@ -725,6 +729,7 @@ namespace Risebird.Web.Controllers
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
+                    ViewBag.ResultStatus = "VideoPresent";
                     //Start:Save View counts of vedio
                     if (HttpContext.Session.GetString("UserLogedIn") != null)                    {                        string values = String.Empty;                        var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();                        if (valuestatus == "Yes")                        {
                             _meetingService.AddTotalViewCount(id);
@@ -1014,16 +1019,14 @@ namespace Risebird.Web.Controllers
                 result = Shortlistcount.totalcount;
                 Mail _mail = new Mail();
                 _mail.TO = Shortlistcount.Email;
+                _mail.Subject = "RiseBird: Your profile has been shortlisted";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Client Name: " + email.ToUpper());
-                bulider.Append("is Shortlisted your profile.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result1 = _notificationHelper.NotifyCandidate(_mail);
+               
+                bulider.Append("Client Name: " + email.ToUpper());
+                bulider.Append("has shortlisted your profile");
+                var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
             return Json(result);
@@ -1039,16 +1042,13 @@ namespace Risebird.Web.Controllers
             {
                 Mail _mail = new Mail();
                 _mail.TO = Status;
+                _mail.Subject = "RiseBird: A client has shown interest in your profile";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Client Name:</p>" + email.ToUpper());
-                bulider.Append("<br/><p>Shows interest in your profile.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result = _notificationHelper.NotifyCandidate(_mail);
+                bulider.Append("Client Name:</p>" + email.ToUpper());
+                bulider.Append("has showed interest in your profile");
+                var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
         }

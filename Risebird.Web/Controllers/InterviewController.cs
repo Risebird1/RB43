@@ -5779,21 +5779,23 @@ namespace Risebird.Web.Controllers
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
             var Email = _meetingService.Intrestreaction(vedioid, Status);
-            var email = HttpContext.Session.GetString("email");
 
             if (Email != null)
             {
                 Mail _mail = new Mail();
-                _mail.TO = Email;
-                email = email.Replace("\"", "");
-                email = email.Split("@")[1].Split(".")[0];
+                _mail.TO = Email.Comment;
+                _mail.Subject = "Candidate has " + Status + "ed your interest";
+                var usernames = Email.UserName.Trim().Split(" ");
+                var namemodel = String.Empty;
+                foreach (var name in usernames)
+                {
+                    namemodel = namemodel + name.ToCharArray()[0];
+                }
+                Email.UserName = namemodel;
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Candidate "+ email + " has "+ Status + " your interest.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result1 = _notificationHelper.NotifyCandidate(_mail);
+                bulider.Append("Candidate " + Email.UserName + " has " + Status + "ed your interest");
+                var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
+
             }
             return Json("Success");
         }
