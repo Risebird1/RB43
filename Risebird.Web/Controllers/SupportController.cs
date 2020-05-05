@@ -34,6 +34,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     //var emailid = HttpContext.Session.GetString("email")?.Trim();
                     //emailid = emailid.Replace("\"", "");
+                    HttpContext.Session.SetString("NavigationShow", "false");
                     var model = new SupportList();
                     model.Supports = _supportService.GetAllSupportHR();
                     ViewBag.Profile = profileName;
