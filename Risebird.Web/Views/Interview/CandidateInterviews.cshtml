@@ -749,7 +749,7 @@
                 html += '<table style="Width:100%">';
                 html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
-                    if (data[i].status == "Interested Accepted") {
+                    if (data[i].status == "Interest Accepted") {
                         html += '<tr id="tablerow_' + data[i].id + '" style="background-color:limegreen">';
                     }
                     else if (data[i].status == "Interested Passed") {
@@ -761,7 +761,7 @@
                     html += '<td>' + data[i].clientName + '</td>';
                     html += '<td>' + data[i].dateRequired + '</td>';
                     html += '<td>' + data[i].approvalComments + '</td><td class="text-center">';
-                    if (data[i].status == "Interested Accepted") {
+                    if (data[i].status == "Interest Accepted") {
                         html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
                         html += '          </button>';
@@ -842,7 +842,7 @@
         $.ajax({
             type: "POST",
             url: "/Interview/Intrestreaction",
-            data: { vedioid: id, Status: "Interested Accepted" },
+            data: { vedioid: id, Status: "Interest Accepted" },
             success: function (data) {
                 $("#btnAcceptIntrest_" + id).attr('disabled', true);
                 $("#tablerow_" + id).attr('style', 'background-color:limegreen');
