@@ -522,7 +522,14 @@ namespace Risebird.Web.Controllers
                         }).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         var modelList = modelList1;
-
+                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
+                        {
+                            var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
+                            filter1.IsShortListed = filter1.IsShortListed == null ? filter1.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter1.IsShortListed = filter1.IsShortListed;
+                            filter1.IsIntrested = filter1.IsIntrested == null ? filter1.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter1.IsIntrested = filter1.IsIntrested;
+                            modelList = modelList.Where(c => (filter1.IsShortListed.Count() > 0 ? filter1.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
+                                       && (filter1.IsIntrested.Count() > 0 ? filter1.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        }
                         if (HttpContext.Session.GetString("VideoPagefilters") != null)
                         {
 
@@ -580,7 +587,7 @@ namespace Risebird.Web.Controllers
 
                         MeetingVM NewModel = new MeetingVM();
 
-                        if (HttpContext.Session.GetString("VideoPagefilters") != null)
+                        if (HttpContext.Session.GetString("VideoPagefilters") != null || HttpContext.Session.GetString("RiseTubefilters") != null)
                         {
                             NewModel.SubVideo_List = modelList.ToList().Where(x => x.imid != id).ToList();
                         }
@@ -782,7 +789,14 @@ namespace Risebird.Web.Controllers
                         //MeetingVM model = modelList.Where(a => a.imid == id).FirstOrDefault();
                         modelList = modelList.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
-
+                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
+                        {
+                            var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
+                            filter1.IsShortListed = filter1.IsShortListed == null ? filter1.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter1.IsShortListed = filter1.IsShortListed;
+                            filter1.IsIntrested = filter1.IsIntrested == null ? filter1.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter1.IsIntrested = filter1.IsIntrested;
+                            modelList = modelList.Where(c => (filter1.IsShortListed.Count() > 0 ? filter1.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty)
+                                       && (filter1.IsIntrested.Count() > 0 ? filter1.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        }
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
                             modelList = modelList.Where(t => t.JDTiltle.Contains(model.JDTiltle.Split("|")[0]) && t.interviewDate.Date >= filter.StartDate && t.interviewDate.Date <= filter.EndDate).ToList();
@@ -845,6 +859,10 @@ namespace Risebird.Web.Controllers
                                     namemodel = namemodel + name.ToCharArray()[0];
                                 }
                                 NewModel.candidateName = namemodel;
+                            }
+                            else
+                            {
+                                NewModel.candidateName = model.candidateName;
                             }
                         }
                         else
