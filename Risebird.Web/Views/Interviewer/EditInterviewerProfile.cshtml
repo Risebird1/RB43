@@ -10,9 +10,9 @@
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
 
 
-<script src="sweetalert2.all.min.js"></script>
+@*<script src="sweetalert2.all.min.js"></script>
 <script src="sweetalert2.min.js"></script>
-<link rel="stylesheet" href="sweetalert2.min.css">
+<link rel="stylesheet" href="sweetalert2.min.css">*@
 
 <style>
     .multiple_row > h2 {
@@ -153,7 +153,11 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IsLeadInterviewer, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.EditorFor(model => model.IsLeadInterviewer, new { htmlAttributes = new { id = "txt_IsLeadInterviewer", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
+                                        @*@Html.EditorFor(model => model.IsLeadInterviewer, new { htmlAttributes = new { id = "txt_IsLeadInterviewer", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.DropDownListFor(model => model.IsLeadInterviewer, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsLeadINtr", @class = "form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsLeadInterviewer, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -165,7 +169,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.Label("DOB", "Age", htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control" })
+                                        @Html.TextBox("txt_Age", null, new { id = "txt_Age", @class = "form-control", @readonly = true })
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.AltEmailId, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
@@ -192,7 +196,11 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
-                                        @Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
+                                        @*@Html.EditorFor(model => model.IsActive, new { htmlAttributes = new { id = "txt_IsActive", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.DropDownListFor(model => model.IsActive, new[]
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsActive", @class = "form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -214,7 +222,11 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.IsApproved, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label" })
-                                        @Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })
+                                        @*@Html.EditorFor(model => model.IsApproved, new { htmlAttributes = new { id = "txt_IsApproved", @class = "form-control text-box single-line", @type = "text", @Value = "false" } })*@
+                                        @Html.DropDownListFor(model => model.IsApproved, new[] 
+                                                        {   new SelectListItem { Text = "No", Value = "false" },
+                                                            new SelectListItem { Text = "Yes", Value = "true"} },
+                                                          new { id = "drp_IsAppr", @class = "form-control text-box single-line" })
                                         @Html.ValidationMessageFor(model => model.IsApproved, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
@@ -273,12 +285,12 @@
                                                 <thead class="tableHeaderClass">
                                                     <tr>
                                                         <th width="20%" class="table_heading">Skill Name </th>
-                                                        <th width="20%" class="table_heading">Category </th>
+                                                        <th width="15%" class="table_heading">Category </th>
                                                         <th width="15%" class="table_heading">IP</th>
                                                         <th width="15%" class="table_heading">Level</th>
-                                                        <th width="10%" class="table_heading">Year of Experince </th>
+                                                        <th width="5%" class="table_heading">Year of Experince </th>
                                                         <th width="20%" class="table_heading">Nature</th>
-                                                        <th width="20%" class="table_heading"> Action</th>
+                                                        <th width="10%" class="table_heading"> Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="tableBody">
@@ -287,26 +299,26 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].SkillId", (SelectList)Model.SkillTypeList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].Category", (SelectList)Model.SkillCategoryList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Ip", (SelectList)Model.SkillIPList, new { id = "drp_Ip", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].Ip", (SelectList)Model.SkillIPList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.SkillExpertiseLevelList, new { id = "drp_Level", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].Level", (SelectList)Model.SkillExpertiseLevelList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].SkillExperience", (SelectList)Model.SkillYearsOfExperienceList, new { id = "drp_SkillExperience", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].SkillExperience", (SelectList)Model.SkillYearsOfExperienceList, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerSkill[0].Nature", (SelectList)Model.SkillNatureList, new { id = "drp_Nature", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerSkill[0].Nature", (SelectList)Model.SkillNatureList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'InterviewerSkill','SkillId','Category','Ip','Level','SkillExperience', 'Nature')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -316,26 +328,26 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillId, (SelectList)Model.SkillTypeList, new { id = "drp_SkillName", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillId, (SelectList)Model.SkillTypeList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { id = "drp_Category", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Category, (SelectList)Model.SkillCategoryList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Ip, (SelectList)Model.SkillIPList, new { id = "drp_Ip", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Ip, (SelectList)Model.SkillIPList, new {  @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.SkillExpertiseLevelList, new { id = "drp_Level", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Level, (SelectList)Model.SkillExpertiseLevelList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillExperience, (SelectList)Model.SkillYearsOfExperienceList, new { id = "drp_SkillExperience", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].SkillExperience, (SelectList)Model.SkillYearsOfExperienceList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Nature, (SelectList)Model.SkillNatureList, new { id = "drp_Nature", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerSkill[i].Nature, (SelectList)Model.SkillNatureList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
                                                                     <span id="btnPlus" onclick="addRowSkillDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="deleteRowSkillDetails(this, 'InterviewerSkill','SkillId','Category','Ip','Level','SkillExperience', 'Nature')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                                 </td>
                                                             </tr>
                                                         }
@@ -359,11 +371,11 @@
                                             <table class="table table-bordered mbn" id="certificateTable">
                                                 <thead class="tableHeaderClass">
                                                     <tr>
-                                                        <th width="30%" class="table_heading">Certificate ID </th>
-                                                        <th width="30%" class="table_heading">Certificate Name</th>
+                                                        <th width="20%" class="table_heading">Certificate ID </th>
+                                                        <th width="20%" class="table_heading">Certificate Name</th>
                                                         <th width="30%" class="table_heading">Version </th>
-                                                        <th width="30%" class="table_heading">Expiry date</th>
-                                                        <th width="30%" class="table_heading">Action</th>
+                                                        <th width="20%" class="table_heading">Expiry date</th>
+                                                        <th width="10%" class="table_heading">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="tableBody">
@@ -371,13 +383,13 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateID, null, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].CertificateName, null, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
+                                                                @Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Version, null, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 @*@Html.TextBoxFor(m => m.InterviewerCertificateDetails[0].Expirydate, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date", @Value = Model.InterviewerCertificateDetails[0].Expirydate })*@
@@ -385,7 +397,7 @@
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRow(this, 'InterviewerCertificateDetails','CertificateID','CertificateName','Version','Expirydate')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -395,13 +407,13 @@
                                                         {
                                                 <tr>
                                                     <td>
-                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new { id = "txt_CertificateID", @class = "form-control text-box single-line" })
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateID, null, new {  @class = "form-control text-box single-line" })
                                                     </td>
                                                     <td>
-                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new { id = "txt_CertificateName", @class = "form-control text-box single-line" })
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].CertificateName, null, new {  @class = "form-control text-box single-line" })
                                                     </td>
                                                     <td>
-                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { id = "txt_Version", @class = "form-control text-box single-line" })
+                                                        @Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Version, null, new { @class = "form-control text-box single-line" })
                                                     </td>
                                                     <td>
                                                         @*@Html.TextBoxFor(m => m.InterviewerCertificateDetails[i].Expirydate, null, new { id = "txt_Expirydate", @class = "form-control text-box single-line", type = "date" })*@
@@ -411,7 +423,7 @@
                                                     </td>
                                                     <td>
                                                         <span id="btnPlus" onclick="addRowCertificateDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="deleteRowCertificateDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                        <span id="btnMinus" onclick="deleteRow(this, 'InterviewerCertificateDetails','CertificateID','CertificateName','Version','Expirydate')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                     </td>
                                                 </tr>
                                                         }
@@ -436,13 +448,13 @@
                                             <table class="table table-bordered mbn" id="educationTable">
                                                 <thead class="tableHeaderClass">
                                                     <tr>
-                                                        <th width="20%" class="table_heading">Educational Type </th>
-                                                        <th width="20%" class="table_heading">Degree</th>
+                                                        <th width="10%" class="table_heading">Educational Type </th>
+                                                        <th width="15%" class="table_heading">Degree</th>
                                                         <th width="20%" class="table_heading">EducationMode</th>
                                                         <th width="10%" class="table_heading">College Type</th>
                                                         <th width="20%" class="table_heading">University Name</th>
-                                                        <th width="15%" class="table_heading">Pass Out Year</th>
-                                                        <th width="20%" class="table_heading">Any Gap</th>
+                                                        <th width="10%" class="table_heading">Pass Out Year</th>
+                                                        <th width="5%" class="table_heading">Any Gap</th>
                                                         <th width="10%" class="table_heading">Action</th>
                                                     </tr>
                                                 </thead>
@@ -451,32 +463,33 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList, new { id = "drp_EducationType", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationType", (SelectList)Model.GraduationTypeList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, new { id = "drp_Degree", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerEducationDetails[0].Degree", (SelectList)Model.DegreeList, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationMode", (SelectList)Model.EducationModeList, new { id = "drp_EducationMode", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerEducationDetails[0].EducationMode", (SelectList)Model.EducationModeList, new {@class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new { id = "drp_CollegeType", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerEducationDetails[0].CollegeType", (SelectList)Model.CollegeTypeList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBox("InterviewerEducationDetails[0].UniversityName", null, new { id = "txt_UniversityName", @class = "form-control text-box single-line" })
+                                                                @Html.TextBox("InterviewerEducationDetails[0].UniversityName", null, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.TextBox("InterviewerEducationDetails[0].PassOutYear", null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })
+                                                                @*@Html.TextBox("InterviewerEducationDetails[0].PassOutYear", null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })*@
+                                                                @Html.DropDownList("InterviewerEducationDetails[0].PassOutYear", (SelectList)ViewBag.Years, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <div class="checkbox checkbox-danger">
-                                                                    @Html.CheckBox("InterviewerEducationDetails[0].AnyGap", new { id = Html.Name("InterviewerEducationDetails[0].AnyGap") })
-                                                                    <label for="@Html.Name("InterviewerEducationDetails[0].AnyGap")">Any Gap</label>
+                                                                    @Html.CheckBox("InterviewerEducationDetails[0].AnyGap")
+                                                                    <label for="@Html.Name("InterviewerEducationDetails[0].AnyGap")"></label>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'InterviewerEducationDetails','EducationType','Degree','EducationMode','CollegeType','UniversityName', 'PassOutYear', 'AnyGap')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -486,33 +499,35 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationType, (SelectList)Model.GraduationTypeList, new { id = "drp_EducationType", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationType, (SelectList)Model.GraduationTypeList, new {  @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Degree, (SelectList)Model.DegreeList, new { id = "drp_Degree", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].Degree, (SelectList)Model.DegreeList, new { @class = "form-control text-box single-line" })
                                                                 </td>
 
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationMode, (SelectList)Model.EducationModeList, new { id = "drp_EducationMode", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].EducationMode, (SelectList)Model.EducationModeList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new { id = "drp_CollegeType", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerEducationDetails[i].CollegeType, (SelectList)Model.CollegeTypeList, new {  @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].UniversityName, null, new { id = "txt_UniversityName", @class = "form-control text-box single-line" })
+                                                                    @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].UniversityName, null, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextBoxFor(m => m.InterviewerEducationDetails[i].PassOutYear, null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })
+                                                                    @*@Html.TextBoxFor(m => m.InterviewerEducationDetails[i].PassOutYear, null, new { id = "txt_PassOutYear", @class = "form-control text-box single-line" })*@
+                                                                    @Html.DropDownListFor(m=>m.InterviewerEducationDetails[i].PassOutYear, (SelectList)ViewBag.Years, new {  @class = "form-control text-box single-line" })
+
                                                                 </td>
                                                                 <td>
                                                                     <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(x => x.InterviewerEducationDetails[i].AnyGap, new { id = Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap) })
-                                                                        <label for="@Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap)">Any Gap</label>
+                                                                        @Html.CheckBoxFor(x => x.InterviewerEducationDetails[i].AnyGap )
+                                                                        <label for="@Html.NameFor(x => x.InterviewerEducationDetails[i].AnyGap)"></label>
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <span id="btnPlus" onclick="addRowEducationDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="deleteRowEducationDetails(this, 'InterviewerEducationDetails','EducationType','Degree','EducationMode','CollegeType','UniversityName', 'PassOutYear', 'AnyGap')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
                                                                 </td>
                                                             </tr>
@@ -617,10 +632,10 @@
                                                 <thead>
                                                     <tr class="tableHeaderClass">
                                                         @*<th width="15%" class="table_heading">TechnologyEnvironment</th>*@
-                                                        <th width="10%" class="table_heading">Using Primary Skill In Recent Project</th>
-                                                        <th width="35%" class="table_heading">Project Description</th>
-                                                        <th width="15%" class="table_heading">Commercial</th>
-                                                        <th width="15%" class="table_heading">Nature of Project</th>
+                                                        <th width="10%" class="table_heading">Is Primary Skill used In Recent Project</th>
+                                                        <th width="50%" class="table_heading">Project Description</th>
+                                                        <th width="10%" class="table_heading">Is Commercial Project</th>
+                                                        <th width="20%" class="table_heading">Nature of Project</th>
                                                         <th width="10%" class="table_heading">Action</th>
                                                     </tr>
                                                 </thead>
@@ -633,25 +648,25 @@
                                                                 </td>*@
                                                             <td>
                                                                 <div class="checkbox checkbox-danger">
-                                                                    @Html.CheckBox("InterviewerProjectsDetails[0].IsPrimarySkillUsed", new { id = Html.Name("InterviewerProjectsDetails[0].IsPrimarySkillUsed") })
-                                                                    <label for="@Html.Name("InterviewerProjectsDetails[0].IsPrimarySkillUsed")">Is Primary Skill Used</label>
+                                                                    @Html.CheckBox("InterviewerProjectsDetails[0].IsPrimarySkillUsed")
+                                                                    @*<label for="@Html.Name("InterviewerProjectsDetails[0].IsPrimarySkillUsed")">Is Primary Skill Used</label>*@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new { id = "txt_Description", @class = "form-control text-box single-line" })
+                                                                @Html.TextArea("InterviewerProjectsDetails[0].Description", null, new {@class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <div class="checkbox checkbox-danger">
-                                                                    @Html.CheckBox("InterviewerProjectsDetails[0].IsCommercialProject", new { id = Html.Name("InterviewerProjectsDetails[0].IsCommercialProject") })
-                                                                    <label for="@Html.Name("InterviewerProjectsDetails[0].IsCommercialProject")">Is Commercial Project</label>
+                                                                    @Html.CheckBox("InterviewerProjectsDetails[0].IsCommercialProject")
+                                                                    @*<label for="@Html.Name("InterviewerProjectsDetails[0].IsCommercialProject")">Is Commercial Project</label>*@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList, new { id = "drp_NatureOfProject", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerProjectsDetails[0].NatureOfProject", (SelectList)Model.NatureOfProjectList, new { @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRow(this, 'InterviewerProjectsDetails','IsPrimarySkillUsed','Description','IsCommercialProject','NatureOfProject')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -665,25 +680,25 @@
                                                                     </td>*@
                                                                 <td>
                                                                     <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed) })
-                                                                        <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>
+                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)
+                                                                        @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsPrimarySkillUsed)">Is Primary Skill Used</label>*@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new { id = "txt_Description", @class = "form-control text-box single-line" })
+                                                                    @Html.TextAreaFor(m => m.InterviewerProjectsDetails[i].Description, new {  @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
                                                                     <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject, new { id = Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject) })
-                                                                        <label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>
+                                                                        @Html.CheckBoxFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)
+                                                                        @*<label for="@Html.NameFor(M => M.InterviewerProjectsDetails[i].IsCommercialProject)">Is Commercial Project</label>*@
                                                                     </div>
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(M => M.InterviewerProjectsDetails[i].NatureOfProject, (SelectList)Model.NatureOfProjectList, new { id = "drp_NatureOfProjectList", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(M => M.InterviewerProjectsDetails[i].NatureOfProject, (SelectList)Model.NatureOfProjectList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
                                                                     <span id="btnPlus" onclick="addProjectTableRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteProjectTableRow(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="deleteRow(this, 'InterviewerProjectsDetails','IsPrimarySkillUsed','Description','IsCommercialProject','NatureOfProject')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
                                                                 </td>
                                                             </tr>
@@ -713,9 +728,9 @@
                                             <table class="table table-bordered mbn" id="availabilityDetailsTable">
                                                 <thead class="tableHeaderClass">
                                                     <tr>
-                                                        <th width="20%" class="table_heading">Week Day</th>
-                                                        <th width="20%" class="table_heading">Week End</th>
-                                                        <th width="5%" class="table_heading">Is Available On Public Holidays</th>
+                                                        <th width="40%" class="table_heading">Week Day</th>
+                                                        <th width="40%" class="table_heading">Week End</th>
+                                                        <th width="10%" class="table_heading">Is Available On Public Holidays</th>
                                                         <th width="10%" class="table_heading">Action</th>
                                                     </tr>
                                                 </thead>
@@ -724,20 +739,20 @@
                                                     {
                                                         <tr>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new { id = "drp_Weekday", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekday", (SelectList)Model.WeekDayList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
-                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new { id = "drp_Weekend", @class = "form-control text-box single-line" })
+                                                                @Html.DropDownList("InterviewerAvailabilityDetails[0].Weekend", (SelectList)Model.WeekEndList, new {  @class = "form-control text-box single-line" })
                                                             </td>
                                                             <td>
                                                                 <div class="checkbox checkbox-danger">
-                                                                    @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays", new { id = Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays") })
-                                                                    <label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>
+                                                                    @Html.CheckBox("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")
+                                                                    @*<label for="@Html.Name("InterviewerAvailabilityDetails[0].IsAvailableOnPublicHolidays")">Is Available On Public Holidays</label>*@
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday', 'Weekend', 'IsAvailableOnPublicHolidays')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                             </td>
                                                         </tr>
                                                     }
@@ -747,20 +762,20 @@
                                                         {
                                                             <tr>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { id = "drp_Weekday", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekday, (SelectList)Model.WeekDayList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { id = "drp_Weekend", @class = "form-control text-box single-line" })
+                                                                    @Html.DropDownListFor(m => m.InterviewerAvailabilityDetails[i].Weekend, (SelectList)Model.WeekEndList, new { @class = "form-control text-box single-line" })
                                                                 </td>
                                                                 <td>
                                                                     <div class="checkbox checkbox-danger">
-                                                                        @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays, new { id = Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays) })
-                                                                        <label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>
+                                                                        @Html.CheckBoxFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)
+                                                                        @*<label for="@Html.NameFor(x => x.InterviewerAvailabilityDetails[i].IsAvailableOnPublicHolidays)">Is Available On Public Holidays</label>*@
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <span id="btnPlus" onclick="addAvailabilityDetails()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnMinus" onclick="deleteRowAvailabilityDetails(this, 'InterviewerAvailabilityDetails','Weekday', 'Weekend', 'IsAvailableOnPublicHolidays')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
                                                                 </td>
                                                             </tr>
                                                         }
@@ -787,7 +802,7 @@
                                     {
                                         <div class="col-md-2 col-sm-2 pr-1">
                                             <div class="form-group">
-                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Holder Name</label>
+                                                <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="accountHolderName">Account Name</label>
                                                 @Html.TextBox("InterviewerAccDetails[0].AccountName", null, new { id = "txt_AccountName", @class = "form-control text-box single-line" })
                                             </div>
                                         </div>
@@ -860,7 +875,7 @@
                                     <div class="row">
                                         <label class="col-md-2"></label>
                                         <div class="col-md-6">
-                                            <input type="submit" value="Submit" class="btn btn-fill btn-primary" />
+                                            <input type="submit" value="Submit"  id="btnUpload" class="btn btn-fill btn-primary" />
                                             @*<button type="submit"  value="Submit">Submit</button>*@
                                         </div>
 
@@ -908,7 +923,7 @@
         </div>
     </div>
 
-    <script>
+    @*<script>
         function Submit_InterviewerProfileDetails_Click() {
             alert("Please Wait few Seconds...");
 
@@ -937,8 +952,7 @@
                             //swal({
                             //    title: "",
                             //    text: "<b style='color:#03bd00'>
-                            " + d.Message + " < b >
-                                ",
+                            " + d.Message + " < b > ",
                             //    html: true,
                             //});
                             MessageBox(d.Message)
@@ -955,7 +969,7 @@
                     }
                 });
         }
-    </script>
+    </script>*@
 
     <script>
         //====== Age CalculationFunctiopn======//
@@ -972,215 +986,699 @@
     </script>
     <script>
 
+        // ========== Add Row Methods  =========================================================//
 
-
-        function addProjectTableRow() {
-            var x = document.getElementById('projectTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                alert("Cannot add more than 3 Projects Details.");
-                swal("Sweet Alert Called!!!!!!");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-            // deep clone the targeted row
-
-
-            // get the total number of rows
-            //var len = x.rows.length;
-
-
-            // set the innerHTML of the first row
-            //  new_row.cells[0].innerHTML = len;
-
-            // grab the input from the first cell and update its ID and value
-            //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-            //inp1.id += len;
-            //inp1.value = '';
-
-            // grab the input from the first cell and update its ID and value
-            //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-            //inp2.id += len;
-            //inp2.value = '';
-
-            // append the new row to the table
-
-        }
-
-        function deleteProjectTableRow(row) {
-            var x = document.getElementById('projectTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            //console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('projectTable').deleteRow(i);
-            }
-        }
-
-        function addRowProfessionalDetails() {
-            var x = document.getElementById('professionalDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 3) {
-                swal("Cannot add row more than 3 Professional Details.");
-
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowProfessionalDetails(row) {
-            var x = document.getElementById('professionalDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('professionalDetailsTable').deleteRow(i);
-            }
-        }
-
-        function addRowEducationDetails() {
-            var x = document.getElementById('educationTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 2) {
-                alert("Cannot add more than 2 Educational Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
-
-        function deleteRowEducationDetails(row) {
-            var x = document.getElementById('educationTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('educationTable').deleteRow(i);
-            }
-        }
+        // Skills
 
         function addRowSkillDetails() {
-            var x = document.getElementById('skillTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Skill Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
+
+        var table = document.getElementById("skillTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 15) {
+            alert("Cannot add more than 14 Skills");
+            return;
         }
 
-        function deleteRowSkillDetails(row) {
-            var x = document.getElementById('skillTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('skillTable').deleteRow(i);
-            }
-        }
+        var $ttc = $("#skillTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#skillTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
 
 
-        function addAvailabilityDetails() {
-            var x = document.getElementById('availabilityDetailsTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
-            if (rowLen > 14) {
-                alert("Cannot add more than 14 Availability Detaiils.");
-                return;
-            }
-            else {
-                var new_row = x.rows[1].cloneNode(true);
-                x.appendChild(new_row);
-            }
-        }
 
-        function deleteRowAvailabilityDetails(row) {
-            var x = document.getElementById('availabilityDetailsTable');
-            // get the total number of rows
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
-                alert('Must have atleast one Row');
-                return false;
-            }
-            else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('availabilityDetailsTable').deleteRow(i);
-            }
-        }
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#skillTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+       // For Certificate
 
         function addRowCertificateDetails() {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length:: " + rowLen);
+            debugger;
+        //var table = document.getElementById("certificateTable");
+        //var rowCount = table.rows.length;
+        //if (rowCount == 3) {
+        //    alert("Cannot add more than 2 Certificates");
+        //    return;
+        //}
 
-            var new_row = x.rows[1].cloneNode(true);
-            x.appendChild(new_row);
+        var $ttc = $("#certificateTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#certificateTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#certificateTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+        // For Education 
+        function addRowEducationDetails() {
+
+        var table = document.getElementById("educationTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 3) {
+            alert("Cannot add more than 2 rows");
+            return;
         }
 
-        function deleteRowCertificateDetails(row) {
-            var x = document.getElementById('certificateTable');
-            var rowLen = x.rows.length;
-            console.log("Row Length to delete:: " + rowLen);
-            if (rowLen == 2) {
+        var $ttc = $("#educationTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#educationTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#educationTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+    }
+
+    // For Project 
+        function addProjectTableRow() {
+            debugger;
+        var table = document.getElementById("projectTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 4) {
+            alert("Cannot add more than 3 Pojects");
+            return;
+        }
+        var $ttc = $("#projectTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#projectTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#projectTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+        }
+
+        // For Availability 
+        function addAvailabilityDetails() {
+        var table = document.getElementById("availabilityDetailsTable");
+        var rowCount = table.rows.length;
+        if (rowCount == 13) {
+            alert("Cannot add more than 12 rows");
+            return;
+        }
+
+        var $ttc = $("#availabilityDetailsTable").find("tbody tr:last");
+        var $tr = $ttc.clone();
+        var trIndexReplaced = $("#availabilityDetailsTable tr").length - 1;
+
+        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
+        }).attr("id", function () { // change id also
+            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
+            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
+        });
+        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
+            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
+            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
+        })
+
+
+
+        // reset fields in the new row
+        $tr.find("select").val("");
+        $tr.find("input[type=text]").val("");
+        $tr.find("input[type=hidden]").val("");
+
+        $tr.find("a").val("");
+
+        // add cloned row as last row
+        $("#availabilityDetailsTable").find("tbody tr:last").after($tr);
+
+        // Find the affected form
+        var $form = $tr.closest("FORM");
+
+        // Unbind existing validation
+        $form.unbind();
+        $form.data("validator", null);
+
+        // Check document for changes
+        //$.validator.unobtrusive.parse(document);
+
+        }
+        //=========================== End of Add rows functions ====================//
+        
+        //===========================Begin of delete rows functions ====================//
+
+        function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
+            debugger;
+            if ($(element).parents('tbody').find('tr').length === 1) {
+                
                 alert('Must have atleast one Row');
                 return false;
             }
+
             else {
-                var i = row.parentNode.parentNode.rowIndex;
-                document.getElementById('certificateTable').deleteRow(i);
+                document.getElementById("btnUpload").disabled = false;
+
+                //var currentvalue = $(this).attr('value');
+                var closestRow = $(element).closest('tr');
+                var currentIndex = closestRow[0].sectionRowIndex;
+                var totalRows = $(element).parents('tbody').find('tr').length;
+                var maxIndex = totalRows - 1;
+                if (currentIndex == maxIndex) {
+                    $(element).closest('tr').remove();
+                }
+                //ClientCollection_1__ClientRoleId
+                else {
+                    $(element).closest('tr').remove();
+                    var startIndex = currentIndex + 1;
+                    var endIndex = maxIndex + 1;
+                    for (i = startIndex; i < endIndex; i++) {
+                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+
+                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+
+                        //var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                        //elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                        //elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+
+                        //var elem8 = document.getElementById(collectionName + "_" + i + "__" + tdEight);
+                        //elem8.id = collectionName + "_" + (i - 1) + "__" + tdEight;
+                        //elem8.name = collectionName + "[" + (i - 1) + "]." + tdEight;
+                    }
+
+                }
+
+            }
+        }
+
+        
+
+        // for certficate and Project Lists
+
+        function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
+            debugger;
+            if ($(element).parents('tbody').find('tr').length === 1) {
+
+                alert('Must have atleast one Row');
+                return false;
+            }
+
+            else {
+                document.getElementById("btnUpload").disabled = false;
+
+                //var currentvalue = $(this).attr('value');
+                var closestRow = $(element).closest('tr');
+                var currentIndex = closestRow[0].sectionRowIndex;
+                var totalRows = $(element).parents('tbody').find('tr').length;
+                var maxIndex = totalRows - 1;
+                if (currentIndex == maxIndex) {
+                    $(element).closest('tr').remove();
+                }
+                //ClientCollection_1__ClientRoleId
+                else {
+                    $(element).closest('tr').remove();
+                    var startIndex = currentIndex + 1;
+                    var endIndex = maxIndex + 1;
+                    for (i = startIndex; i < endIndex; i++) {
+                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                    }
+
+                }
+
+            }
+        }
+
+        
+
+
+        function deleteRowEducationDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix, tdSeven) {
+            if ($(element).parents('tbody').find('tr').length === 1) {
+
+                alert('Must have atleast one Row');
+                return false;
+            }
+
+            else {
+                document.getElementById("btnUpload").disabled = false;
+
+                //var currentvalue = $(this).attr('value');
+                var closestRow = $(element).closest('tr');
+                var currentIndex = closestRow[0].sectionRowIndex;
+                var totalRows = $(element).parents('tbody').find('tr').length;
+                var maxIndex = totalRows - 1;
+                if (currentIndex == maxIndex) {
+                    $(element).closest('tr').remove();
+                }
+                //ClientCollection_1__ClientRoleId
+                else {
+                    $(element).closest('tr').remove();
+                    var startIndex = currentIndex + 1;
+                    var endIndex = maxIndex + 1;
+                    for (i = startIndex; i < endIndex; i++) {
+                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+                        var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
+                        elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
+                        elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
+
+                        var elem5 = document.getElementById(collectionName + "_" + i + "__" + tdFive);
+                        elem5.id = collectionName + "_" + (i - 1) + "__" + tdFive;
+                        elem5.name = collectionName + "[" + (i - 1) + "]." + tdFive;
+
+                        var elem6 = document.getElementById(collectionName + "_" + i + "__" + tdSix);
+                        elem6.id = collectionName + "_" + (i - 1) + "__" + tdSix;
+                        elem6.name = collectionName + "[" + (i - 1) + "]." + tdSix;
+
+                        var elem7 = document.getElementById(collectionName + "_" + i + "__" + tdSeven);
+                        elem7.id = collectionName + "_" + (i - 1) + "__" + tdSeven;
+                        elem7.name = collectionName + "[" + (i - 1) + "]." + tdSeven;
+
+                    }
+
+                }
+
+            }
+        }
+
+        
+
+
+        
+
+
+        
+
+
+        function deleteRowAvailabilityDetails(element, collectionName, tdOne, tdTwo, tdThree) {
+            if ($(element).parents('tbody').find('tr').length === 1) {
+
+                alert('Must have atleast one Row');
+                return false;
+            }
+
+            else {
+                document.getElementById("btnUpload").disabled = false;
+
+                //var currentvalue = $(this).attr('value');
+                var closestRow = $(element).closest('tr');
+                var currentIndex = closestRow[0].sectionRowIndex;
+                var totalRows = $(element).parents('tbody').find('tr').length;
+                var maxIndex = totalRows - 1;
+                if (currentIndex == maxIndex) {
+                    $(element).closest('tr').remove();
+                }
+                //ClientCollection_1__ClientRoleId
+                else {
+                    $(element).closest('tr').remove();
+                    var startIndex = currentIndex + 1;
+                    var endIndex = maxIndex + 1;
+                    for (i = startIndex; i < endIndex; i++) {
+                        var elem1 = document.getElementById(collectionName + "_" + i + "__" + tdOne);
+                        elem1.id = collectionName + "_" + (i - 1) + "__" + tdOne;
+                        elem1.name = collectionName + "[" + (i - 1) + "]." + tdOne;
+
+                        var elem2 = document.getElementById(collectionName + "_" + i + "__" + tdTwo);
+                        elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
+                        elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
+
+                        var elem3 = document.getElementById(collectionName + "_" + i + "__" + tdThree);
+                        elem3.id = collectionName + "_" + (i - 1) + "__" + tdThree;
+                        elem3.name = collectionName + "[" + (i - 1) + "]." + tdThree;
+
+
+                    }
+
+                }
+
             }
         }
 
 
-        function RadioChanged(val) {
-            if (val == 'Upload') {
-                document.getElementById("uploadDiv").style.display = "block";
-                document.getElementById("linkDiv").style.display = "none";
-                document.getElementById("ResumeLink").value = '';
+        //function addProjectTableRow() {
+        //    var x = document.getElementById('projectTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+        //    if (rowLen > 3) {
+        //        alert("Cannot add more than 3 Projects Details.");
+        //        swal("Sweet Alert Called!!!!!!");
+        //        return;
+        //    }
+        //    else {
+        //        var new_row = x.rows[1].cloneNode(true);
+        //        x.appendChild(new_row);
+        //    }
+        //    // deep clone the targeted row
 
-            }
-            else {
-                document.getElementById("uploadDiv").style.display = "none";
-                document.getElementById("linkDiv").style.display = "block";
-                document.getElementById("File").value = '';
 
-            }
+        //    // get the total number of rows
+        //    //var len = x.rows.length;
 
-        }
+
+        //    // set the innerHTML of the first row
+        //    //  new_row.cells[0].innerHTML = len;
+
+        //    // grab the input from the first cell and update its ID and value
+        //    //var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+        //    //inp1.id += len;
+        //    //inp1.value = '';
+
+        //    // grab the input from the first cell and update its ID and value
+        //    //var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+        //    //inp2.id += len;
+        //    //inp2.value = '';
+
+        //    // append the new row to the table
+
+        //}
+
+        //function deleteProjectTableRow(row) {
+        //    var x = document.getElementById('projectTable');
+        //    // get the total number of rows
+        //    var rowLen = x.rows.length;
+        //    //console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('projectTable').deleteRow(i);
+        //    }
+        //}
+
+        //function addRowProfessionalDetails() {
+        //    var x = document.getElementById('professionalDetailsTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+        //    if (rowLen > 3) {
+        //        swal("Cannot add row more than 3 Professional Details.");
+
+        //        return;
+        //    }
+        //    else {
+        //        var new_row = x.rows[1].cloneNode(true);
+        //        x.appendChild(new_row);
+        //    }
+        //}
+
+        //function deleteRowProfessionalDetails(row) {
+        //    var x = document.getElementById('professionalDetailsTable');
+        //    // get the total number of rows
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('professionalDetailsTable').deleteRow(i);
+        //    }
+        //}
+
+        //function addRowEducationDetails() {
+        //    var x = document.getElementById('educationTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+        //    if (rowLen > 2) {
+        //        alert("Cannot add more than 2 Educational Detaiils.");
+        //        return;
+        //    }
+        //    else {
+        //        var new_row = x.rows[1].cloneNode(true);
+        //        x.appendChild(new_row);
+        //    }
+        //}
+
+        //function deleteRowEducationDetails(row) {
+        //    var x = document.getElementById('educationTable');
+        //    // get the total number of rows
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('educationTable').deleteRow(i);
+        //    }
+        //}
+
+        //function addRowSkillDetails() {
+        //    var x = document.getElementById('skillTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+        //    if (rowLen > 14) {
+        //        alert("Cannot add more than 14 Skill Detaiils.");
+        //        return;
+        //    }
+        //    else {
+        //        var new_row = x.rows[1].cloneNode(true);
+        //        x.appendChild(new_row);
+        //    }
+        //}
+
+        //function deleteRowSkillDetails(row) {
+        //    var x = document.getElementById('skillTable');
+        //    // get the total number of rows
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('skillTable').deleteRow(i);
+        //    }
+        //}
+
+
+        //function addAvailabilityDetails() {
+        //    var x = document.getElementById('availabilityDetailsTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+        //    if (rowLen > 14) {
+        //        alert("Cannot add more than 14 Availability Detaiils.");
+        //        return;
+        //    }
+        //    else {
+        //        var new_row = x.rows[1].cloneNode(true);
+        //        x.appendChild(new_row);
+        //    }
+        //}
+
+        //function deleteRowAvailabilityDetails(row) {
+        //    var x = document.getElementById('availabilityDetailsTable');
+        //    // get the total number of rows
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('availabilityDetailsTable').deleteRow(i);
+        //    }
+        //}
+
+        //function addRowCertificateDetails() {
+        //    var x = document.getElementById('certificateTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length:: " + rowLen);
+
+        //    var new_row = x.rows[1].cloneNode(true);
+        //    x.appendChild(new_row);
+        //}
+
+        //function deleteRowCertificateDetails(row) {
+        //    var x = document.getElementById('certificateTable');
+        //    var rowLen = x.rows.length;
+        //    console.log("Row Length to delete:: " + rowLen);
+        //    if (rowLen == 2) {
+        //        alert('Must have atleast one Row');
+        //        return false;
+        //    }
+        //    else {
+        //        var i = row.parentNode.parentNode.rowIndex;
+        //        document.getElementById('certificateTable').deleteRow(i);
+        //    }
+        //}
+
+
+        //function RadioChanged(val) {
+        //    if (val == 'Upload') {
+        //        document.getElementById("uploadDiv").style.display = "block";
+        //        document.getElementById("linkDiv").style.display = "none";
+        //        document.getElementById("ResumeLink").value = '';
+
+        //    }
+        //    else {
+        //        document.getElementById("uploadDiv").style.display = "none";
+        //        document.getElementById("linkDiv").style.display = "block";
+        //        document.getElementById("File").value = '';
+
+        //    }
+
+        //}
     </script>

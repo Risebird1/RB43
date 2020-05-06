@@ -1198,7 +1198,7 @@ namespace Risebird.Web.Controllers
         //}
 
         //[HttpGet]
-        //public async Task<IActionResult> AddInterviewerProfile_EmployerDetails(int UserId)
+        //public async Task<IActionResult> IndexEmployer(int UserId)
         //{
         //    try
         //    {
@@ -1207,7 +1207,7 @@ namespace Risebird.Web.Controllers
         //            List<InterviewerProfessional> EmployerList = _userRepository.GetEmployerListById(UserId).Result;
 
         //            return View(EmployerList);
-                                      
+
         //        }
         //        else
         //        {
@@ -1252,7 +1252,7 @@ namespace Risebird.Web.Controllers
         //    }
         //}
 
-        
+
         //#region Interviewer My Profile
         //[HttpGet]
         //public async Task<IActionResult> AddInterviewerMyProfileIndex()

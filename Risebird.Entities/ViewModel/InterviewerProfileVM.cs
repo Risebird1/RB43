@@ -39,6 +39,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Date Of Birth")]
         [Required(ErrorMessage = "Please Enter Date Of Birth")]
         [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime DOB { get; set; }
         [Display(Name = "Gender")]
         public string Gender { get; set; }
@@ -54,7 +55,6 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
 
         [Display(Name = "Altername Mobile Number")]
-        [Required(ErrorMessage = "Please enter Alternate Mobile Number")]
         public string AltMobileNumber { get; set; }
 
         [Display(Name = "Current Role")]
@@ -62,7 +62,6 @@ namespace Risebird.Entities.ViewModel
         public string CurrentRole { get; set; }
 
         [Display(Name = "Years of Experience")]
-        [Required(ErrorMessage = "Please enter Years of Experience")]
         public decimal Experience { get; set; }
 
         [Display(Name = "Preferred Domain")]
@@ -70,7 +69,6 @@ namespace Risebird.Entities.ViewModel
         public string PreferredDomain { get; set; }
 
         [Display(Name = "Resume Link")]
-        //[Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
 
         [Display(Name = "Upload Resume")]

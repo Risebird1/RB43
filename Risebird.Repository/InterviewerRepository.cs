@@ -832,20 +832,32 @@ namespace Risebird.Repository
             {
                 int ProfileId;
 
-                DynamicParameters parameters = SetSPParametersForInterviewProfile(interviewerProfile);
+                // In this case, Only passing the required parameters to fil in the tables
+                var parameters = new DynamicParameters();
+
+                parameters.Add("@UserId", interviewerProfile.UserId);
+                parameters.Add("@FirstName", interviewerProfile.FirstName);
+                parameters.Add("@LastName", interviewerProfile.LastName);
+                parameters.Add("@EmailId", interviewerProfile.EmailId);
+                parameters.Add("@AltEmailId", interviewerProfile.AltEmailId);
+                parameters.Add("@MobileNumber", interviewerProfile.MobileNumber);
+                parameters.Add("@AltMobileNumber", interviewerProfile.AltMobileNumber);
+                parameters.Add("@ResumeLink", interviewerProfile.ResumeLink);
+                parameters.Add("@v_ProfileId", SqlDbType.Int, direction: ParameterDirection.Output);
+
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     //Just added to get Id this way
-                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    //var result = await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
                     //   commandType: CommandType.StoredProcedure);
-                    //int ProfileId = result.FirstOrDefault();
+                    //int MyProfileId = result.FirstOrDefault();
 
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddOrEditInterviewerProfile", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_MyProfile", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     var ProfileList = SqlMapper.QueryAsync<InterviewerProfileVM>(
                         con, "select id, NickName, userId from InterviewerProfile orderby ", null, commandType: Text).Result.AsList();
-                    ProfileId = ProfileList.Where(x => x.NickName == interviewerProfile.NickName).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
+                    ProfileId = ProfileList.Where(x => x.UserId == interviewerProfile.UserId).Last().id;//irfList.Find(x => x.IRFId == irfDetails.IRFId).id;
                 }
 
                 foreach (var item in interviewerProfile.InterviewerAvailabilityDetails)

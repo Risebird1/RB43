@@ -1,7 +1,8 @@
-/****** Object:  StoredProcedure [dbo].[usp_AddOrEditInterviewerProfile]    Script Date: 4/17/2020 10:09:01 PM ******/
+/****** Object:  StoredProcedure [dbo].[usp_AddOrEditInterviewerProfile]    Script Date: 5/1/2020 3:59:20 PM ******/
+
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_AddOrEditInterviewerProfile'))
 BEGIN
-    DROP PROCEDURE dbo.usp_AddOrEditInterviewerProfile
+    DROP PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 END
 
 SET ANSI_NULLS ON
@@ -9,6 +10,7 @@ GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -23,14 +25,22 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 @NickName varchar(100),
 @EmailId varchar(150),
 @AltEmailId varchar(150),
-@Location varchar(200),
+@DOB DateTime,
+@Gender varchar(50),
+@AnnualSalary nvarchar(200),
+@Country varchar(200),
+@City varchar (200),
 @MobileNumber nvarchar(200),
 @AltMobileNumber nvarchar(200),
 @CurrentRole varchar(150),
 @Experience decimal(10,2),
 @PreferredDomain varchar(200),
-@ResumeLink varchar(max),
-@CodedResumeLink varchar(max),
+@GitHubLink nvarchar(max),
+@ResumeLink nvarchar(max),
+@CodedResumeLink nvarchar(max),
+@StackOverflowLink nvarchar(max),
+@LinkedinLink nvarchar(max),
+@Blog nvarchar(max),
 @IsLeadInterviewer bit,
 @IsActive bit,
 @IsApproved bit,
@@ -39,88 +49,128 @@ CREATE PROCEDURE [dbo].[usp_AddOrEditInterviewerProfile]
 AS
 
 If Exists (select 1 from [dbo].[InterviewerProfile] where userId = @UserId)
--- Update 
+-- Edit in both the tables
 Begin
 
-Declare @ProfileId int;
+Declare @v_ProfileId int;
+
+  Update [dbo].[UserList]
+  SET
+			[FirstName] = @FirstName,
+			[LastName] = @LastName,
+			[EmailId] = @EmailId,
+			[IsActive] = @IsActive,
+			[MobileNumber] = @MobileNumber 
+
+   where Id = @UserId;
 
   Update [dbo].[InterviewerProfile]
   Set
-			[FirstName] = @FirstName,
-			[LastName] = @LastName,
 			[NickName] = @NickName, 
-			[EmailId] = @EmailId,
 			[AltEmailID] = @AltEmailId,
-			[Location] = @Location,
-			[MobileNumber]=@MobileNumber,
+			[DOB] = @DOB,
+			[Gender] = @Gender,
+			[AnnualSalary] = @AnnualSalary,
+			[Country] = @Country,
+			[City] = @City,
 			[AltMobileNumber] = @AltMobileNumber,
 			[CurrentRole] = @CurrentRole,
 			[Experience] = @Experience,
 			[PreferredDomain] = @PreferredDomain,
 			[ResumeLink] = @ResumeLink,
 			[CodedResumeLink] = @CodedResumeLink,
+			[GitHubLink] = @GitHubLink,
+			[StackOverflowLink] = @StackOverflowLink,
+			[LinkedinLink] = @LinkedinLink,
+			[Blog] = @Blog,
 			[IsLeadInterviewer] = @IsLeadInterviewer,
-			[IsActive] = @IsActive,
 			[IsApproved] = @IsApproved
        
-	   where userId = @UserId
+	where userId = @UserId;
 	
-  select @ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;
+  select @v_ProfileId = id from [dbo].[InterviewerProfile] where UserId = @UserId;
 
-delete from TransInterviewerSkill where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerSkill where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerEducation where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerEducation where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerProfessional where InterviewerProfileId=@ProfileId
+  --delete from TransInterviewerProfessional where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerProjects where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerProjects where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerAvailability where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerAvailability where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerAccDetails where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerAccDetails where InterviewerProfileId=@v_ProfileId
 
-delete from TransInterviewerCertificate where InterviewerProfileId=@ProfileId
+  delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId
 
 End
 
 Else
---Insert new record
+--Insert new record for Add request
 Begin
+Declare @v_User_Id int;
+
+	INSERT INTO [dbo].[UserList]
+           ([idProfile],
+		    [FirstName],
+			[LastName],
+			[EmailId],
+			[IsActive],
+			[MobileNumber])
+			
+       VALUES
+           (3,
+		    @FirstName,
+			@LastName,
+			@EmailId,
+			@IsActive,
+			@MobileNumber)
+
+	-- Collect the user ID from UserList tbl
+	Select @v_User_Id = id from [dbo].[UserList] where EmailId = @EmailId;
+
 	INSERT INTO [dbo].[InterviewerProfile]
            ([UserId],
-			[FirstName],
-			[LastName],
 			[NickName], 
-			[EmailId],
 			[AltEmailID],
-			[Location],
-			[MobileNumber],
+			[DOB],
+			[Gender],
+			[AnnualSalary],
+			[Country],
+			[City],
 			[AltMobileNumber],
 			[CurrentRole],
 			[Experience],
 			[PreferredDomain],
 			[ResumeLink],
 			[CodedResumeLink],
+			[GitHubLink],
+			[StackOverflowLink],
+			[LinkedinLink],
+			[Blog],
 			[IsLeadInterviewer],
-			[IsActive],
 			[IsApproved])
        VALUES
-           (@UserId,
-			@FirstName,
-			@LastName,
+           (@v_User_Id,
 			@NickName,
-			@EmailId,
 			@AltEmailId,
-			@Location,
-			@MobileNumber,
+			@DOB,
+			@Gender,
+			@AnnualSalary,
+			@Country,
+			@City,
 			@AltMobileNumber,
 			@CurrentRole,
 			@Experience,
 			@PreferredDomain,
 			@ResumeLink,
 			@CodedResumeLink,
+			@GitHubLink,
+			@StackOverflowLink,
+			@LinkedinLink,
+			@Blog,
 			@IsLeadInterviewer,
-			@IsActive,
 			@IsApproved)
 
 End

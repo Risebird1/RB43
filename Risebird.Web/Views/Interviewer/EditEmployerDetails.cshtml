@@ -90,7 +90,7 @@
                                     @*--company Head quarter*@
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Headquarters, htmlAttributes: new { @class = "control-label col-md-4 col-sm-2 desp-label " })
-                                        @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CompanySizeList, new { @class = "form-control text-box single-line" })
+                                        @Html.DropDownListFor(m => m.Headquarters, (SelectList)ViewBag.CountryList, new { @class = "form-control text-box single-line" })
                                     </div>
 
 
@@ -147,7 +147,7 @@
 
                                     </div>
                                     <div class="col-md-6">
-                                        @Html.ActionLink("Cancel", "AddInterviewerProfile_EmployerDetails", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        @Html.ActionLink("Cancel", "IndexEmployer", "Interviewer", new { id = Model.InterviewerProfileId }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
 
                                         <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
 

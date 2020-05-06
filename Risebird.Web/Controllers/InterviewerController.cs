@@ -220,12 +220,12 @@ namespace Risebird.Web.Controllers
 
                     if (_interviewerService.EditInterviewerProfile(interviewerProfile).Result)
                     {
-                        TempData["MessageInterviewer"] = "Interviewer is added Successfully";
+                        TempData["MessageInterviewer"] = "Edit Interviewer Successful";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["MessageInterviewer"] = "Interviewer addition is Failed while adding to the System";
+                        TempData["MessageInterviewer"] = " Edit Interviewer is Failed";
                         return RedirectToAction("Index");
                     }
 
@@ -277,6 +277,9 @@ namespace Risebird.Web.Controllers
             var collegeType = from CollegeType s in Enum.GetValues(typeof(CollegeType))
                               select new { ID = (int)s, Name = s.GetDescription() };
             model.CollegeTypeList = new SelectList(collegeType, "ID", "Name");
+
+            ViewBag.Years = new SelectList(Enumerable.Range(DateTime.Today.Year-50, 51).Select(x => new SelectListItem()
+                                 {Text = x.ToString(), Value = x.ToString() }), "Value", "Text");
 
             //=========Skills============
 
@@ -330,12 +333,13 @@ namespace Risebird.Web.Controllers
                     if (_interviewerService.DeleteInterviewerProfile(UserId).Result)
                     {
                         TempData["InterviewerEmployerMessage"] = "Successfully Deleted";
-                        return RedirectToAction("Index");
+                        //return RedirectToAction("Index");
+                        return Json(new { url = Url.Action("Index", "Interviewer") });
                     }
                     else
                     {
                         TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                        return RedirectToAction("Index");
+                        return Json(new { url = Url.Action("Index", "Interviewer") });
                     }
                 }
                 else
@@ -347,7 +351,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                return RedirectToAction("Index");
+                return Json(new { url = Url.Action("Index", "Interviewer") });
             }
         }
 
@@ -381,7 +385,7 @@ namespace Risebird.Web.Controllers
         #region Interviewer Employer functions
 
         [HttpGet]
-        public async Task<IActionResult> AddInterviewerProfile_EmployerDetails(int id)
+        public async Task<IActionResult> IndexEmployer(int id)
         {
             try
             {
@@ -433,7 +437,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = IProfileId });
+                return RedirectToAction("IndexEmployer", new { id = IProfileId });
             }
         }
         [HttpPost]
@@ -449,12 +453,12 @@ namespace Risebird.Web.Controllers
                     if (_interviewerService.AddEmployerProfile(interviewerProfessional).Result)
                     {
                         TempData["InterviewerEmployerMessage"] = "Adding Interviewer Employer Details is Successful";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                        return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
                     }
                     else
                     {
                         TempData["InterviewerEmployerMessage"] = "Adding Interviewer Employer Details is failed";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                        return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
                     }
                 }
                 else
@@ -465,7 +469,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
             }
         }
         private void GetAllEmployerSelectList()
@@ -521,7 +525,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = IProfileId });
+                return RedirectToAction("IndexEmployer", new { id = IProfileId });
             }
         }
 
@@ -538,12 +542,12 @@ namespace Risebird.Web.Controllers
                     if (_interviewerService.EditEmployerProfile(interviewerProfessional).Result)
                     {
                         TempData["InterviewerEmployerMessage"] = "Editing Interviewer Employer Details is Successful";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                        return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
                     }
                     else
                     {
                         TempData["InterviewerEmployerMessage"] = "Editing Interviewer Employer Details is failed";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                        return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
                     }
                 }
                 else
@@ -555,11 +559,11 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["InterviewerEmployerMessage"] = "Adding Interviewer Employer Details is failed";
-                return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = interviewerProfessional.InterviewerProfileId });
+                return RedirectToAction("IndexEmployer", new { id = interviewerProfessional.InterviewerProfileId });
             }
         }
 
-        
+
         public async Task<IActionResult> DeleteEmployerDetails(int id, int IProfileId)
         {
             try
@@ -570,12 +574,13 @@ namespace Risebird.Web.Controllers
                     if (_interviewerService.DeleteEmployerProfile(id).Result)
                     {
                         TempData["InterviewerEmployerMessage"] = "Successfully Deleted";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = IProfileId });
+                        return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
+                        //return RedirectToAction("IndexEmployer", new { id = IProfileId });
                     }
                     else
                     {
                         TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                        return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = IProfileId });
+                        return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
                     }
                 }
                 else
@@ -587,7 +592,7 @@ namespace Risebird.Web.Controllers
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 TempData["InterviewerEmployerMessage"] = "Failed to Delete";
-                return RedirectToAction("AddInterviewerProfile_EmployerDetails", new { id = IProfileId });
+                return Json(new { url = Url.Action("IndexEmployer", "Interviewer", new { id = IProfileId }) });
             }
         }
 
@@ -598,7 +603,7 @@ namespace Risebird.Web.Controllers
         #region Interviewer My Profile
 
         [HttpGet]
-        public async Task<IActionResult> AddInterviewerMyProfileIndex(int UserId)
+        public async Task<IActionResult> MyProfile(int UserId)
         {
             try
             {
@@ -607,10 +612,15 @@ namespace Risebird.Web.Controllers
 
                     //InterviewerProfileVM model = new InterviewerProfileVM();
                     InterviewerProfileVM model = _interviewerService.GetInterviewerMyProfileById(UserId);
+                    if (model == null)
+                    {
+                        TempData["MessageInterviewer"] = "No Information available in the System";
+                        return RedirectToAction("Index");
+                    }
                     // Get all the select Lists
                     GetAllSelectList(model);
 
-                    return View("AddInterviewerMyProfileIndex", model);
+                    return View("MyProfile", model);
                 }
                 else
                 {
@@ -620,11 +630,12 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["MessageInterviewer"] = "Failed";
                 return RedirectToAction("Index");
             }
         }
         [HttpPost]
-        public async Task<IActionResult> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile)
+        public async Task<IActionResult> MyProfile(InterviewerProfileVM interviewerProfile)
         {
             try
             {
@@ -632,26 +643,24 @@ namespace Risebird.Web.Controllers
                 {
                     string uploadedFileURL = string.Empty;
 
-                    if (interviewerProfile.ResumeFile != null || interviewerProfile.CodedResumeFile != null)
+                    if (interviewerProfile.ResumeFile != null)
                     {
-                        if (interviewerProfile.ResumeFile != null)
-                        {
-                            await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
-                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
-                            var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
-                            uploadedFileURL = blob.Uri.ToString();
-                            interviewerProfile.ResumeLink = uploadedFileURL;
-                        }
+                        await _azureStorageHelper.InsertBlob(interviewerProfile.ResumeFile.FileName, "resumes", interviewerProfile.ResumeFile);
+                        var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                        var blob = containerRef.GetBlockBlobReference(interviewerProfile.ResumeFile.FileName);
+                        uploadedFileURL = blob.Uri.ToString();
+                        interviewerProfile.ResumeLink = uploadedFileURL;
+
                     }
 
                     if (_interviewerService.AddInterviewerMyProfile(interviewerProfile).Result)
                     {
-                        TempData["MessageInterviewer"] = "Interviewer My Profile is added Successfully";
+                        TempData["MessageInterviewer"] = "My Profile is added Successfully";
                         return RedirectToAction("Index");
                     }
                     else
                     {
-                        TempData["MessageInterviewer"] = "Interviewer My Profile addition is Failed while adding to the System";
+                        TempData["MessageInterviewer"] = "My Profile addition is Failed";
                         return RedirectToAction("Index");
                     }
 
