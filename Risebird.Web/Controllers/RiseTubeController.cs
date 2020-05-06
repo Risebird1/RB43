@@ -514,7 +514,6 @@ namespace Risebird.Web.Controllers
                             ViewBag.ResultStatus = "VideoNotPresent";
 
                         }
-                        var modelList2 = modelList1;
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         modelList1 = modelList1.Select(x =>
                         {
@@ -523,14 +522,7 @@ namespace Risebird.Web.Controllers
                         }).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         var modelList = modelList1;
-                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
-                        {
-                            var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
-                            filter1.IsShortListed = filter1.IsShortListed == null ? filter1.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter1.IsShortListed = filter1.IsShortListed;
-                            filter1.IsIntrested = filter1.IsIntrested == null ? filter1.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter1.IsIntrested = filter1.IsIntrested;
-                            modelList2 = modelList2.Where(c => (filter1.IsShortListed.Count() > 0 ? filter1.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty) 
-                            && (filter1.IsIntrested.Count() > 0 ? filter1.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
-                        }
+
                         if (HttpContext.Session.GetString("VideoPagefilters") != null)
                         {
 
@@ -591,10 +583,6 @@ namespace Risebird.Web.Controllers
                         if (HttpContext.Session.GetString("VideoPagefilters") != null)
                         {
                             NewModel.SubVideo_List = modelList.ToList().Where(x => x.imid != id).ToList();
-                        }
-                        else if(HttpContext.Session.GetString("RiseTubefilters") != null)
-                        {
-                            NewModel.SubVideo_List = modelList2.ToList().Where(x => x.imid != id).ToList();
                         }
                         else
                         {
