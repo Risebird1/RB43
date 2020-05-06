@@ -16,7 +16,7 @@ AS
 BEGIN  
 DECLARE @Id int  
 Select @Id=id from UserList where EmailId=@EmailId  
-Insert Into SuitableCandidate values(@InterviewId,@Id,'Intrested',@Comment,GetDate())  
+Insert Into SuitableCandidate values(@InterviewId,@Id,'Interest Sent',@Comment,GetDate())  
 Select CandidateEmail from InterviewMeetings where id=@InterviewId  
 END
 GO
