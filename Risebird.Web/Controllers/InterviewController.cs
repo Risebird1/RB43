@@ -5786,32 +5786,26 @@ namespace Risebird.Web.Controllers
                 Mail _mail = new Mail();
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-               // var nameuser = _meetingService.Fetchusername(emailid);
+              
                 _mail.TO = Email.Comment;
                 if (Status == "Interest Accepted")
                 {
-                    _mail.Subject = "A candidate has accepted your interest";
+                    _mail.Subject = "Candidate has accepted your interest";
                 }
                 else
                 {
-                    _mail.Subject = "A candidate has passed your interest";
+                    _mail.Subject = "Candidate has passed your interest";
 
                 }
-                //var usernames = nameuser.Trim().Split(" ");
-                //var namemodel = String.Empty;
-                //foreach (var name in usernames)
-                //{
-                //    namemodel = namemodel + name.ToCharArray()[0];
-                //}
-                //Email.UserName = namemodel;
+               
                 StringBuilder bulider = new StringBuilder();
                 if (Status == "Interest Accepted")
                 {
-                    bulider.Append("A candidate has accepted your interest");
+                    bulider.Append("Candidate has accepted your interest");
                 }
                 else
                 {
-                    bulider.Append("A candidate has passed your interest");
+                    bulider.Append("Candidate has passed your interest");
 
 
                 }

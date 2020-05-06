@@ -167,7 +167,7 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0];
+                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                     }
                                     item.candidateName = namemodel;
                                 }
@@ -323,7 +323,7 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0];
+                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                     }
                                     item.candidateName = namemodel;
                                 }
@@ -578,7 +578,7 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0];
+                                        namemodel = namemodel + name.ToCharArray()[0]+ name.ToCharArray()[1];
                                     }
                                     itemmodel.candidateName = namemodel;
                                 }
@@ -598,13 +598,13 @@ namespace Risebird.Web.Controllers
 
                         if (profileName == "CuratedUser")
                         {
-                            if (model.IsIntrested != "Interest Accepted" && model.IsIntrested != null)
+                            if (model.IsIntrested != "Interest Accepted")
                             {
                                 var usernames = model.candidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0];
+                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                 }
                                 NewModel.candidateName = namemodel;
                             }
@@ -628,7 +628,7 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0];
+                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                     }
                                     IRListModel.CandidateName = namemodel;
                                 }
@@ -840,7 +840,7 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0];
+                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                     }
                                     itemmodel.candidateName = namemodel;
                                 }
@@ -856,7 +856,7 @@ namespace Risebird.Web.Controllers
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0];
+                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                 }
                                 NewModel.candidateName = namemodel;
                             }
@@ -878,7 +878,7 @@ namespace Risebird.Web.Controllers
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0];
+                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
                                 }
                                 IRListModel.CandidateName = namemodel;
                             }
@@ -1041,8 +1041,7 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
 
-                bulider.Append("A client: " + email.ToUpper());
-                bulider.Append(" has shortlisted your profile");
+                bulider.Append("Client: " + email.ToUpper()+ " has shortlisted your profile");              
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
@@ -1059,12 +1058,11 @@ namespace Risebird.Web.Controllers
             {
                 Mail _mail = new Mail();
                 _mail.TO = Status;
-                _mail.Subject = "A client has shown interest in your profile";
+                _mail.Subject = "Client has shown interest in your profile";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("A client: " + email.ToUpper());
-                bulider.Append(" has showed interest in your profile");
+                bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");               
                 var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
