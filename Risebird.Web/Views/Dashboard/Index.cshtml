@@ -4,11 +4,9 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
 <style>
     .statistics {
         margin-bottom: 10%
@@ -75,81 +73,6 @@
     .card {
         margin-bottom: 20px;
     }
-
-    .btn-primary {
-        background-color: #007bff
-    }
-
-    .table-primary {
-        background-color: #007bff !important
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-        td .wordwrap
-
-    {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        /*max-width: 300px !important;*/
-        font-family: Arial, Helvetica, sans-serif
-    }
-
-    .btn-primary {
-        margin-right: 30px;
-    }
-
-    .content {
-        background-color: white
-    }
-
-    .table-striped {
-        width: 100%;
-        overflow: hidden;
-        margin: 0 auto;
-    }
-
-        .table-striped:hover {
-            overflow-y: scroll;
-        }
 </style>
 
 
@@ -157,7 +80,6 @@
 
 
 <div class="main-panel" id="main-panel">
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
@@ -171,38 +93,75 @@
                 </div>
                 <a class="navbar-brand">Dashboard</a>
             </div>
-
+           
         </div>
     </nav>
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content" style="background-color:white">
-
+    <div class="content">
         <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-4">
-
-                @* <h2>Invites</h2>*@
-                <div class="card">
-                    <div class="card-body" id="first-element-introduction">
-                        <p class="card-text">Total Candidates : <span style="color: black">1500</span></p>
-                        @*<h4 class="card-title">@ViewBag.Totinvites </h4>*@
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div id="selected" style=" height: 200px; width: 50%;"></div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6" style="display:none">
-                            <div id="rejected" style="height: 200px; width: 40%;"></div>
+            <div class="col-md-12">
+                <div class="card card-stats">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="statistics">
+                                    <div class="info">
+                                        <div class="icon icon-primary">
+                                            <i class="now-ui-icons fa fa-user"></i>
+                                        </div>
+                                        <h3 class="info-title">@ViewBag.Totcandidate</h3>
+                                        <h6 class="stats-title">Candidates</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="statistics">
+                                    <div class="info">
+                                        <div class="icon icon-success">
+                                            <i class="now-ui-icons fa fa-video-camera"></i>
+                                        </div>
+                                        <h3 class="info-title">
+                                            @ViewBag.TotInterviewer
+                                        </h3>
+                                        <h6 class="stats-title">Interviewer</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="statistics">
+                                    <div class="info">
+                                        <div class="icon icon-info">
+                                            <i class="now-ui-icons users_single-02"></i>
+                                        </div>
+                                        <h3 class="info-title">@ViewBag.Totinvites</h3>
+                                        <h6 class="stats-title">Interview</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="col-md-3">
+                                    <div class="statistics">
+                                        <div class="info">
+                                            <div class="icon icon-danger">
+                                                <i class="now-ui-icons objects_support-17"></i>
+                                            </div>
+                                            <h3 class="info-title">353</h3>
+                                            <h6 class="stats-title">Support Requests</h6>
+                                        </div>
+                                    </div>
+                                </div>*@
                         </div>
                     </div>
                 </div>
-
             </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-6">
 
-            <div class="col-lg-4 col-md-4 col-sm-4">
-
-                @* <h2>Invites</h2>*@
+                <h2>Invites</h2>
                 <div class="card">
-                    <div class="card-body" id="second-element-introduction">
+                    <div class="card-body">
                         <p class="card-text">Total Invites : <span style="color: black">@ViewBag.Totinvites</span></p>
                         @*<h4 class="card-title">@ViewBag.Totinvites </h4>*@
                         <div class="col-lg-6 col-md-6 col-sm-6">
@@ -215,11 +174,11 @@
                 </div>
 
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="col-lg-6 col-md-6 col-sm-6">
 
-                @* <h2>Interviewers</h2>*@
+                <h2>Interviewers</h2>
                 <div class="card">
-                    <div class="card-body" id="third-element-introduction">
+                    <div class="card-body">
                         <p class="card-text">Total Interviewers : <span style="color: black">@ViewBag.TotInterviewer</span></p>
                         @*<h4 class="card-title">@ViewBag.TotInterviewer</h4>*@
                         <div class="col-lg-6 col-md-6 col-sm-6">
@@ -228,146 +187,20 @@
                     </div>
                 </div>
             </div>
-
         </div>
-
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="dates">
-                    <button class="btn btn-primary btn-round " id="demo" style="margin-right: 40px;" onclick="FilterInterviewDashboard('Yesterday')"></button>
-                    <button class="btn btn-primary btn-round" id="demo1" style="margin-right: 40px;" onclick="FilterInterviewDashboard('Today')"></button>
-                    <button class="btn btn-primary btn-round " id="demo2" style="margin-right: 40px;" onclick="FilterInterviewDashboard('Tomorrow')"></button>
-                    <button class="btn btn-primary btn-round" id="demo3" style="margin-right: 40px;" onclick="FilterInterviewDashboard('1DayTomorrow')"></button>
-                    <button class="btn btn-primary btn-round" id="demo4" style="margin-right: 40px;" onclick="FilterInterviewDashboard('2DayTomorrow')"></button>
-                    <button class="btn btn-primary btn-round" id="demo5" style="margin-right: 40px;" onclick="FilterInterviewDashboard('3DayTomorrow')"></button>
-                    <button class="btn btn-primary btn-round" id="demo6" style="margin-right: 40px;" onclick="FilterInterviewDashboard('4DayTomorrow')"></button>
-                </div>
-            </div>
-        </div>
-        <div id='loadingmessage' class="text-center" style='display:none'>
-            <img src="~/Newassets/img/newloader.gif" />
-        </div>
-        <div class="table-responsive text-nowrap" id="tableIRFID">
-
-            <!--Table-->
-            <table class="table table-striped" id="meetingIRF" style="margin-top: 5px;">
-
-                <!--Table head-->
-                <thead>
-                    <tr style="background-color: #007bff;font-size:13px;color:#ffffff">
-                        <th>IRF ID</th>
-                        <th>Primary Skill</th>
-                        <th>Client Name</th>
-                        <th>End Client Name</th>
-                        <th>Interview</th>
-                        <th>Unassigned Interview</th>
-                        <th>Concurrent Interviews</th>
-                        <th>Interviews Status</th>
-                        <th>Not Filled Report</th>
-                        <th>Quality Check Pending</th>
-                    </tr>
-                </thead>
-                <!--Table head-->
-                <!--Table body-->
-                <tbody>
-                </tbody>
-                <!--Table body-->
-
-
-            </table>
-            <!--Table-->
-        </div>
-      
-        <!--Section: Live preview-->
-        @*<div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                <div id="tableIRFID" class="table-responsive">
-                    <table id="meetingIRF" class="class="table table-bordered"" cellspacing="0" width="100%">
-                        <thead>
-                            <tr class="table-dark text-dark">
-                                <th>IRF ID</th>
-                                <th>Primary Skill</th>
-                                <th>Client Name</th>
-                                <th>End Client Name</th>
-                                <th>Interview</th>
-                                <th>Unassigned Interview</th>
-                                <th>Concurrent Interviews</th>
-                                <th>Interviews Status</th>
-                                <th>Not Filled Report</th>
-                                <th>Quality Check Pending</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>*@
-
-        @*<div class="table-responsive" id="tableIRFID">
-                <table class="table table-bordered" id="meetingIRF">
-                    <thead>
-                        <tr>
-                            <th>IRF ID</th>
-                            <th>Primary Skill</th>
-                            <th>Client Name</th>
-                            <th>End Client Name</th>
-                            <th>Interview</th>
-                            <th>Unassigned Interview</th>
-                            <th>Concurrent Interviews</th>
-                            <th>Interviews Status</th>
-                            <th>Not Filled Report</th>
-                            <th>Quality Check Pending</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>*@
-    </div>
-    <div class="row" style="display:none">
-        <div class="col-md-12">
-            <h2>Skillwise Distribution of Interviews</h2>
-            <div class="card">
-                <div class="card-body">
-                    <div id="container"></div>
+        <div class="row" style="display:none">
+            <div class="col-md-12">
+                <h2>Skillwise Distribution of Interviews</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div id="container"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+   
 </div>
-<footer class="footer">
-    <div class=" container-fluid ">
-        <nav>
-            <ul style="padding-left: 93px">
-                <li>
-                    <a href="#">
-                        Risebird
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        About Us
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        Blog
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="copyright" id="copyright">
-            &copy;
-            <script>
-                document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-            </script> Risebird All Rights Reserved.
-        </div>
-    </div>
-</footer>
-
-
-
 
 
 
@@ -467,30 +300,6 @@
                 //]
             }]
         });
-       chart.render();
-        var chart = new CanvasJS.Chart("selected", {
-           theme: "light2",
-            width: 350,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: null,
-            data: [{
-                type: "pie",
-                startAngle: 60,
-                innerRadius: 55,
-                indexLabelFontSize: 15,
-               // indexLabel: "{label}  {y}%",
-               // toolTipContent: "<b>{label} </b>({y}%)",
-               // dataPoints:1000,
-                indexLabel: "{label}  #percent%",
-               toolTipContent: "<b>{label} </b>(#percent%)",
-                dataPoints: [
-                    { y: 500, label: "Rejected", color: "#aa80ff" },
-                    { y: 500, label: "Proxy", color: "	#33a0ff"},
-                    { y: 500, label: "Selected", color:"#cce7ff" }
-                ]
-            }]
-        });
         chart.render();
 
         // Create the chart
@@ -584,134 +393,4 @@
     }
 </script>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-<script>
-    var today = new Date() - 1;
-    console.log(today)
-    var daysSorted = [];
-    var FDates = [];
-    var goBackDays = 6;
-
-    for (let i = 0; i <= goBackDays; i += 1) {
-        var newDate = new Date(new Date().setDate((new Date().getDate() - 1) + i));
-        daysSorted.push(newDate);
-    }
-
-
-    daysSorted.sort(function (a, b) {
-        return a - b;
-    })
-
-    daysSorted.filter(function (obj) {
-        var d = new Date(obj);
-        mnth = ("0" + (d.getMonth() + 1)).slice(-2),
-            day = ("0" + d.getDate()).slice(-2);
-        //  return [d.getFullYear(), mnth, day].join("-");
-        FDates.push([d.getFullYear(), mnth, day].join("-"))
-    })
-
-    console.log("DateArray => " + FDates);
-    //var text = "";
-    //var i;
-    //for (i = 0; i < FDates.length; i++) {
-    //    text += "<button class='btn btn-primary' style = 'margin-lrft:25px'>" + FDates[i] + "</button>"
-    //}
-    var text = FDates[0]; var text1 = FDates[1]; var text2 = FDates[2]; var text3 = FDates[3]; var text4 = FDates[4]; var text5 = FDates[5]; var text6 = FDates[6];
-
-    document.getElementById("demo").innerHTML = text;
-    document.getElementById("demo1").innerHTML = text1;
-    document.getElementById("demo2").innerHTML = text2;
-    document.getElementById("demo3").innerHTML = text3;
-    document.getElementById("demo4").innerHTML = text4;
-    document.getElementById("demo5").innerHTML = text5;
-    document.getElementById("demo6").innerHTML = text6;
-
-
-</script>
-
-<script>
-    $(document).ready(function () {
-        FilterInterviewDashboard("Today");// on page load default dropdownlist value set
-        //$('#meetingIRF').DataTable({
-        //    "pagingType": "full_numbers",
-        //    "lengthMenu": [
-        //        [10, 25, 50, -1],
-        //        [10, 25, 50, "All"]
-        //    ],
-        //    responsive: true,
-        //    language: {
-        //        search: "_INPUT_",
-        //        searchPlaceholder: "Search records",
-        //    }
-
-        //});
-        //var table = $('#meetingIRF').DataTable();
-    });
-</script>
-
-
-<script type="text/javascript">
-    //// script for loader starts here
-    $(".dataloading").hide();
-    $("#meetingIRF").hide();
-    var loader;
-    function ShowProgress() {
-        $(".dataloading").hide();
-        $("#meetingIRF").hide();
-        loader = document.getElementsByClassName("loader")[0];
-        loader.style.display = "block";
-        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
-        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
-        loader.style.top = top + "px";
-        loader.style.left = left + "px";
-    };
-    ShowProgress();
-
-    window.onload = function () {
-        setTimeout(function () {
-            loader.style.display = "none";
-            $(".dataloading").show();
-            $("#meetingIRF").show();
-        }, 2000);
-    };
-    //// script for loader ends here
-</script>
-
-<script>
-    function FilterInterviewDashboard(filterValue) {
-
-        $('#loadingmessage').show();
-        $.ajax({
-            type: "GET",
-            url: "/IRF/FilteredInterviewDashboard",
-            data: { 'filterValue': filterValue },
-            success: function (data) {
-                if (data == '') {
-                    $('#loadingmessage').hide();
-                    $('#tableIRFID').html('');
-                    $('#tableIRFID').html('No interviews for ' + filterValue + '.');
-                    $('#tableIRFID').css("margin-left", "452px");
-                    return;
-                }
-                $('#loadingmessage').hide();
-                $('#tableIRFID').css("margin-left", "");
-                $('#tableIRFID').html('');
-                $('#tableIRFID').html(data);
-
-                $('#meetingIRF').DataTable({
-                    bFilter: false, bInfo: false, bPaginate: false,
-
-                });
-                //  var table = $('#meetingIRF').DataTable();
-
-
-
-            },
-            error: function (err) {
-
-
-            }
-        });
-    }
-</script>
 

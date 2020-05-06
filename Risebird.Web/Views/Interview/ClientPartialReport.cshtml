@@ -1,45 +1,201 @@
 ﻿
 
 @model Risebird.Entities.ViewModel.InterviewReport
-
+@{
+    ViewData["Title"] = "Interview Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 <style>
 
-
-
-    .main-panel {
-        width: 100% !important;
+    body {
+        font-family: Roboto, sans-serif;
     }
 
-    .canvasjs-chart-credit {
-        display: none;
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
     }
 
-    .table-responsive {
-        overflow: hidden;
+
+    textarea::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: var(--mdc-theme-primary, #018786) !important;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
+    }
+
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
+    }
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
     }
 
     .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
 
-    #btnPlus, #btnMinus {
-        padding: 2px;
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
     }
 
-    #btnPlus {
-        background-color: #4a89dc;
+ 
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
     }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;border-top:0; border-left:0; border-right:0;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
+    }
+
+
+
+
 
     .glyphicon {
         top: -1px;
@@ -47,84 +203,141 @@
         vertical-align: middle;
         line-height: 0;
     }
-</style>
 
-<style>
-    /* The Modal (background) */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    .table-responsive {
+        overflow: hidden;
     }
 
-    /* Modal Content */
-    .modal-content {
+    #AudioFile {
+        margin: 0px 0px 15px 0px;
+    }
+
+
+
+    #PageVideoLink {
+        margin: 0px 0px 10px 0px;
+    }
+
+
+    #VideoFile {
+        margin: 0px 0px 10px 0px;
+    }
+
+    .top-gap {
+        padding-top: 40px;
+        display: block
+    }
+
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #ProctoringTable .label-type {
+        background: #e8f5ff;
+        padding: 8px 10px;
+        border: 0;
+    }
+
+    .video-choose {
         position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 40%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        /*-webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s*/
+        top: -28px;
     }
 
-    /* The Close Button */
-    .close {
-        color: #fefefe !important;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
+    .trash-btn {
+        background: #d20505 !important;
     }
 
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
+    .click {
+        color: #53a5f5;
+        text-decoration: underline;
+    }
+
+    .file-lable {
+        color: #000 !important;
+        font-size: 14px !important;
+    }
+
+    .card-text-label {
+        font-size: 13px !important;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
+    }
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+    .dropdown-toggle {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke !important;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .dropdown-toggle::after {
+            color: rgba(0, 0, 0, 0.29);
+            position: absolute;
+            right: 30px;
+            top: 14px;
         }
 
-    .modal-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
+    .mdc-card button.dropdown-toggle:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
-    .modal-body {
-        padding: 2px 16px;
+    #StartDate, #EndDate {
+        width: 270px;
     }
 
-    .modal-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
+    .modal-content .modal-body {
+        padding-top: 10px;
     }
 
-    .modal-content .modal-header {
-        font-size: 10px;
+    .modal .form-group {
+        margin-bottom: 10px;
     }
+
+        .modal .form-group .btn {
+            margin: 0px;
+        }
+
 </style>
+
+
 <meta charset="utf-8" />
 <link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
 <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--     Fonts and icons     -->
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <!-- CSS Files -->
 <link href="~/Newassets/css/bootstrap.min.css" rel="stylesheet" />
 <link href="~/Newassets/css/now-ui-dashboard.css?v=1.4.1" rel="stylesheet" />
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script src="~/Newassets/js/core/jquery.min.js"></script>
 <script src="~/Newassets/js/core/popper.min.js"></script>
 <script src="~/Newassets/js/core/bootstrap.min.js"></script>
@@ -139,11 +352,15 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="navbar-wrapper">
-                
-                <a class="navbar-brand">
-                    Interview Report
-                </a>
+            <div class="navbar-wrapper" style="width:100%;float:left;display:block;">
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Interview Report
+                    </a>
+                </div>
+                <div class="pull-right">
+                    <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()">
+                </div>
             </div>
 
         </div>
@@ -154,18 +371,31 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
                         @if (Model.InterviewStatus == 2 || Model.InterviewStatus == 4)
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
-                            <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-info btn-icon btn-sm like fa fa-thumbs-up" style="width:90px"> Approve</button>
-                            <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-info btn-icon btn-sm like fa fa-check-circle" style="width:90px"> Select</button>
+                            <div class="clearfix text-right">
 
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
+                                    <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
+                                </button>
+
+
+                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
+                                    <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Select</font></span>
+                                </button>
+
+
+
+                                <!--  <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-success btn-icon btn-sm like fa fa-thumbs-up" style="width:145px"><font style="font-family:Arial;font-size:12px;"> Approve</font></button>
+            <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-primary btn-icon btn-sm like fa fa-check-circle" style="width:145px"> <font style="font-family:Arial;font-size:12px;">Select</font></button>-->
+                            </div>
                         }
 
-                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
+                        <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine clearfix ng-valid form" id="Clienform">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -177,24 +407,27 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.interviewDate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.interviewDate, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
 
+
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.expectedPerHourRate, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -204,30 +437,32 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.PreferredLocation, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
                                             @Html.TextBoxFor(m => m.PreferredLocation, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.currentEmployerName, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
                                             @Html.TextBoxFor(m => m.currentEmployerName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
                                             @{
                                                 if (Model.resumeLink != null && Model.resumeLink != "")
                                                 {
-                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label">Click here</a>
+                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.resumeLink.ToString().Replace(" ", "%20") class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label click ">Click here</a>
                                                 }
                                             }
 
@@ -245,7 +480,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.ProctoringCount, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.ProctoringCount, new { @class = "form-control text-box single-line", @readonly = "readonly" })
@@ -253,23 +488,25 @@
 
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.MeetingStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            
+
 
                                             @Html.DropDownListFor(x => Model.MeetingStatus, Model.MeetingStatusList, "Select Status", htmlAttributes: new { @class = "form-control webkitEnabled", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.MeetingStatus, "", new { @class = "text-danger" })
                                         </div>
                                     </div>
 
+
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.Rating, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                           
+
 
                                             @Html.DropDownList("Rating", (SelectList)Model.Level, new { @class = "form-control", @disabled = "disabled" })
                                             @Html.ValidationMessageFor(model => model.OverallScore, "", new { @class = "text-danger" })
@@ -277,7 +514,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-6 col-sm-6 pull-left">
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.InterviewStatusList, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
@@ -287,6 +524,7 @@
                                         </div>
                                     </div>
 
+
                                 </div>
 
                                 <div class="row">
@@ -295,15 +533,19 @@
                                             <h2>Interview Video</h2>
                                         </div><!--end of multiple location-->
                                     </div><!--end of col-md-12-->
+                                </div>
 
-
+                                <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p style="min-height:20px;border:1px #1d181817 solid;    margin: 10px;">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
 
-                                        @Html.HiddenFor(x => Model.VideoLink)
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+
                                             {
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                <p></p>
                                                 <video width="320" height="240" style="width:100%" controls>
                                                     <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                     <source src=@Url.Content(Model.VideoLink) type="video/ogg">
@@ -313,1005 +555,1058 @@
                                             }
                                             else
                                             {
-                                                <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                <iframe width="420" height="345" style="width:99.5%;border:0; margin:0px 0px 15px 0px;" src="@Url.Content(Model.VideoLink)"></iframe>
 
                                             }
                                         }
 
-                                      
-                                    </div><!--end of col-md-12-->
+                                            </p>
+                                        </div><!--end of col-md-12-->
 
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Report Details</h2>
-                                        </div><!--end of multiple location-->
                                     </div>
 
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="card" style="height:344px">
-                                            <div class="card-body">
-                                                <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
-                                                <div class="col-lg-6 col-md-6 col-sm-6">
-                                                    <div id="scoreChart" style="height: 200px; width: 40%;"></div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Report Details</h2>
+                                            </div><!--end of multiple location-->
+                                        </div>
+
+                                        <div class="col-md-5 col-sm-5">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
+                                                    <div>
+                                                        <div id="scoreChart" style="height: 200px; width: 40%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                          
+                                            <div id="uploadDiv">
+
+
+                                                <div style="margin-bottom:15px;">
+                                                    @{
+                                                        if (Model.VideoLink != null)
+                                                        {
+                                                            <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                          
+
+
+
+
+
+
+
+                                            </div>
+                                            <div class="col-md-7 col-sm-7">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+
+                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                <div class="talktext">
+                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+
+                                                                </div>
+                                                            </div>
+                                                            @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <span>
+
+                                                            </span>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+                                                        <div class="form-group">
+                                                            @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                            @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        </div>
+
+
+
+                                                        
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6">
-                                        <div class="card">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
-                                                @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                <span>
 
-                                                </span>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6 col-sm-6 pull-left">
+
                                             </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                            </div>
+
+                                            
                                         </div>
                                     </div>
-                                </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Questions Discussed</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Questions</th>
+                                                            <th class="table_heading">Skill Name</th>
+                                                            <th class="table_heading">Rating</th>
+                                                            <th class="table_heading">Time(Min)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
+                                                        {
+                                                            <tr>
+                                                                <td>
 
 
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        
-                                        @{
-                                            if (Model.AudioLink != null)
-                                            {
-                                                <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
-                                            }
-                                        }
-                                        @*</div>*@
+                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+
+                                                                </td>
+                                                                <td>
+                                                                    @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                </td>
+                                                                <td>
+
+                                                                    @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
+
+                                                                </td>
+
+                                                                <td>
+                                                                    <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
+
+                                                                </td>
+
+                                                                <td>
+                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                                </td>
+
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
+
+
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+
+
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
+
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
+
+
+                                                                    </td>
+
+                                                                    <td>
+
+                                                                        @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+
+                                                                    </td>
+
+                                                                </tr>
+
+
+                                                            }
+
+                                                        }
+
+
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
                                     </div>
 
-                                    <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
-                                       
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Tech Skill Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
-                                        <div class="">
-                                            @{
-                                                if (Model.VideoLink != null)
-                                                {
-                                                    <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
-                                                }
-                                            }
-                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SkillTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Required Level</th>
+                                                            <th class="table_heading">Skill Name</th>
+                                                            <th class="table_heading">Actual Level</th>
+                                                            <th class="table_heading">Required Weightage</th>
+                                                            <th class="table_heading">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+
+
+                                                    <tbody>
+                                                        @if (Model.TechSkillReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @*<input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
+                                                                        @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
+                                                                    @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
+
+
+                                                                </tr>
+
+                                                            }
+                                                        }
+
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="form-group">
+                                                @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+
+
+                                                        @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+
+
+
+                                        </div><!--end of col-md-12-->
+
                                     </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Questions Discussed</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>General Skill Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
 
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="QuestionsTable">
-                                                <thead>
-                                                    <tr>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="SkillGeneralTable">
+                                                    <thead>
+                                                        <tr>
 
-                                                        <th class="table_heading">Questions</th>
-                                                        <th class="table_heading">SkillName</th>
-                                                        <th class="table_heading">Rating</th>
-                                                        <th class="table_heading">Time(Min)</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
-                                                    {
+                                                            <th class="table_heading">Required Level</th>
+                                                            <th class="table_heading">Type</th>
+                                                            <th class="table_heading">Value</th>
+                                                            <th class="table_heading">Actual Level</th>
+                                                            <th class="table_heading">Required Weightage</th>
+                                                            <th class="table_heading">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.SkillGeneralReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.SkillGeneralReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @*<input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
+
+
+                                                                        @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
+
+
+                                                                </tr>
+
+                                                            }
+
+                                                        }
+
+
+                                                    </tbody>
+                                                </table>
+
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+
+                                                            @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Joinability Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+
+                                                <table class="table table-bordered mbn" id="JoinabilityTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">Required Level</th>
+                                                            <th width="20%">Type</th>
+                                                            <th width="35%">Value</th>
+                                                            <th width="15%">Actual Level</th>
+                                                            <th width="10%">Required Weightage</th>
+                                                            <th width="10%">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.JoinabilityHRReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.JoinabilityHRReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    @Html.HiddenFor(m => m.JoinabilityHRReportCollection[i].RequiredLevelId)
+
+                                                                </tr>
+
+                                                            }
+                                                        }
+
+
+
+                                                    </tbody>
+                                                </table>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+
+                                                            @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:70%", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Selectability Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+
+                                                <table class="table table-bordered mbn" id="SelectabilityTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">Required Level</th>
+                                                            <th width="20%">Type</th>
+                                                            <th width="35%">Value</th>
+                                                            <th width="15%">Actual Level</th>
+                                                            <th width="10%">Required Weightage</th>
+                                                            <th width="10%">Actual Weightage</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.SelectabilityEvaluatorReportCollection != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.SelectabilityEvaluatorReportCollection.Count(); i++)
+                                                            {
+                                                                <tr>
+
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
+
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+
+                                                                    @Html.HiddenFor(m => m.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
+
+                                                                </tr>
+
+                                                            }
+                                                        }
+
+
+
+                                                    </tbody>
+                                                </table>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+                                                            @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:70%", @readonly = "readonly" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Proctoring Report</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="ProctoringTable">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th class="table_heading">Areas</th>
+                                                            <th class="table_heading">Number of Red Flags</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
                                                         <tr>
                                                             <td>
-
-
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
-
+                                                                Eyes Movement
                                                             </td>
-                                                            <td>
-                                                                @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                            </td>
-                                                            <td>
-
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
-
-                                                            </td>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
 
                                                             <td>
-                                                                <input class="form-control text-box single-line" id="QuestionsCollection_0__Timing" name="QuestionsCollection[0].Timing" type="number" min="1">
-
+                                                                <label class="form-control label-type" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
                                                             </td>
 
+                                                        </tr>
+                                                        <tr>
                                                             <td>
-                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <label class="form-control label-type" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Head Movement
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Lips Movement
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="LipsOverhead">Using overhead light</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="LipsDarklight">Dark light in the room or on the face</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="LipsHeadphone">Using Headphone in front of Lips</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Latency check
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td>
+                                                                Candidate desktop
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="DesktopScreenSharing">Sharing screen but not desktop</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Voice Impostering
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @onchange = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Linkedin Photo
+                                                            </td>
+                                                            <td class="control-width"></td>
+                                                        </tr>
+                                                        <tr>
+
+                                                            <td>
+                                                                <label class="form-control label-type" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
+                                                            </td>
+                                                            <td class="control-width">
+                                                                @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
+                                                                @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
 
                                                             </td>
 
                                                         </tr>
-                                                    }
-                                                    else
-                                                    {
-                                                        for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
 
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!--end of col-md-12-->
 
+                                    </div>
 
-                                                                </td>
-
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
-
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
-
-
-                                                                </td>
-
-                                                                <td>
-
-                                                                    @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
-
-                                                                </td>
-
-                                                            </tr>
-
-
-                                                        }
-
-                                                    }
+                                    @Html.HiddenFor(m => m.id)
+                                    @Html.HiddenFor(m => m.IRFId)
+                                    @Html.HiddenFor(m => m.InterviewId)
+                                    @Html.HiddenFor(m => m.IsEdited)
 
 
 
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div><!--end of col-md-12-->
+
 
                                 </div>
+                            </form>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Tech Skill Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="SkillTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="table_heading">Required Level</th>
-                                                        <th class="table_heading">Skill Name</th>
-                                                        <th class="table_heading">Actual Level</th>
-                                                        <th class="table_heading">Required Weightage</th>
-                                                        <th class="table_heading">Actual Weightage</th>
-                                                    </tr>
-                                                </thead>
-
-
-                                                <tbody>
-                                                    @if (Model.TechSkillReportCollection != null)
-                                                    {
-                                                        @for (int i = 0; i < Model.TechSkillReportCollection.Count(); i++)
-                                                        {
-                                                            <tr>
-
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                <td>
-                                                                    @*<input class="form-control" id="@("TechSkillReportCollection_"+i+"__ActualLevelId")" name="TechSkillReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.LevelTech.Where(x=> x.Value == Model.TechSkillReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
-                                                                    @Html.DropDownListFor(m => m.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.LevelTech, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.TechSkillReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                @Html.HiddenFor(m => m.TechSkillReportCollection[i].SkillId)
-
-
-                                                            </tr>
-
-                                                        }
-                                                    }
-
-
-
-                                                </tbody>
-                                            </table>
-                                        </div>
+                            <div id="myModal" class="modal modal-wrap">
+                                <!-- Modal content -->
+                                <div class="modal-content" style="width:50%">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
+                                        <span class="close" id="approvePopUp">&times;</span>
+                                    </div>
+                                    <div class="modal-body">
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                            @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-
-
+                                            @*<label>Approved</label>
+                            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+                                            <label for="approveDropdown" class="control-label">Approved For Next Round</label>
+                                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                                         </div>
-
-
-
-                                    </div><!--end of col-md-12-->
+                                        <div id="approvalComments" class="form-group">
+                                            <label class="control-label">Approval Comments</label>
+                                            <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px">
+                                        </div>
+                                        <div>
+                                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
+                                        </div>
+                                    </div>
 
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>General Skill Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="SkillGeneralTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="table_heading">Required Level</th>
-                                                        <th class="table_heading">Type</th>
-                                                        <th class="table_heading">Value</th>
-                                                        <th class="table_heading">Actual Level</th>
-                                                        <th class="table_heading">Required Weightage</th>
-                                                        <th class="table_heading">Actual Weightage</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.SkillGeneralReportCollection != null)
-                                                    {
-                                                        @for (int i = 0; i < Model.SkillGeneralReportCollection.Count(); i++)
-                                                        {
-                                                            <tr>
-
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                <td>
-                                                                    @*<input class="form-control" id="@("SkillGeneralReportCollection_"+i+"__ActualLevelId")" name="SkillGeneralReportCollection[@i].ActualLevelId" readonly="readonly" type="text" value="@Model.Level.Where(x=> x.Value == Model.SkillGeneralReportCollection[i].ActualLevelId.ToString()).FirstOrDefault().Text">*@
-
-
-                                                                    @Html.DropDownListFor(m => m.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @disabled = "disabled" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SkillGeneralReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                @Html.HiddenFor(m => m.SkillGeneralReportCollection[i].RequiredLevelId)
-
-
-                                                            </tr>
-
-                                                        }
-
-                                                    }
-
-
-                                                </tbody>
-                                            </table>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                            </div>
-
-
-                                        </div>
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
-                                
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Joinability Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-
-                                            <table class="table table-bordered mbn" id="JoinabilityTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="20%">Type</th>
-                                                        <th width="35%">Value</th>
-                                                        <th width="15%">Actual Level</th>
-                                                        <th width="10%">Required Weightage</th>
-                                                        <th width="10%">Actual Weightage</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.JoinabilityHRReportCollection != null)
-                                                    {
-                                                        @for (int i = 0; i < Model.JoinabilityHRReportCollection.Count(); i++)
-                                                        {
-                                                            <tr>
-
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.JoinabilityHRReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                @Html.HiddenFor(m => m.JoinabilityHRReportCollection[i].RequiredLevelId)
-
-                                                            </tr>
-
-                                                        }
-                                                    }
-
-
-
-                                                </tbody>
-                                            </table>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-                                            </div>
-
-
-                                        </div>
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
-
-                               
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Selectability Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-
-                                            <table class="table table-bordered mbn" id="SelectabilityTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="20%">Type</th>
-                                                        <th width="35%">Value</th>
-                                                        <th width="15%">Actual Level</th>
-                                                        <th width="10%">Required Weightage</th>
-                                                        <th width="10%">Actual Weightage</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @if (Model.SelectabilityEvaluatorReportCollection != null)
-                                                    {
-                                                        @for (int i = 0; i < Model.SelectabilityEvaluatorReportCollection.Count(); i++)
-                                                        {
-                                                            <tr>
-
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].RequiredLevel, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].Name, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].Value, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                <td>
-                                                                    @Html.DropDownListFor(m => m.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.Level, new { @class = "form-control", @readonly = "readonly" })
-
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].WeightageRequired, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.TextBoxFor(m => m.SelectabilityEvaluatorReportCollection[i].WeightageActual, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                </td>
-
-                                                                @Html.HiddenFor(m => m.SelectabilityEvaluatorReportCollection[i].RequiredLevelId)
-
-                                                            </tr>
-
-                                                        }
-                                                    }
-
-
-
-                                                </tbody>
-                                            </table>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
-                                            </div>
-
-
-                                        </div>
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Proctoring Report</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
-
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="ProctoringTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th class="table_heading">Areas</th>
-                                                        <th class="table_heading">Number of Red Flags</th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            Eyes Movement
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="EyesDirection">At the time of code writing or theoretical questions explanations where the eyes are</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.EyesDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <label class="form-control" for="EyesReflection">Zoom the candidate to see how many lights reflection in her eyes</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.EyesReflection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Head Movement
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="HeadDirection">At the time of code writing or theoretical questions explanations where the head is</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.HeadDirection, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Lips Movement
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="LipsOverhead">Using overhead light</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.LipsOverhead, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="LipsDarklight">Dark light in the room or on the face</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.LipsDarklight, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="LipsHeadphone">Using Headphone in front of Lips</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.LipsHeadphone, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Latency check
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="LatencyJitter">Latency check or Jitter report to see for the packet loss</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.LatencyJitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td>
-                                                            Candidate desktop
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="DesktopSuspiciousApps">External suspicious applications (screen mirroring app/ remote desktops) open or devices connected; we can see the toolbar</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.DesktopSuspiciousApps, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="DesktopScreenSharing">Sharing screen but not desktop</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.DesktopScreenSharing, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Voice Impostering
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="VoiceAudioSplitter">Using speaker or audio splitter to communicate, so that the voice can be heard on phone c-nference and answer can be given on phone</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceAudioSplitter, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="VoiceToneExpression">Voice tone and expressions are not in sync- flat voice</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceToneExpression, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @onchange = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="VoicePersonalUnsatisfactory">Non-satisfactory answers for personal questions from the resume</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.VoicePersonalUnsatisfactory, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="VoiceSuspicious">Suspicious voice- any notifcations, pings, other voices</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.VoiceSuspicious, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                        </td>
-
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            Linkedin Photo
-                                                        </td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-
-                                                        <td>
-                                                            <label class="form-control" for="LinkedInPhotoVerification">Linkedin Photo Verification</label>
-                                                        </td>
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.Proctoring.LinkedInPhotoVerification, new { @class = "form-control text-box single-line", @type = "number", @min = "0", @value = "0", @oninput = "CountProctoring(this.value)", @readonly = "readonly" })
-                                                            @*<input class="form-control text-box single-line" id="Proctoring_LinkedInPhotoVerification" name="Proctoring.LinkedInPhotoVerification" type="number" min="0" value="0">*@
-
-                                                        </td>
-
-                                                    </tr>
-
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div><!--end of col-md-12-->
-
-                                </div>
-
-                                @Html.HiddenFor(m => m.id)
-                                @Html.HiddenFor(m => m.IRFId)
-                                @Html.HiddenFor(m => m.InterviewId)
-                                @Html.HiddenFor(m => m.IsEdited)
-                               
-
-
-
-
 
                             </div>
-                        </form>
+
+                            <div id="mySelectionModal" class="modal modal-wrap" tabindex="-1" role="dialog" aria-labelledby="mySelectionModalLabel" aria-hidden="true" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <!-- Modal content -->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
+                                            <span class="close" id="selectPopUp" style="cursor:pointer;">&times;</span>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+
+                                                <label for="selectionDropdown" class="control-label">Final Selection</label>
+                                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                            </div>
+                                            <div id="selectionComments" class="form-group">
+                                                <label class="control-label">Final Comments</label>
+                                                <input type="text" name="selecComments" class="form-control" id="selecComments" >
+                                            </div>
+                                            <div class="">
+                                                <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
+                                            </div>
+
+                                        </div>
+                                       
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- end content-->
                     </div>
-
-                    <!-- end content-->
+                    <!--  end card  -->
                 </div>
-                <!--  end card  -->
-            </div>
-            <!-- end col-md-12 -->
-        </div>
-
-        <div id="myModal" class="modal">
-            <!-- Modal content -->
-            <div class="modal-content" style="width:50%">
-                <div class="modal-header">
-                    <h5>Approved For Next Round</h5>
-                    <span class="close" id="approvePopUp">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        @*<label>Approved</label>
-            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
-                        <label for="approveDropdown"><b>Approved For Next Round</b></label>
-                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                    </div>
-                    <div id="approvalComments" class="form-group">
-                        <label>Approval Comments</label>
-                        <input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>
-                    </div>
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
-                    </div>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-            </div>
-
-        </div>
-
-        <div id="mySelectionModal" class="modal">
-
-            <!-- Modal content -->
-            <div class="modal-content" style="width:50%">
-                <div class="modal-header">
-                    <h5>Final Selection Status</h5>
-                    <span class="close" id="selectPopUp">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-
-                        <label for="selectionDropdown"><b>Final Selection</b></label>
-                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                    </div>
-                    <div id="selectionComments" class="form-group">
-                        <label>Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>
-                    </div>
-                    <div class="">
-                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary" id="btnSelectUpload" value="Save">
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    @*<h3>Modal Footer</h3>*@
-                </div>
+                <!-- end col-md-12 -->
             </div>
 
-        </div>
-        <!-- end row -->
-
-    </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
             
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
+                <!-- end row -->
+
             </div>
-        </div>
-    </footer>
-</div>
+        <footer class="footer">
+            <div class=" container-fluid ">
 
-<script>
-    var imid = "";
-    var span = document.getElementById("approvePopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+                <div class="copyright" id="copyright">
+                    &copy;
+                    <script>
+                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
+                    </script> Risebird All Rights Reserved.
+                </div>
+            </div>
+        </footer>
+    </div>
 
-    
-</script>
-
-<script>
-    function ModalButtonClick(item) {
-        imid = item.InterviewId;
-
-        // Get the modal
-        var modal = document.getElementById("myModal");
-        
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-        document.getElementById("appComments").value = item.ApprovalComments;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getApprovalStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#approveDropdown").html(s);
-                if (item.IsApproved != null) {
-                    $("#approveDropdown").val(item.IsApproved);
-                }
-                else {
-                    $("#approveDropdown").val("-1");
-
-                }
-            }
-        });
-
-        
-
-    }
-
-    function SavePopUp() {
-        var approvalComment = document.getElementById("appComments").value;
-        var isApproved = document.getElementById("approveDropdown").value;
-        var id = imid;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/ChangeApproval",
-            data: { 'imid': id, 'value': isApproved, 'comment': approvalComment },
-            success: function (data) {
-
-                location.reload(true);
-
-            }
-        });
-    }
-
-</script>
-
-<script>
-    var imidSelect = "";
-    var spanSelect = document.getElementById("selectPopUp");
-    var commSelect = '';
-    // When the user clicks on <span> (x), close the modal
-    spanSelect.onclick = function () {
-        var modal = document.getElementById("mySelectionModal");
-        modal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    //window.onclick = function (event) {
-    //    var modal = document.getElementById("myModal");
-    //    if (event.target == modal) {
-    //        modal.style.display = "none";
-    //    }
-    //}
-</script>
-
-<script>
-    function ModalSelectionButtonClick(item) {
-
-        imidSelect = item.InterviewId;
-
-        // Get the modal
-        var modal = document.getElementById("mySelectionModal");
-        
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-        document.getElementById("selecComments").value = item.FinalComments;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/getSelectionStatusList",
-            data: "{}",
-            success: function (data) {
-                var s = '<option value="-1">Please Select a Status</option>';
-                for (var i = 0; i < data.length; i++) {
-                    s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
-                }
-                $("#selectionDropdown").html(s);
-                if (item.IsSelected != null) {
-                    $("#selectionDropdown").val(item.IsSelected);
-                }
-                else {
-                    $("#selectionDropdown").val("-1");
-                }
-
-
-            }
-        });
-        
-
-
-    }
-
-    function SaveSelecPopUp() {
-        var selectionComment = document.getElementById("selecComments").value;
-        var isSelected = document.getElementById("selectionDropdown").value;
-        var id = imidSelect;
-
-        $.ajax({
-            type: "GET",
-            url: "/Interview/ChangeSelection",
-            data: { 'imid': id, 'value': isSelected, 'comment': selectionComment },
-            success: function (data) {
-
-                location.reload(true);
-
-            }
-        });
-    }
-
-</script>
-
-<script>
-
-
-
-
-    function RadioChanged(val) {
-        if (val == 'Upload') {
-            document.getElementById("uploadDiv").style.display = "block";
-            document.getElementById("linkDiv").style.display = "none";
-            document.getElementById("PageVideoLink").value = '';
-
+    <script>
+        var imid = "";
+        var span = document.getElementById("approvePopUp");
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
         }
-        else {
-            document.getElementById("uploadDiv").style.display = "none";
-            document.getElementById("linkDiv").style.display = "block";
-            document.getElementById("VideoFile").value = '';
+
+
+    </script>
+
+    <script>
+        function ModalButtonClick(item) {
+            imid = item.InterviewId;
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+            document.getElementById("appComments").value = item.ApprovalComments;
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getApprovalStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#approveDropdown").html(s);
+                    if (item.IsApproved != null) {
+                        $("#approveDropdown").val(item.IsApproved);
+                    }
+                    else {
+                        $("#approveDropdown").val("-1");
+
+                    }
+                }
+            });
+
+
 
         }
 
-    }
+        function SavePopUp() {
+            var approvalComment = document.getElementById("appComments").value;
+            var isApproved = document.getElementById("approveDropdown").value;
+            var id = imid;
 
-    function getPDF() {
+            $.ajax({
+                type: "GET",
+                url: "/Interview/ChangeApproval",
+                data: { 'imid': id, 'value': isApproved, 'comment': approvalComment },
+                success: function (data) {
 
-        var HTML_Width = $(".canvas_div_pdf").width();
-        var HTML_Height = $(".canvas_div_pdf").height();
-        var top_left_margin = 15;
-        var PDF_Width = HTML_Width + (top_left_margin * 2);
-        var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
-        var canvas_image_width = HTML_Width;
-        var canvas_image_height = HTML_Height;
+                    location.reload(true);
 
-        var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+                }
+            });
+        }
+
+    </script>
+
+    <script>
+        var imidSelect = "";
+        var spanSelect = document.getElementById("selectPopUp");
+        var commSelect = '';
+        // When the user clicks on <span> (x), close the modal
+        spanSelect.onclick = function () {
+            var modal = document.getElementById("mySelectionModal");
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        //window.onclick = function (event) {
+        //    var modal = document.getElementById("myModal");
+        //    if (event.target == modal) {
+        //        modal.style.display = "none";
+        //    }
+        //}
+    </script>
+
+    <script>
+        function ModalSelectionButtonClick(item) {
+
+            imidSelect = item.InterviewId;
+
+            // Get the modal
+            var modal = document.getElementById("mySelectionModal");
+
+            // When the user clicks the button, open the modal
+            modal.style.display = "block";
+
+            document.getElementById("selecComments").value = item.FinalComments;
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/getSelectionStatusList",
+                data: "{}",
+                success: function (data) {
+                    var s = '<option value="-1">Please Select a Status</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].value + '">' + data[i].description + '</option>';
+                    }
+                    $("#selectionDropdown").html(s);
+                    if (item.IsSelected != null) {
+                        $("#selectionDropdown").val(item.IsSelected);
+                    }
+                    else {
+                        $("#selectionDropdown").val("-1");
+                    }
 
 
-        html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
-            canvas.getContext('2d');
-
-            console.log(canvas.height + "  " + canvas.width);
+                }
+            });
 
 
-            var imgData = canvas.toDataURL("image/jpeg", 1.0);
-            var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+        }
+
+        function SaveSelecPopUp() {
+            var selectionComment = document.getElementById("selecComments").value;
+            var isSelected = document.getElementById("selectionDropdown").value;
+            var id = imidSelect;
+
+            $.ajax({
+                type: "GET",
+                url: "/Interview/ChangeSelection",
+                data: { 'imid': id, 'value': isSelected, 'comment': selectionComment },
+                success: function (data) {
+
+                    location.reload(true);
+
+                }
+            });
+        }
+
+    </script>
+
+    <script>
 
 
-            for (var i = 1; i <= totalPDFPages; i++) {
-                pdf.addPage(PDF_Width, PDF_Height);
-                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+
+
+        function RadioChanged(val) {
+            if (val == 'Upload') {
+                document.getElementById("uploadDiv").style.display = "block";
+                document.getElementById("linkDiv").style.display = "none";
+                document.getElementById("PageVideoLink").value = '';
+
+            }
+            else {
+                document.getElementById("uploadDiv").style.display = "none";
+                document.getElementById("linkDiv").style.display = "block";
+                document.getElementById("VideoFile").value = '';
+
             }
 
-            pdf.save("Feedback_Interview.pdf");
-        });
-    };
-</script>
+        }
 
-<script>
+        function getPDF() {
+
+            var HTML_Width = $(".canvas_div_pdf").width();
+            var HTML_Height = $(".canvas_div_pdf").height();
+            var top_left_margin = 15;
+            var PDF_Width = HTML_Width + (top_left_margin * 2);
+            var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
+            var canvas_image_width = HTML_Width;
+            var canvas_image_height = HTML_Height;
+
+            var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
+
+
+            html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
+                canvas.getContext('2d');
+
+                console.log(canvas.height + "  " + canvas.width);
+
+
+                var imgData = canvas.toDataURL("image/jpeg", 1.0);
+                var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
+
+
+                for (var i = 1; i <= totalPDFPages; i++) {
+                    pdf.addPage(PDF_Width, PDF_Height);
+                    pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
+                }
+
+                pdf.save("Feedback_Interview.pdf");
+            });
+        };
+    </script>
+
+    <script>
 
     function CountProctoring(value) {
 
@@ -1525,7 +1820,7 @@
     });
 
     function AddRow() {
-        
+
 
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1663,7 +1958,7 @@
     }
 
     function AddRowClient() {
-        
+
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -2022,101 +2317,101 @@
 
     });
 
-</script>
+    </script>
 
-<script>
+    <script>
 
-    window.onload = function () {
+        window.onload = function () {
 
-        var totalScore = 0;
-        var arr = [];
-        var obj = { y: "", legendText: "", label: "" }
-        //TechSkills actual weightage total
-        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-        var techTotal = 0;
-        for (i = 0; i < techItems.length; i++) {
+            var totalScore = 0;
+            var arr = [];
+            var obj = { y: "", legendText: "", label: "" }
+            //TechSkills actual weightage total
+            var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+            var techTotal = 0;
+            for (i = 0; i < techItems.length; i++) {
 
-            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+                techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            obj.y = parseInt(techTotal) / 4;
+            obj.label = "Tech Skills Score";
+            obj.legendText = "Tech Skills Score";
+            arr.push(obj);
+
+            //SkillsGeneral actual weightage total
+            var objGen = { y: "", legendText: "", label: "" }
+            var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+            var genTotal = 0;
+            for (i = 0; i < genSkillsItems.length; i++) {
+                var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+                genTotal = parseInt(genTotal) + parseInt(weightage);
+
+            }
+
+            objGen.y = parseInt(genTotal) / 4;
+            objGen.label = "General Skills Score";
+            objGen.legendText = "General Skills Score";
+            arr.push(objGen);
+
+            //Joinability actual weightage total
+            var objJoin = { y: "", legendText: "", label: "" }
+            var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
+            var joinabilityTotal = 0;
+            for (i = 0; i < joinabilityItems.length; i++) {
+
+                joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objJoin.y = parseInt(joinabilityTotal) / 4;
+            objJoin.label = "Joinability Score";
+            objJoin.legendText = "Joinability Score";
+            arr.push(objJoin);
+
+            //Selectability actual weightage total
+            var objSelect = { y: "", legendText: "", label: "" }
+            var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+            var selectabilityTotal = 0;
+            for (i = 0; i < selectabilityItems.length; i++) {
+
+                selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+            }
+            objSelect.y = parseInt(selectabilityTotal) / 4;
+            objSelect.label = "Selectability Score";
+            objSelect.legendText = "Selectability Score";
+            arr.push(objSelect);
+
+            totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+            document.getElementById("totScore").innerHTML = totalScore;
+
+
+            var chart = new CanvasJS.Chart("scoreChart", {
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                width: 400,//in pixels
+                height: 200,//in pixels
+                animationEnabled: true,
+                title: {
+                    text: "Score Chart"
+                },
+                data: [{
+                    type: "column",
+                    //startAngle: 60,
+                    //innerRadius: 55,
+                    indexLabelFontSize: 8,
+                    indexLabel: "{label}  {y}",
+                    toolTipContent: "<b>{label} </b>({y})",
+                    dataPoints: arr
+
+                }]
+            });
+            chart.render();
+
+
 
         }
-        obj.y = parseInt(techTotal) / 4;
-        obj.label = "Tech Skills Score";
-        obj.legendText = "Tech Skills Score";
-        arr.push(obj);
-
-        //SkillsGeneral actual weightage total
-        var objGen = { y: "", legendText: "", label: "" }
-        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-        var genTotal = 0;
-        for (i = 0; i < genSkillsItems.length; i++) {
-            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-            genTotal = parseInt(genTotal) + parseInt(weightage);
-
-        }
-
-        objGen.y = parseInt(genTotal) / 4;
-        objGen.label = "General Skills Score";
-        objGen.legendText = "General Skills Score";
-        arr.push(objGen);
-
-        //Joinability actual weightage total
-        var objJoin = { y: "", legendText: "", label: "" }
-        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-        var joinabilityTotal = 0;
-        for (i = 0; i < joinabilityItems.length; i++) {
-
-            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objJoin.y = parseInt(joinabilityTotal) / 4;
-        objJoin.label = "Joinability Score";
-        objJoin.legendText = "Joinability Score";
-        arr.push(objJoin);
-
-        //Selectability actual weightage total
-        var objSelect = { y: "", legendText: "", label: "" }
-        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-        var selectabilityTotal = 0;
-        for (i = 0; i < selectabilityItems.length; i++) {
-
-            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-        }
-        objSelect.y = parseInt(selectabilityTotal) / 4;
-        objSelect.label = "Selectability Score";
-        objSelect.legendText = "Selectability Score";
-        arr.push(objSelect);
-
-        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-        document.getElementById("totScore").innerHTML = totalScore;
-
-
-        var chart = new CanvasJS.Chart("scoreChart", {
-            theme: "light2", // "light1", "light2", "dark1", "dark2"
-            width: 400,//in pixels
-            height: 200,//in pixels
-            animationEnabled: true,
-            title: {
-                text: "Score Chart"
-            },
-            data: [{
-                type: "column",
-                //startAngle: 60,
-                //innerRadius: 55,
-                indexLabelFontSize: 8,
-                indexLabel: "{label}  {y}",
-                toolTipContent: "<b>{label} </b>({y})",
-                dataPoints: arr
-
-            }]
-        });
-        chart.render();
-
-
-
-    }
-</script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/data.js"></script>
-<script src="https://code.highcharts.com/modules/drilldown.js"></script>
-<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    </script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

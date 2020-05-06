@@ -15,7 +15,7 @@ namespace Risebird.Entities.ViewModel
 
         public MeetingVM()
         {
-          SubVideo_List = new List<MeetingVM>();
+            SubVideo_List = new List<MeetingVM>();
         }
         public List<MeetingVM> SubVideo_List { get; set; }
         public int imid { get; set; }
@@ -75,7 +75,7 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter Preffered Location.")]
         public string preferredLocation { get; set; }
         [Display(Name = "Staffing Agency")]
-       
+
         public string staffingAgency { get; set; }
         [Display(Name = "Expected Per Hour Rate")]
         [Required(ErrorMessage = "Please enter Expected Per Hour Rate.")]
@@ -86,16 +86,21 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerComment { get; set; }
         public int? InterviewStatus { get; set; }
         public string InterviewStatusDescription { get; set; }
+        public int interviewVediosequence { get; set; }
+        public string PageNumber { get; set; }
 
         public string intervieweStatusStatDesc { get; set; }
         public string selectionStatus { get; set; }
         public string VideoLink { get; set; }
+        public string ThumbnailImage { get; set; }
+        public string ThumbnailImagestring { get; set; }
+
         public string reportLink { get; set; }
         public string fraudSyncComment { get; set; }
         public string hrCoordinatorComment { get; set; }
         public string trainableComment { get; set; }
         [Display(Name = "Mobile Number")]
-       // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
+        // [RegularExpression("^[0-9]{1,12}$", ErrorMessage ="Please enter a valid Mobile Number.")]
         //[Required(ErrorMessage = "Please enter a valid Mobile Number.")]
         public string MobileNumber { get; set; }
         public DateTime dtCreatedOn { get; set; }
@@ -154,5 +159,30 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Candidate Visa")]
         public string CandidateVisa { get; set; }
+
+        public int QCInterview { get; set; }
+        public string IsLike { get; set; }
+        public int TotalVedioLike { get; set; }
+        public int TotalVedioDisLike { get; set; }
+
+        public int TotalView { get; set; }
+        public string IsShared { get; set; }
+        public List<VedioComments> Comments { get; set; }
+        public int ShortListCount { get; set; }
+        public int IsShortlisted { get; set; }
+        public bool CuratedLink { get; set; }
+        public string CandidateCodedname { get; set; }
+        public string IsIntrested { get; set; }
+        public string ShortListstatus { get; set; }
+    }
+    public class VedioComments
+    {
+        public string Comment { get; set; }
+        public string UserName { get; set; }
+    }
+    public class EmailDetails
+    {
+        public int totalcount { get; set; }
+        public string Email { get; set; }
     }
 }

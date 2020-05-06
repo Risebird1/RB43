@@ -8,7 +8,54 @@
         content: "*";
         color: red;
     }
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .mc-button-area {
+        text-align:right;
+    }
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+    }
+
+
+    .mdc-card .modal .form-control, .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
 </style>
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 <script src="~/js/CustomValidation/EmailValidation.js"></script>
 @using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateEmail()" }))
 {
@@ -85,20 +132,25 @@
         <div class="content">
             <div class="row">
                 <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="title">Mail</h5>
-                        </div>
-                        <div class="card-body">
+                    <div class="mdc-card card">
+                      
+                        <div class="mdc-card-wrapper__text-section">
+                          
                             <form>
 
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                                 <div class="row">
                                     @*<label class="col-md-3 control-label">BODY :</label>*@
+
+                                    <div class="card-header">
+                                        <h5 >Mail</h5>
+                                    </div>
+                                    <div style="width:100%; float:left; height:10px;"></div>
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>To</label>
+
+                                        <div class="form-group" style="margin-bottom:0px;">
+                                            <label> <b>TO</b></label>
 
                                             @Html.EditorFor(model => model.TO, new { htmlAttributes = new { @class = "form-control", placeholder = "Use ';' for multiple sender", required = "required" } })
                                             @Html.ValidationMessageFor(model => model.TO, "", new { @class = "text-danger" })
@@ -111,8 +163,8 @@
                                 <div class="row">
                                     @*<label class="col-md-3 control-label">BODY :</label>*@
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>SUBJECT</label>
+                                        <div class="form-group" >
+                                            <label>    <b>SUBJECT</b></label>
                                             @Html.TextBoxFor(model => model.Subject,
                                          htmlAttributes: new { @class = "form-control", maxlength = 100, placeholder = "Mail Subject", required = "required" })
                                         </div>
@@ -122,8 +174,8 @@
                                 <div class="row">
                                     @*<label class="col-md-3 control-label">BODY :</label>*@
                                     <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>BODY</label>
+                                        <div class="form-group" style="margin-bottom:10px;">
+                                            <label>   <b>BODY</b></label>
                                             @Html.TextAreaFor(model => model.Body,
                                             htmlAttributes: new { @class = "form-control", maxlength = 5000, style = "height: 200px", placeholder = "Mail Body", required = "required" })
                                         </div>
@@ -133,9 +185,9 @@
                         </div>
                         <div class="card-footer ">
                             <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Send">Send</button>
+
+                                <div class="col-md-12 mc-button-area">
+                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Send">Send</button>
                                 </div>
                             </div>
                         </div>
@@ -145,35 +197,7 @@
             </div>
 
         </div>
-        <footer class="footer">
-            <div class=" container-fluid ">
-                <nav>
-                    <ul>
-                        <li>
-                            <a href="#">
-                                Risebird
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Blog
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="copyright" id="copyright">
-                    &copy;
-                    <script>
-                        document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                    </script> Risebird All Rights Reserved.
-                </div>
-            </div>
-        </footer>
+
     </div>
 
 

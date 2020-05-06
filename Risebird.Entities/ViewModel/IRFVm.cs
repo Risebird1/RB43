@@ -152,6 +152,7 @@ namespace Risebird.Entities.ViewModel
         public int TotalInvites { get; set; }
 
         public string ArchiveStatus { get; set; }
+        public string SubscriptionStatus { get; set; }
         public string ClientGST { get; set; }
         public string ClientAddress { get; set; }
         public string[] ClientRole { get; set; }
@@ -172,5 +173,10 @@ namespace Risebird.Entities.ViewModel
         public DateTime interviewDate { get; set; }
         public string interviewer { get; set; }
         public float TotalBudgetConsumed { get; set; }
+        public string ImageUrl { get; set; }
+        public string IRFStatus { get; set; }
+        public bool CuratedLink { get; set; }
+        public bool IsSubscribed { get; set; }
+        public int? SubId { get; set; }
     }
 }

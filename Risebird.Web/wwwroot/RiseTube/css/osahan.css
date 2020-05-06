@@ -44,6 +44,14 @@ Version: 1.0
  #wrapper #content-wrapper .container-fluid{
      padding: 30px 30px 30px 30px;
 }
+
+
+    #wrapper #content-wrapper .container-wrap{
+        padding: 0px 15px 30px 15px;
+
+
+
+
 .sidebar-toggled #wrapper #content-wrapper .container-fluid{
      padding: 30px 30px 30px 30px;
 }
@@ -723,6 +731,13 @@ Version: 1.0
  .video-title {
      margin-bottom: 5px;
 }
+
+.video-block .single-video-right .video-title{
+margin-bottom: 5px;
+min-height: 20px;
+}
+
+
  .video-page {
      font-size: 11px;
 }
@@ -732,16 +747,31 @@ Version: 1.0
      font-weight: 500;
      margin: 2px 0 0;
 }
- .video-card {
+/*.video-card {
      background: #fff none repeat scroll 0 0;
      border-radius: 2px;
      box-shadow: 0 0 11px #ececec;
      transition-duration: 0.4s;
+}*/
+
+
+
+
+
+.video-card {
+    border-radius: 4px;
+    background-color: #fff;
+    background-color: var(--mdc-theme-surface, #fff);
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
  .video-card-body {
-     padding: 12px;
+     padding: 10px;
      height:100px;
 }
+
  .video-card-list .video-card-image {
      float: left;
      height: 77px;
@@ -1143,7 +1173,37 @@ Version: 1.0
     .sidebar-toggled footer.sticky-footer {
         margin: 0;
     }
-}
+
+
+    .newsletter .content {
+        max-width: 100%;
+        margin: 0;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        padding: 0;
+    }
+
+    #myForm .searchbox {
+        margin-right: 0px;
+    }
+
+
+    #myForm input[type=email] {
+        background: #fff;
+        border: solid 1px #ccc;
+        padding: 9px 10px 9px 10px;
+        width: 230px;
+    }
+
+    .video .mdc-button {
+        margin: 0px auto 10px auto;
+        float: none;
+        text-align: center;
+        width: 100px;
+        display: block;
+    }
+    }
 /* Small devices (landscape phones, 576px and up) */
  @media (min-width: 576px) and (max-width: 767.98px) {
     .top-mobile-search {

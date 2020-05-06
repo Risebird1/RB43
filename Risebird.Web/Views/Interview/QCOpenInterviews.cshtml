@@ -31,9 +31,22 @@
         white-space: nowrap !important;
     }
 
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
+    table {
+        border: 1px #ccc solid !important;
+        white-space: nowrap;
     }
+
+        table td {
+            color: #504e4e;
+        }
+
+        table th {
+            color: #000000e0;
+        }
+
+        table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+            max-width: 300px !important;
+        }
 
     td:hover.wordwrap {
         text-overflow: clip !important;
@@ -53,8 +66,169 @@
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
     }
-</style>
 
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    #resumeId, #zoomlinkId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+    #reportId {
+        background: #b3d2f1;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 16px;
+        border: 1px #79c0f3 solid;
+    }
+
+    #videoId {
+        background: #53a5f53d;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+    #OpeninterviewList_length, #OpeninterviewList_filter {
+        margin: 10px 0px
+    }
+
+        #OpeninterviewList_length label {
+            font-size: 14px;
+        }
+
+        #OpeninterviewList_length select.form-control {
+            padding: 8px 8px;
+        }
+
+        #OpeninterviewList_length select:focus {
+            border-color: #4a93de;
+        }
+
+    #OpeninterviewList_filter input {
+        outline: none;
+    }
+
+
+        #OpeninterviewList_filter input::-webkit-search-decoration,
+        #OpeninterviewList_filter input::-webkit-search-cancel-button {
+            display: none;
+        }
+
+
+        #OpeninterviewList_filter input[type=search] {
+            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+            border: solid 1px #ccc;
+            padding: 9px 10px 9px 32px;
+            width: 135px;
+            font-family: arial;
+            -webkit-border-radius: 10em;
+            -moz-border-radius: 10em;
+            border-radius: 10em;
+            -webkit-transition: all .5s;
+            -moz-transition: all .5s;
+            transition: all .5s;
+        }
+
+            #OpeninterviewList_filter input[type=search]:focus {
+                width: 200px;
+                background-color: #fff;
+                border-color: #4a93de;
+                font-family: arial;
+                margin: 3px;
+                -webkit-box-shadow: 0 0 5px #4a93de;
+                -moz-box-shadow: 0 0 5px #4a93de;
+                box-shadow: 0 0 5px #4a93de;
+            }
+
+
+        #OpeninterviewList_filter input:-moz-placeholder {
+            color: #999;
+        }
+
+        #OpeninterviewList_filter input::-webkit-input-placeholder {
+            color: #999;
+        }
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+</style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -82,14 +256,10 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">QC Open Interviews</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                        </div>
+                <div class="mdc-card card">
+                   
+                    <div class="mdc-card-wrapper__text-section">
+                      
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
@@ -97,7 +267,9 @@
                             <div class="toolbar">
 
                                 <div class="row">
-
+                                    <div class="card-header">
+                                        <h4 class="card-title">QC Open Interviews</h4>
+                                    </div>
                                 </div>
 
 
@@ -115,7 +287,7 @@
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </thead>
                                         <tfoot>
@@ -127,7 +299,7 @@
                                                 <th>Resume</th>
                                                 <th>JD Link</th>
                                                 <th>Risebird HR</th>
-                                                <th class="disabled-sorting text-right">Actions</th>
+                                                <th class="disabled-sorting text-center">Actions</th>
                                             </tr>
                                         </tfoot>
                                         <tbody>
@@ -156,8 +328,13 @@
                                                     }
 
                                                     <td> @item.risebirdHR</td>
-                                                    <td class="text-right">
-                                                        <span onclick="location.href = '@Url.Action("QCAssignYourself", "Interview", new { id = item.id})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
+                                                    <td class="text-center">
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Assign Yourself">
+                                                            <span onclick="location.href = '@Url.Action("QCAssignYourself", "Interview", new { id = item.id})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" /></svg></span>
+                                                        </button>
+
                                                     </td>
                                                 </tr>
                                             }
@@ -177,35 +354,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />

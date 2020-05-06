@@ -156,12 +156,51 @@
                 {
                     if (!string.IsNullOrEmpty(m.sUrl))
                     {
-                        <li>
-                            <a href="@m.sUrl">
-                                <i class="now-ui-icons @m.sIcon"></i>
-                                <p>@m.functionName</p>
-                            </a>
-                        </li>
+                        if (m.sUrl == "/IRF/Index")
+                        {
+                            <li class="skillchannelmenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Support/Index")
+                        {
+                            <li class="supportmenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/AllPriorityClientMeetings")
+                        {
+                            <li class="iacm">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/SelectedPriorityClientMeetings")
+                        {
+                            <li class="iscm">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
                     }
                     else
                     {
@@ -189,60 +228,60 @@
                             </div>
                         </li>
                         @*<li>
-                                <a data-toggle="collapse" href="#componentsExamples">
-                                    <i class="now-ui-icons education_atom"></i>
-                                    <p>
-                                        Components
-                                        <b class="caret"></b>
-                                    </p>
-                                </a>
-                                <div class="collapse " id="componentsExamples">
-                                    <ul class="nav">
-                                        <li>
-                                            <a href="../../examples/components/buttons.html">
-                                                <span class="sidebar-mini-icon">B</span>
-                                                <span class="sidebar-normal"> Buttons </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/grid.html">
-                                                <span class="sidebar-mini-icon">G</span>
-                                                <span class="sidebar-normal"> Grid System </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/panels.html">
-                                                <span class="sidebar-mini-icon">P</span>
-                                                <span class="sidebar-normal"> Panels </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/sweet-alert.html">
-                                                <span class="sidebar-mini-icon">SA</span>
-                                                <span class="sidebar-normal"> Sweet Alert </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/notifications.html">
-                                                <span class="sidebar-mini-icon">N</span>
-                                                <span class="sidebar-normal"> Notifications </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/icons.html">
-                                                <span class="sidebar-mini-icon">I</span>
-                                                <span class="sidebar-normal"> Icons </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/typography.html">
-                                                <span class="sidebar-mini-icon">T</span>
-                                                <span class="sidebar-normal"> Typography </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>*@
+                        <a data-toggle="collapse" href="#componentsExamples">
+                            <i class="now-ui-icons education_atom"></i>
+                            <p>
+                                Components
+                                <b class="caret"></b>
+                            </p>
+                        </a>
+                        <div class="collapse " id="componentsExamples">
+                            <ul class="nav">
+                                <li>
+                                    <a href="../../examples/components/buttons.html">
+                                        <span class="sidebar-mini-icon">B</span>
+                                        <span class="sidebar-normal"> Buttons </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/grid.html">
+                                        <span class="sidebar-mini-icon">G</span>
+                                        <span class="sidebar-normal"> Grid System </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/panels.html">
+                                        <span class="sidebar-mini-icon">P</span>
+                                        <span class="sidebar-normal"> Panels </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/sweet-alert.html">
+                                        <span class="sidebar-mini-icon">SA</span>
+                                        <span class="sidebar-normal"> Sweet Alert </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/notifications.html">
+                                        <span class="sidebar-mini-icon">N</span>
+                                        <span class="sidebar-normal"> Notifications </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/icons.html">
+                                        <span class="sidebar-mini-icon">I</span>
+                                        <span class="sidebar-normal"> Icons </span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="../../examples/components/typography.html">
+                                        <span class="sidebar-mini-icon">T</span>
+                                        <span class="sidebar-normal"> Typography </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>*@
 
 
                     }

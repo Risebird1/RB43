@@ -1,43 +1,224 @@
 ﻿@model Risebird.Entities.ViewModel.IRFVm
 
 @{
-    ViewData["Title"] = "Add IRF";
+    ViewData["Title"] = "Add Skills Channel";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <style>
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
+    #AudioFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+
+    #PageVideoLink {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+    #VideoFile {
+        margin: 0px 10px 10px 10px;
+        width: calc(100% - 20px);
+    }
+
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+    #ProctoringTable .label-type {
+        background: #e8f5ff;
         padding: 8px 10px;
+        border: 0;
+    }
+
+
+    .multiple_row > h2 {
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
 
-    #btnPlus, #btnMinus {
-        padding: 2px;
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
     }
 
-    #btnPlus {
-        background-color: #4a89dc;
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+    }
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
     }
 
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
     }
 
-    .table-responsive {
-        overflow: hidden;
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
+    }
+
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #53a5f5 !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .upload a {
+        text-decoration: none;
+        width: 160px;
+        margin: 10px auto;
+        display: block;
+        padding: 8px 0px;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    .trash-btn {
+        background: #d20505 !important;
     }
 </style>
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
@@ -59,14 +240,14 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
-                <a class="navbar-brand">Add IRF</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
+                <a class="navbar-brand">Add Skills Channel</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
-            </button>           
+            </button>
         </div>
     </nav>
     <!-- End Navbar -->
@@ -75,61 +256,91 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add IRF</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
                         @*<form action="/IRF/AddIRF" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">*@
 
                         @using (Html.BeginForm("AddIRF", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid", @id = "irfForm", @onsubmit = "return CheckTotalWeightage()" }))
                         {
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        <div class="row">
-
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
-
-                                    @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
-                                    <label class="text-danger" id="uniqueMsg" style="color:red"></label>
-                                    @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
-                                    @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
-
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 px-1">
-                                <div class="form-group">
-                                    <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                    @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                    @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                    @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
-
-                                </div>
-                            </div>
-
-                            <div class="col-md-3 col-sm-3 pr-1">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control" })
-
-                                </div>
-                            </div>
-                        </div>
                             <div class="row">
-                                <div class="col-md-6 col-sm-6">
-                                    @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                    @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "form-control text-box single-line", @style = "margin-top:-21px;margin-bottom:21px; height:18px; margin-left:-23px"})
+
+
+                                <div class="card-header">
+                                    <h4 class="card-title">Add Skills Channel</h4>
+                                </div>
+
+                                <div style="width: 100%;">&nbsp;</div>
+
+                                <div class="col-md-3 col-sm-3 pr-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @*<label class="control-label col-md-4 col-sm-2 desp-label" for="irfid">irf id</label>*@
+
+                                        @Html.EditorFor(model => model.IRFId, new { htmlAttributes = new { @class = "form-control text-box single-line", @onblur = "checkUniqueness(this.value)" } })
+                                        <label class="text-danger" id="uniqueMsg" style="color:red"></label>
+                                        @Html.ValidationMessageFor(model => model.IRFId, "", new { @class = "text-danger" })
+                                        @*<input class="form-control text-box single-line" id="IRFId" name="IRFId" type="text" value="">*@
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                                        @Html.DropDownList("ClientId", (SelectList)ViewBag.Clients, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3 px-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.CalendlyLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.CalendlyLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                        @Html.ValidationMessageFor(model => model.CalendlyLink, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-sm-3 pl-1">
+                                    <div class="form-group" style="margin-bottom:0px;">
+                                        @Html.LabelFor(model => model.PriorityLevel, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        @Html.DropDownList("PriorityLevel", Model.PriorityLevelList, new { @class = "form-control" })
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+
+
+                                <div class="col-md-4 col-sm-4">
+
+                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+
+
+                                        <div class="mdc-checkbox">
+                                            @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control" })
+
+
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark"
+                                                     viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path"
+                                                          fill="none"
+                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                        </div>
+                                        @Html.LabelFor(model => model.IsBiometricEnabled, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; padding-top: 8px;" })
+                                    </div>
+
 
                                 </div>
-                                
+
                             </div>
 
                             <div class="row">
@@ -157,7 +368,7 @@
                                         @*<label class="control-label col-md-4 col-sm-2 desp-label" for="companytype">companytype</label>*@
                                         @Html.DropDownList("CompanyType[0].Type", (SelectList)Model.CompanyTypeList, new { @class = "form-control text-box single-line" })
 
-                                        
+
                                         @Html.ValidationMessageFor(model => model.CompanyType, "", new { @class = "text-danger" })
 
 
@@ -271,9 +482,37 @@
                                     </div>
                                     <div class="form-group">
                                         Upload JD
-                                        <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
+
+
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
+    position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+
+
                                         Provide JD Link
-                                        <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
+
+
+
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Link" onclick="RadioChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                     <div class="form-group" style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -300,7 +539,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SkillTable">
                                             <thead>
                                                 <tr>
@@ -308,7 +547,7 @@
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="65%" class="table_heading">Skill Name</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -324,11 +563,18 @@
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
-                                                    <td>
-                                                        
+                                                    <td class="action text-center">
 
-                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','','TechDelete')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
 
                                                     </td>
                                                 </tr>
@@ -351,7 +597,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="JoinabilityTable">
                                             <thead>
                                                 <tr>
@@ -360,7 +606,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -373,7 +619,7 @@
                                                     <td>
                                                         @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
 
-                                                       
+
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
@@ -382,10 +628,19 @@
                                                         <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
 
-                                                    <td>
-                                                        
-                                                        <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
 
                                                     </td>
                                                 </tr>
@@ -405,7 +660,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SelectabilityTable">
                                             <thead>
                                                 <tr>
@@ -414,7 +669,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -435,10 +690,16 @@
                                                         <input class="form-control text-box single-line" id="Selectability_0__Weightage" name="Selectability[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
 
-                                                    <td>
-                                                        
-                                                        <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
 
                                                     </td>
                                                 </tr>
@@ -460,7 +721,7 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="SkillGeneralTable">
                                             <thead>
                                                 <tr>
@@ -468,7 +729,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -490,10 +751,19 @@
                                                         <input class="form-control text-box single-line" id="SkillGeneral_0__Weightage" name="SkillGeneral[0].Weightage" type="number" max="100" min="1" value="100">
                                                     </td>
 
-                                                    <td>
-                                                       
-                                                        <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
+
 
                                                     </td>
                                                 </tr>
@@ -515,13 +785,13 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="ClientTable">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
                                                     <th class="table_heading">Role</th>
-                                                    <th class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -536,10 +806,18 @@
 
                                                     </td>
 
-                                                    <td>
-                                                        
-                                                        <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
 
                                                     </td>
                                                 </tr>
@@ -555,17 +833,17 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2>Approved Interviewer</h2>
+                                        <h2>Interviewer</h2>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="InterviewerTable">
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -581,10 +859,19 @@
 
                                                     </td>
 
-                                                    <td>
-                                                       
-                                                        <span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
 
                                                     </td>
                                                 </tr>
@@ -600,17 +887,17 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2>Approved Quality Controllers</h2>
+                                        <h2>Quality Controller</h2>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="QualityControllerTable">
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -625,11 +912,21 @@
 
                                                     </td>
 
-                                                    <td>
+                                                    <td class="action text-center">
 
 
-                                                        <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
 
                                                     </td>
                                                 </tr>
@@ -642,17 +939,17 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2>Approved Emergency Interviewer</h2>
+                                        <h2>Emergency Interviewer</h2>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="EmergencyInterviewerTable">
                                             <thead>
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -668,10 +965,22 @@
 
                                                     </td>
 
-                                                    <td>
-                                                        
-                                                        <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
+
+
+
 
                                                     </td>
                                                 </tr>
@@ -690,12 +999,12 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th class="table_heading">Action</th>
+                                                    <th width="10%"  class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -705,10 +1014,18 @@
                                                         @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control" })
                                                     </td>
 
-                                                    <td>
-                                                       
-                                                        <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
 
                                                     </td>
                                                 </tr>
@@ -727,12 +1044,12 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="HRTable">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -742,11 +1059,19 @@
                                                         @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control" })
                                                     </td>
 
-                                                    <td>
-                                                        
+                                                    <td class="action text-center">
 
-                                                        <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
+
 
                                                     </td>
                                                 </tr>
@@ -761,17 +1086,17 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2>Recruiters</h2>
+                                        <h2>Recruiter</h2>
                                     </div>
                                 </div>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive-sm">
                                         <table class="table table-bordered mbn" id="recruiterTable">
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
                                                     <th class="table_heading">Domain</th>
-                                                    <th class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -787,10 +1112,21 @@
 
                                                     </td>
 
-                                                    <td>
-                                                       
-                                                        <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                        <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm"><i class="far fa  fa-trash"></i></span>
+                                                    <td class="action text-center">
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+                                                        </button>
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                            <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
+
+                                                     
 
                                                     </td>
                                                 </tr>
@@ -810,10 +1146,10 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-                                    <label class="col-md-2"></label>
-                                    <div class="col-md-9">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                        <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
                                 </div>
                             </div>
@@ -832,35 +1168,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 <script>
@@ -900,7 +1208,7 @@
 
 
     function CheckTotalWeightage() {
-        
+
         //var ckeck = $("#irfForm").validate();
         var inCorrectCount = 0;
         var skillArray = ["SkillCollection", "Joinability", "Selectability", "SkillGeneral"];
@@ -940,13 +1248,13 @@
             // check interviewers list InterviewerCollection_  UserId
             var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
             for (i = 0; i < drpdowns.length; i++) {
-                
+
                 var interviewId = $("#" + drpdowns[i].id).val();
                 if (interviewId == '') {
                     //noInterviewer
                     document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
                     document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
-                    
+
                     return false;
                 }
             }
@@ -965,7 +1273,7 @@
                     document.getElementById("noInterviewer").innerHTML = "There should be atleast one Interviewer.";
                     document.getElementById("noInterviewerDown").innerHTML = "There should be atleast one Interviewer.";
                     break;
-                   
+
                 }
                 document.getElementById("noInterviewer").innerHTML = "";
                 document.getElementById("noInterviewerDown").innerHTML = "";
@@ -973,23 +1281,24 @@
             return false;
         }
 
-        
+
     }
 
 
     function ClientChanged(clientId) {
-        
+
         $.ajax({
             type: "GET",
             url: "/IRF/GetClientUser",
             data: { 'clientId': clientId },
             success: function (data) {
-                
+
+
 
                 var drpdwnId = $("#ClientCollection_0__ClientUserId");
                 //drpdwnId.options.length = 0;
                 $("#ClientCollection_0__ClientUserId option").remove();
-                
+
                 if (data.length > 0) {
                     $(data).each(function () {
                         var option = $("<option />");
@@ -1004,19 +1313,19 @@
                         drpdwnId.append(option);
                     });
                 }
-                
-                
+
+
             }
         });
 
     }
 
     function TechSkillChanged() {
-        
+
         //var index = id.charAt(16);
         var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
         //var arr = [];
-        var skills ="";
+        var skills = "";
         for (i = 0; i < techSkills.length; i++) {
             //arr.push(techSkills[i].value);
             skills = skills + ',' + techSkills[i].value;
@@ -1029,7 +1338,7 @@
 
                 var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
                 for (i = 0; i < drpdowns.length; i++) {
-                    $("#" + drpdowns[i].id+" option").remove();
+                    $("#" + drpdowns[i].id + " option").remove();
                 }
 
                 var drpdownsEI = $('[id^="EmergencyInterviewerCollection"][id$="UserId"]');
@@ -1041,7 +1350,7 @@
                 for (i = 0; i < drpdownsQC.length; i++) {
                     $("#" + drpdownsQC[i].id + " option").remove();
                 }
-               
+
                 if (data.length > 0) {
 
                     for (i = 0; i < drpdowns.length; i++) {
@@ -1058,11 +1367,11 @@
                             option.val(this.value);
 
                             //Add the Option element to DropDownList.
-                            
+
                             $("#" + drpdowns[i].id).append(option);
-                            
-                            InterviewerChanged(drpdowns[i].value, drpdowns[i].id);   
-                            
+
+                            InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+
                             //drpdwnId.append(option);
                         });
                     }
@@ -1113,7 +1422,7 @@
                     }
 
 
-                   
+
                 }
 
 
@@ -1132,7 +1441,7 @@
         var month = parseInt(val.substring(5, 7)) - 1;
         var date = val.substring(8, 10);
         var StartDate = new Date(year, month, date);
-        
+
 
         var d = new Date();
         var currentDate = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -1147,21 +1456,21 @@
             document.getElementById("startDateCheck").style.display = "none";
             document.getElementById("startDateCheck").innerHTML = "";
             document.getElementById("btnUpload").disabled = false;
-            
+
         }
         if (document.getElementById("EndDate").value != "") {
             checkEndDate(document.getElementById("EndDate").value);
         }
-        
+
     }
 
     function checkEndDate(val) {
-      
+
         if (val == "") {
             return;
         }
         var startDateValue = document.getElementById("StartDate").value;
-        
+
         //end Date object creation
         var year = val.substring(0, 4);
         var month = parseInt(val.substring(5, 7)) - 1;
@@ -1169,7 +1478,7 @@
         var endDate = new Date(year, month, date);
 
         //start Date object creation
-        
+
         if (startDateValue == "") {
             document.getElementById("endDateCheck").style.display = "block";
             document.getElementById("endDateCheck").innerHTML = "Kindly fill the Start Date field.";
@@ -1181,7 +1490,7 @@
         var dateStart = startDateValue.substring(8, 10);
         var startDate = new Date(yearStart, monthStart, dateStart);
 
-        
+
         if (endDate <= startDate) {
             document.getElementById("btnUpload").disabled = true;
             document.getElementById("endDateCheck").style.display = "block";
@@ -1200,7 +1509,7 @@
 
     //checkUniqueness(this.value)
     function checkUniqueness(val) {
-     
+
         if (val == "") {
             return;
         }
@@ -1222,7 +1531,7 @@
                         document.getElementById("btnUpload").disabled = false;
                         return;
                     }
-                        
+
                 }
             });
         }
@@ -1275,7 +1584,7 @@
 
         // Check document for changes
         $.validator.unobtrusive.parse(document);
-       // document.getElementById("btnUpload").disabled = false;
+        // document.getElementById("btnUpload").disabled = false;
 
     }
     function AddSkillGeneralRow() {
@@ -1433,7 +1742,7 @@
 
 
     function AddRowClient() {
-        
+
         document.getElementById("btnUpload").disabled = false;
 
         var $ttc = $("#ClientTable").find("tbody tr:last");
@@ -1482,7 +1791,7 @@
 
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
-       
+
 
         var $ttc = $("#InterviewerTable").find("tbody tr:last");
         var $tr = $ttc.clone();
@@ -1602,7 +1911,7 @@
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
         })
 
-        
+
         // reset fields in the new row
         $tr.find("select").val("");
         $tr.find("input[type=text]").val("");
@@ -1684,7 +1993,7 @@
 
         var table = document.getElementById("HRTable");
         var rowCount = table.rows.length;
-        
+
         var $ttc = $("#HRTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#HRTable tr").length - 1;
@@ -1853,7 +2162,7 @@
 
         TechSkillChanged();
         //Perform Ajax request.
-       
+
         var id = $("#InterviewerCollection_0__UserId").val();
         $.ajax({
             type: "GET",
@@ -1873,11 +2182,11 @@
             url: "/IRF/GetRecruiterDomain",
             data: { 'userId': userId },
             success: function (data) {
-                $("#RecruiterCollection_0__Domain").val(data);               
+                $("#RecruiterCollection_0__Domain").val(data);
 
             }
         });
-       
+
         //Get Client Users based on clietn ID
         var clientId = $("#ClientId").val();
         $.ajax({
@@ -1923,7 +2232,7 @@
 
     });
 
-    
+
 
     function AddRowController() {
 
@@ -1974,7 +2283,7 @@
         document.getElementById("btnUpload").disabled = false;
 
     }
-    
+
 
 
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
@@ -2010,7 +2319,7 @@
                         elem2.id = collectionName + "_" + (i - 1) + "__" + tdTwo;
                         elem2.name = collectionName + "[" + (i - 1) + "]." + tdTwo;
                     }
-                    
+
 
                 }
 
@@ -2022,7 +2331,7 @@
     }
 
     function DeleteRowSkills(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive) {
-        
+
         if ($(element).parents('tbody').find('tr').length === 1) {
 
             alert('Must have atleast one Row');
@@ -2063,7 +2372,7 @@
                         elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                         elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
                     }
-                    
+
 
                 }
 
@@ -2078,6 +2387,6 @@
 
     }
 
-    
+
 
 </script>
