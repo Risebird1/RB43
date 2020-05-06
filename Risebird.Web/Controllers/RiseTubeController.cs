@@ -1036,13 +1036,13 @@ namespace Risebird.Web.Controllers
                 result = Shortlistcount.totalcount;
                 Mail _mail = new Mail();
                 _mail.TO = Shortlistcount.Email;
-                _mail.Subject = "RiseBird: Your profile has been shortlisted";
+                _mail.Subject = "Your profile has been shortlisted";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
 
-                bulider.Append("Client Name: " + email.ToUpper());
-                bulider.Append("has shortlisted your profile");
+                bulider.Append("A client: " + email.ToUpper());
+                bulider.Append(" has shortlisted your profile");
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
@@ -1059,12 +1059,12 @@ namespace Risebird.Web.Controllers
             {
                 Mail _mail = new Mail();
                 _mail.TO = Status;
-                _mail.Subject = "RiseBird: A client has shown interest in your profile";
+                _mail.Subject = "A client has shown interest in your profile";
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("Client Name:</p>" + email.ToUpper());
-                bulider.Append("has showed interest in your profile");
+                bulider.Append("A client: " + email.ToUpper());
+                bulider.Append(" has showed interest in your profile");
                 var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
