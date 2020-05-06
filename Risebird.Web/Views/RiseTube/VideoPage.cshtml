@@ -1556,22 +1556,7 @@
                                                                                 </div>
 
                                                                             </div>
-                                                                            @*<div class="row">
-                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                        </div>
-                                                                                    </div>
-
-                                                                                </div>*@
                                                                             <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
                                                                                     <div class="form-group">
@@ -1614,6 +1599,22 @@
                                                                             @if (ViewBag.ProfileName != "CuratedUser")
                                                                             {
                                                                                 <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <div class="row">
                                                                                     <div class="col-md-12 col-sm-12">
                                                                                         <div class="form-group">
                                                                                             @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
@@ -1638,8 +1639,24 @@
                                                                                     }
                                                                                 </div>
                                                                             }
-                                                                            @if (Model.IsIntrested == "Accept" && ViewBag.ProfileName == "CuratedUser")
+                                                                            @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
                                                                             {
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
                                                                                 <div class="row">
                                                                                     <div class="col-md-12 col-sm-12">
                                                                                         <div class="form-group">
