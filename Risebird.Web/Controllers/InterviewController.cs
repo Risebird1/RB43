@@ -5801,7 +5801,15 @@ namespace Risebird.Web.Controllers
                 }
                 Email.UserName = namemodel;
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("Candidate " + Email.UserName + " has " + Status + "ed your interest");
+                if (Status == "Interest Accepted")
+                {
+                    bulider.Append("Candidate " + Email.UserName + " has Accepted your interest");
+                }
+                else
+                {
+                    bulider.Append("Candidate " + Email.UserName + " has Passed your interest");
+
+                }
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
 
             }
