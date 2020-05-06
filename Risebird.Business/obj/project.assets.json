@@ -12359,20 +12359,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\rumab\\.nuget\\packages\\": {}
+    "C:\\Users\\PS250550\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "projectUniqueName": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
       "projectName": "Risebird.Business",
-      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
-      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\obj\\",
+      "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "packagesPath": "C:\\Users\\PS250550\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Business\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
       "configFilePaths": [
-        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\PS250550\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.0"
@@ -12384,14 +12389,14 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\PS250550\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             }
           }
         }
@@ -12422,7 +12427,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -147,3 +147,4 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper.Interface\obj\Debug
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csproj.CopyComplete
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.pdb
+C:\Users\PS250550\source\repos\Risebird\Risebird.CommonHelper.Interface\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.Interface.csprojAssemblyReference.cache
