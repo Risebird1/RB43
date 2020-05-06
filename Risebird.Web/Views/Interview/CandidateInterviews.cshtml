@@ -245,7 +245,7 @@
     }
 
     #divIntrestedShown td, #divshortlist td {
-        padding: 5px;
+        padding: 3px;
         text-align: center;
     }
 
@@ -544,7 +544,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6" style="margin-right:-25%">
+                    <div class="col-md-6" >
                         <input type="button" onclick="interestConfirm()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
                     </div>
                     <div class="col-md-6">
@@ -573,7 +573,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6" style="margin-right:-25%">
+                    <div class="col-md-6" >
                         <input type="button" onclick="interestConfirmPass()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
                     </div>
                     <div class="col-md-6">
@@ -747,7 +747,7 @@
                 var modal = document.getElementById("myintrestList");
                 modal.style.display = "block";
                 var html = '';
-                html += '<table class="table-responsive-sm" style="Width:100%">';
+                html += '<table style="Width:100%"><div  class="table-responsive-sm">';
                 html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
@@ -759,9 +759,9 @@
                     else {
                         html += '<tr id="tablerow_' + data[i].id + '">';
                     }
-                    html += '<td>' + data[i].clientName + '</td>';
-                    html += '<td>' + data[i].dateRequired + '</td>';
-                    html += '<td width="40%">' + data[i].approvalComments + '</td><td class="text-center">';
+                    html += '<td style="border-right: 1px #ccc solid;">' + data[i].clientName + '</td>';
+                    html += '<td style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
+                    html += '<td style="border-right: 1px #ccc solid;" width="30%">' + data[i].approvalComments + '</td><td width="25%" class="text-center">';
                     if (data[i].status == "Interest Accepted") {
                         html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
@@ -789,7 +789,7 @@
                     html += "</td></tr>";
 
                 }
-                html += "</table>";
+                html += "</div></table>";
                 if (data.length == 0) {
                     html = 'No record found';
                 }
