@@ -1393,12 +1393,12 @@
                                                                             {
                                                                                 @if (Model.IsShortlisted > 0)
                                                                                 {
-                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
+                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
                                                                                 }
                                                                             }
                                                                         }
@@ -3406,7 +3406,7 @@
                     url: "/RiseTube/CandidateShortList",
                     data: { vedioid: $("#txtVedioId").val() },
                     success: function (data) {
-                        $("#btnShortlist").val("ShortListed(" + data + ")");
+                        $("#btnShortlist").val("Shortlisted(" + data + ")");
                     }
                 });
 
@@ -3531,7 +3531,7 @@
                 data: { vedioid: $("#txtVedioId").val(), Comment: $("#txtintrestecomment").val() },
                 success: function (data) {
                     if (data == "Success") {
-                        $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px");
+                        $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px");                       
                         $("#btnIntrest").attr('Shortvalue', "2");
                         var modal = document.getElementById("myModalComment");
                         modal.style.display = "none";
@@ -3563,7 +3563,7 @@
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Video will be playing over here',
+                    'next .card-title': 'Selected Candidates Video will be playing over here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3666,7 +3666,7 @@
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Video will be playing over here',
+                    'next .card-title': 'Selected Candidates Video will be playing over here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },

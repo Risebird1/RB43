@@ -246,6 +246,7 @@
 
     #divIntrestedShown td, #divshortlist td {
         padding: 5px;
+        text-align: center;
     }
 
 
@@ -300,105 +301,105 @@
                             @foreach (var item in Model)
                             {
                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-                                <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
-                                    <div class="card card-stats border  card-blue">
+                            <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
+                                <div class="card card-stats border  card-blue">
 
 
-                                        <div class="statistics statistics-horizontal">
-                                            <div class="info info-horizontal">
+                                    <div class="statistics statistics-horizontal">
+                                        <div class="info info-horizontal">
 
-                                                <div class="card-header">
-                                                    <div class="row">
-                                                        <div class="col-12 ">
-                                                            <h6> @item.IRFID</h6>
-                                                        </div>
+                                            <div class="card-header">
+                                                <div class="row">
+                                                    <div class="col-12 ">
+                                                        <h6> @item.IRFID</h6>
                                                     </div>
-                                                </div>
-
-
-
-                                                <div class="card-body ">
-
-                                                    <div class="row" style="font-size:smaller;">
-
-                                                        <div class="col-12">
-                                                            <div class="group inner list-group-item-text">
-                                                                <div class="can-details">
-                                                                    <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span>
-                                                                </div>
-                                                                <div class="can-details">
-                                                                    <b>Interview Date:</b> <span>@item.interviewDate  </span>
-                                                                </div>
-                                                                <div class="can-details">
-                                                                    <b>Primary Skills:</b> <span>@item.JDTiltle.Split('|')[0]  </span>
-                                                                </div>
-
-                                                                <div class="can-details">
-                                                                    <b>JD Link:</b> <span><a href="@item.JDLink" target="_blank">Job Description</a>  </span>
-                                                                </div>
-
-                                                                <div class="can-details">
-
-                                                                    <b>Job Ends on:</b> <span> @item.EndDate.ToString("dd MMM yyyy") </span>
-
-                                                                </div>
-                                                                <div class="can-details">
-                                                                    <b>Resume:</b> <span><a href="@item.resumeLink" target="_blank">Resume</a>   </span>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-
                                                 </div>
                                             </div>
+
+
+
+                                            <div class="card-body ">
+
+                                                <div class="row" style="font-size:smaller;">
+
+                                                    <div class="col-12">
+                                                        <div class="group inner list-group-item-text">
+                                                            <div class="can-details">
+                                                                <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span>
+                                                            </div>
+                                                            <div class="can-details">
+                                                                <b>Interview Date:</b> <span>@item.interviewDate  </span>
+                                                            </div>
+                                                            <div class="can-details">
+                                                                <b>Primary Skills:</b> <span>@item.JDTiltle.Split('|')[0]  </span>
+                                                            </div>
+
+                                                            <div class="can-details">
+                                                                <b>JD Link:</b> <span><a href="@item.JDLink" target="_blank">Job Description</a>  </span>
+                                                            </div>
+
+                                                            <div class="can-details">
+
+                                                                <b>Job Ends on:</b> <span> @item.EndDate.ToString("dd MMM yyyy") </span>
+
+                                                            </div>
+                                                            <div class="can-details">
+                                                                <b>Resume:</b> <span><a href="@item.resumeLink" target="_blank">Resume</a>   </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        <div class="card-footer ">
-                                            <div class="stats text-center">
-
-
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="ShortList">
-                                                    <span onclick="ShortList('@item.IRFID')" title="Shortlisted" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
-                                                </button>
+                                    <div class="card-footer ">
+                                        <div class="stats text-center">
 
 
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Show Interest">
-                                                    <span onclick="Interested('@item.IRFID')" title="Show Interest" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10zm-3-5h-2V7h-4v3H8l4 4 4-4z" /></svg></span>
-                                                </button>
+                                            <button class="mdc-fab app-fab--absolute" aria-label="ShortList">
+                                                <span onclick="ShortList('@item.IRFID')" title="Shortlisted" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                            </button>
 
 
 
-
-
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Reschedule Meeting">
-                                                    <span onclick="window.open('@item.CalendlyLink')" title="Reschedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
-                                                </button>
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Show Interest">
+                                                <span onclick="Interested('@item.IRFID')" title="Show Interest" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3H4.99c-1.11 0-1.98.9-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10zm-3-5h-2V7h-4v3H8l4 4 4-4z" /></svg></span>
+                                            </button>
 
 
 
 
-                                                <button class="mdc-fab app-fab--absolute" aria-label="Join Meeting">
-                                                    <span onclick="window.open('@item.zoomLink')" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
-                                                </button>
+
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Reschedule Meeting">
+                                                <span onclick="window.open('@item.CalendlyLink')" title="Reschedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                            </button>
 
 
 
-                                                @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
+
+                                            <button class="mdc-fab app-fab--absolute" aria-label="Join Meeting">
+                                                <span onclick="window.open('@item.zoomLink')" title="Meetings" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z" /></svg></span>
+                                            </button>
+
+
+
+                                            @if (item.InterviewerPhone != null && item.InterviewerPhone != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                 {
-                                                    <!--   <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
-                                                        <i class="now-ui-icons fa fa-phone"></i>
-                                                    </button>-->
+                                            <!--   <button type="button" onclick="ModalButtonClick(@jsonObject)" class="btn btn-success btn-icon btn-sm" title="Call Interviewer">
+                                                <i class="now-ui-icons fa fa-phone"></i>
+                                            </button>-->
 
 
 
 
-                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Call Interviewer">
-                                                        <span onclick="ModalButtonClick(@jsonObject)" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
-                                                    </button>
+                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Call Interviewer">
+                                                <span onclick="ModalButtonClick(@jsonObject)" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg></span>
+                                            </button>
 
 
 
@@ -413,15 +414,15 @@
 
 
 
-                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel interview request">
-                                                    <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
-                                                </button>
+                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Cancel interview request">
+                                                <span onclick="javascript:CancelInterview(@jsonObject);" title="Cancel interview request" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                            </button>
 
 
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
                             }
                         </div>
 
@@ -543,11 +544,11 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                        <input type="button" onclick="interestConfirm()" style="margin-left:73%" class="btn btn-fill btn-danger" value="OK">
+                    <div class="col-md-6" style="margin-right:-25%">
+                        <input type="button" onclick="interestConfirm()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
                     </div>
                     <div class="col-md-6">
-                        <input type="button" onclick="closeIntrestAccept()" id="hangUpButton" class="btn btn-fill btn-danger" value="Close">
+                        <input type="button" onclick="closeIntrestAccept()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -572,11 +573,11 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                        <input type="button" onclick="interestConfirmPass()" style="margin-left:73%" class="btn btn-fill btn-danger" value="OK">
+                    <div class="col-md-6" style="margin-right:-25%">
+                        <input type="button" onclick="interestConfirmPass()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
                     </div>
                     <div class="col-md-6">
-                        <input type="button" onclick="closeIntrestPass()" id="hangUpButton"  class="btn btn-fill btn-danger" value="Close">
+                        <input type="button" onclick="closeIntrestPass()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -746,21 +747,21 @@
                 var modal = document.getElementById("myintrestList");
                 modal.style.display = "block";
                 var html = '';
-                html += '<table style="Width:100%">';
+                html += '<table class="table-responsive-sm" style="Width:100%">';
                 html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
-                        html += '<tr id="tablerow_' + data[i].id + '" style="background-color:limegreen">';
+                        html += '<tr id="tablerow_' + data[i].id + '" style="background-color:#adf9ad96">';
                     }
                     else if (data[i].status == "Interested Passed") {
-                        html += '<tr id="tablerow_' + data[i].id + '" style="background-color:red">';
+                        html += '<tr id="tablerow_' + data[i].id + '" style="background-color:#d61f4533">';
                     }
                     else {
                         html += '<tr id="tablerow_' + data[i].id + '">';
                     }
                     html += '<td>' + data[i].clientName + '</td>';
                     html += '<td>' + data[i].dateRequired + '</td>';
-                    html += '<td>' + data[i].approvalComments + '</td><td class="text-center">';
+                    html += '<td width="40%">' + data[i].approvalComments + '</td><td class="text-center">';
                     if (data[i].status == "Interest Accepted") {
                         html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
@@ -860,15 +861,15 @@
     }
     function interestConfirmPass() {
         var id = $("#txtConfirmPass").val();
-             $.ajax({
-                type: "POST",
-                url: "/Interview/Intrestreaction",
-                data: { vedioid: id, Status: "Interested Passed" },
-                success: function (data) {
-                    $("#btnRejectIntrest_" + id).attr('disabled', true);
-                    $("#tablerow_" + id).attr('style', 'background-color:red');
-                    closeIntrestPass();
-                }
-            });
+        $.ajax({
+            type: "POST",
+            url: "/Interview/Intrestreaction",
+            data: { vedioid: id, Status: "Interested Passed" },
+            success: function (data) {
+                $("#btnRejectIntrest_" + id).attr('disabled', true);
+                $("#tablerow_" + id).attr('style', 'background-color:red');
+                closeIntrestPass();
+            }
+        });
     }
 </script>
