@@ -5784,7 +5784,15 @@ namespace Risebird.Web.Controllers
             {
                 Mail _mail = new Mail();
                 _mail.TO = Email.Comment;
-                _mail.Subject = "Candidate has " + Status + "ed your interest";
+                if (Status == "Interest Accepted")
+                {
+                    _mail.Subject = "Candidate has Accepted your interest";
+                }
+                else
+                {
+                    _mail.Subject = "Candidate has Passed your interest";
+
+                }
                 var usernames = Email.UserName.Trim().Split(" ");
                 var namemodel = String.Empty;
                 foreach (var name in usernames)
