@@ -161,7 +161,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var item in modelList)
                             {
-                                if (item.IsIntrested != "Accept")
+                                if (item.IsIntrested != "Interested Accepted")
                                 {
                                     var usernames = item.candidateName.Trim().Split(" ");
                                     var namemodel = String.Empty;
@@ -317,7 +317,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var item in modelList)
                             {
-                                if (item.IsIntrested != "Accept")
+                                if (item.IsIntrested != "Interested Accepted")
                                 {
                                     var usernames = item.candidateName.Trim().Split(" ");
                                     var namemodel = String.Empty;
@@ -449,17 +449,17 @@ namespace Risebird.Web.Controllers
                                 }
                                 else if (actionstatus.ToUpper() == "SHORTLIST")
                                 {
-                                    modelList1 = modelList1.Where(x => x.ShortListstatus == "ShortListed").ToList();
+                                    modelList1 = modelList1.Where(x => x.ShortListstatus == "Shortlisted").ToList();
                                     id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
                                 }
                                 else if (actionstatus.ToUpper() == "INTRESTED")
                                 {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Intrested").ToList();
+                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interest Sent").ToList();
                                     id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
                                 }
                                 else if (actionstatus.ToUpper() == "ACCEPT")
                                 {
-                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Accept").ToList();
+                                    modelList1 = modelList1.Where(x => x.IsIntrested == "Interested Accepted").ToList();
                                     id = modelList1.OrderByDescending(x => x.imid).Select(x => x.imid).FirstOrDefault();
                                 }
                             }
@@ -514,7 +514,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.ResultStatus = "VideoNotPresent";
 
                         }
-
+                        var modelList2 = modelList1;
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
                         modelList1 = modelList1.Select(x =>
                         {
@@ -523,7 +523,14 @@ namespace Risebird.Web.Controllers
                         }).ToList();
                         var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
                         var modelList = modelList1;
-
+                        if (HttpContext.Session.GetString("RiseTubefilters") != null)
+                        {
+                            var filter1 = JsonConvert.DeserializeObject<InterviewFilter>(HttpContext.Session.GetString("RiseTubefilters"));
+                            filter1.IsShortListed = filter1.IsShortListed == null ? filter1.IsShortListed = modelList.Select(x => x.ShortListstatus).ToArray() : filter1.IsShortListed = filter1.IsShortListed;
+                            filter1.IsIntrested = filter1.IsIntrested == null ? filter1.IsIntrested = modelList.Select(x => x.IsIntrested).ToArray() : filter1.IsIntrested = filter1.IsIntrested;
+                            modelList2 = modelList2.Where(c => (filter1.IsShortListed.Count() > 0 ? filter1.IsShortListed.Contains(c.ShortListstatus) : c.ShortListstatus == string.Empty) 
+                            && (filter1.IsIntrested.Count() > 0 ? filter1.IsIntrested.Contains(c.IsIntrested) : c.IsIntrested == string.Empty)).ToList();
+                        }
                         if (HttpContext.Session.GetString("VideoPagefilters") != null)
                         {
 
@@ -566,7 +573,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var itemmodel in modelList)
                             {
-                                if (itemmodel.IsIntrested != "Accept")
+                                if (itemmodel.IsIntrested != "Interested Accepted")
                                 {
                                     var usernames = itemmodel.candidateName.Trim().Split(" ");
                                     var namemodel = String.Empty;
@@ -585,6 +592,10 @@ namespace Risebird.Web.Controllers
                         {
                             NewModel.SubVideo_List = modelList.ToList().Where(x => x.imid != id).ToList();
                         }
+                        else if(HttpContext.Session.GetString("RiseTubefilters") != null)
+                        {
+                            NewModel.SubVideo_List = modelList2.ToList().Where(x => x.imid != id).ToList();
+                        }
                         else
                         {
                             NewModel.SubVideo_List = modelList1.ToList().Where(x => x.imid != id).ToList();
@@ -592,7 +603,7 @@ namespace Risebird.Web.Controllers
 
                         if (profileName == "CuratedUser")
                         {
-                            if (model.IsIntrested != "Accept" && model.IsIntrested != null)
+                            if (model.IsIntrested != "Interested Accepted" && model.IsIntrested != null)
                             {
                                 var usernames = model.candidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -616,7 +627,7 @@ namespace Risebird.Web.Controllers
                         {
                             if (IRListModel != null)
                             {
-                                if (model.IsIntrested != "Accept")
+                                if (model.IsIntrested != "Interested Accepted")
                                 {
                                     var usernames = IRListModel.CandidateName.Trim().Split(" ");
                                     var namemodel = String.Empty;
@@ -821,7 +832,7 @@ namespace Risebird.Web.Controllers
                         {
                             foreach (var itemmodel in modelList)
                             {
-                                if (itemmodel.IsIntrested != "Accept")
+                                if (itemmodel.IsIntrested != "Interested Accepted")
                                 {
                                     var usernames = itemmodel.candidateName.Trim().Split(" ");
                                     var namemodel = String.Empty;
@@ -837,7 +848,7 @@ namespace Risebird.Web.Controllers
                         NewModel.SubVideo_List = modelList.ToList();
                         if (profileName == "CuratedUser")
                         {
-                            if (model.IsIntrested != "Accept")
+                            if (model.IsIntrested != "Interested Accepted")
                             {
                                 var usernames = model.candidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -855,7 +866,7 @@ namespace Risebird.Web.Controllers
                         ViewBag.ProfileName = profileName;
                         if (profileName == "CuratedUser")
                         {
-                            if (model.IsIntrested != "Accept")
+                            if (model.IsIntrested != "Interested Accepted")
                             {
                                 var usernames = IRListModel.CandidateName.Trim().Split(" ");
                                 var namemodel = String.Empty;
@@ -1023,7 +1034,7 @@ namespace Risebird.Web.Controllers
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-               
+
                 bulider.Append("Client Name: " + email.ToUpper());
                 bulider.Append("has shortlisted your profile");
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
