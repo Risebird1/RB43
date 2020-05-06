@@ -5782,18 +5782,39 @@ namespace Risebird.Web.Controllers
 
             if (Email != null)
             {
+
                 Mail _mail = new Mail();
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+               // var nameuser = _meetingService.Fetchusername(emailid);
                 _mail.TO = Email.Comment;
-                _mail.Subject = "Candidate has " + Status + "ed your interest";
-                var usernames = Email.UserName.Trim().Split(" ");
-                var namemodel = String.Empty;
-                foreach (var name in usernames)
+                if (Status == "Interest Accepted")
                 {
-                    namemodel = namemodel + name.ToCharArray()[0];
+                    _mail.Subject = "A candidate has accepted your interest";
                 }
-                Email.UserName = namemodel;
+                else
+                {
+                    _mail.Subject = "A candidate has passed your interest";
+
+                }
+                //var usernames = nameuser.Trim().Split(" ");
+                //var namemodel = String.Empty;
+                //foreach (var name in usernames)
+                //{
+                //    namemodel = namemodel + name.ToCharArray()[0];
+                //}
+                //Email.UserName = namemodel;
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("Candidate " + Email.UserName + " has " + Status + "ed your interest");
+                if (Status == "Interest Accepted")
+                {
+                    bulider.Append("A candidate has accepted your interest");
+                }
+                else
+                {
+                    bulider.Append("A candidate has passed your interest");
+
+
+                }
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
 
             }

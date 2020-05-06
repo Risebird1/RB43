@@ -1183,6 +1183,19 @@ namespace Risebird.Business
                 return null;
             }
         }
+        public string Fetchusername(string Emailid)
+        {
+            try
+            {
+                var assignedMeeting = _meetingRespository.Fetchusername(Emailid);
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
     }
 
 }

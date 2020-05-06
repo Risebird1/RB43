@@ -1768,5 +1768,30 @@ namespace Risebird.Repository
             return null;
 
         }
+        public string Fetchusername(string Emailid)
+        {
+            try
+            {
+                var finalquery = "Select (Firstname+' '+LastName) As Name  from InterviewMeetings Where EmailId=@Emailid";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(finalquery, finaldynamicParameters);
+                    return results.FirstOrDefault().ToString();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
     }
 }

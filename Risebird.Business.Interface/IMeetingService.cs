@@ -59,6 +59,7 @@ namespace Risebird.Business.Interface
         string ShortListreaction(string vedioid, string Status);
         List<Meeting> ShortListedClient(string emailid, string IRFID);
         List<Meeting> InterestListClient(string emailid, string IRFID);
+        string Fetchusername(string emailid);
 
 
     }
