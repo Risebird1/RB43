@@ -512,6 +512,7 @@ namespace Risebird.Web.Controllers
                         {
                             model = new MeetingVM();
                             ViewBag.ResultStatus = "VideoNotPresent";
+                            return View(model);
 
                         }
                         modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
