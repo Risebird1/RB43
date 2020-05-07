@@ -167,7 +167,11 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                        if (name != null && name.Length >= 2)
+                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                        else if (name != null && name.Length == 1)
+                                            namemodel = namemodel + name?.ToCharArray()[0];
+
                                     }
                                     item.candidateName = namemodel;
                                 }
@@ -323,7 +327,11 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                        if (name != null && name.Length >= 2)
+                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                        else if (name != null && name.Length == 1)
+                                            namemodel = namemodel + name?.ToCharArray()[0];
+                                       
                                     }
                                     item.candidateName = namemodel;
                                 }
@@ -579,7 +587,11 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0]+ name.ToCharArray()[1];
+                                        if (name != null && name.Length >= 2)
+                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                        else if (name != null && name.Length == 1)
+                                            namemodel = namemodel + name?.ToCharArray()[0];
+                                       
                                     }
                                     itemmodel.candidateName = namemodel;
                                 }
@@ -605,7 +617,10 @@ namespace Risebird.Web.Controllers
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                    if (name != null && name.Length >= 2)
+                                        namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                    else if (name != null && name.Length == 1)
+                                        namemodel = namemodel + name?.ToCharArray()[0];                                 
                                 }
                                 NewModel.candidateName = namemodel;
                             }
@@ -629,7 +644,10 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                        if (name != null && name.Length >= 2)
+                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                        else if (name != null && name.Length == 1)
+                                            namemodel = namemodel + name?.ToCharArray()[0];                                      
                                     }
                                     IRListModel.CandidateName = namemodel;
                                 }
@@ -841,7 +859,10 @@ namespace Risebird.Web.Controllers
                                     var namemodel = String.Empty;
                                     foreach (var name in usernames)
                                     {
-                                        namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                        if (name != null && name.Length >= 2)
+                                            namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                        else if (name != null && name.Length == 1)
+                                            namemodel = namemodel + name?.ToCharArray()[0];                                      
                                     }
                                     itemmodel.candidateName = namemodel;
                                 }
@@ -857,7 +878,10 @@ namespace Risebird.Web.Controllers
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                    if (name != null && name.Length >= 2)
+                                        namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                    else if (name != null && name.Length == 1)
+                                        namemodel = namemodel + name?.ToCharArray()[0];                                   
                                 }
                                 NewModel.candidateName = namemodel;
                             }
@@ -879,7 +903,11 @@ namespace Risebird.Web.Controllers
                                 var namemodel = String.Empty;
                                 foreach (var name in usernames)
                                 {
-                                    namemodel = namemodel + name.ToCharArray()[0] + name.ToCharArray()[1]; 
+                                    if (name != null && name.Length >= 2)
+                                        namemodel = namemodel + name?.ToCharArray()[0] + name?.ToCharArray()[1];
+                                    else if (name != null && name.Length == 1)
+                                        namemodel = namemodel + name?.ToCharArray()[0];
+                                  
                                 }
                                 IRListModel.CandidateName = namemodel;
                             }
@@ -1042,7 +1070,7 @@ namespace Risebird.Web.Controllers
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
 
-                bulider.Append("Client: " + email.ToUpper()+ " has shortlisted your profile");              
+                bulider.Append("Client: " + email.ToUpper() + " has shortlisted your profile");
                 var result1 = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
 
             }
@@ -1063,7 +1091,7 @@ namespace Risebird.Web.Controllers
                 email = email.Replace("\"", "");
                 email = email.Split("@")[1].Split(".")[0];
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");               
+                bulider.Append("Client: " + email.ToUpper() + " has showed interest in your profile");
                 var result = _notificationHelper.CuretatedNotification(_mail, "Candidate", bulider.ToString());
             }
             return Json("Success");
