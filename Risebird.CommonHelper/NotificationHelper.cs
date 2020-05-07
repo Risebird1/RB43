@@ -428,11 +428,10 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-        public string NotifyCandidate(Mail model)
+        public string CuretatedNotification(Mail model, string UserType, string EmailParameter)
         {
             try
             {
-                object[] parameters = new object[] { model.Body };
                 var mailMessage = new MailMessage();
 
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
@@ -441,9 +440,42 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
+                object[] parameters = new object[] { UserType, EmailParameter };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.Subject = model.Subject;
-                string msgBody = string.Format(model.Body);
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
+        public string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));
+                foreach (var mails in curatedUsers)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { irf, meetingDate };
+                mailMessage.Subject = "New candidate selected!";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));

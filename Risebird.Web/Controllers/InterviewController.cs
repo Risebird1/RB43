@@ -5779,21 +5779,38 @@ namespace Risebird.Web.Controllers
         public JsonResult Intrestreaction(string vedioid, string Status)
         {
             var Email = _meetingService.Intrestreaction(vedioid, Status);
-            var email = HttpContext.Session.GetString("email");
 
             if (Email != null)
             {
+
                 Mail _mail = new Mail();
-                _mail.TO = Email;
-                email = email.Replace("\"", "");
-                email = email.Split("@")[1].Split(".")[0];
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+              
+                _mail.TO = Email.Comment;
+                if (Status == "Interest Accepted")
+                {
+                    _mail.Subject = "Candidate has accepted your interest";
+                }
+                else
+                {
+                    _mail.Subject = "Candidate has passed your interest";
+
+                }
+               
                 StringBuilder bulider = new StringBuilder();
-                bulider.Append("<p>Hi Dear,</p><br/>");
-                bulider.Append("<p>Candidate "+ email + " has "+ Status + " your interest.</p>");
-                bulider.Append("<p>For more details, Please visit RiseBird portal.</p>");
-                bulider.Append("<br/><p>Thanks,</p>RiseBird");
-                _mail.Body = bulider.ToString();
-                var result1 = _notificationHelper.NotifyCandidate(_mail);
+                if (Status == "Interest Accepted")
+                {
+                    bulider.Append("Candidate has accepted your interest");
+                }
+                else
+                {
+                    bulider.Append("Candidate has passed your interest");
+
+
+                }
+                var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
+
             }
             return Json("Success");
         }

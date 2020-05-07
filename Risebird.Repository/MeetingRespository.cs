@@ -1647,7 +1647,7 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public string Intrestreaction(string vedioid, string Status)
+        public VedioComments Intrestreaction(string vedioid, string Status)
         {
             try
             {
@@ -1659,13 +1659,13 @@ namespace Risebird.Repository
                 {
                     con.Query(query, dynamicParameters);
                 }
-                var finalquery = "Select ul.EmailId from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
+                var finalquery = "Select ul.EmailId as Comment,(ul.Firstname +''+ ul.lastname) as UserName from SuitableCandidate sc Join UserList ul on sc.userid=ul.id where sc.id=@Id ";
                 var finaldynamicParameters = new DynamicParameters();
                 finaldynamicParameters.Add("@Id", vedioid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result=con.Query<string>(finalquery, finaldynamicParameters);
-                    return result.FirstOrDefault().ToString();
+                    var result=con.Query<VedioComments>(finalquery, finaldynamicParameters);
+                    return (VedioComments)result.FirstOrDefault();
                 }
             }
             catch (SqlException ex)
@@ -1764,6 +1764,31 @@ namespace Risebird.Repository
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+        public string Fetchusername(string Emailid)
+        {
+            try
+            {
+                var finalquery = "Select (Firstname+' '+LastName) As Name  from InterviewMeetings Where EmailId=@Emailid";
+                var finaldynamicParameters = new DynamicParameters();
+                finaldynamicParameters.Add("@Emailid", Emailid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<string>(finalquery, finaldynamicParameters);
+                    return results.FirstOrDefault().ToString();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
 

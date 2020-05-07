@@ -9,11 +9,13 @@
     dynamic filter = null;
     string strtDte = String.Empty;
     string endDte = String.Empty;
+    string[] primarySkills = new string[] { };
     string[] RFID = new string[] { };
     string[] ArchiveStatus = new string[] { };
     string[] ClientName = new string[] { };
     string[] SubscriptionStatus = new string[] { };
     string[] ClientRole = new string[] { };
+    string[] PrimarySkill = new string[] { };
 }
 @if (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters") != null)
 {
@@ -21,11 +23,13 @@
 (HttpContextAccessor.HttpContext.Session.GetString("IRFfilters"));
     strtDte = filter.StartDate != null ? String.Format("{0:yyyy-MM-dd}", filter.StartDate) : String.Empty;
     endDte = filter.EndDate != null ? String.Format("{0:yyyy-MM-dd}", filter.EndDate) : String.Empty;
+    primarySkills = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
     RFID = filter.RFID != null ? filter.RFID : new string[] { };
     ArchiveStatus = filter.ArchiveStatus != null ? filter.ArchiveStatus : new string[] { };
     SubscriptionStatus = filter.SubscriptionStatus != null ? filter.SubscriptionStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
     ClientRole = filter.ClientRole != null ? filter.ClientRole : new string[] { };
+    PrimarySkill = filter.PrimarySkill != null ? filter.PrimarySkill : new string[] { };
 
 }
 
@@ -310,7 +314,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        font-weight: normal!important;
+        font-weight: normal !important;
     }
 
 
@@ -525,6 +529,7 @@
     .mc-button-area {
         text-align: right;
     }
+
     .statusImg {
         -ms-flex: 0 0 12.666667%;
         flex: 0 0 12.666667%;
@@ -532,6 +537,7 @@
         float: left;
         padding: 0px 15px;
     }
+
     .statusInfo {
         -ms-flex: 0 0 82.333333%;
         flex: 0 0 82.333333%;
@@ -539,6 +545,7 @@
         float: left;
         padding: 0px 15px;
     }
+
     .jobs-user {
         font-size: 18px;
         font-weight: normal;
@@ -547,19 +554,21 @@
         display: block;
         width: 100%;
         padding: 0;
-        font-weight:bold;
+        font-weight: bold;
     }
-  .jobs-user span{
 
-     font-weight:normal;
-  }
+        .jobs-user span {
+            font-weight: normal;
+        }
 
-        @@media screen and (max-width: 767px) {
-            .clientName{width:170px;}
+    @@media screen and (max-width: 767px) {
+        .clientName {
+            width: 170px;
+        }
+
         .card-header-buttons {
             text-align: center;
         }
-
     }
 
     @@media screen and (max-width: 640px) {
@@ -567,7 +576,6 @@
             text-align: center;
         }
     }
-
 </style>
 
 <div class="main-panel" id="main-panel">
@@ -735,34 +743,49 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                    <div class="form-group col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                        <div class="col-md-6 col-sm-6">
+                                                            <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12">
 
-                                                        <div class="row">
-                                                            <div class="col-md-12 col-sm-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12">
 
 
-                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
-                                                                    <font style="font-size:12px;"> Reset Filter</font>
-                                                                </button>
-
-
-
-                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
-                                                                    <font style="font-size:12px;"> Apply Filter</font>
-                                                                </button>
+                                                            <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                <font style="font-size:12px;"> Reset Filter</font>
+                                                            </button>
 
 
 
-                                                            </div>
+                                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                <font style="font-size:12px;"> Apply Filter</font>
+                                                            </button>
+
+
 
                                                         </div>
-
-
 
                                                     </div>
 
 
+
                                                 </div>
+
+
+
                                             </div>
 
                                         </div>
@@ -915,7 +938,7 @@
                                                         {
 
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Questions">
+                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Questions">
                                                                 <span onclick="javascript:AddComments('@item.id');" title="Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" /></svg></span>
                                                             </button>
 
@@ -962,7 +985,7 @@
 
 
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Play">
+                                                                <button class="mdc-fab app-fab--absolute item6" aria-label="Play">
                                                                     <span onclick="PlayIRF('@item.id', '@item.IRFId');" title="Play" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
                                                                 </button>
 
@@ -991,18 +1014,39 @@
                                                     {
                                                         @if (item.SubId != null)
                                                         {
+                                                            <button class="mdc-fab app-fab--absolute allcur" aria-label="All">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ALL"})'" title="ALL" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="ShortListed" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
+                                                                  
+
+
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintsent" aria-label="Interest-Sent">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Intrested"})'" title="Interest-Sent" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
+                                                                </span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute allintac" aria-label="Interest-Accept">
+                                                                <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="Accept"})'" title="Interest-Accept" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                                </span>
+                                                            </button>
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Unsubscribe">
-                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId');" title="Unsubscribe" class="mdc-fab__icon material-icons">
+                                                                <span onclick="javascript:UnSubscribe('@item.id', '@item.IRFId','@item.JDTiltle.Split("|")[0]');" title="Unsubscribe" class="mdc-fab__icon material-icons">
                                                                     <i style="font-size:16px;" class="far fa-bell-slash"></i>
-
-
                                                                 </span>
                                                             </button>
                                                         }
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
                                                             </button>
                                                         }
 
@@ -1018,7 +1062,7 @@
                         </div>
 
                         <!-- End Card-->
-                        <div id="myModal" class="modal modal-wrap" style="        display: none; /* Hidden by default */
+                        <div id="myModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
         position: fixed; /* Stay in place */
         z-index: 1; /* Sit on top */
         padding-top: 100px; /* Location of the box */
@@ -1299,11 +1343,11 @@
 
 
                         }
-                        function Subscribe(irfId, irfName) {
+                        function Subscribe(irfId, irfName, primarySkill) {
 
                             swal.fire({
                                 title: 'Subscribe!',
-                                text: "Subscribe to " + irfName,
+                                text: "Subscribe to " + irfName + '(' + primarySkill+')',
                                 type: 'primary',
                                 showCancelButton: true,
                                 confirmButtonColor: '#3085d6',
@@ -1330,7 +1374,7 @@
                                     swal.fire({
                                         title: 'Subscribed!',
                                         type: 'success',
-                                        html: '<p>Subscribed to ' + irfName + '.</p>',
+                                        html: '<p>Subscribed to ' + irfName + '(' + primarySkill + ')' + '.</p>',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
                                         confirmButtonText: 'Close!',
@@ -1350,11 +1394,11 @@
 
 
                         }
-                        function UnSubscribe(irfId, irfName) {
+                        function UnSubscribe(irfId, irfName, primarySkill) {
 
                             swal.fire({
                                 title: 'Unsubscribe!',
-                                text: "Are you sure you want to unsubscribe " + irfName,
+                                text: "Are you sure you want to unsubscribe " + irfName + '(' + primarySkill + ')',
                                 type: 'warning',
                                 showCancelButton: true,
                                 confirmButtonColor: '#3085d6',
@@ -1381,7 +1425,7 @@
                                     swal.fire({
                                         title: 'Unsubscribed!',
                                         type: 'success',
-                                        html: '<p>Unsubscribed ' + irfName + '.</p>',
+                                        html: '<p>Unsubscribed ' + irfName + '(' + primarySkill + ')' + '.</p>',
                                         showCancelButton: false,
                                         confirmButtonColor: '#3085d6',
                                         confirmButtonText: 'Close!',
@@ -1594,7 +1638,12 @@
                 buttonWidth: '270px',
                 maxHeight: 200
             });
-
+             $("#PrimarySkill").multiselect({
+                includeSelectAllOption: true,
+                selectedClass: 'active1',
+                buttonWidth: '270px',
+                maxHeight: 200
+            });
         });
 
         function ResetFilter() {
@@ -1615,7 +1664,7 @@
             var archiveStatus =  @Html.Raw(Json.Serialize(ArchiveStatus));
             var subscriptionStatus =  @Html.Raw(Json.Serialize(SubscriptionStatus));
             var clientRole =  @Html.Raw(Json.Serialize(ClientRole));
-
+            var primarySkill= @Html.Raw(Json.Serialize(PrimarySkill));
 
             $('input[name=StartDate]').val(strtDte);
             $('input[name=EndDate]').val(endDte);
@@ -1624,6 +1673,8 @@
             $("#ArchiveStatus").val(archiveStatus);
             $("#SubscriptionStatus").val(subscriptionStatus);
             $("#ClientRole").val(clientRole);
+            $("#PrimarySkill").val(primarySkill);
+
             var form = $("#form").serialize();
             $.ajax({
                 type: "POST",
@@ -1725,28 +1776,48 @@
                                 var enjoyhint_instance = new EnjoyHint({});
 
                                 var enjoyhint_script_steps = [
-                                    {
-                                        'next .card-title': 'Welcome to Skills Channel! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "exit" }
+                                     {
+                                        'next .card-title': 'List of Skill Based Channel',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .filter': 'Filters here based on avialble attributes and reset filters if applied earlier! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .first': 'This is IRF reference ID and Primary Skill Name! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .first': 'Skill Channel Name and Primary Skill',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .subc': 'To subscribe IRF ',
-                                        'nextbutton': { classname: "mynext", text: "next" },
-                                        'skipbutton': { classname: "myskip", text: "skip" }
+                                        'next .allcur': 'Click here to see the Selected Candidates Video',
+                                        'nextbutton': { classname: "mynext", text: "Next" },
+                                        'skipbutton': { classname: "myskip", text: "Skip" }
                                     },
                                     {
-                                        'click .supportmenu':'click on the support icon to see its feartures'
+                                        'next .allshort': 'Click here to see the Shortlisted Candidates Video',
+                                        'nextbutton': { classname: "mynext", text: "Next" },
+                                        'skipbutton': { classname: "myskip", text: "Skip" }
+                                    },
+                                    {
+                                        'next .allintsent': 'Click here to see the Interest Sent Candidates Video',
+                                        'nextbutton': { classname: "mynext", text: "Next" },
+                                        'skipbutton': { classname: "myskip", text: "Skip" }
+                                    },
+                                    {
+                                        'next .allintac': 'Click here to see the Interest Accepted Candidates Video',
+                                        'nextbutton': { classname: "mynext", text: "Next" },
+                                        'skipbutton': { classname: "myskip", text: "Skip" }
+                                    },
+                                    {
+                                        'next .subc': 'Click here Subscribe/Unsubscribe Skill Channel',
+                                        'nextbutton': { classname: "mynext", text: "Next" },
+                                        'skipbutton': { classname: "myskip", text: "Skip" }
+                                    },
+                                    {
+                                        'click .supportmenu': 'Click on Support Menu to see its features'
                                     }
 
                                 ];
@@ -1772,114 +1843,84 @@
 
                                 var enjoyhint_script_steps = [
                                     {
-                                        'next .card-title': 'Welcome to Skills Channel! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "exit" }
+                                        'next .card-title': 'List of Skill Based Channel',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .filter': 'Filters here based on avialble attributes and reset filters if applied earlier! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .first': 'This is IRF reference ID and Primary Skill Name! ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .first': 'Skill Channel Name and Primary Skill',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .second': 'This is client Name ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .second': 'This is Client Name',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .three': 'This is interviews end date ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .three': 'Skill Channel End Date',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .four': 'Total interviews attended ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .four': 'Total interviews',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .five': 'Scheduled interviews ',
-                                        'nextButton': { className: "myNext", text: "Sure" },
-                                        'skipButton': { className: "mySkip", text: "Nope!" }
+                                        'next .five': 'Selected interviews',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
+                                    },                                    
+                                    {
+                                        'next .itemques': 'List of Questions discussed by interviewer',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .six': 'Budget consumed ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
-                                    },
-                                    //{
-                                    //    'next .seven': 'Budget consumed ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
+                                        'next .item1': 'List of Candidates belongs',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
+                                    },                                      
                                     {
-                                        'next .item1': 'If you want to edit the IRF you can edit here ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .item2': 'Grid View of all Interviews',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item2': 'This is interview planner ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .item3': 'Grid View of Selected Canditates',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item3': 'This is interview invoice',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .item4': 'Link to Schedule meeting over this Skill Channel',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item4': 'This is archive',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .item5': 'Interview Stats',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item5': 'Interview related Questions ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
+                                        'next .item6': 'Click here to pause this Skill Channel and by clicking it will cancel all upcoming interviews',
+                                        'nextButton': { className: "myNext", text: "Next" },
+                                        'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item6': 'Canditate List ',
-                                        'nextButton': { className: "myNext", text: "next" },
-                                        'skipButton': { className: "mySkip", text: "skip" }
-                                    },
-                                      {
-                                        'click .iacm': 'click on the Icon icon to see its feartures'
+                                        'click .iacm': 'Click here to navigate over Candidate Interview Grid View menu and see its feartures'
                                     }
-                                    //{
-                                    //    'next .item7': 'Meetings ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
-                                    //{
-                                    //    'next .item8': 'Selected Canditates! ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
-                                    //{
-                                    //    'next .item9': 'Scheduled meetings ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
-                                    //{
-                                    //    'next .item10': 'Stats of interviews ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
-                                    //{
-                                    //    'next .item11': 'If you want to stop this IRF You can click here ',
-                                    //    'nextButton': { className: "myNext", text: "next" },
-                                    //    'skipButton': { className: "mySkip", text: "skip" }
-                                    //},
                                 ];
 
                                 enjoyhint_instance.set(enjoyhint_script_steps);
                                 enjoyhint_instance.run();
 
                             </script>
-                            }
                         }
+                    }
 
