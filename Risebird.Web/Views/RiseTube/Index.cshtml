@@ -510,42 +510,43 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6 border-rv">
-
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName">
-                                                                Candidate Name
-                                                            </label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in ViewBag.CandidateList)
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item">@item</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
-
-                                                                    @foreach (var item in ViewBag.PrimarySkillList)
-                                                                    {
-                                                                        @if (item != null && item != "")
-                                                                        {
-                                                                            <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
-                                                                        }
-                                                                    }
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                     @if (ViewBag.ProfileName != "CuratedUser")
                                                     {
+                                                        <div class="col-md-6 col-sm-6 border-rv">
+
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="CandidateName">
+                                                                    Candidate Name
+                                                                </label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
+                                                                        @foreach (var item in ViewBag.CandidateList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item">@item</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                <div class="col-md-6 col-sm-6">
+                                                                    <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
+
+                                                                        @foreach (var item in ViewBag.PrimarySkillList)
+                                                                        {
+                                                                            @if (item != null && item != "")
+                                                                            {
+                                                                                <option value="@item.Split("|")[0]">@item.Split("|")[0]</option>
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
                                                                 <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
