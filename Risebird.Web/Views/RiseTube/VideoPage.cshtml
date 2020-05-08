@@ -1407,36 +1407,38 @@
                                                                             {
                                                                                 <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist " id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
-                                                                }
-                                                            </div>
-                                                            <div class="col-md-2 showint" style="text-align: end;padding-top:5px">
-                                                                @if (Model.VideoLink != null)
-                                                                {
-                                                                    @if (ViewBag.VedioStatus != "Public")
+                                                                </div>
+                                                                <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                                    @if (Model.VideoLink != null)
                                                                     {
-                                                                        @if (ViewBag.ProfileName == "CuratedUser")
+                                                                        @if (ViewBag.VedioStatus != "Public")
                                                                         {
-                                                                            @if (Model.IsIntrested == "Intrested")
+                                                                            @if (ViewBag.ProfileName == "CuratedUser")
                                                                             {
-                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 24px;" />
+                                                                                @if (Model.IsIntrested == "Interest Sent")
+                                                                                {
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
 
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 24px;" />
-
-
+                                                                                }
+                                                                                else if (Model.IsIntrested == "Interest Accepted")
+                                                                                {
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
-                                                                }
 
                                                             </div>
                                                             <div class="col-md-4 views" style="text-align: end;">
