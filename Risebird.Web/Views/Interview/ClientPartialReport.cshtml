@@ -583,21 +583,21 @@
                                             </div>
 
 
-                                          
-                                            <div id="uploadDiv">
+                                            <div class="mc-button-area">
+                                                <div id="uploadDiv">
 
 
-                                                <div style="margin-bottom:15px;">
-                                                    @{
-                                                        if (Model.VideoLink != null)
-                                                        {
-                                                            <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                    <div style="margin-bottom:15px;">
+                                                        @{
+                                                            if (Model.VideoLink != null)
+                                                            {
+                                                                <a style="text-decoration:none;" class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                            }
                                                         }
-                                                    }
+                                                    </div>
                                                 </div>
-                                            </div>
-                                          
 
+                                                </div>
 
 
 
@@ -643,7 +643,7 @@
 
 
 
-                                                        
+
                                                     </div>
                                                 </div>
                                             </div>

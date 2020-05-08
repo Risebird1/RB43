@@ -86,10 +86,6 @@
         white-space: nowrap !important;
     }
 
-    .table > tbody > tr > td {
-        padding: 0px 5px;
-    }
-
 
     table.dataTable > thead > tr > th {
         padding: 5px;
@@ -443,7 +439,10 @@
         .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus{
         border-bottom: 2px rgb(80, 158, 235) solid;
         }
-
+    /* Needed */
+    .table > tbody > tr > td {
+        padding: 0px 5px;
+    }
 
     @@media screen and (max-width: 767px) {
 
@@ -548,10 +547,10 @@
                                                     <div class="row">
                                                         <div class="col-md-6 col-sm-6 border-rv">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                                     Start Date
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                                 </div>
                                                             </div>
@@ -562,19 +561,19 @@
                                                         </div>
                                                         <div class="col-md-6 col-sm-6">
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                                     End Date
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                                </div>
+                                                                <div class="col-md-12 col-sm-12">
+    <input id="EndDate" name="EndDate" type="date" class="form-control">
+</div>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 col-sm-6 border-rv">
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
                                                                         @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
@@ -590,11 +589,11 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
                                                                     Client
                                                                     HR
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                         {
@@ -608,10 +607,10 @@
                                                             </div>
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="MeetingStatus">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                     Meeting Status
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="MeetingStatus" name="MeetingStatus" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.MeetingStatusStatusDesc).Distinct().ToList())
                                                                         {
@@ -624,10 +623,10 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
                                                                     Interviewer
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="Interviewer" name="Interviewer" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.interviewer).Distinct().ToList())
                                                                         {
@@ -644,8 +643,8 @@
                                                         <div class="col-md-6 col-sm-6">
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">RFID</label>
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
 
                                                                         @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
@@ -659,10 +658,10 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-6 desp-label" for="ConfirmationStatus">
+                                                                <label class="control-label  col-md-12 col-sm-12 desp-label" for="ConfirmationStatus">
                                                                     Confirmation Status
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="ConfirmationStatus" name="ConfirmationStatus" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.confirmationStatus).Distinct().ToList())
                                                                         {
@@ -676,10 +675,10 @@
                                                             </div>
 
                                                             <div class="form-group">
-                                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="InterviewStatus">
+                                                                <label class="control-label col-md-12 col-sm-12 desp-label" for="InterviewStatus">
                                                                     Interview Status
                                                                 </label>
-                                                                <div class="col-md-6 col-sm-6">
+                                                                <div class="col-md-12 col-sm-12">
                                                                     <select id="InterviewStatus" name="InterviewStatus" class="form-control multiselect" multiple="multiple">
                                                                         @foreach (var item in Model.Select(x => x.intervieweStatusStatDesc).Distinct().ToList())
                                                                         {
@@ -724,7 +723,7 @@
                                 </div>
                                 <div style="overflow-x:scroll" class="scrollbar" id="style-2">
 
-                                    <div id="tableID">
+                                    <div id="tableID" class="second">
                                         <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                             <thead>
                                                 <tr>
@@ -1042,9 +1041,7 @@
         border-bottom: 2px rgb(80, 158, 235) solid!important;
     }
 
-        #StartDate, #EndDate {
-            width: 270px;
-        }
+      
 
     .modal-content .modal-body {
         padding-top: 10px;
@@ -1078,7 +1075,7 @@
         $("#PrimarySkill").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
@@ -1086,41 +1083,41 @@
          $("#RFID").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
          $("#ClientHR").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
         $("#ConfirmationStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
          $("#MeetingStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
         $("#InterviewStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
         $("#Interviewer").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 

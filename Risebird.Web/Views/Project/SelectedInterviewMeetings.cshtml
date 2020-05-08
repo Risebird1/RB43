@@ -4,10 +4,42 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <style>
+
+
+    body {
+        font-family: Roboto, sans-serif;
+    }
+
     #style-2::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         border-radius: 5px;
+    }
+
+
+    textarea::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: var(--mdc-theme-primary, #018786) !important;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
+    }
+
+
+
+    .no-sort::after {
+        display: none !important;
+    }
+
+    .no-sort {
+        pointer-events: none !important;
+        cursor: default !important;
     }
 
     #style-2::-webkit-scrollbar {
@@ -20,13 +52,27 @@
         background-color: darkgray;
     }
 
-    td.wordwrap {
-        display: inline-block !important;
+    table {
+        white-space: nowrap !important;
+    }
+
+
+
+        table.dataTable > thead > tr > th {
+            padding: 5px;
+        }
+
+
+    .table > tfoot > tr > th {
+        padding: 5px 7px;
+    }
+
+    td .wordwrap {
         max-width: 250px !important;
         min-width: 250px !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
-        vertical-align: top !important;
+        vertical-align: middle !important;
         white-space: nowrap !important;
     }
 
@@ -35,22 +81,345 @@
         white-space: normal !important;
     }
 
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
     /*CSS FOR Loader*/
     .loader {
         font-family: Arial;
         font-size: 10pt;
         /*border: 5px solid #67CFF5;*/
         /*width: 200px;
-            height: 100px;*/
+                height: 100px;*/
         display: none;
         position: center !important;
         background-color: White;
         z-index: 999;
         /*opacity: 0.5;*/
         filter: alpha(opacity = 50);
+    }
+    /*table.dataTable > thead > tr > th {
+            max-width: 200px !important;
+        }*/
+    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
+        max-width: 300px !important;
+    }
+
+    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+    .table > thead > tr > th, .table > tfoot > tr > th {
+        padding: 7px;
+        font-weight: normal !important;
+    }
+
+
+    table {
+        border: 1px #ccc solid !important;
+    }
+
+        table td {
+            color: #504e4e;
+        }
+
+        table th {
+            color: #000000e0;
+        }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+    .btn-call {
+        width: 30px !important;
+        height: 30px;
+        border-radius: 15px;
+        text-align: center;
+        font-size: 12px;
+        BORDER: 0px;
+        line-height: 1.42857;
+        background: #53a4f4;
+        display: inline-block;
+    }
+
+        .btn-call .fa {
+            color: #fff;
+            font-size: 14px;
+            padding: 0px;
+            top: 8px;
+            position: relative;
+        }
+
+    .call i {
+        color: #fff
+    }
+
+    .call-txt {
+        border: 1px #53a5f5 solid;
+        position: relative;
+        padding: 5px 15px;
+        left: -10px;
+        top: 8px;
+        font-size: 14px;
+        font-family: arial;
+        color: #53a5f5;
+        border-left: 0px;
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+    #meeting_length, #meeting_filter {
+        margin: 10px 0px
+    }
+
+        #meeting_length label {
+            font-size: 14px;
+        }
+
+        #meeting_length select.form-control {
+            padding: 8px 8px;
+        }
+
+        #meeting_length select:focus {
+            border-color: #4a93de;
+        }
+
+        #meeting_filter input {
+            outline: none;
+        }
+
+    #meeting input[type=search] {
+        -webkit-appearance: textfield;
+        -webkit-box-sizing: content-box;
+        font-family: inherit;
+        font-size: 100%;
+    }
+
+    #meeting_filter input::-webkit-search-decoration,
+    #meeting_filter input::-webkit-search-cancel-button {
+        display: none;
+    }
+
+
+    #meeting_filter input[type=search] {
+        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+        border: solid 1px #ccc;
+        padding: 9px 10px 9px 32px;
+        width: 135px;
+        font-family: arial;
+        -webkit-border-radius: 10em;
+        -moz-border-radius: 10em;
+        border-radius: 10em;
+        -webkit-transition: all .5s;
+        -moz-transition: all .5s;
+        transition: all .5s;
+    }
+
+        #meeting_filter input[type=search]:focus {
+            width: 200px;
+            background-color: #fff;
+            border-color: #4a93de;
+            font-family: arial;
+            margin: 3px;
+            -webkit-box-shadow: 0 0 5px #4a93de;
+            -moz-box-shadow: 0 0 5px #4a93de;
+            box-shadow: 0 0 5px #4a93de;
+        }
+
+
+    #meeting_filter input:-moz-placeholder {
+        color: #999;
+    }
+
+    #meeting_filter input::-webkit-input-placeholder {
+        color: #999;
+    }
+
+
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+
+
+    #resumeId, #zoomlinkId {
+        background: #e2f0ff;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+
+    #reportId {
+        background: #b3d2f1;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+    #jdlinkId {
+        background: #fff;
+        color: #1d3b5e;
+        padding: 4px 10px;
+        border-radius: 16px;
+        border: 1px #79c0f3 solid;
+    }
+
+    #videoId {
+        background: #53a5f53d;
+        color: #1d3b5e;
+        padding: 5px 10px;
+        border-radius: 16px;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 10px;
+        margin: 5px 0px;
+        background-color: #eff7ff;
+    }
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+
+
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .border-bubble {
+        border: 1px solid #620bee21;
+    }
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control, .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+
+    @@media screen and (max-width: 767px) {
+
+        .table > tbody > tr > td {
+            padding: 12px 5px !important;
+        }
     }
 </style>
 
@@ -132,7 +501,18 @@
     .modal-content .modal-header {
         font-size: 10px;
     }
+
+    /* Needed */
+    .table > tbody > tr > td {
+        padding: 0px 5px;
+    }
+
 </style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -159,23 +539,27 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            Selected Candidate list for <b>@ViewBag.ProjectName</b>
-                        </h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                  
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
                             <div class="toolbar">
                                 <div class="row">
+                               <div class="card-header">
+                                        <div class="pull-left">
+                                            <h4 class="card-title">
+                                                Selected Candidate list for <b>@ViewBag.ProjectName</b></h4>
+                                        </div>
 
-                                    <div class="col-auto">
-                                        @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <div class="pull-right">
+                                            @Html.ActionLink("Back", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        </div>
                                     </div>
+
+                                  
                                 </div>
 
                             </div>
@@ -249,60 +633,66 @@
                                             {
                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
 
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.IRFId </td>
-                                                <td> @item.candidateName </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId=item.irfIntId, IsSelected = true})'>Report</a> </td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.IRFId </td>
+                                                    <td> @item.candidateName </td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId=item.irfIntId, IsSelected = true})'>Report</a> </td>
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
 
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                <td> @item.intervieweStatusStatDesc </td>
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                                <td>
-                                                    @item.NextLevelApprovalStat
-                                                </td>
-                                                <td>
-                                                    <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
-                                                </td>
-                                                <td></td>
-
-                                                <td>
-                                                    @item.FinalSelectionStat
-                                                </td>
-                                                <td>
-                                                    <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
-                                                </td>
-                                                <td></td>
-                                                @if (ViewBag.ProfileName == "client")
-                                                {
-                                                    <td class="text-right">
-                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                    <td> @item.intervieweStatusStatDesc </td>
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td>
+                                                        @item.NextLevelApprovalStat
                                                     </td>
-                                                }
-                                            </tr>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.ApprovalComments</textarea>
+                                                                </div></div>
+                                                    </td>
+                                                    <td></td>
+
+                                                    <td>
+                                                        @item.FinalSelectionStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 40px; width:100%;">@item.FinalComments</textarea>
+                                                                </div></div>
+                                                    </td>
+                                                    <td></td>
+                                                    @if (ViewBag.ProfileName == "client")
+                                                    {
+                                                        <td class="text-right">
+                                                            <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        </td>
+                                                    }
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -412,7 +802,7 @@
 
         <!-- end row -->
     </div>
-   
+
 </div>
 
 
@@ -460,7 +850,7 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-        
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -554,7 +944,7 @@
 
             }
         });
-        
+
     }
 
     function ApprovalChanged() {
@@ -573,7 +963,7 @@
     }
 
     function SavePopUp() {
-       
+
         var approvalComment = document.getElementById("appComments").value;
         var isApproved = document.getElementById("approveDropdown").value;
 

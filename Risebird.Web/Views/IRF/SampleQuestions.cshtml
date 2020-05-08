@@ -28,6 +28,7 @@
         margin: 2px;
         border-radius: 2px;
     }
+
     .mc-button-area {
         text-align: right;
     }
@@ -44,6 +45,7 @@
         .mdc-card .form-control:focus {
             border-bottom: 2px rgb(80, 158, 235) solid;
         }
+
     .mdc-fab {
         width: 30px !important;
         height: 30px !important;
@@ -60,9 +62,11 @@
     .mdc-card {
         border-top: 3px #53a5f5 solid;
     }
+
     .mdc-card-wrapper__text-section {
         padding: 16px;
     }
+
     .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
         background: #42a5f5 !important;
         font-family: Roboto, sans-serif;
@@ -79,14 +83,15 @@
         background: #fff !important;
         color: #53a5f5 !important;
     }
+
     .card .card-header .card-title, .card .card-header h4.card-title {
         margin: 0 0px 10px 0;
     }
-  
 
-        .navbar .navbar-wrapper .navbar-brand {
-            margin-right: 0.5rem;
-        }
+
+    .navbar .navbar-wrapper .navbar-brand {
+        margin-right: 0.5rem;
+    }
 
     .mc-button-area {
         text-align: right;
@@ -97,11 +102,13 @@
         padding-top: 65px;
         background: none !important;
     }
+
     .talktext {
         padding: 8px 8px 4px 8px;
         text-align: left;
         line-height: 1.5em;
     }
+
     .talk-bubble {
         display: inline-block;
         position: relative;
@@ -120,13 +127,17 @@
             padding: 5px;
         }
 
+    .action-area {
+        width: 20%
+    }
+
     .border-bubble {
         border: 1px solid #620bee21;
     }
+
     .trash-btn {
         background: #d20505 !important;
     }
-
 </style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
@@ -152,7 +163,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
-              /   &nbsp;<a class="navbar-brand">Sample Questions</a>
+                /   &nbsp;<a class="navbar-brand">Sample Questions</a>
             </div>
 
         </div>
@@ -188,11 +199,11 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                         
-                                                                    @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
 
-                                                      
-                                                                    </td>
+                                                            @Html.DropDownList("SkillCollection[0].Skill", Model.Skills, new { @class = "form-control" })
+
+
+                                                        </td>
 
 
 
@@ -208,7 +219,7 @@
 
                                                         </td>
 
-                                                        <td class="text-center action">
+                                                        <td class="text-center action-area">
 
 
                                                             <button class="mdc-fab app-fab--absolute" aria-label="Add">
@@ -222,7 +233,7 @@
 
 
 
-                                                            
+
 
                                                         </td>
                                                     </tr>
@@ -243,9 +254,10 @@
                                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                                     <div class="talktext">
                                                                         @Html.TextAreaFor(m => m.SkillCollection[i].Comment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
-                                                                        </div></div>
-                                                                        
-                                                                        </td>
+                                                                    </div>
+                                                                </div>
+
+                                                            </td>
 
                                                             <td class="text-center">
 
@@ -277,7 +289,7 @@
 
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
-                                   
+
 
                                         <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                                     </div>
