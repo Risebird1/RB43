@@ -384,6 +384,11 @@
         .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
             border-bottom: 2px rgb(80, 158, 235) solid;
         }
+          .single-video-left {
+        -ms-flex: 0 0 66.666667%;
+        flex: 0 0 66.666667%;
+       
+    }
 
 
     .title.name-video-primary-info-renderer {
@@ -613,14 +618,10 @@
         font-weight: bold;
     }
 
-    .shortlist .fa {
-        float: left;
-    }
-
     .btnShortlist {
         background: none !important;
         border: 0px !important;
-        float: left;
+        float: right;
         width: 100px;
         padding: 0;
         font-weight: bold;
@@ -720,24 +721,19 @@
     }
 
 
-    .single-video-left {
-        -ms-flex: 0 0 66.666667%;
-        flex: 0 0 66.666667%;
-        max-width: 66.666667%;
-        padding: 0px 20px 0 10px;
-    }
+   
 
     .single-video-right {
         -ms-flex: 0 0 33.333333%;
         flex: 0 0 33.333333%;
-        max-width: 33.333333%;
+        
     }
 
     .counts-liks label {
         font-size: 15px !important;
         margin-bottom: 5px;
         color: #9A9A9A;
-        padding: 0px 10px !important;
+        padding: 0px 5px !important;
         font-family: Roboto, sans-serif;
     }
 
@@ -755,11 +751,15 @@
             margin: 0px 10px 10px 10px;
             width: calc(100% - 10px) !important;
         }
-
-        .single-video-left {
+         .single-video-left {
             -ms-flex: 0 0 100%;
             flex: 0 0 100%;
             max-width: 100%;
+            padding: 0px;
+        }
+         .single-video-left {
+            border-bottom: 1px #620bee21 solid;
+            margin-bottom: 20px;
             padding: 0px;
         }
 
@@ -769,11 +769,7 @@
             max-width: 100%;
         }
 
-        .single-video-left {
-            border-bottom: 1px #620bee21 solid;
-            margin-bottom: 20px;
-            padding: 0px;
-        }
+       
     }
 
 
@@ -834,22 +830,13 @@
         }
 
         .shortlist {
+            position: absolute;
+            top: -5px;
             margin: 0;
-            float: left;
-            width: 50%;
-            margin-top: 15px;
-        }
-
-        .showint {
-            width: 50%;
-            float: right;
-            margin-top: 19px;
         }
 
         .views {
             margin: 0;
-            padding: 0;
-            position: absolute;
         }
 
         .single-video-info-content hr {
@@ -1053,7 +1040,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    <form action="@Url.Action("VideoPage", "risetube" , new { id=Model.imid })" method="post" id="form">
+                                    <form action="@Url.Action("VideoPage", "risetube", new { id = Model.imid })" method="post" id="form">
 
                                         <div class="modal-body">
                                             <div class="row">
@@ -1226,7 +1213,7 @@
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="IsShortListed">
-                                                                ShortListed
+                                                                Shortlisted
                                                             </label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="IsShortListed" name="IsShortListed" class="form-control multiselect" multiple="multiple">
@@ -1333,126 +1320,258 @@
                             </div>
 
                         </div>
+                        @if (ViewBag.ResultStatus == "VideoPresent")
+                        {
+                            <div id="wrapper">
+                                <!-- Sidebar -->
 
-                        <div id="wrapper">
-                            <!-- Sidebar -->
-
-                            <div id="content-wrapper">
-                                <div class="container-wrap pb-0">
-                                    <div class="video-block section-padding">
-                                        <div class="row">
-
-                                            <div class="single-video-left clearfix">
-                                                <div>
-                                                    <div class="single-video ">
-                                                        @if (Model.VideoLink != null && Model.VideoLink != "")
-                                                        {
-
-                                                            @if (@Model.VideoLink.Contains(".mp4"))
+                                <div id="content-wrapper">
+                                    <div class="container-wrap pb-0">
+                                        <div class="video-block section-padding">
+                                            <div class="container-fluid">
+                                                <div class="row mn-section" style="position:absolute">
+                                                    <div class="col-8 player-main" id="player">
+                                                        <div class="single-video-left">
+                                                            @if (Model.VideoLink != null && Model.VideoLink != "")
                                                             {
-                                                                <video controls style=" background:black!important;width:100% " autoplay class="btnvideo">
-                                                                    <source src="@Model.VideoLink" type="video/mp4">
-                                                                </video>
-                                                            }
-                                                            else
-                                                            {
-                                                                <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            <span> Video deleted !!!</span>
-                                                        }
-                                                        @if (Model.JDTiltle != null)
-                                                        {
-                                                            <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                                @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                            </h1>
-                                                        }
-                                                        <div class="row counts-liks">
 
-                                                            <div class="k col-md-3">
-                                                                @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                @if (@Model.VideoLink.Contains(".mp4"))
                                                                 {
-                                                                    @if (Model.IsLike == "Liked")
-                                                                    {
-                                                                        <div class="btn2">
-                                                                            <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px"><label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
-                                                                            <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"><label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
-                                                                        </div>
-                                                                    }
-                                                                    else if (Model.IsLike == "Disliked")
-                                                                    {
-                                                                        <div class="btn3">
-                                                                            <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px"><label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
-                                                                            <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
-                                                                        </div>
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 10px"><label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
-                                                                        <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
-                                                                    }
-
+                                                                    <video class="vid-player" controls style=" background:black!important; " autoplay>
+                                                                        <source src="@Model.VideoLink" type="video/mp4">
+                                                                    </video>
                                                                 }
-                                                            </div>
-                                                            <div class="col-md-3 shortlist" style="text-align: end;">
-                                                                @if (Model.VideoLink != null)
-                                                                {
-                                                                    @if (ViewBag.VedioStatus != "Public")
-                                                                    {
-                                                                        @if (ViewBag.ProfileName == "CuratedUser")
-                                                                        {
-                                                                            @if (Model.IsShortlisted > 0)
-                                                                            {
-                                                                                <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist " id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
 
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                </div>
-                                                                <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
-                                                                    @if (Model.VideoLink != null)
-                                                                    {
-                                                                        @if (ViewBag.VedioStatus != "Public")
-                                                                        {
-                                                                            @if (ViewBag.ProfileName == "CuratedUser")
-                                                                            {
-                                                                                @if (Model.IsIntrested == "Interest Sent")
-                                                                                {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
-
-                                                                                }
-                                                                                else if (Model.IsIntrested == "Interest Accepted")
-                                                                                {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                            </div>
-                                                            <div class="col-md-4 views" style="text-align: end;">
-                                                                @if (Model.VideoLink != null)
-                                                                {
-                                                                    <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
-                                                                }
-                                                            </div>
-
+                                                            }
 
 
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-md-4  side-player" id="sd-player" style="margin-left:auto!important;margin-top:10px">
+                                                        @if (Model.SubVideo_List.Count > 0)
+                                                        {
+                                                            <div class="single-video-right">
+                                                                <div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-12">
+                                                                            <div id="style-2">
+                                                                                @foreach (var videolist in Model.SubVideo_List)
+                                                                                {
+                                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+
+                                                                                    <div class="video-card video-card-list">
+                                                                                        <div class="video-card-image">
+
+                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                            {
+                                                                                                @if (videolist.ThumbnailImage != null)
+                                                                                                {
+                                                                                                    <img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />
+
+                                                                                                }
+                                                                                                <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                </video>
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <img src="~/RiseTube/img/video-icon.png" />
+                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                            }
+
+
+                                                                                            @*<div class="time">3:50</div>*@
+                                                                                        </div>
+                                                                                        <div class="video-card-body">
+
+                                                                                            <div class="video-title">
+                                                                                                <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+
+                                                                                                <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                                            </div>
+                                                                                            <div class="video-page text-success">
+                                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
+    font-weight: 500;
+    font-size: 12px;">@videolist.interviewDate</span>
+
+                                        @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
+                                        </div>
+
+                                        </div>
+                                        </div>
+
+                                    }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (ViewBag.ProfileName == "CuratedUser")
+                                                        {
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
+                                                        }
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8" style="margin-top: 400px;">
+                                                    <style>
+
+
+
+
+
+.mn-section{
+    height: 100vh;
+    position: absolute;
+}
+.player-main
+{
+    
+   
+    align-items: center;
+    justify-content: center; 
+    background-color: black;
+    height:400px;
+    width: 750px;
+    
+}
+
+.player-main .vid-player
+{
+    height: 400px;
+    width: 100%;
+    margin:  0 auto;
+    
+}
+
+.side-player{
+
+    min-height: 500px;
+    max-height: 600px;
+
+}
+                                                    </style>
+                                                    <script>
+                                                        function getThMode() {
+                                                            var ele = document.getElementById('player');
+                                                            console.log(ele);
+                                                            ele.classList.remove("col-8");
+                                                            ele.classList.add("col-12");
+
+
+
+                                                        }
+
+                                                        function closeThMode() {
+                                                            var ele = document.getElementById('player');
+                                                            console.log(ele);
+                                                            ele.classList.remove("col-12");
+                                                            ele.classList.add("col-8");
+
+
+                                                        }
+
+                                                        /**/</script>
+                                                    <div class="btn btn-danger" onclick="getThMode()">click for theatre mode</div>
+                                                    <div class="btn btn-danger" onclick="closeThMode()">click for close theatre  mode</div>
+                                                    @if (Model.JDTiltle != null)
+                                                    {
+                                                        <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        </h1>
+                                                    }
+                                                    <div class="row counts-liks">
+
+                                                        <div class="k col-md-3">
+                                                            @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                            {
+                                                                @if (Model.IsLike == "Liked")
+                                                                {
+                                                                    <div class="btn2">
+                                                                        <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">&nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"><label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
+                                                                    </div>
+                                                                }
+                                                                else if (Model.IsLike == "Disliked")
+                                                                {
+                                                                    <div class="btn3">
+                                                                        <i class="fa fa-thumbs-up fa-5px " aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px;padding-right:10px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: blue; font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                    <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
+                                                                }
+
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-3 shortlist" style="text-align: end;">
+                                                            @if (Model.VideoLink != null)
+                                                            {
+                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                {
+                                                                    @if (ViewBag.ProfileName == "CuratedUser")
+                                                                    {
+                                                                        @if (Model.IsShortlisted > 0)
+                                                                        {
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
+
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        </div>
+                                                        <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                            @if (Model.VideoLink != null)
+                                                            {
+                                                                @if (ViewBag.VedioStatus != "Public")
+                                                                {
+                                                                    @if (ViewBag.ProfileName == "CuratedUser")
+                                                                    {
+                                                                        @if (Model.IsIntrested == "Interest Sent")
+                                                                        {
+                                                                            <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Sent" Shortvalue="2" style="border:none;background-color:yellow; font-weight: bold;font-size: 13px !important; padding: 0px 0px; height: 30px;" />
+
+                                                                        }
+                                                                        else if (Model.IsIntrested == "Interest Accepted")
+                                                                        {
+                                                                            <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Show Interest" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                        <div class="col-md-4 views" style="text-align: end;">
+                                                            @if (Model.VideoLink != null)
+                                                            {
+                                                                <p style="text-align:end"><b>Total Views:</b> @Model.TotalView - View(s)</p>
+                                                            }
+                                                        </div>
+
+
+
+                                                    </div>
                                                     <div class="single-video-info-content ">
 
                                                         <style>
@@ -1568,22 +1687,7 @@
                                                                             </div>
 
                                                                         </div>
-                                                                        @*<div class="row">
-                                                                                <div class="col-md-6 col-sm-6">
-                                                                                    <div class="form-group">
-                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-md-6 col-sm-6">
-                                                                                    <div class="form-group">
-                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>*@
                                                                         <div class="row">
                                                                             <div class="col-md-6 col-sm-6">
                                                                                 <div class="form-group">
@@ -1626,9 +1730,57 @@
                                                                         @if (ViewBag.ProfileName != "CuratedUser")
                                                                         {
                                                                             <div class="row">
-                                                                                <div class="col-md-12 col-sm-12">
+                                                                                <div class="col-md-6 col-sm-6">
                                                                                     <div class="form-group">
-                                                                                        @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                </div>
+                                                                                <div class="row">
+
+                                                                                    @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
+                                                                                    {
+                                                                                        <div class="col-md-6 col-sm-6">
+
+                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+
+                                                                                    </div>
+
+                                                                                    }
+                                                                                </div>
+                                                                            }
+
+                                                                            @if (Model.IsIntrested == "Interest Accepted" && ViewBag.ProfileName == "CuratedUser")
+                                                                            {
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-md-6 col-sm-6">
+                                                                                    <div class="form-group">
+                                                                                        @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                        @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                </div>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
                                                                                         @{
                                                                                             if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
@@ -1647,13 +1799,12 @@
 
                                                                                     </div>
 
-                                                                                }
-                                                                            </div>
-                                                                        }
-                                                                        @if (Model.IsIntrested == "Accept" && ViewBag.ProfileName == "CuratedUser")
-                                                                        {
-                                                                            <div class="row">
-                                                                                <div class="col-md-12 col-sm-12">
+                                                                                    }
+                                                                                </div>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="col-md-6 col-sm-6">
                                                                                     <div class="form-group">
                                                                                         @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
 
@@ -1666,31 +1817,21 @@
 
                                                                                     </div>
                                                                                 </div>
-                                                                                @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                {
-                                                                                    <div class="col-md-6 col-sm-6">
-
-                                                                                        <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
-
-                                                                                    </div>
-
-                                                                                }
-                                                                            </div>
-                                                                        }
-                                                                    </div>
-                                                                    <div class="tab-pane tab_content" id="link3">
-                                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                            <div class="table-responsive-sm">
-                                                                                <table class="table table-bordered mbn" id="SkillTable">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th width="10%">Required Level</th>
-                                                                                            <th width="40%">Skill Name</th>
-                                                                                            <th width="20%">Actual Level</th>
-                                                                                            <th width="15%">Required Weightage</th>
-                                                                                            <th width="15%">Actual Weightage</th>
-                                                                                        </tr>
-                                                                                    </thead>
+                                                                            }
+                                                                        </div>
+                                                                        <div class="tab-pane tab_content" id="link3">
+                                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                                <div class="table-responsive-sm">
+                                                                                    <table class="table table-bordered mbn" id="SkillTable">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th width="10%">Required Level</th>
+                                                                                                <th width="40%">Skill Name</th>
+                                                                                                <th width="20%">Actual Level</th>
+                                                                                                <th width="15%">Required Weightage</th>
+                                                                                                <th width="15%">Actual Weightage</th>
+                                                                                            </tr>
+                                                                                        </thead>
 
 
                                                                                     <tbody>
@@ -1763,7 +1904,7 @@
                                                                                                 <th width="20%">Rating</th>
                                                                                                 <th width="10%">Time(Min)</th>
                                                                                                 @*
-                                                                                                    <th width="10%">Action</th>*@
+                                                            <th width="10%">Action</th>*@
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody>
@@ -1791,12 +1932,12 @@
                                                                                                     </td>
 
                                                                                                     @*
-                                                                                                        <td>
+                                                                <td>
 
-                                                                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                                                        </td>*@
+                                                                </td>*@
                                                                                                 </tr>
                                                                                             }
                                                                                             else
@@ -1826,12 +1967,12 @@
                                                                                                         </td>
 
                                                                                                         @*
-                                                                                                            <td>
+                                                                    <td>
 
-                                                                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                                                                                            </td>*@
+                                                                    </td>*@
                                                                                                     </tr>
 
 
@@ -2084,7 +2225,7 @@
                                                                         <form>
                                                                             <div class="form-group comment-area">
 
-                                                                                <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..."></textarea>
+                                                                                <textarea class="form-control status-box comment2" rows="1" id="txtComment" placeholder="Enter your comment here..." style="height:50px"></textarea>
                                                                                 <div class="button-group pull-right">
                                                                                     <a href="#" class="mdc-button mdc-button--raised mdc-ripple-upgraded post " id="btnComment">POST</a>
                                                                                 </div>
@@ -2122,100 +2263,21 @@
                                                             </div>
 
 
-
-
-                                                            @*<h6>Cast:</h6>
-                                                                <p>Nathan Drake , Victor Sullivan , Sam Drake , Elena Fisher</p>
-                                                                <h6>Category :</h6>
-                                                                <p>Gaming , PS4 Exclusive , Gameplay , 1080p</p>
-                                                                <h6>About :</h6>
-                                                                <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved overVarious versions have evolved over the years, sometimes </p>
-                                                                <h6>Tags :</h6>
-                                                                <p class="tags mb-0">
-                                                                    <span><a href="#">Uncharted 4</a></span>
-                                                                    <span><a href="#">Playstation 4</a></span>
-                                                                    <span><a href="#">Gameplay</a></span>
-                                                                    <span><a href="#">1080P</a></span>
-                                                                    <span><a href="#">ps4Share</a></span>
-                                                                    <span><a href="#">+ 6</a></span>
-                                                                </p>*@
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (Model.SubVideo_List.Count > 0)
-                                            {
-                                                <div class="single-video-right">
-                                                    <div>
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div id="style-2">
-                                                                    @foreach (var videolist in Model.SubVideo_List)
-                                                                    {
-                                                                        var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-
-                                                                        <div class="video-card video-card-list">
-                                                                            <div class="video-card-image">
-
-                                                                                @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                {
-                                                                                    @if (videolist.ThumbnailImage != null)
-                                                                                    {
-                                                                                        <img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />
-
-                                                                                    }
-                                                                                    <video controls style=" background:black!important;width:100%; height:100% ">
-                                                                                        <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                    </video>
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                                    <img src="~/RiseTube/img/video-icon.png" />
-                                                                                    <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube" , new { id=videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                }
-
-
-                                                                                @*<div class="time">3:50</div>*@
-                                                                            </div>
-                                                                            <div class="video-card-body">
-
-                                                                                <div class="video-title">
-                                                                                    <a onclick="location.href='@Url.Action("VideoPage", "Risetube" , videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
-
-                                                                                    <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
-                                                                                </div>
-                                                                                <div class="video-page text-success">
-                                                                                    &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
-    font-weight: 500;
-    font-size: 12px;">@videolist.interviewDate</span>
-
-    @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
-</div>
-
-</div>
-</div>
-
-}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
-                                            }
-
-
                                         </div>
                                     </div>
+                                    <!-- /.container-fluid -->
                                 </div>
-                                <!-- /.container-fluid -->
+                                <!-- /.content-wrapper -->
                             </div>
-                            <!-- /.content-wrapper -->
-                        </div>
+                        }
+                        else
+                        {
+                            <div>No Selected Candidate Yet on this Channel.</div>
+                        }
                     </div>
                 </div>
             </div>
@@ -2269,7 +2331,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" style="color:#fff">Intersted</h5>
+                <h5 class="modal-title" style="color:#fff">Interested</h5>
                 <span onclick="closeCommentPopUp()" style="cursor:pointer;" class="close" id="CommentPopUp">&times;</span>
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
@@ -2282,7 +2344,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-right">
-                        <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Intersted">
+                        <input type="button" onclick="SendNotification()" id="btnintrested" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="Interested">
 
                         <input style="background:#ff253a!important" type="button" onclick="closeCommentPopUp()" id="hangUpButton" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-danger" value="Close">
                     </div>
@@ -3392,7 +3454,7 @@
                     url: "/RiseTube/CandidateShortList",
                     data: { vedioid: $("#txtVedioId").val() },
                     success: function (data) {
-                        $("#btnShortlist").val("ShortListed(" + data + ")");
+                        $("#btnShortlist").val("Shortlisted(" + data + ")");
                     }
                 });
 
@@ -3517,7 +3579,7 @@
                 data: { vedioid: $("#txtVedioId").val(), Comment: $("#txtintrestecomment").val() },
                 success: function (data) {
                     if (data == "Success") {
-                        $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px");
+                        $("#btnIntrest").css("background-color", "yellow", "height", "30px", "padding", "0px");                       
                         $("#btnIntrest").attr('Shortvalue', "2");
                         var modal = document.getElementById("myModalComment");
                         modal.style.display = "none";
@@ -3549,91 +3611,91 @@
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Videos will be playing over here.',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn1': 'Filters here based on available attributes and reset filters if applied earlier',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btnvideo': 'You will see video here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn2': 'Like Candidate Video by clicking here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn3': 'Unlike Candidate Video by clicking here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .item1': 'Interviewer comment and overall matric chart will be available over here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item2': 'Click here to see Canditate Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item3': 'Click here to see Canditate Teck Skill Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item4': 'Click here to see list of Questions, discussed during interview',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item5': 'Click here to see General Skill Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item6': 'Click here to see Joinability  Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item7': 'Click here to see Selectability Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .comment2': 'Comment Box!',
+                    'next .card-title': 'Selected Candidates Video will be playing over here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'By clicking, You can post you comments here !',
+                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'click .skillchannelmenu': 'Click here to navigate over SkillChannel menu and see its feartures',
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn2': 'Click here to like the Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn3': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item2': 'Click here to see the Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Click here to see Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Click here to see Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item5': 'Click here to see General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Click here to see Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Click here to see Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .comment2': 'Write your comment here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .post': 'For Post your comment click here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
                 }
 
             ];
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 5000)
+            }, 10000)
         </script>
     }
 }
@@ -3652,103 +3714,81 @@
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Videos will be playing over here.',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn1': 'Filters here based on available attributes and reset filters if applied earlier',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btnvideo': 'You will see video here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn2': 'Like Candidate Video by clicking here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .btn3': 'Unlike Candidate Video by clicking here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .shortlist': 'Shortlist Candidate by clicking here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-                {
-                    'next .showinter': 'Send interest to Candidate by clicking here, color coding Yellow -After Interest Send and Green - After Interest Accepted by Candidate',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-                },
-
-                {
-                    'next .item1': 'Interviewer comment and overall matric chart will be available over here',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item2': 'Click here to see Canditate Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item3': 'Click here to see Canditate Teck Skill Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item4': 'Click here to see list of Questions, discussed during interview',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item5': 'Click here to see General Skill Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item6': 'Click here to see Joinability  Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .item7': 'Click here to see Selectability Details',
-                    'nextButton': { className: "myNext", text: "next" },
-                    'skipButton': { className: "mySkip", text: "exit!" }
-
-                },
-                {
-                    'next .comment2': 'Comment Box!',
+                    'next .card-title': 'Selected Candidates Video will be playing over here',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'By clicking, You can post you comments here !',
+                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'click .skillchannelmenu': 'Click here to navigate over SkillChannel menu and see its feartures',
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },                
+                {
+                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
+                },
+                {
+                    'next .item2': 'Click here to see Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Click here to see Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Click here to see Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item5': 'Click here to see General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Click here to see Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Click here to see Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },                
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
                 }
 
             ];
             setTimeout(function () {
                 enjoyhint_instance.set(enjoyhint_script_steps);
                 enjoyhint_instance.run();
-            }, 5000)
+            }, 10000)
         </script>
     }
 }

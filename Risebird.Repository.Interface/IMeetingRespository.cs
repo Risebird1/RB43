@@ -78,6 +78,7 @@ namespace Risebird.Repository.Interface
         string ShortListreaction(string vedioid, string Status);
         Task<IEnumerable<Meeting>> ShortListedClient(string emailid, string IRFID);
         Task<IEnumerable<Meeting>> InterestListClient(string emailid, string IRFID);
+        string Fetchusername(string Emailid);
 
 
 
