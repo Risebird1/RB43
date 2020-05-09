@@ -1,13 +1,62 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Risebird.Entities.Data;
+using Risebird.Entities.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Risebird.Entities.ViewModel;
+using System.Threading.Tasks;
 
 namespace Risebird.Business.Interface
 {
     public interface IInterviewerSkillsService
     {
-        IEnumerable<InterviewerSkillsModel> GetAllInterviewerSkills(string emailId, string profileName);
+        IEnumerable<InterviewerSkillsModel> GetAllInterviewerSkills(string profileName);
+        Task<bool> AddInterviewerSkillsDetails(InterviewerSkillsVM InterviewerSkillsDetails);
+        IEnumerable<Users> GetRiseBirdHR();
+        IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
+        IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
+        string GetInterviewerSkills(int id);
+        IEnumerable<Interviewer> GetInterviewers(string skills);
+        bool CheckUniqueness(string value);
+        Task<InterviewerSkillsVM> GetEditInterviewerSkills(int id);
+        bool UpdateInterviewerSkills(InterviewerSkillsVM model);
+        bool UpdateInterviewerIsApproved(int id, bool IsChecked);
+        IEnumerable<InterviewerSkillsVM> GetLeadInterviewerForApprove();
+        Task<bool> DeleteInterviewerSkills(int id);
+        //Task<bool> UnArchiveDeleteInterviewerSkills(int id);
+        IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id);
+        int GetUserId(string emailId, string profile);
+        bool UpdateInterviewerIsApproved(InterviewerSkillsVM model);
+        bool PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillsName);
+        bool PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillsName);
+        Task<bool> DeleteInterviewerList(int id);
+
+        //IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();GetAllInterviewerSkills
+        //IEnumerable<Skill> GetTechSkills(int id);
+        //bool AddSkillComments(TechSkillComments skillComments);
+        //List<string> GetListOfInterviwerBasedOnInterviewerSkillId(string InterviewerSkillId);
+        //List<MeetingVM> GetInterviewerSkillsInterviewMeetings(int id, string profileName, string email);
+        //string GetQCSkills(int id);
+        //SelectList GetQualityController();
+        //IList<SkillComment> GetTechSkillComments(int id);
+
+        //string GetQuestionSkills(string id);
+        //IEnumerable<Users> GetClientUser(int id);
+        //string GetClientUserRole(int id);
+        //Task<string> AddCandidate(Candidate obj, string emailId, string profile);
+        //Task<string> AddMultipleCandidates(List<Candidate> candidateList, string emailId, string profile);
+        //Candidate GetCandidate(int id, int InterviewerSkillId);
+        //bool UpdateCandidate(Candidate obj);
+        //bool SendInvite(int InterviewerSkillId, string email);
+        //InterviewPlanner GetInterviewPlanner(int id);
+        //Task<bool> AddUpdateInterviewPlanner(InterviewPlanner model);
+        //bool CancelInvite(int InterviewerSkillId, string email);
+        //IEnumerable<Candidate> GetCandidateInterviewerSkillsInvites(string emailId);
+        //IRFFunnel GetFunnelData(int InterviewerSkillId, string InterviewerSkillsName);
+        //InvoiceModel GetInvoiceModel(int InterviewerSkillId, DateTime startDate, DateTime endDate, string srNumber, string poNumber, string reqNumber, string currencyCode, string projectCode, bool isGST, string discount, string clientAddress);
+        //string GetRecruiterDomain(int userId);
+        //List<InterviewVM> GetUpComingInterviewList();
+        //List<InterviewerSkillsVM> GetUpComingInterviewerSkillsList();
 
     }
 }

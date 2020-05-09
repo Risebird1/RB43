@@ -16,31 +16,10 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string InterviewerSkillId { get; set; }
 
-        [DisplayName("End Client Name")]
-        [Required]
-        public string ClientName { get; set; }
 
         [DisplayName("JD Title")]
         [Required]
         public string JDTiltle { get; set; }
-
-        [DisplayName("Company Type")]
-        [Required]
-        public string CompanyType { get; set; }
-
-        [DisplayName("Total Budget")]
-        public int TotalBudget { get; set; }
-
-        [DisplayName("Budget Consumed")]
-        public string BudgetConsumed { get; set; }
-
-        [DisplayName("Job Level")]
-        public int? JobLevel { get; set; }
-        public int ClientId { get; set; }
-        [DisplayName("Job Country")]
-        [Required]
-        [RegularExpression("^[a-zA-Z]{1,20}$", ErrorMessage = "Kindly Enter only letters.")]
-        public string JobCountry { get; set; }
 
         [DisplayName("Start Date")]
         //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
@@ -53,18 +32,6 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public DateTime EndDate { get; set; }
 
-        [DisplayName("JD Link")]
-        [Required]
-        public string JDLink { get; set; }
-
-        [DisplayName("No of Positions")]
-        [Required]
-        public int NoOfPosition { get; set; }
-
-        [DisplayName("No of Interviews")]
-        [Required]
-        public int NoOfIntterview { get; set; }
-
         [DisplayName("Risebird HR")]
         [Required]
         public int RisebirdHr { get; set; }
@@ -73,45 +40,61 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public double PerMintuteRate { get; set; }
 
-        public DateTime CreatedOn { get; set; }
-
         public SelectList JobLevelList { get; set; }
-        public IList<TransSkill> SkillCollection { get; set; }
-        public IList<TransSkillGeneral> SkillGeneral { get; set; }
+        public IList<TransInterviewerSkillsofSkills> SkillCollection { get; set; }
+        public IList<TransInterviewerSkillsofGeneralSkill> SkillGeneral { get; set; }
         [Required]
-        public IList<TransJoinability> Joinability { get; set; }
-        public IList<TransSelectability> Selectability { get; set; }
-        public IList<TransClientUser> ClientCollection { get; set; }
-        public IList<TransQualityController> QualityController { get; set; }
-        public IList<TransInterviewer> InterviewerCollection { get; set; }
-        public IList<TransEmergencyInterviewer> EmergencyInterviewerCollection { get; set; }
-        public IList<TransResumeEvaluator> ResumeEvaluatorCollection { get; set; }
-        public IList<TransHR> HRCollection { get; set; }
-        public IList<TransRecruiter> RecruiterCollection { get; set; }
+        public IList<TransInterviewerSkillsSelectability> Selectability { get; set; }
+        public IList<TransInterviewerSkillsLeadInterviewer> InterviewerCollection { get; set; }
+        public IList<InterviewerVM> InterviewerDetailsCollection { get; set; }
 
-        public string ClientCompName { get; set; }
-
-        public SelectList JoinabilityTypeList { get; set; }
         public SelectList SelectabilityTypeList { get; set; }
         public SelectList SkillGeneralTypeList { get; set; }
 
-        public SelectList CompanyTypeList { get; set; }
-
-        [Required]
-        public IFormFile JDFile { get; set; }
-
         [DisplayName("Calendly Link")]
         public string CalendlyLink { get; set; }
-        public int TotalInvites { get; set; }
-        public string ArchiveStatus { get; set; }
-        public string[] ClientRole { get; set; }
+        public string PrimarySkill { get; set; }
         public string LoggedEmail { get; set; }
-
-        [DisplayName("Enable Voice Biometric")]
-        public bool IsBiometricEnabled { get; set; }
+        public string EmailId { get; set; }
+        public string Name { get; set; }
         public bool IsPaused { get; set; }
-        public int? PriorityLevel { get; set; }
-        public SelectList PriorityLevelList { get; set; }
+        public int UserId { get; set; }
+        //=================================================================
+
+        [Required(ErrorMessage = "Please enter First Name")]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+        [Required(ErrorMessage = "Please Enter Last Name")]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+        [Display(Name = "Mobile Number")]
+        public string MobileNumber { get; set; }
+
+        public int userId { get; set; }
+        [Display(Name = "Resume Link")]
+        [Required(ErrorMessage = "Please enter a link.")]
+        public string ResumeLink { get; set; }
+
+        [Required(ErrorMessage = "Please mention available slots")]
+        [Display(Name = "Available Slots")]
+        public string Slots { get; set; }
+
+        [Display(Name = "Number Of Interview")]
+        public int NoOfInterview { get; set; }
+        [Display(Name = "Success Rate")]
+        public double SuccessRate { get; set; }
+        [Display(Name = "Approved")]
+        public bool IsApproved { get; set; }
+
+        [Display(Name = "Upload Resume")]
+        public IFormFile File { get; set; }
+
+        //[Required(ErrorMessage = "Please mention skill")]
+        public int[] SelectedSkillIds { get; set; }
+        //public int SelectedSkillId { get; set; }
+
+        [Display(Name = "Skills")]
+        public SelectList PrimarySkills { get; set; }
 
     }
 
@@ -119,63 +102,20 @@ namespace Risebird.Entities.ViewModel
     {
         public int id { get; set; }
         public string InterviewerSkillId { get; set; }
-        public string ClientName { get; set; }
         public string JDTiltle { get; set; }
-        public string CompanyType { get; set; }
-        public int ClientId { get; set; }
-        public string ClientCompName { get; set; }
-        public string JobCountry { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string JDLink { get; set; }
-        public int NoOfPosition { get; set; }
-        public int NoOfIntterview { get; set; }
         public int RisebirdHr { get; set; }
         public double PerMintuteRate { get; set; }
-
-        public int JobLevel { get; set; }
-        public bool IsClientUser { get; set; }
-        public bool IsDeleted { get; set; }
-
-        public int? TotalMeetings { get; set; }
-        public int TotalBudget { get; set; }
-        public string BudgetConsumed { get; set; }
-        public int? SelectedMeetings { get; set; }
-        public int UnAssignedMeeting { get; set; }
-        public string UnAssignedMeetingDsr { get; set; }
-        public int TodayMeeting { get; set; }
-        public string TodayMeetingDsr { get; set; }
-        public int TomorrowMeeting { get; set; }
-        public string TomorrowMeetingDsr { get; set; }
-        public int? ScheduledMeetings { get; set; }
-        public int? ConfirmedMeetings { get; set; }
         public string CalendlyLink { get; set; }
-        public int TotalInvites { get; set; }
-
-        public string ArchiveStatus { get; set; }
-        public string ClientGST { get; set; }
-        public string ClientAddress { get; set; }
-        public string[] ClientRole { get; set; }
-        public double Discount { get; set; }
-        public bool IsBiometricEnabled { get; set; }
+        public string PrimarySkill { get; set; }
+        public string EmailId { get; set; }
+        public string Name { get; set; }
         public bool IsPaused { get; set; }
-
-        public int? PriorityLevel { get; set; }
-        public int? MeetingId { get; set; }
-
-        public string ClientHrContact { get; set; }
-        public string staffingAgency { get; set; }
-        public int interviewSlot { get; set; }
-        public string confirmationStatus { get; set; }
-        public int? InterviewStatus { get; set; }
-        public int? MeetingStatus { get; set; }
-        public int ClientRoleId { get; set; }
-        public DateTime interviewDate { get; set; }
-        public string interviewer { get; set; }
-        public float TotalBudgetConsumed { get; set; }
         public string ImageUrl { get; set; }
-        public string IRFStatus { get; set; }
-
+        public string InterviewerSkillStatus { get; set; }
+        public bool IsApproved { get; set; }
+        public int UserId { get; set; }
 
     }
 }
