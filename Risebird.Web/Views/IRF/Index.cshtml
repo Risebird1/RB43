@@ -1019,7 +1019,7 @@
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
                                                             </button>
                                                         }
 
@@ -1366,6 +1366,9 @@
                             })
 
 
+                        }
+                        function setNav() {
+                            localStorage.setItem('subscribe', true)
                         }
                         function UnSubscribe(irfId, irfName, primarySkill) {
 
@@ -1736,6 +1739,9 @@
                             // divTile.style.backgroundColor = color;
                         }
                     </script>
+                    <script>
+
+                    </script>
                     @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
                     {
                         var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
@@ -1745,55 +1751,86 @@
                             <script src="~/Newassets/js/enjoyhint.min.js"></script>
                             <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
                             <script>
-                                console.log('CuratedUser')
-                                var enjoyhint_instance = new EnjoyHint({});
+                                var getData = localStorage.getItem('subscribe');
+                                if (getData == "true") {
+                                   
+                                    var enjoyhint_instance = new EnjoyHint({});
 
-                                var enjoyhint_script_steps = [
-                                     {
-                                        'next .card-title': 'List of Skill Based Channel',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .first': 'Skill Channel Name and Primary Skill',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allcur': 'Click here to see the Selected Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allshort': 'Click here to see the Shortlisted Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allintsent': 'Click here to see the Interest Sent Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allintac': 'Click here to see the Interest Accepted Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .subc': 'Click here Subscribe/Unsubscribe Skill Channel',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'click .supportmenu': 'Click on Support Menu to see its features'
-                                    }
+                                    var enjoyhint_script_steps = [
+                                        {
+                                            'next .card-title': 'List of Skill Based Channel',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .first': 'Skill Channel Name and Primary Skill',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        
+                                        {
+                                            'click .allcur': 'Click here to see the Selected Candidates Video',
+                                           
+                                        },
+                                        {
+                                            'next .allshort': 'Click here to see the Shortlisted Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .allintsent': 'Click here to see the Interest Sent Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .allintac': 'Click here to see the Interest Accepted Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
 
-                                ];
+                                        {
+                                            'click .supportmenu': 'Click on Support Menu to see its features'
+                                        },
+
+
+                                    ];
+                                } else {
+                                    console.log("false")
+                                    var enjoyhint_instance = new EnjoyHint({});
+
+                                    var enjoyhint_script_steps = [
+                                        {
+                                            'next .card-title': 'List of Skill Based Channel',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .first': 'Skill Channel Name and Primary Skill',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+
+
+                                        {
+                                            'click .subc': 'Click here Subscribe/Unsubscribe Skill Channel',
+
+                                        },
+
+
+                               
+
+                                    ];
+                                }
 
                                 enjoyhint_instance.set(enjoyhint_script_steps);
                                 enjoyhint_instance.run();
