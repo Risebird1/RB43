@@ -243,7 +243,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">QC Open Interviews</a>
+               
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -522,31 +522,33 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .card-title': 'Open QC interviews and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Continue" }
+            'next .card-title': 'Open Quality Check interviews and click on continue to know its features',
+            'nextButton': { className: "myNext", text: "Continue" },
+            'skipButton': { className: "mySkip", text: "Skip" }
         },
 
         {
-            'next .three': 'This is th QC open inteviews info ',
+            'next .three': 'Unassigned Interview for Quality Check',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .four': 'QC Interview details open for assignment, Click on Assign button under Actions column to assign an interview for yourself',
+            'next .four': 'Click here to assign an interview for Quality Check',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
        
         {
-            'click .inmqci': 'Click here to navigate to My QC Interviews menu to see its features',
+            'click .inmqci': 'Click on My QC Interviews menu to see its features',
 
         },
 
     ];
-
-    enjoyhint_instance.set(enjoyhint_script_steps);
-    enjoyhint_instance.run();
+      setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
+   
 
 </script>
 
