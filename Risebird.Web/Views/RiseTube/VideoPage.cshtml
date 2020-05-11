@@ -1470,7 +1470,7 @@
                                                     {
                                                 <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
                                                     @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                    <input class="nav-link item5" type="button" id="1" value="THEATER-MODE-ON" style="color:black;float:right;border-radius:0px;font-size:11.5px;background: #f2f2f2;padding: 0px 6px; margin: 10px 3px 0px 0px;" onclick="toggle(this);">
+                                                    <input class="nav-link" type="button" id="1" value="THEATER-MODE-ON" style="color:black;float:right;border-radius:0px;font-size:11.5px;background: #f2f2f2;padding: 0px 6px; margin: 10px 3px 0px 0px;" onclick="toggle(this);">
                                                 </h1>
                                                     }
                                                     <div class="row counts-liks">
@@ -1494,7 +1494,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                    <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
                                                                     <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                 }
 
@@ -3679,7 +3679,7 @@
                 {
                     'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
                     'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Next" }
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
@@ -3714,7 +3714,7 @@
 
                 },
                 {
-                    'next .item3': 'Click here to see Tech Skill Report',
+                    'next .item3': 'Tech Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3742,14 +3742,9 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },
+                },              
                 {
-                    'next .comment2': 'Write your comment here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .post': 'For Post your comment click here',
+                    'next .post': 'Write your comment and click on Post',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
