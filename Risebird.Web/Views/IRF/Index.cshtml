@@ -1724,19 +1724,15 @@
                             localStorage.removeItem("localStorageforColorName");
                             localStorage.setItem('localStorageforColorName', 'localStorageforColor');
                             let value = localStorage.getItem('localStorageforColorName');
-                            console.log("Inside the changeColor()-- color is::" + tileColor);
-
                             if (value) {
-                                console.log("local storge value is::" + value);
+                                
                                 $(document).ready(function () {
                                     $("#divTile").css({ "backgroundColor": tileColor });
 
                                 });
                             }
 
-                            // console.log("Div Value::"+document.getElementById("divTile"));
-                            //document.getElementById("divTile").style.backgroundColor = tileColor;
-                            // divTile.style.backgroundColor = color;
+                           
                         }
                     </script>
                     <script>
@@ -1752,7 +1748,7 @@
                             <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
                             <script>
                                 var risetubeClicked = localStorage.getItem('risetube');
-                                console.log("Risetube "+risetubeClicked);
+                                
                                  if (risetubeClicked == "true") {
                                    
                                     var enjoyhint_instance = new EnjoyHint({});
@@ -1786,7 +1782,7 @@
                                 }
 
                                 var getData = localStorage.getItem('subscribe');
-                                console.log("IRF subscribed " + getData);
+                                
                                 if (getData == "true") {
                                    
                                     var enjoyhint_instance = new EnjoyHint({});
@@ -1850,7 +1846,7 @@
                             <script src="~/Newassets/js/enjoyhint.min.js"></script>
                             <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
                             <script>
-                                console.log("client")
+                                
                                 var enjoyhint_instance = new EnjoyHint({});
 
                                 var enjoyhint_script_steps = [
