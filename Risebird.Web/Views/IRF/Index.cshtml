@@ -1019,7 +1019,7 @@
                                                         else
                                                         {
                                                             <button class="mdc-fab app-fab--absolute subc" aria-label="Subscribe">
-                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
+                                                                <span onclick="javascript:Subscribe('@item.id', '@item.IRFId', '@item.JDTiltle.Split("|")[0]');setNav()" title="Subscribe" class="mdc-fab__icon material-icons"><i style="font-size:16px;" class="fas fa-bell"></i></span>
                                                             </button>
                                                         }
 
@@ -1366,6 +1366,9 @@
                             })
 
 
+                        }
+                        function setNav() {
+                            localStorage.setItem('subscribe', true)
                         }
                         function UnSubscribe(irfId, irfName, primarySkill) {
 
@@ -1721,20 +1724,19 @@
                             localStorage.removeItem("localStorageforColorName");
                             localStorage.setItem('localStorageforColorName', 'localStorageforColor');
                             let value = localStorage.getItem('localStorageforColorName');
-                            console.log("Inside the changeColor()-- color is::" + tileColor);
-
                             if (value) {
-                                console.log("local storge value is::" + value);
+                                
                                 $(document).ready(function () {
                                     $("#divTile").css({ "backgroundColor": tileColor });
 
                                 });
                             }
 
-                            // console.log("Div Value::"+document.getElementById("divTile"));
-                            //document.getElementById("divTile").style.backgroundColor = tileColor;
-                            // divTile.style.backgroundColor = color;
+                           
                         }
+                    </script>
+                    <script>
+
                     </script>
                     @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
                     {
@@ -1745,58 +1747,91 @@
                             <script src="~/Newassets/js/enjoyhint.min.js"></script>
                             <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
                             <script>
-                                console.log('CuratedUser')
-                                var enjoyhint_instance = new EnjoyHint({});
+                                var risetubeClicked = localStorage.getItem('risetube');
+                                
+                                 if (risetubeClicked == "true") {
+                                   
+                                    var enjoyhint_instance = new EnjoyHint({});
 
-                                var enjoyhint_script_steps = [
-                                     {
-                                        'next .card-title': 'List of Skill Based Channel',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .first': 'Skill Channel Name and Primary Skill',
-                                        'nextButton': { className: "myNext", text: "Next" },
-                                        'skipButton': { className: "mySkip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allcur': 'Click here to see the Selected Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allshort': 'Click here to see the Shortlisted Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allintsent': 'Click here to see the Interest Sent Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .allintac': 'Click here to see the Interest Accepted Candidates Video',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'next .subc': 'Click here Subscribe/Unsubscribe Skill Channel',
-                                        'nextbutton': { classname: "mynext", text: "Next" },
-                                        'skipbutton': { classname: "myskip", text: "Skip" }
-                                    },
-                                    {
-                                        'click .supportmenu': 'Click on Support Menu to see its features'
-                                    }
+                                    var enjoyhint_script_steps = [                                                                              
+                                        {
+                                            'next .allshort': 'Click here to see the Shortlisted Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .allintsent': 'Click here to see the Interest Sent Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .allintac': 'Click here to see the Interest Accepted Candidates Video',
+                                            'nextbutton': { classname: "mynext", text: "Next" },
+                                            'skipbutton': { classname: "myskip", text: "Skip" }
+                                        },
+                                        {
+                                            'click .risetubemenu': 'Click on Risetube Home Page to see its features'
+                                        }
 
-                                ];
 
-                                enjoyhint_instance.set(enjoyhint_script_steps);
-                                enjoyhint_instance.run();
+                                     ];
+                                        setTimeout(function () {
+                                        enjoyhint_instance.set(enjoyhint_script_steps);
+                                        enjoyhint_instance.run();
+                                    }, 5000)
+                                }
+
+                                var getData = localStorage.getItem('subscribe');
+                                
+                                if (getData == "true") {
+                                   
+                                    var enjoyhint_instance = new EnjoyHint({});
+
+                                    var enjoyhint_script_steps = [                                                                               
+                                        {
+                                            'click .allcur': 'Click here to see the Selected Candidates Video and navigate over Risetube menu',
+                                           
+                                        } 
+                                    ];
+                                    setTimeout(function () {
+                                        enjoyhint_instance.set(enjoyhint_script_steps);
+                                        enjoyhint_instance.run();
+                                    }, 5000)
+                                }
+
+                                 if (getData == null) {
+                                  
+                                    var enjoyhint_instance = new EnjoyHint({});
+
+                                    var enjoyhint_script_steps = [
+                                        {
+                                            'next .card-title': 'List of Skill Based Channel',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'next .first': 'Skill Channel Name and Primary Skill',
+                                            'nextButton': { className: "myNext", text: "Next" },
+                                            'skipButton': { className: "mySkip", text: "Skip" }
+                                        },
+                                        {
+                                            'click .subc': 'Click here Subscribe/Unsubscribe Skill Channel',
+
+                                        }
+                                     ];
+                                      setTimeout(function () {
+                                        enjoyhint_instance.set(enjoyhint_script_steps);
+                                        enjoyhint_instance.run();
+                                    }, 5000)
+                                }
+                        
+                              
+                              
 
                             </script>
                         }
@@ -1811,7 +1846,7 @@
                             <script src="~/Newassets/js/enjoyhint.min.js"></script>
                             <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
                             <script>
-                                console.log("client")
+                                
                                 var enjoyhint_instance = new EnjoyHint({});
 
                                 var enjoyhint_script_steps = [
@@ -1821,7 +1856,7 @@
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .filter': 'Filter here based on available attributes and reset filter if applied earlier',
+                                        'next .filter': 'Filter here based on available attributes or reset filter if applied earlier',
                                         'nextButton': { className: "myNext", text: "Next" },
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
@@ -1831,7 +1866,7 @@
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .second': 'This is Client Name',
+                                        'next .second': 'Client Name',
                                         'nextButton': { className: "myNext", text: "Next" },
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
@@ -1851,12 +1886,12 @@
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },                                    
                                     {
-                                        'next .itemques': 'List of Questions discussed by interviewer',
+                                        'next .itemques': 'List of questions discussed by Interviewer',
                                         'nextButton': { className: "myNext", text: "Next" },
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item1': 'List of Candidates belongs',
+                                        'next .item1': 'List of Candidates',
                                         'nextButton': { className: "myNext", text: "Next" },
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },                                      
@@ -1866,7 +1901,7 @@
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
                                     {
-                                        'next .item3': 'Grid View of Selected Canditates',
+                                        'next .item3': 'Grid View of Selected Candidates',
                                         'nextButton': { className: "myNext", text: "Next" },
                                         'skipButton': { className: "mySkip", text: "Skip" }
                                     },
@@ -1890,8 +1925,10 @@
                                     }
                                 ];
 
+                             setTimeout(function () {
                                 enjoyhint_instance.set(enjoyhint_script_steps);
                                 enjoyhint_instance.run();
+                            }, 5000)
 
                             </script>
                         }

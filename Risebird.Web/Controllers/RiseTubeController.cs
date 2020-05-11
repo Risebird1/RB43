@@ -179,7 +179,15 @@ namespace Risebird.Web.Controllers
                         }
 
                         ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(searchvalue))                        {                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();                            ViewBag.searchvalue = searchvalue;                        }                        else                        {                            ViewBag.searchvalue = "";                        }
+                        if (!String.IsNullOrEmpty(searchvalue))
+                        {
+                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(searchvalue.ToUpper()) || x.JDTiltle.ToUpper().Contains(searchvalue.ToUpper())).ToList();
+                            ViewBag.searchvalue = searchvalue;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
 
 
                         for (int i = 0; i < modelList.Count; i++)
@@ -338,7 +346,15 @@ namespace Risebird.Web.Controllers
                             }
                         }
                         ViewBag.ProfileName = profileName;
-                        if (!String.IsNullOrEmpty(filter.SearchFillter))                        {                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(filter.SearchFillter.ToUpper()) || x.JDTiltle.ToUpper().Contains(filter.SearchFillter.ToUpper())).ToList();                            ViewBag.searchvalue = filter.SearchFillter;                        }                        else                        {                            ViewBag.searchvalue = "";                        }
+                        if (!String.IsNullOrEmpty(filter.SearchFillter))
+                        {
+                            modelList = modelList.Where(x => x.candidateName.ToUpper().Contains(filter.SearchFillter.ToUpper()) || x.JDTiltle.ToUpper().Contains(filter.SearchFillter.ToUpper())).ToList();
+                            ViewBag.searchvalue = filter.SearchFillter;
+                        }
+                        else
+                        {
+                            ViewBag.searchvalue = "";
+                        }
 
                         for (int i = 0; i < modelList.Count; i++)
                         {
@@ -708,14 +724,37 @@ namespace Risebird.Web.Controllers
                 {
                     //Start: Share button functionaly
                     ViewBag.ResultStatus = "VideoPresent";
-                    MeetingVM model = _meetingService.GetMeetingbyid(id, "");                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;                    if (status == "Public")
-                    {                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
+                    MeetingVM model = _meetingService.GetMeetingbyid(id, "");
+                    var status = String.IsNullOrEmpty(model.IsShared) ? "" : model.IsShared;
+                    if (status == "Public")
+                    {
+                        var IRListModel = _meetingService.GetInteviewReport(model.imid, model.irfIntId).Result;
 
-                        MeetingVM NewModel = new MeetingVM();                        NewModel.SubVideo_List = new List<MeetingVM>();                        NewModel.candidateName = model.candidateName;
+                        MeetingVM NewModel = new MeetingVM();
+                        NewModel.SubVideo_List = new List<MeetingVM>();
+                        NewModel.candidateName = model.candidateName;
 
-                        ViewBag.ProfileName = "";                        NewModel.CandidateId = model.CandidateId;                        NewModel.interviewDate = model.interviewDate;                        NewModel.imid = model.imid;                        NewModel.IRFId = model.IRFId;                        NewModel.ClientName = model.ClientName;
+                        ViewBag.ProfileName = "";
+                        NewModel.CandidateId = model.CandidateId;
+                        NewModel.interviewDate = model.interviewDate;
+                        NewModel.imid = model.imid;
+                        NewModel.IRFId = model.IRFId;
+                        NewModel.ClientName = model.ClientName;
 
-                        NewModel.InterviewerComment = model.InterviewerComment;                        NewModel.InterviewStatus = model.InterviewStatus;                        NewModel.JDTiltle = model.JDTiltle;                        NewModel.JDLink = model.JDLink;                        NewModel.MeetingStatus = model.MeetingStatus;                        NewModel.confirmationStatus = model.confirmationStatus;                        NewModel.VideoLink = model.VideoLink;                        NewModel.candidateEmail = model.candidateEmail;                        NewModel.reportLink = model.reportLink;                        NewModel.resumeLink = model.resumeLink;                        NewModel.zoomLink = model.zoomLink;                        NewModel.IreportModel = IRListModel;                        NewModel.IsLike = model.IsLike;                        NewModel.TotalView = model.TotalView;
+                        NewModel.InterviewerComment = model.InterviewerComment;
+                        NewModel.InterviewStatus = model.InterviewStatus;
+                        NewModel.JDTiltle = model.JDTiltle;
+                        NewModel.JDLink = model.JDLink;
+                        NewModel.MeetingStatus = model.MeetingStatus;
+                        NewModel.confirmationStatus = model.confirmationStatus;
+                        NewModel.VideoLink = model.VideoLink;
+                        NewModel.candidateEmail = model.candidateEmail;
+                        NewModel.reportLink = model.reportLink;
+                        NewModel.resumeLink = model.resumeLink;
+                        NewModel.zoomLink = model.zoomLink;
+                        NewModel.IreportModel = IRListModel;
+                        NewModel.IsLike = model.IsLike;
+                        NewModel.TotalView = model.TotalView;
                         NewModel.IsShared = model.IsShared;
                         NewModel.TotalVedioLike = model.TotalVedioLike;
                         NewModel.TotalVedioDisLike = model.TotalVedioDisLike;
@@ -724,12 +763,26 @@ namespace Risebird.Web.Controllers
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
 
-                        if (NewModel.IreportModel.QuestionsCollection == null)                        {                            ViewBag.QuestionsDiscussedCount = 0;                        }                        else                        {                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();                        }                        bool isQC = false;                        NewModel.IreportModel.IsQC = isQC;
+                        if (NewModel.IreportModel.QuestionsCollection == null)
+                        {
+                            ViewBag.QuestionsDiscussedCount = 0;
+                        }
+                        else
+                        {
+                            ViewBag.QuestionsDiscussedCount = NewModel.IreportModel.QuestionsCollection?.Count();
+                        }
+
+                        bool isQC = false;
+                        NewModel.IreportModel.IsQC = isQC;
                         ViewBag.VedioStatus = "Public";
                         //desible Like and dilisk button and share button and comment opetion
                         return View(NewModel);
                         //END: Share button functionaly
-                    }                    else                    {                        return RedirectToAction("SignOut", "Session");                    }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
 
                 }
             }
@@ -756,16 +809,41 @@ namespace Risebird.Web.Controllers
                 {
                     ViewBag.ResultStatus = "VideoPresent";
                     //Start:Save View counts of vedio
-                    if (HttpContext.Session.GetString("UserLogedIn") != null)                    {                        string values = String.Empty;                        var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();                        if (valuestatus == "Yes")                        {
+                    if (HttpContext.Session.GetString("UserLogedIn") != null)
+                    {
+                        string values = String.Empty;
+                        var valuestatus = HttpContext.Session.GetString("UserLogedIn")?.Trim();
+                        if (valuestatus == "Yes")
+                        {
                             _meetingService.AddTotalViewCount(id);
                             //save into database to increase view count save into main table from where data is picked
-                            HttpContext.Session.SetString("UserLogedIn", "No");                        }                        else                        {                            if (HttpContext.Session.GetString("UserLogedInVedioId") != null)                            {                                values = HttpContext.Session.GetString("UserLogedInVedioId")?.Trim();                                var _lst = values.Split(";");
-                                var flag = true;                                for (int i = 0; i < _lst.Count(); i++)                                {                                    if (_lst[i] == id.ToString())                                    {                                        flag = false;                                    }                                }                                if (flag == true)                                {
+                            HttpContext.Session.SetString("UserLogedIn", "No");
+                        }
+                        else
+                        {
+                            if (HttpContext.Session.GetString("UserLogedInVedioId") != null)
+                            {
+                                values = HttpContext.Session.GetString("UserLogedInVedioId")?.Trim();
+                                var _lst = values.Split(";");
+                                var flag = true;
+                                for (int i = 0; i < _lst.Count(); i++)
+                                {
+                                    if (_lst[i] == id.ToString())
+                                    {
+                                        flag = false;
+                                    }
+                                }
+                                if (flag == true)
+                                {
                                     _meetingService.AddTotalViewCount(id);
                                     //save into database to increase view count save into main table from where data is picked
-                                }                            }
+                                }
+                            }
                             //not do anything
-                        }                        values = values + ";" + id;                        HttpContext.Session.SetString("UserLogedInVedioId", values);                    }
+                        }
+                        values = values + ";" + id;
+                        HttpContext.Session.SetString("UserLogedInVedioId", values);
+                    }
                     //End:Save View counts of vedio
                     bool isClientUser = false;
                     int ClientId = 0;

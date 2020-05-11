@@ -155,50 +155,51 @@
             border-color: #4a93de;
         }
 
-    #OpeninterviewList_filter input {
-        outline: none;
-    }
-
-
-        #OpeninterviewList_filter input::-webkit-search-decoration,
-        #OpeninterviewList_filter input::-webkit-search-cancel-button {
-            display: none;
+        #OpeninterviewList_filter input {
+            outline: none;
         }
 
 
-        #OpeninterviewList_filter input[type=search] {
-            background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-            border: solid 1px #ccc;
-            padding: 9px 10px 9px 32px;
-            width: 135px;
-            font-family: arial;
-            -webkit-border-radius: 10em;
-            -moz-border-radius: 10em;
-            border-radius: 10em;
-            -webkit-transition: all .5s;
-            -moz-transition: all .5s;
-            transition: all .5s;
-        }
-
-            #OpeninterviewList_filter input[type=search]:focus {
-                width: 200px;
-                background-color: #fff;
-                border-color: #4a93de;
-                font-family: arial;
-                margin: 3px;
-                -webkit-box-shadow: 0 0 5px #4a93de;
-                -moz-box-shadow: 0 0 5px #4a93de;
-                box-shadow: 0 0 5px #4a93de;
+            #OpeninterviewList_filter input::-webkit-search-decoration,
+            #OpeninterviewList_filter input::-webkit-search-cancel-button {
+                display: none;
             }
 
 
-        #OpeninterviewList_filter input:-moz-placeholder {
-            color: #999;
-        }
+            #OpeninterviewList_filter input[type=search] {
+                background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+                border: solid 1px #ccc;
+                padding: 9px 10px 9px 32px;
+                width: 135px;
+                font-family: arial;
+                -webkit-border-radius: 10em;
+                -moz-border-radius: 10em;
+                border-radius: 10em;
+                -webkit-transition: all .5s;
+                -moz-transition: all .5s;
+                transition: all .5s;
+            }
 
-        #OpeninterviewList_filter input::-webkit-input-placeholder {
-            color: #999;
-        }
+                #OpeninterviewList_filter input[type=search]:focus {
+                    width: 200px;
+                    background-color: #fff;
+                    border-color: #4a93de;
+                    font-family: arial;
+                    margin: 3px;
+                    -webkit-box-shadow: 0 0 5px #4a93de;
+                    -moz-box-shadow: 0 0 5px #4a93de;
+                    box-shadow: 0 0 5px #4a93de;
+                }
+
+
+            #OpeninterviewList_filter input:-moz-placeholder {
+                color: #999;
+            }
+
+            #OpeninterviewList_filter input::-webkit-input-placeholder {
+                color: #999;
+            }
+
     .mdc-fab {
         width: 30px !important;
         height: 30px !important;
@@ -218,6 +219,7 @@
         color: #807e7e;
         font-size: 12px;
     }
+
     .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
         background-color: #4e9bea !important;
         border-color: #4e9bea;
@@ -257,9 +259,9 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                   
+
                     <div class="mdc-card-wrapper__text-section">
-                      
+
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
@@ -276,7 +278,7 @@
                             </div>
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
+                                <div id="tableID" class="three">
                                     <table id="OpeninterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
@@ -331,7 +333,7 @@
                                                     <td class="text-center">
 
 
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Assign Yourself">
+                                                        <button class="mdc-fab app-fab--absolute four" aria-label="Assign Yourself">
                                                             <span onclick="location.href = '@Url.Action("QCAssignYourself", "Interview", new { id = item.id})'" title="Assign Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm-2 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" /></svg></span>
                                                         </button>
 
@@ -511,6 +513,41 @@
             }
         });
     }
+</script>
+<script src="~/Newassets/js/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+<script>
+
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+        {
+            'next .card-title': 'Open QC interviews and click on continue to know its features',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Continue" }
+        },
+
+        {
+            'next .three': 'This is th QC open inteviews info ',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .four': 'QC Interview details open for assignment, Click on Assign button under Actions column to assign an interview for yourself',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+       
+        {
+            'click .inmqci': 'Click here to navigate to My QC Interviews menu to see its features',
+
+        },
+
+    ];
+
+    enjoyhint_instance.set(enjoyhint_script_steps);
+    enjoyhint_instance.run();
+
 </script>
 
 <!-- PAGE CONTENT WRAPPER -->
