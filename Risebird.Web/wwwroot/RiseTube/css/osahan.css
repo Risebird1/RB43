@@ -42,14 +42,14 @@ Version: 1.0
      width: 100%;
 }
  #wrapper #content-wrapper .container-fluid{
-     padding: 30px 30px 30px 30px;
+     padding: 30px 20px 30px 20px;
 }
 
 
     #wrapper #content-wrapper .container-wrap{
-        padding: 30px 15px 30px 15px;
+        padding: 0px 15px 30px 15px;
 
-
+}
 
 
 .sidebar-toggled #wrapper #content-wrapper .container-fluid{

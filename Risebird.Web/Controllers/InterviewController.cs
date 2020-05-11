@@ -21,6 +21,7 @@ using MediaToolkit.Model;
 using MediaToolkit;
 using MediaToolkit.Options;
 using Microsoft.AspNetCore.Http.Internal;
+using System.Text;
 
 namespace Risebird.Web.Controllers
 {
@@ -34,7 +35,9 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private IIRFService _iRFService;
         private IIRFRepository _iRFRepository;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService)
+        private INotificationHelper _notificationHelper;
+
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -43,6 +46,8 @@ namespace Risebird.Web.Controllers
             _iRFRepository = iRFRepository;
             _iRFService = iRFService;
             _settingsService = settingsService;
+            _notificationHelper = notificationHelper;
+
         }
 
 
@@ -3815,11 +3820,11 @@ namespace Risebird.Web.Controllers
                         }
                         else if (model.VideoFile != null)
                         {
-                            
+
                             //Start:Generate Thumbnail from Vedio
-                          
-                               string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
-                           
+
+                            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", model.VideoFile.FileName);
+
 
                             using (var stream = new FileStream(path, FileMode.Create))
                             {
@@ -3855,7 +3860,7 @@ namespace Risebird.Web.Controllers
                             }
 
 
-                          
+
                         }
 
 
@@ -5363,7 +5368,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CandidateInterviews()
+        public async Task<IActionResult> CandidateInterviews(string status)
         {
             try
             {
@@ -5375,7 +5380,8 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _meetingService.GetCandidateInterviews(emailid);
+                        var myInterview = _meetingService.GetCandidateInterviews(emailid, status);
+
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
                         {
@@ -5769,7 +5775,77 @@ namespace Risebird.Web.Controllers
         {
             return _settingsService.GetInterviewUnassignedMinutes();
         }
+        [HttpPost]
+        public JsonResult Intrestreaction(string vedioid, string Status)
+        {
+            var Email = _meetingService.Intrestreaction(vedioid, Status);
 
+            if (Email != null)
+            {
+
+                Mail _mail = new Mail();
+                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                emailid = emailid.Replace("\"", "");
+              
+                _mail.TO = Email.Comment;
+                if (Status == "Interest Accepted")
+                {
+                    _mail.Subject = "Candidate has accepted your interest";
+                }
+                else
+                {
+                    _mail.Subject = "Candidate has passed your interest";
+
+                }
+               
+                StringBuilder bulider = new StringBuilder();
+                if (Status == "Interest Accepted")
+                {
+                    bulider.Append("Candidate has accepted your interest");
+                }
+                else
+                {
+                    bulider.Append("Candidate has passed your interest");
+
+
+                }
+                var result1 = _notificationHelper.CuretatedNotification(_mail, "User", bulider.ToString());
+
+            }
+            return Json("Success");
+        }
+        [HttpPost]
+        public JsonResult ShortListreaction(string vedioid, string Status)
+        {
+            _meetingService.ShortListreaction(vedioid, Status);
+            return Json("Success");
+        }
+        [HttpPost]
+        public JsonResult ShortListList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model = _meetingService.ShortListedClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
+            return Json(model);
+        }
+        [HttpPost]
+        public JsonResult InterestList(string IRFID)
+        {
+            var emailid = HttpContext.Session.GetString("email")?.Trim();
+            emailid = emailid.Replace("\"", "");
+            var model = _meetingService.InterestListClient(emailid, IRFID);
+            foreach (var item in model)
+            {
+                item.ClientName = item.ClientName.Split("@")[1].Split(".")[0].ToString();
+                item.DateRequired = item.interviewDate.ToString("dd/MMM/yyyy");
+            }
+            return Json(model);
+        }
     }
 
 }

@@ -59,7 +59,7 @@
 
     .panel-header-sm {
         height: 85px;
-        padding-top: 50px;
+        padding-top: 65px;
         background: none !important;
     }
 
@@ -171,14 +171,14 @@
 
         .navbar .navbar-wrapper .navbar-brand {
             margin-right: 0.5rem;
-            color: #143e67 !important;
+         
         }
 
     .mc-button-area {
         text-align: right;
     }
 
-    .mdc-card .form-control {
+    .mdc-card .form-control, .mdc-card .form-control[readonly], .mdc-card form-control:disabled {
         border: 0;
         border-radius: 4px 4px 0 0;
         background: whitesmoke;
@@ -289,8 +289,13 @@
         color: #000 !important;
         font-size: 14px !important;
     }
-
- 
+    .card-text-label {
+        font-size: 13px !important;
+    }
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
+    }
 </style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -306,8 +311,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="top-gap">&nbsp;</div>
-            <div class="navbar-wrapper" style="        width: 100%;
+          
+            <div class="navbar-wrapper" style="width: 100%;
         float: left;
         display: block;
 ">
@@ -518,7 +523,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="form-group">
-                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                         <div  class="talktext">
                                                             @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 86px; width:100%" })
@@ -673,7 +678,7 @@
 
                                                             </td>
 
-                                                            <td>
+                                                            <td class="action text-center">
 
                                                                 <button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
@@ -726,7 +731,7 @@
 
                                                                 </td>
 
-                                                                <td>
+                                                                <td class="action text-center">
 
 
                                                                     <button class="mdc-fab app-fab--absolute" aria-label="Add">
@@ -823,7 +828,7 @@
                                             </table>
                                         </div>
                                         <div class="form-group">
-                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                            @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                             <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                 <div class="talktext">
@@ -902,7 +907,7 @@
                                             </table>
 
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.SkillGeneralComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                     <div class="talktext">
                                                         @Html.TextAreaFor(m => m.SkillGeneralComments, new { htmlAttributes = new { @class = "form-control text-box single-line scrollbar" }, @style = "width:100%" })
@@ -979,7 +984,7 @@
                                                 </tbody>
                                             </table>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                     <div class="talktext">
@@ -1058,7 +1063,7 @@
                                                 </tbody>
                                             </table>
                                             <div class="form-group">
-                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 card-text-label" })
 
                                                 <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
                                                     <div class="talktext">
@@ -1429,9 +1434,6 @@
 
         html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
             canvas.getContext('2d');
-
-            console.log(canvas.height + "  " + canvas.width);
-
 
             var imgData = canvas.toDataURL("image/jpeg", 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);

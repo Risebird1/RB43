@@ -18,7 +18,7 @@
 
     .panel-header-sm {
         height: 85px;
-        padding-top: 50px;
+        padding-top: 65px;
         background: none !important;
     }
 
@@ -124,13 +124,10 @@
         color: #53a5f5 !important;
     }
 
-    .navbar .navbar-wrapper {
-        color: #143e67 !important;
-    }
 
         .navbar .navbar-wrapper .navbar-brand {
             margin-right: 0.5rem;
-            color: #143e67 !important;
+           
         }
 
     .mc-button-area {
@@ -207,11 +204,6 @@
                             <div style="width: 100%;">&nbsp;</div>
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
-
-                                
-
-
-
 
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.IRFId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -527,15 +519,13 @@
     }
 
     function checkDate() {
-        debugger;
-        //var interviewDate = document.getElementById("interviewDate").value;
+       
         var interviewDate = new Date(document.getElementById("interviewDate").value);
-        //console.log(date.getTime())
+      
         var todayDate = new Date();
-        //console.log(todayDate.getTime())
 
         if (todayDate.getTime() > interviewDate.getTime()) {
-            //error_interviewDate
+           
             document.getElementById("error_interviewDate").innerHTML = "Interview Date time should be greater than current Date time.";
             return false;
         }

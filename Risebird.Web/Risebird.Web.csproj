@@ -8,12 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="bin\Debug\netcoreapp2.0\OneShareManagement.Web.deps.json" />
-    <Content Include="bin\Debug\netcoreapp2.0\OneShareManagement.Web.runtimeconfig.dev.json" />
-    <Content Include="bin\Debug\netcoreapp2.0\OneShareManagement.Web.runtimeconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MediaToolkit" Version="1.1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
@@ -45,8 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bin\Debug\netcoreapp2.0\OneShareManagement.Web.dll" />
-    <None Include="bin\Debug\netcoreapp2.0\OneShareManagement.Web.pdb" />
     <None Include="wwwroot\Newassets\css\bootstrap.min.css.map" />
     <None Include="wwwroot\Newassets\css\now-ui-dashboard.css.map" />
     <None Include="wwwroot\Newassets\demo\demo.js" />

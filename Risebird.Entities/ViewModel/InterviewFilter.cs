@@ -24,6 +24,9 @@ namespace Risebird.Entities.ViewModel
         public string [] CandidateLocation { get; set; }
 
         public string SearchFillter { get; set; }
+        public string[] IsShortListed { get; set; }
+        public string[] IsIntrested { get; set; }
+
 
     }
 }
