@@ -103,9 +103,7 @@
         border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
-    #StartDate, #EndDate {
-        width: 270px;
-    }
+
 
     .modal-content .modal-body {
         padding-top: 10px;
@@ -733,7 +731,7 @@
         font-size: 15px !important;
         margin-bottom: 5px;
         color: #9A9A9A;
-        padding: 0px 5px !important;
+        padding: 0px 10px !important;
         font-family: Roboto, sans-serif;
     }
 
@@ -829,14 +827,24 @@
             position: relative
         }
 
+
         .shortlist {
-            position: absolute;
-            top: -5px;
             margin: 0;
+            float: left;
+            width: 50%;
+            margin-top: 15px;
+        }
+
+        .showint {
+            width: 50%;
+            float: right;
+            margin-top: 19px;
         }
 
         .views {
             margin: 0;
+            padding: 0;
+            position: absolute;
         }
 
         .single-video-info-content hr {
@@ -1499,7 +1507,7 @@
                                                                 {
                                                                     <div class="btn2">
                                                                         <i class="fa fa-thumbs-up fa-5px  " aria-hidden="true" id="toggle-click" style="color: blue;font-size: 24px;padding-right:10px">&nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
-                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:30px"><label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
+                                                                        <i class="fa fa-thumbs-down fa-5px " aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"><label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                     </div>
                                                                 }
                                                                 else if (Model.IsLike == "Disliked")
@@ -1511,7 +1519,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
+                                                                    <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="color: black;font-size: 24px; padding-right: 10px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
                                                                     <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                 }
 
@@ -1526,18 +1534,18 @@
                                                                     {
                                                                         @if (Model.IsShortlisted > 0)
                                                                         {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                         }
                                                                         else
                                                                         {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
+                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
                                                                         }
                                                                     }
                                                                 }
                                                             }
                                                         </div>
-                                                        <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
+                                                        <div class="col-md-2 showinter showint" style="text-align: end;padding-top:5px">
                                                             @if (Model.VideoLink != null)
                                                             {
                                                                 @if (ViewBag.VedioStatus != "Public")
@@ -3272,64 +3280,64 @@
         $("#ClientHR").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
 
             $("#CandidateName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
 
         $("#InterviewStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+            buttonWidth: '100%',
                     maxHeight: 200
                 });
 
             $("#ClientName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ApprovalStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#JoiningStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#OfferStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#CandidateLocation").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
              $("#IsShortListed").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                 buttonWidth: '100%',
                     maxHeight: 200
          });
           $("#IsIntrested").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+              buttonWidth: '100%',
                     maxHeight: 200
                 });
 

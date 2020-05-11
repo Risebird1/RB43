@@ -978,33 +978,35 @@
 
 
 
-                <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
-                    <!-- Modal content -->
-                    <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                            <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
-                            <span class="close" id="callPopUp">&times;</span>
-                        </div>
-                        <div class="modal-body" style="padding: 2px 16px;">
-                            <div class="row">
-                                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+                 <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
+                     <!-- Modal content -->
+                     <div class="modal-dialog modal-lg" role="document">
+                         <div class="modal-content">
+                             <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                                 <h5 class="modal-title" style="font-size:20px;">Call Candidate!</h5>
+                                 <span style="cursor:pointer;" class="close" id="callPopUp">&times;</span>
+                             </div>
+                             <div class="modal-body" style="padding: 2px 16px;">
+                                 <div class="row">
+                                     <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
 
-                            </div>
+                                 </div>
 
-                            <div class="">
-                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
+                                 <div class="">
+                                     <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                                 </div>
+                             </div>
+                             <div class="modal-footer" style="padding: 2px 16px;
+        background-color: #fff;
         color: white;">
 
-                        </div>
-                    </div>
+                             </div>
+                         </div>
 
-                </div>
-                <!-- end row -->
-            </div>
+                     </div>
+                 </div>
+                     <!-- end row -->
+                 </div>
        
     </div>
 </div>
@@ -1227,7 +1229,7 @@
                 [10, 25, 50, -1],
                 [10, 25, 50, "All"]
             ],
-            responsive: false,
+            responsive: true,
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search records",

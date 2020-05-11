@@ -249,10 +249,6 @@
     }
 
 
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
 </style>
 
 <!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
@@ -454,10 +450,6 @@
         border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
 
 
     .border-rv {
@@ -657,31 +649,31 @@
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                             Start Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                             End Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6 border-rv">
-                                                  
+
                                                     @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
                                                     {
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
@@ -698,8 +690,8 @@
                                                     @if (Model.Profile == "CuratedUser")
                                                     {
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SubscriptionStatus">Subscription Status</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                     {
@@ -715,10 +707,10 @@
 
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
-                                                                                                        
+
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">PrimarySkill</label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                 {
@@ -995,7 +987,7 @@
                                                             <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-                                                                  
+
 
 
                                                                 </span>
@@ -1204,8 +1196,10 @@
                         <!-- end row -->
                     </div>
 
-
-
+                </div>
+            </div>
+            </div></div>
+    </div>
 
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
@@ -1584,37 +1578,37 @@
             $("#RFID").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ClientName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ArchiveStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#SubscriptionStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ClientRole").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
              $("#PrimarySkill").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                 buttonWidth: '100%',
                 maxHeight: 200
             });
         });

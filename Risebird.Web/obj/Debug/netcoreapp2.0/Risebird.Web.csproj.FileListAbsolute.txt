@@ -349,3 +349,4 @@ C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSe
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
+C:\Users\rumab\Source\Repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Views\Dashboard\package.json
