@@ -339,7 +339,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">Open Interviews</a>
+               
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -449,7 +449,7 @@
                                                     }
 
                                                     <td> @item.risebirdHR</td>
-                                                    <td class="text-right">
+                                                    <td class="text-right four">
                                                         <span onclick="location.href = '@Url.Action("AssignYourself", "Interview", new { id = item.id,InterviewDate=item.interviewDate,CandidateEmail=item.candidateName})'" title="Assign Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
                                                     </td>
                                                 </tr>
@@ -641,17 +641,22 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .first': 'Filter based on day to see available interviews',
+            'next .first': 'Filter based on day(s) to see available interviews',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .second': 'Scheduled Interview details open for assignment, Click on Assign button under Actions column to assign an interview for yourself',
+            'next .second': 'Unassinged Scheduled Interviews details',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+         {
+            'next .four': 'Click here to assign an interview based on your availability',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'click .myint': 'Click here to navigate to My Interviews menu to see its features',
+            'click .myint': 'Click on My Interviews menu to see its features',
 
         }
 

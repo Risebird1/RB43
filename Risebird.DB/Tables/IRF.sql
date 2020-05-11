@@ -21,6 +21,7 @@ CREATE TABLE [dbo].[IRF](
 			[IsBiometricEnabled] [bit] NOT NULL,
 			[PriorityLevel] [int] NOT NULL,
 			[IsPaused] [bit] NOT NULL,
+            [CompanyDetails][VARCHAR](MAX) NULL,
 			CONSTRAINT [FK_IRF_Client] FOREIGN KEY (ClientId) REFERENCES Client(id),
 			CONSTRAINT [FK_IRF_User] FOREIGN KEY (RisebirdHr) REFERENCES UserList(id),
  CONSTRAINT [PK_IRF] PRIMARY KEY CLUSTERED 					
@@ -107,6 +108,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE IRF
     Add IsPaused BIT NOT NULL DEFAULT 0
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'CompanyDetails')
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add CompanyDetails [VARCHAR](MAX) NULL
 END
 END
 
