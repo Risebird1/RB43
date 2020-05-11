@@ -493,6 +493,19 @@ namespace Risebird.Business
             }
         }
 
+        public void UpdateUserSigInDetails(string emailId)
+        {
+            try
+            {
+                 _userRepository.UpdateUserSigInDetails(emailId);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+              
+            }
+        }
 
 
 
