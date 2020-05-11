@@ -749,7 +749,7 @@
                 html += '<tr><td>Client Name</td><td>Shortlisted Date</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     html += '<tr>';
-                    html += '<td>' + data[i].clientName + '</td>';
+                    html += '<td>' + data[i].clientName.toUpperCase() + '</td>';
                     html += '<td>' + data[i].dateRequired + '</td>';
                     html += "</tr>";
 
@@ -783,7 +783,7 @@
                     else {
                         html += '<tr id="tablerow_' + data[i].id + '">';
                     }
-                   html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName + '</td>';
+                   html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName.toUpperCase() + '</td>';
                     html += '<td class="client-date" style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
                     html += '<td class="client-cmt" style="border-right: 1px #ccc solid;">' + data[i].approvalComments + '</td><td class="text-center client-action">';
                     if (data[i].status == "Interest Accepted") {
@@ -905,8 +905,8 @@
     var enjoyhint_script_steps = [
         {
             'next .card-title': 'Your Scheduled interviews and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Continue" }
+            'nextButton': { className: "myNext", text: "Continue" },
+            'skipButton': { className: "mySkip", text: "Next" }
         },
 
         {
@@ -920,7 +920,7 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .three': 'Interview Date',
+            'next .three': 'Your Scheduled Interview Date and Time',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
@@ -930,7 +930,7 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .five': 'Job description link',
+            'next .five': 'Job Description link',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
@@ -946,12 +946,12 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .eight': 'In case any client have shortlisted your profile',
+            'next .eight': 'See here incase your profile got shorlisted by any Client',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .nine': 'In case any client have shown interest in your profile',
+            'next .nine': 'See here incase client have shown interest on your profile, you can accept or pass those interest',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
@@ -961,7 +961,7 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .eleven': 'To Join Meetings',
+            'next .eleven': 'Click here to Join meeting',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },

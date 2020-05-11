@@ -1332,95 +1332,98 @@
                                                 <div class="row mn-section" style="position:absolute">
                                                     <div class="col-8 player-main" id="player">
                                                         <div class="single-video-left btnvideo">
-                                                            @if (Model.VideoLink != null && Model.VideoLink != "")
-                                                            {
+                                                            <div>
+                                                                <div class="single-video ">
+                                                                    @if (Model.VideoLink != null && Model.VideoLink != "")
+                                                                    {
 
-                                                                @if (@Model.VideoLink.Contains(".mp4"))
-                                                                {
-                                                                    <video class="vid-player" controls style=" background:black!important; " autoplay>
-                                                                        <source src="@Model.VideoLink" type="video/mp4">
-                                                                    </video>
-                                                                }
+                                                                        @if (@Model.VideoLink.Contains(".mp4"))
+                                                                        {
+                                                                            <video class="vid-player" controls style=" background:black!important; width:99%;height:406px" autoplay>
+                                                                                <source src="@Model.VideoLink" type="video/mp4">
+                                                                            </video>
+                                                                        }
 
-                                                            }
-
+                                                                    }
+                                                                </div>
+                                                            </div>
 
                                                         </div>
-                                                    </div>
+                                                            </div>
 
-                                                    <div class="col-md-4  side-player" id="sd-player" style="margin-left:auto!important;margin-top:10px">
-                                                        @if (Model.SubVideo_List.Count > 0)
-                                                        {
-                                                            <div class="single-video-right videosidelist">
-                                                                <div>
-                                                                    <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <div id="style-2">
-                                                                                @foreach (var videolist in Model.SubVideo_List)
-                                                                                {
-                                                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
+                                                            <div class="col-md-4  side-player" id="sd-player" style="margin-left:auto!important;margin-top:10px">
+                                                                @if (Model.SubVideo_List.Count > 0)
+                                                                {
+                                                                    <div class="single-video-right videosidelist">
+                                                                        <div>
+                                                                            <div class="row">
+                                                                                <div class="col-md-12">
+                                                                                    <div id="style-2">
+                                                                                        @foreach (var videolist in Model.SubVideo_List)
+                                                                                        {
+                                                                                            var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
 
-                                                                                    <div class="video-card video-card-list">
-                                                                                        <div class="video-card-image">
+                                                                                            <div class="video-card video-card-list">
+                                                                                                <div class="video-card-image">
 
-                                                                                            @if (videolist.VideoLink.Contains(".mp4"))
-                                                                                            {
-                                                                                                @if (videolist.ThumbnailImage != null)
-                                                                                                {
-                                                                                                    <img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />
+                                                                                                    @if (videolist.VideoLink.Contains(".mp4"))
+                                                                                                    {
+                                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                                        {
+                                                                                                            <img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />
 
-                                                                                                }
-                                                                                                <video controls style=" background:black!important;width:100%; height:100% ">
-                                                                                                    <source src="@videolist.VideoLink" type="video/mp4">
-                                                                                                </video>
-                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <img src="~/RiseTube/img/video-icon.png" />
-                                                                                                <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
-                                                                                            }
+                                                                                                        }
+                                                                                                        <video controls style=" background:black!important;width:100%; height:100% ">
+                                                                                                            <source src="@videolist.VideoLink" type="video/mp4">
+                                                                                                        </video>
+                                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <img src="~/RiseTube/img/video-icon.png" />
+                                                                                                        <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
+                                                                                                    }
 
 
-                                                                                            @*<div class="time">3:50</div>*@
-                                                                                        </div>
-                                                                                        <div class="video-card-body">
+                                                                                                    @*<div class="time">3:50</div>*@
+                                                                                                </div>
+                                                                                                <div class="video-card-body">
 
-                                                                                            <div class="video-title">
-                                                                                                <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
+                                                                                                    <div class="video-title">
+                                                                                                        <a onclick="location.href='@Url.Action("VideoPage", "Risetube", videolist)'" style=" cursor: pointer;">@videolist.candidateName </a>
 
-                                                                                                <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
-                                                                                            </div>
-                                                                                            <div class="video-page text-success">
-                                                                                                &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
+                                                                                                        <span style="color: #6c757d;font-weight: 500;">(@videolist.JDTiltle.Split("|")[0])</span>
+                                                                                                    </div>
+                                                                                                    <div class="video-page text-success">
+                                                                                                        &nbsp;<i class="fas fa-calendar-alt"></i> <span style="    color: #606060;
     font-weight: 500;
     font-size: 12px;">@videolist.interviewDate</span>
 
-                                       
-                                        </div>
 
-                                        </div>
-                                        </div>
+                                                        </div>
 
-                                    }
+                                                        </div>
+                                                        </div>
+
+                                                    }
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                }
+                                                                else if (ViewBag.ProfileName == "CuratedUser")
+                                                                {
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
+                                                                }
+
                                                             </div>
-                                                        }
-                                                        else if (ViewBag.ProfileName == "CuratedUser")
-                                                        {
 
-                                                        }
-                                                        else
-                                                        {
-                                                            <label id="lblErrorMsg" title="Record not fount...!" style="color:red;">Record not found...!</label>
-                                                        }
-
-                                                    </div>
-
-                                                </div>
+                                                        </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-8" style="margin-top: 400px;">
@@ -1441,7 +1444,7 @@
    
     align-items: center;
     justify-content: center; 
-    background-color: black;
+   
     height:400px;
     width: 750px;
     
@@ -1465,9 +1468,10 @@
                                                  
                                                     @if (Model.JDTiltle != null)
                                                     {
-                                                        <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                            @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                        </h1>
+                                                <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                    @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; ">  (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                    <input class="nav-link item5" type="button" id="1" value="THEATER-MODE-ON" style="color:black;float:right;border-radius:0px;font-size:11.5px;background: #f2f2f2;padding: 0px 6px; margin: 10px 3px 0px 0px;" onclick="toggle(this);">
+                                                </h1>
                                                     }
                                                     <div class="row counts-liks">
 
@@ -1505,7 +1509,7 @@
                                                                     {
                                                                         @if (Model.IsShortlisted > 0)
                                                                         {
-                                                                            <i class="fa fa-check" style="padding-top: 15px;"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2">
+                                                                            <i class="fa fa-check" style="padding-top: 15px;"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
 
                                                                         }
                                                                         else
@@ -3130,7 +3134,13 @@
 <script>
 
     window.onload = function () {
-
+        if (localStorage.getItem('isTheaterMode') == "true") {
+             getThMode();
+              document.getElementById("1").value = "THEATER-MODE-OFF";
+            }
+            else {
+                closeThMode();
+            }
         var totalScore = 0;
         var arr = [];
         var obj = { y: "", legendText: "", label: "" }
@@ -3214,9 +3224,97 @@
             }]
         });
         chart.render();
+   if (isTheaterMode === true) {
+            getThMode();
+            console.log("hai")
+        }
+         checkAnotherMode();
+        checktheatre();
+        getThMode();
+        closeThMode();
+        checkMode();
+
+        }
+     function checktheatre() {
+       
+        var mode = localStorage.getItem('isTheaterMode');
+        console.log(mode);
+        if (mode == true) {
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        } else {
+            document.getElementById("1").value = "THEATER-MODE-ON";
+        }
+    }
+
+    function getThMode() {
+        var ele = document.getElementById('player');
+       
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+        document.getElementById("1").value = "THEATER-MODE-ON";
+        localStorage.setItem('isTheaterMode', true);
+    }
+
+    function closeThMode() {
+        var ele = document.getElementById('player');
+       
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+        localStorage.setItem('isTheaterMode', false);
+    }
+
+    function checkMode() {
+        var val = window.localStorage.getItem('isTheaterMode');
+       
+        if (val == true) {
+            getThMode();
+        } else {
+
+            closeThMode();
+        }
+    }
+    if (localStorage.getItem('isTheaterMode') == true) {
+        console.log("hai123 ");
+
+        var ele = document.getElementById('player');
+        console.log(ele);
+        ele.classList.remove("col-8");
+        ele.classList.add("col-12");
+    }
+     if (localStorage.getItem('isTheaterMode') == false) {
+        console.log("hai123 ");
+
+          var ele = document.getElementById('player');
+        console.log(ele);
+        ele.classList.remove("col-12");
+        ele.classList.add("col-8");
+    }
+   
+    function toggle(button) {
 
 
-
+        if (document.getElementById("1").value == "THEATER-MODE-ON") {
+            this.getThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-ON";
+        }
+    }
+    function checkAnotherMode() {
+       @* alert(localStorage.getItem('isTheaterMode'));*@
+        console.log(localStorage.getItem('isTheaterMode'));
+        if (localStorage.getItem('isTheaterMode') == "true") {
+            
+            this.getThMode();
+           
+            
+        }
+        else {
+            this.closeThMode();
+            document.getElementById("1").value = "THEATER-MODE-OFF";
+        }
     }
 </script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
