@@ -1071,12 +1071,12 @@
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
     <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
     <script>
-
+          localStorage.setItem('risetube', true)
         var enjoyhint_instance = new EnjoyHint({});
 
         var enjoyhint_script_steps = [
             {
-                'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here',
+                'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
                 'nextButton': { className: "myNext", text: "Continue" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },           
@@ -1086,13 +1086,13 @@
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'next .btn4': 'Filter here based on available attributes and reset filter if applied earlier',
+                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'click .video-card': 'Click here to see the Candidate Video',
-            }
+               'click .supportmenu': 'Click on Support Menu to see its features'
+            }           
 
         ];
         setTimeout(function () {
@@ -1112,7 +1112,7 @@
 
         var enjoyhint_script_steps = [
             {
-                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here',
+                'next #risetubeid': 'Risetube! Selected Candidate Videos will be available over here  and click on continue to know its features',
                 'nextButton': { className: "myNext", text: "Continue" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
@@ -1122,7 +1122,7 @@
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-                'next .btn4': 'Filter here based on available attributes and reset filter if applied earlier',
+                'next .btn4': 'Filter here based on available attributes or reset filter if applied earlier',
                 'nextButton': { className: "myNext", text: "Next" },
                 'skipButton': { className: "mySkip", text: "Skip" }
             },

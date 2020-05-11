@@ -1331,7 +1331,7 @@
                                             <div class="container-fluid">
                                                 <div class="row mn-section" style="position:absolute">
                                                     <div class="col-8 player-main" id="player">
-                                                        <div class="single-video-left">
+                                                        <div class="single-video-left btnvideo">
                                                             @if (Model.VideoLink != null && Model.VideoLink != "")
                                                             {
 
@@ -1351,7 +1351,7 @@
                                                     <div class="col-md-4  side-player" id="sd-player" style="margin-left:auto!important;margin-top:10px">
                                                         @if (Model.SubVideo_List.Count > 0)
                                                         {
-                                                            <div class="single-video-right">
+                                                            <div class="single-video-right videosidelist">
                                                                 <div>
                                                                     <div class="row">
                                                                         <div class="col-md-12">
@@ -1396,7 +1396,7 @@
     font-weight: 500;
     font-size: 12px;">@videolist.interviewDate</span>
 
-                                        @*Education  <a title="" data-placement="top" data-toggle="tooltip" href="#" data-original-title="Verified"><i class="fas fa-check-circle text-success"></i></a>*@
+                                       
                                         </div>
 
                                         </div>
@@ -1526,12 +1526,12 @@
                                                                     {
                                                                         @if (Model.IsShortlisted > 0)
                                                                         {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2" />
+                                                                            <i class="fa fa-check" style="padding-top: 15px;"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlisted(@Model.ShortListCount)" Shortvalue="2">
 
                                                                         }
                                                                         else
                                                                         {
-                                                                            <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
+                                                                            <i class="fa fa-check"  style="padding-top: 15px;"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="Shortlist(@Model.ShortListCount)" Shortvalue="1" />
                                                                         }
                                                                     }
                                                                 }
@@ -1903,8 +1903,7 @@
                                                                                                 <th width="20%">SkillName</th>
                                                                                                 <th width="20%">Rating</th>
                                                                                                 <th width="10%">Time(Min)</th>
-                                                                                                @*
-                                                            <th width="10%">Action</th>*@
+                                                                                               
                                                                                             </tr>
                                                                                         </thead>
                                                                                         <tbody>
@@ -1966,13 +1965,7 @@
 
                                                                                                         </td>
 
-                                                                                                        @*
-                                                                    <td>
-
-                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
-
-                                                                    </td>*@
+                                                                   
                                                                                                     </tr>
 
 
@@ -2417,10 +2410,8 @@
 </script>
 
 <script>
-    < script >
+    <script>
     jQuery(document).ready(function ($) {
-
-
 
         var main = function () {
             $('.btn').click(function () {
@@ -3605,18 +3596,18 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-            console.log("Client")
+           
 
             var enjoyhint_instance = new EnjoyHint({});
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidates Video will be playing over here',
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3688,6 +3679,11 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .videosidelist': 'Same skill selected Candidate video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },                
+                {
                     'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
                 }
 
@@ -3708,21 +3704,16 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-
-
+             localStorage.setItem('risetube', true)
+             localStorage.setItem('subscribe', false)
             var enjoyhint_instance = new EnjoyHint({});
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidates Video will be playing over here',
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                },               
                 {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3757,7 +3748,7 @@
 
                 },
                 {
-                    'next .item4': 'Click here to see Questions Discussed during interview',
+                    'next .item4': 'Click here to see questions discussed during interview',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3779,10 +3770,15 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },                
+                },   
+                 {
+                    'next .videosidelist': 'Same skill selected Candidate video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },  
                 {
-                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                }
+                'click .skillchannelmenu': 'Click here to navigate back to Skill Channel menu and see its remaining features',
+                },
 
             ];
             setTimeout(function () {

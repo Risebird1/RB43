@@ -631,7 +631,7 @@
 <script src="~/Newassets/js/enjoyhint.min.js"></script>
 <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
 <script>
-
+    localStorage.setItem('openinterview', true)
     var enjoyhint_instance = new EnjoyHint({});
 
     var enjoyhint_script_steps = [
@@ -640,19 +640,18 @@
             'nextButton': { className: "myNext", text: "Continue" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
-
         {
-            'next .first': 'Select any input from the dropdown to get day wise interviews',
+            'next .first': 'Filter based on day to see available interviews',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .second': 'This table give you total info about intervirew',
+            'next .second': 'Scheduled Interview details open for assignment, Click on Assign button under Actions column to assign an interview for yourself',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'click .inmqci': 'Click on the Icon to see open My QC Interviews',
+            'click .myint': 'Click here to navigate to My Interviews menu to see its features',
 
         }
 

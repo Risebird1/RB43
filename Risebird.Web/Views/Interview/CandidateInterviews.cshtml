@@ -250,9 +250,36 @@
     }
 
 
-    #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
-        background-color: rgba(0,0,0,.05);
-    }
+   #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
+                  background-color: rgba(0,0,0,.05);
+              }
+              .client-nme {
+                  width: 25%;
+              }
+              .client-date {
+                  width: 15%;
+              }
+              .client-cmt {
+                  width: 47%;
+              }
+              .client-action {
+                  width: 25%;
+              }
+        @@media (min-width: 576px) {
+            .modal-dialog {
+                max-width: 600px;
+                margin: 1.75rem auto;
+            }
+        }
+        @@media screen and (max-width:480px) {
+            .client-cmt {
+                width: 25% !important;
+            }
+            .client-action {
+                width: 27% !important;
+            }
+        }
+              
 </style>
 
 
@@ -531,24 +558,21 @@
     <!-- Modal content -->
 
 
-    <div class="modal-dialog modal-lg" role="document" style="max-width:400px">
+    <div class="modal-dialog modal-lg" role="document" style="max-width:500px">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Accept Interest</h5>
                 <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestAccept()">&times;</span>
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row" style="padding-left:50px">
-                    Are you sure, you want to accept this interest?
+                <div class="row ">
+                    <p class="text-center col-md-12" style="padding:10px 0px 0pxm 0px"> Are you sure, you want to accept this interest? </p>
                     <input type="text" id="txtConfirmAccept" value="" hidden />
                 </div>
-
                 <div class="row">
-                    <div class="col-md-6">
-                        <input type="button" onclick="interestConfirm()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
-                    </div>
-                    <div class="col-md-6">
-                        <input type="button" onclick="closeIntrestAccept()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                    <div class="col-md-12 text-center">
+                        <input type="button" onclick="interestConfirm()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="OK">
+                        <input type="button" onclick="closeIntrestAccept()" id="hangUpButton" class="btn btn-fill btn-danger" value="Close">
                     </div>
                 </div>
             </div>
@@ -748,7 +772,7 @@
                 modal.style.display = "block";
                 var html = '';
                 html += '<table style="Width:100%"><div  class="table-responsive-sm">';
-                html += '<tr><td >Client Name</td><td>Intersted Date</td><td>Comments</td><td class="text-center">Action</td></tr>';
+                html += '<tr><td class="client-nme" >Client Name</td><td class="client-date">Intersted Date</td><td class="client-cmt">Comments</td><td class="text-center client-action">Action</td></tr>';
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].status == "Interest Accepted") {
                         html += '<tr id="tablerow_' + data[i].id + '" style="background-color:#adf9ad96">';
@@ -759,9 +783,9 @@
                     else {
                         html += '<tr id="tablerow_' + data[i].id + '">';
                     }
-                    html += '<td style="border-right: 1px #ccc solid;">' + data[i].clientName + '</td>';
-                    html += '<td style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
-                    html += '<td style="border-right: 1px #ccc solid;" width="30%">' + data[i].approvalComments + '</td><td width="25%" class="text-center">';
+                   html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName + '</td>';
+                    html += '<td class="client-date" style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
+                    html += '<td class="client-cmt" style="border-right: 1px #ccc solid;">' + data[i].approvalComments + '</td><td class="text-center client-action">';
                     if (data[i].status == "Interest Accepted") {
                         html += '           <button type="button"  disabled class="mdc-fab app-fab--absolute" id="btnAcceptIntrest_' + data[i].id + '" title="Accept">';
                         html += '            <span onclick="AcceptIntrest(' + data[i].id + ')" title="Accept" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></span>';
@@ -881,18 +905,18 @@
 
     var enjoyhint_script_steps = [
         {
-            'next .card-title': 'Here you will get all Scheduled interviews and click on continue to know its features',
+            'next .card-title': 'Your Scheduled interviews and click on continue to know its features',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Continue" }
         },
 
         {
-            'next .first': 'This is IRF ID',
+            'next .first': 'Skill Channel ID',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .second': 'This is Client Name',
+            'next .second': 'Client Name',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
@@ -902,12 +926,12 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .four': 'Primary skill channel',
+            'next .four': 'Primary skill',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .five': 'Job description to see click on the link provided',
+            'next .five': 'Job description link',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
@@ -918,37 +942,37 @@
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .seven': 'Resume to see click on the link provided',
+            'next .seven': 'Resume Link',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .eight': 'Shortlisted list',
+            'next .eight': 'In case any client have shortlisted your profile',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .nine': 'Show Interst list',
+            'next .nine': 'In case any client have shown interest in your profile',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .ten': 'Resheduled meeting list',
+            'next .ten': 'For rescheduling this meeting',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .eleven': 'Meetings',
+            'next .eleven': 'To Join Meetings',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'next .twelve': 'Cancel the interview request',
+            'next .twelve': 'For cancellation this interview',
             'nextButton': { className: "myNext", text: "Next" },
             'skipButton': { className: "mySkip", text: "Skip" }
         },
         {
-            'click .supportmenu': 'Click on the Icon to see to get support',
+            'click .supportmenu': 'Click on Support Menu to see its features',
 
         },
 
