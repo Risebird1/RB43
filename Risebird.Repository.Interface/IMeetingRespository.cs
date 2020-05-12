@@ -39,6 +39,7 @@ namespace Risebird.Repository.Interface
         ProctoringReport GetProctoringReport(int id);
         IEnumerable<LevelTech> GetLevelTech();
         IEnumerable<string> GetIRFName(int id);
+        IRFDetails GetIRFDetails(int id);
         bool GetIRFbyId(int irfId);
         IEnumerable<IRF> GetIRFList();
         IEnumerable<TransClientUser> GetClientsByRoles(string IRF);
@@ -79,7 +80,6 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<Meeting>> ShortListedClient(string emailid, string IRFID);
         Task<IEnumerable<Meeting>> InterestListClient(string emailid, string IRFID);
         string Fetchusername(string Emailid);
-
 
 
 

@@ -1116,6 +1116,27 @@ namespace Risebird.Repository
             }
             return null;
         }
+        public IRFDetails GetIRFDetails(int id)
+        {
+            try
+            {
+                var query = "Select IRFId, JDTiltle from IRF where IsDeleted = @IsDeleted and id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IsDeleted", 0);
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<IRFDetails>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public IEnumerable<TechSkillReport> GetTechSkillReport(int id)
         {
