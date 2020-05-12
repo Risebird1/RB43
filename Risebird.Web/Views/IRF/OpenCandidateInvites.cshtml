@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Open Candidate Invites";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -450,7 +454,7 @@
                         <span class="navbar-toggler-bar bar2"></span>
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
-                </div>              
+                </div>
             </div>
         </div>
     </nav>
@@ -559,65 +563,60 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>\
 
-@*@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
-    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
-    pfName = pfName.Replace("\"", "");
-    @if (pfName == "Client")
-    {*@
-        <script src="~/Newassets/js/enjoyhint.min.js"></script>
-        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-        <script>
-            
-            var enjoyhint_instance = new EnjoyHint({});
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
 
-            var enjoyhint_script_steps = [
-                {
-                    'next .card-title': 'Open interview invites and click on continue to know its features',
-                    'nextButton': { className: "myNext", text: "Continue" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-             
-                {
-                    'next .first': 'Skill Channel ID',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .second': 'Client Name',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .three': 'Primary Skill',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .four': 'Job End Date',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .five': 'Job Description link',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .itemques': 'Click here to schedule your interview based on your availability',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'click .icimenu': 'Click on Scheduled Interview menu to see its features',
-                    
-                },
-                
-            ];
+        var enjoyhint_instance = new EnjoyHint({});
 
-            enjoyhint_instance.set(enjoyhint_script_steps);
-            enjoyhint_instance.run();
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Open interview invites and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
 
-        </script>
-    @*}
-}*@
+            {
+                'next .first': 'Skill Channel ID',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Client Name',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Primary Skill',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .four': 'Job End Date',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .five': 'Job Description link',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .itemques': 'Click here to schedule your interview based on your availability',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .icimenu': 'Click on Scheduled Interview menu to see its features',
+
+            },
+
+        ];
+
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+
+    </script>
+}

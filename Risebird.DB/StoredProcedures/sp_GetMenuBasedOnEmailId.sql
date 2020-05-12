@@ -15,6 +15,9 @@ AS
 BEGIN  
 DECLARE @lastLogin AS varchar(200);
 select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId
+update [dbo].[UserList]
+set LastLogin= getdate()
+where EmailId LIKE @EmailId
 select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,
 pf.dAccess,@lastLogin as NavigationShow from [dbo].[Function] fn  
 join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction  
