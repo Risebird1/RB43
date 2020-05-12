@@ -1,4 +1,7 @@
 ﻿@model IEnumerable<Risebird.Entities.Data.Meeting>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Scheduled Interviews";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -250,36 +253,42 @@
     }
 
 
-   #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
-                  background-color: rgba(0,0,0,.05);
-              }
-              .client-nme {
-                  width: 25%;
-              }
-              .client-date {
-                  width: 15%;
-              }
-              .client-cmt {
-                  width: 47%;
-              }
-              .client-action {
-                  width: 25%;
-              }
-        @@media (min-width: 576px) {
-            .modal-dialog {
-                max-width: 600px;
-                margin: 1.75rem auto;
-            }
+    #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
+        background-color: rgba(0,0,0,.05);
+    }
+
+    .client-nme {
+        width: 25%;
+    }
+
+    .client-date {
+        width: 15%;
+    }
+
+    .client-cmt {
+        width: 47%;
+    }
+
+    .client-action {
+        width: 25%;
+    }
+
+    @@media (min-width: 576px) {
+        .modal-dialog {
+            max-width: 600px;
+            margin: 1.75rem auto;
         }
-        @@media screen and (max-width:480px) {
-            .client-cmt {
-                width: 25% !important;
-            }
-            .client-action {
-                width: 27% !important;
-            }
+    }
+
+    @@media screen and (max-width:480px) {
+        .client-cmt {
+            width: 25% !important;
         }
-              
+
+        .client-action {
+            width: 27% !important;
+        }
+    }
 </style>
 
 
@@ -301,7 +310,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
+
             </div>
         </div>
     </nav>
@@ -388,7 +397,7 @@
 
                                                 <button class="mdc-fab app-fab--absolute eight" aria-label="ShortList">
                                                     <span onclick="ShortList('@item.IRFID')" title="Shortlisted" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
-                                                </button> 
+                                                </button>
 
 
 
@@ -781,7 +790,7 @@
                     else {
                         html += '<tr id="tablerow_' + data[i].id + '">';
                     }
-                   html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName.toUpperCase() + '</td>';
+                    html += '<td class="client-nme" style="border-right: 1px #ccc solid;">' + data[i].clientName.toUpperCase() + '</td>';
                     html += '<td class="client-date" style="border-right: 1px #ccc solid;">' + data[i].dateRequired + '</td>';
                     html += '<td class="client-cmt" style="border-right: 1px #ccc solid;">' + data[i].approvalComments + '</td><td class="text-center client-action">';
                     if (data[i].status == "Interest Accepted") {
@@ -895,87 +904,90 @@
         });
     }
 </script>
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-       var enjoyhint_instance = new EnjoyHint({});
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-    var enjoyhint_script_steps = [
-        {
-            'next .card-title': 'Your Scheduled interviews and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Your Scheduled interviews and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
 
-        {
-            'next .first': 'Skill Channel ID',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'Client Name',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .three': 'Your Scheduled Interview Date and Time',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .four': 'Primary skill',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .five': 'Job Description link',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-    
-        {
-            'next .six': 'Job End Date',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .seven': 'Resume Link',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .eight': 'See here incase your profile got shorlisted by any Client',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .nine': 'See here incase client have shown interest on your profile, you can accept or pass those interest',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .ten': 'For rescheduling this meeting',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .eleven': 'Click here to Join meeting',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .twelve': 'For cancellation this interview',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'click .supportmenu': 'Click on Support menu to see its features',
+            {
+                'next .first': 'Skill Channel ID',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Client Name',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Your Scheduled Interview Date and Time',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .four': 'Primary skill',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .five': 'Job Description link',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
 
-        },
+            {
+                'next .six': 'Job End Date',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .seven': 'Resume Link',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .eight': 'See here incase your profile got shorlisted by any Client',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .nine': 'See here incase client have shown interest on your profile, you can accept or pass those interest',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .ten': 'For rescheduling this meeting',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .eleven': 'Click here to Join meeting',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .twelve': 'For cancellation this interview',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .supportmenu': 'Click on Support menu to see its features',
 
-    ];
+            },
 
-    enjoyhint_instance.set(enjoyhint_script_steps);
-    enjoyhint_instance.run();
+        ];
 
-</script>
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+
+    </script>
+}
