@@ -1480,6 +1480,7 @@ namespace Risebird.Repository
             parameters.Add("@TotalBudget", entity.TotalBudget);
             parameters.Add("@IsBiometricEnabled", entity.IsBiometricEnabled);
             parameters.Add("@PriorityLevel", entity.PriorityLevel);
+            parameters.Add("@CompanyDetails", entity.CompanyDetails);
             parameters.Add("@idIrf", SqlDbType.Int, direction: ParameterDirection.Output);
 
             return parameters;
@@ -1807,11 +1808,11 @@ namespace Risebird.Repository
 
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@IRFId", obj.IRFId);
-                parameters.Add("@Name", obj.Name);
-                parameters.Add("@EmailId", obj.EmailId);
-                parameters.Add("@ResumeLink", obj.ResumeLink);
-                parameters.Add("@Type", obj.Type);
-                parameters.Add("@Location", obj.Location);
+                parameters.Add("@Name", obj.Name?.Trim());
+                parameters.Add("@EmailId", obj.EmailId?.Trim());
+                parameters.Add("@ResumeLink", obj.ResumeLink );
+                parameters.Add("@Type", obj.Type );
+                parameters.Add("@Location", obj.Location );
                 parameters.Add("@Skill", obj.Skill);
                 parameters.Add("@WorkAuth", obj.WorkAuth);
                 parameters.Add("@CurrentLocation", obj.CurrentLocation);

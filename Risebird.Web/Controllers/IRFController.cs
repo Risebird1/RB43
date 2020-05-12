@@ -692,6 +692,14 @@ namespace Risebird.Web.Controllers
                             uploadedFileURL = blob.Uri.ToString();
                             irfDetails.JDLink = uploadedFileURL;
                         }
+                        if (irfDetails.CompanyDetailFile != null)
+                        {
+                            await _azureStorageHelper.InsertBlob(irfDetails.CompanyDetailFile.FileName, "resumes", irfDetails.CompanyDetailFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(irfDetails.CompanyDetailFile.FileName);
+                            uploadedFileURL = blob.Uri.ToString();
+                            irfDetails.CompanyDetails = uploadedFileURL;
+                        }
 
                         if (_irfService.AddIRFDetails(irfDetails).Result)
                         {
@@ -1404,6 +1412,7 @@ namespace Risebird.Web.Controllers
                                         select new { ID = (int)s, Name = s.GetDescription() };
                     model.PriorityLevelList = new SelectList(priorityTypes, "ID", "Name");
                     TempData["JDLink"] = model.JDLink;
+                    TempData["ComapanyDetails"] = model.CompanyDetails;
                     TempData["EditIRFId"] = model.IRFId;
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
@@ -1456,6 +1465,26 @@ namespace Risebird.Web.Controllers
                         else if (model.JDLink == null || model.JDLink == "")
                         {
                             model.JDLink = TempData["JDLink"] != null ? TempData["JDLink"].ToString() : null;
+                        }
+                        if ((model.CompanyDetailFile != null))
+                        {
+
+                            await _azureStorageHelper.InsertBlob(model.CompanyDetailFile.FileName, "resumes", model.CompanyDetailFile);
+                            var containerRef = _azureStorageHelper.GetCloudBlobContainer("resumes");
+                            var blob = containerRef.GetBlockBlobReference(model.CompanyDetailFile.FileName);
+                            string uploadedFileURL = blob.Uri.ToString();
+                            if (uploadedFileURL == null)
+                            {
+                                TempData["SuccessErrorMessage"] = "IRF edits were not saved.";
+                                return RedirectToAction("Index");
+
+                            }
+
+                            model.CompanyDetails = uploadedFileURL;
+                        }
+                        else if (model.CompanyDetails == null || model.CompanyDetails == "")
+                        {
+                            model.CompanyDetails = TempData["ComapanyDetails"] != null ? TempData["ComapanyDetails"].ToString() : null;
                         }
                         if (TempData["EditIRFId"] != null && (TempData["EditIRFId"].ToString() != model.IRFId))
                         {
