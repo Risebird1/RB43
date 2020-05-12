@@ -3,7 +3,125 @@
     ViewData["Title"] = "SkillUpdate";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .canvasjs-chart-credit {
+        display: none;
+    }
 
+
+    .multiple_row > h2 {
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
+    }
+
+
+    .trash-btn {
+        background: #d20505 !important;
+    }
+
+    .mc-button-area {
+        text-align: right
+    }
+</style>
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -32,49 +150,59 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Update Skill</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+               
+
+                    <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("EditSkill", "Skill", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
 
                             @Html.AntiForgeryToken()
 
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-horizontal">
-                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                                        <div class="col-md-6 col-sm-6 pr-1">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                        <div class="row">
 
-                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
-                                            </div>
+                            <div class="card-header">
+                                <h4 class="card-title">Update Skill</h4>
+                            </div>
+                            <div style="width: 100%;">&nbsp;</div>
+                            <div class="form-horizontal" style="width:100%;">
+                                <div class="col-md-6 col-sm-6 pr-1 pull-left">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
-                                            </div>
-                                        </div>
-                                        <div class="card-footer ">
-                                            <div class="row">
-                                                <label class="col-md-2"></label>
-                                                <div class="col-md-9">
-                                                    @Html.ActionLink("Back to List", "List", "Skill", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                 
                                     </div>
+
+                                </div>
+                                <div class="col-md-6 col-sm-6 pl-1 pull-left">
+
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+
                                     </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                            <div class="card-footer ">
+                                <div class="row">
+                           
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "List", "Skill", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
+                                    </div>
+                                </div>
                             </div>
 
                         }
