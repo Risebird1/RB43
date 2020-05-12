@@ -500,11 +500,9 @@
     });
     $.ajax({
         url: '/IRF/FunnelChart',
-        //contentType: "application/json",
-        //dataType: "json",
+       
         success: function (chData) {
-            //myFunnelChart
-            console.log(chData);
+            
             var chart = new CanvasJS.Chart("myFunnelChart", {
                 animationEnabled: true,
                 title: {

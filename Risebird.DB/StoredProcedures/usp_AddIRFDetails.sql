@@ -21,7 +21,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @JobCountry varchar(50),
 @StartDate datetime,
 @EndDate datetime,
-@JDLink varchar(200),
+@JDLink varchar(1000),
 @NoOfPosition int,
 @NoOfIntterview int,
 @RisebirdHr int,
@@ -32,6 +32,7 @@ Create PROCEDURE [dbo].[usp_AddIRFDetails]
 @CreatedOn date,
 @IsBiometricEnabled bit,
 @PriorityLevel int,
+@CompanyDetails varchar(1000),
 @idIrf int output
 
 AS
@@ -57,6 +58,7 @@ INSERT INTO [dbo].[IRF]
 		   ,[IsBiometricEnabled]
 		   ,[TotalBudget]
 		   ,[PriorityLevel]
+            ,[CompanyDetails]
 		   )
        VALUES
            (@IRFId,
@@ -77,7 +79,8 @@ INSERT INTO [dbo].[IRF]
 @CreatedOn,
 @IsBiometricEnabled,
 @TotalBudget,
-@PriorityLevel)
+@PriorityLevel,
+@CompanyDetails)
 
 End
 

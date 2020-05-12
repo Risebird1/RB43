@@ -519,15 +519,13 @@
     }
 
     function checkDate() {
-        debugger;
-        //var interviewDate = document.getElementById("interviewDate").value;
+       
         var interviewDate = new Date(document.getElementById("interviewDate").value);
-        //console.log(date.getTime())
+      
         var todayDate = new Date();
-        //console.log(todayDate.getTime())
 
         if (todayDate.getTime() > interviewDate.getTime()) {
-            //error_interviewDate
+           
             document.getElementById("error_interviewDate").innerHTML = "Interview Date time should be greater than current Date time.";
             return false;
         }
