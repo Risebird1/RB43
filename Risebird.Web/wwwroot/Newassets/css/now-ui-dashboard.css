@@ -2024,7 +2024,7 @@ h6 {
 }
 
 a {
-    color:#007bff;
+    color: #007bff;
 }
 
     a:hover,
@@ -7089,14 +7089,32 @@ Created using IcoMoon - icomoon.io
     left: auto;
 }
 
+.videoTop {
+    margin-top: 400px;
+    position: relative;
+}
+
+input.theatre-btn:focus {
+    outline: none;
+}
+
+.theatre-btn {
+    color: black;
+    /* float: right; */
+    border-radius: 0px;
+    font-size: 11.5px;
+    background: none;
+    padding: 0px 6px;
+    margin:-2px 3px 0px 0px;
+    width: 16px;
+    height: 13px;
+    top: -16%;
+    left: 23%;
+    position: absolute;
+}
 
 @media (max-width: 1024px) {
-
-
-    .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
-    .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal,
-    .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span,
-    .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p {
+    .sidebar-mini .sidebar .sidebar-wrapper > .nav [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info [data-toggle="collapse"] ~ div > ul > li > a .sidebar-normal, .sidebar-mini .sidebar .sidebar-wrapper .user .info > a > span, .sidebar-mini .sidebar .sidebar-wrapper > .nav li > a p {
         opacity: 1 !important;
     }
 
@@ -8681,6 +8699,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
 
 /* Handle stripes;
  */
+
 
 .noUi-handle:before,
 .noUi-handle:after {
@@ -11221,7 +11240,7 @@ table.dataTable thead > tr > th.sorting,
 table.dataTable thead > tr > td.sorting_asc,
 table.dataTable thead > tr > td.sorting_desc,
 table.dataTable thead > tr > td.sorting {
-    padding-right: 30px;
+    padding-right: 20px;
 }
 
 table.dataTable thead > tr > th:active,
@@ -11313,14 +11332,22 @@ div.dataTables_scrollFoot table {
         text-align: center !important;
     }
 
-    .mdc-fab {
-        width: 25px !important;
-        height: 25px !important;
-        background-color: #53a5f5 !important;
+    .player-main {
+        width: 100% !important;
+        text-align: center !important;
+        margin: 0px auto !important;
     }
 
-    .action-area {
-        width: 27% !important;
+    #wrapper #content-wrapper .container-wrap {
+        padding: 0px 0px 30px 0px !important;
+    }
+
+    .mn-section {
+        width: calc(100% - 40px) !important;
+    }
+
+    .videoTop {
+        margin-top: 1000px !important;
     }
 
     #scoreChart .canvasjs-chart-canvas {
@@ -11416,13 +11443,8 @@ div.dataTables_scrollFoot table {
 
 
     .table-responsive-sm input.form-control {
-        width: auto!important;
+        width: auto;
     }
-    .table-responsive-sm select.form-control {
-        width: auto !important;
-    }
-
-
 
     .control-width .form-control {
         width: 80px !important;
@@ -11491,26 +11513,6 @@ div.dataTables_scrollFoot table {
         max-width: 100% !important;
         padding: 0px 0px 0px 0px !important;
         width: 100% !important;
-    }
-
-    .mdc-radio {
-        margin: 0px 15px 0px 1px !important;
-        padding: 3px !important;
-        display: inline-block;
-        position: relative;
-        flex: 0 0 auto;
-        box-sizing: content-box;
-        width: 7px !important;
-        height: 7px !important;
-        cursor: pointer;
-        will-change: opacity,transform,border-color,color;
-    }
-
-    .mdc-button--outlined {
-        border-style: solid;
-        padding: 0 8px 0 8px !important;
-        border-width: 1px;
-        font-size: 13px !important;
     }
 
     #scoreChart .canvasjs-chart-canvas {
@@ -11855,27 +11857,9 @@ div.dtr-modal {
     padding: 0;
 }
 
-.statistics .list-group-item-text span {
-    float: left;
-}
-
-.statistics{padding:0px 15px;}
-
 @media screen and (max-width: 767px) {
-    div .dtr-modal div.dtr-modal-display {
+    div.dtr-modal div.dtr-modal-display {
         width: 95%;
-    }
-    .mdc-radio {
-        padding: 0px !important;
-        display: inline-block;
-        position: relative;
-        flex: 0 0 auto;
-        box-sizing: content-box;
-        width: 7px !important;
-        height: 7px !important;
-        margin: 0px 15px 0px 0px !important;
-        cursor: pointer;
-        will-change: opacity,transform,border-color,color;
     }
 
     table.dataTable > tbody > tr > td:first-child {
