@@ -303,12 +303,12 @@ namespace Risebird.Business
                 return result;
             }
         }
-        public bool UpdateInterviewerIsApproved(InterviewerSkillsVM Model)
+        public bool AddInterviewer(InterviewerSkillsVM Model)
         {
             try
             {
-                Model.InterviewerDetailsCollection = Model.InterviewerDetailsCollection.Where(x => x.IsApproved == true).ToList();
-                return _interviewerSkillsRepository.UpdateInterviewerIsApproved(Model);
+                Model.InterviewerListsCollection = Model.InterviewerListsCollection.Where(x => x.IsAdded == true).ToList();
+                return _interviewerSkillsRepository.AddInterviewer(Model);
             }
 
             catch (Exception e)
@@ -317,11 +317,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool UpdateInterviewerIsApproved(int id, bool IsChecked)
+        public bool AddInterviewer(int id, bool IsChecked)
         {
             try
             {
-                return _interviewerSkillsRepository.UpdateInterviewerIsApproved(id, IsChecked);
+                return _interviewerSkillsRepository.AddInterviewer(id, IsChecked);
             }
 
             catch (Exception e)
@@ -330,11 +330,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<InterviewerSkillsVM> GetLeadInterviewerForApprove()
+        public IEnumerable<InterviewerSkillsVM> GetLeadInterviewer()
         {
             try
             {
-                var InterviewerSkillsList = _interviewerSkillsRepository.GetLeadInterviewerForApprove().Result.ToList();
+                var InterviewerSkillsList = _interviewerSkillsRepository.GetLeadInterviewer().Result.ToList();
                 return InterviewerSkillsList;
             }
 

@@ -195,30 +195,35 @@
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID">
-                                    @using (Html.BeginForm("IsApprovedLeadInterviewer", "InterviewerSkills", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    @using (Html.BeginForm("AddInterviewer", "InterviewerSkills", FormMethod.Post, new { enctype = "multipart/form-data" }))
                                     {
 
                                         <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="1200px">
                                             <thead>
                                                 <tr>
+                                                    <th>Name</th>
                                                     <th>EmailId</th>
                                                     <th>Add</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
+                                                    <th>Name</th>
                                                     <th>EmailId</th>
                                                     <th>Add</th>
                                                 </tr>
                                             </tfoot>
                                             <tbody>
-                                                @for (int i = 0; i < Model.InterviewerDetailsCollection.Count(); i++)
+                                                @for (int i = 0; i < Model.InterviewerListsCollection.Count(); i++)
                                                 {
-                                                    <tr id=@Model.InterviewerDetailsCollection[i].id>
+                                                <tr>
+                                                    @Html.HiddenFor(m => m.InterviewerListsCollection[i].UserId)
+                                                    @Html.HiddenFor(m => m.InterviewerListsCollection[i].InterviewerSkillId)
 
-                                                        <td> @Model.InterviewerDetailsCollection[i].EmailId</td>
-                                                        <td> @Html.CheckBoxFor(m => m.InterviewerDetailsCollection[i].IsApproved @*,new { @class = "form-control" }*@)</td>
-                                                    </tr>
+                                                    <td> @Model.InterviewerListsCollection[i].FirstName</td>
+                                                    <td> @Model.InterviewerListsCollection[i].EmailId</td>
+                                                    <td> @Html.CheckBoxFor(m => m.InterviewerListsCollection[i].IsAdded@*,new { @class = "form-control" }*@)</td>
+                                                </tr>
                                                 }
                                             </tbody>
                                         </table>
@@ -283,11 +288,11 @@
 {
     <script type="text/javascript">
 
-        function IsApprovedChecked(selector) {
+        function IsAddedChecked(selector) {
             alert("Hi");
             var SelectedId = selector.attr('id');
 
-            $.get('/InterviewerSkills/IsApprovedLeadInterviewer', { id: SelectedId, checked: selector.checked }, function () {
+            $.get('/InterviewerSkills/AddInterviewer', { id: SelectedId, checked: selector.checked }, function () {
                 alert('successfull')
             })
 

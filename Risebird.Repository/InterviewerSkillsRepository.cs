@@ -790,14 +790,14 @@ namespace Risebird.Repository
                 return result;
             }
         }
-        public bool UpdateInterviewerIsApproved(int id,bool IsChecked)
+        public bool AddInterviewer(int id,bool IsChecked)
         {
             try
             {
                 var query = "insert into [dbo].[TransInterviewerListForSkills] (UserId,InterviewerSkillId,IsApproved) Values(" + 1 + "," + id + "," + IsChecked + ") ";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.QueryAsync<InterviewerSkillsVM>(query, null).Result;
+                    var results = con.ExecuteAsync(query, null).Result;
                 }
                 return true;
 
@@ -808,20 +808,24 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public bool UpdateInterviewerIsApproved(InterviewerSkillsVM Model)
+        public bool AddInterviewer(InterviewerSkillsVM Model)
         {
             try
             {
-                foreach (var item in Model.InterviewerCollection)
+                foreach (var item in Model.InterviewerListsCollection)
                 {
-                    var query = "insert into [dbo].[TransInterviewerListForSkills] (UserId,InterviewerSkillId) Values(" + item.UserId + "," + item.InterviewerSkillID + ") ";
+                    var query = "insert into [dbo].[TransInterviewerListInterviewerSkills] (UserId,InterviewerSkillId,IsAdded) Values(@UserId,@InterviewerSkillId,@IsAdded) ";
                     using (SqlConnection con = new SqlConnection(connectionString))
                     {
-                        var results = con.QueryAsync<InterviewerSkillsVM>(query, null).Result;
+                        var results = con.ExecuteAsync(query, new
+                        {
+                            UserId = item.UserId,
+                            InterviewerSkillId = item.InterviewerSkillId,
+                            IsAdded = item.IsAdded
+                        }).Result;
                     }
                 }
                 return true;
-
             }
             catch (SqlException ex)
             {
@@ -901,7 +905,7 @@ namespace Risebird.Repository
             return false;
 
         }
-        public async Task<IEnumerable<InterviewerSkillsVM>> GetLeadInterviewerForApprove()
+        public async Task<IEnumerable<InterviewerSkillsVM>> GetLeadInterviewer()
         {
 
             try

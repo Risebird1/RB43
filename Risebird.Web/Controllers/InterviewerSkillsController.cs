@@ -510,19 +510,30 @@ namespace Risebird.Web.Controllers
                         foreach (var item in InterviewerList)
                         {
                             var obj = new InterviewerVM();
-                            obj.userId = item.UserId;
+                            obj.userId = item.id;
                             obj.EmailId = item.EmailId;
                             obj.PrimarySkill = item.PrimarySkill;
                             obj.FirstName = item.FirstName;
                             obj.ResumeLink = item.ResumeLink;
-                            obj.InterviewerSkillId = item.InterviewerSkillId;
-                            obj.IsApproved = false;
                             objList.Add(obj);
 
                             ViewBag.InterviewerId = item.UserId;
                         }
-                        model.InterviewerDetailsCollection = (IList<InterviewerVM>)(objList);
-                     
+                        model.InterviewersCollection = (IList<InterviewerVM>)(objList);
+
+                        var InterviewerSkillsList = _iInterviewerSkillsService.GetLeadInterviewer();
+                        var objLists = new List<InterviewerListsVM>();
+                        foreach (var item in InterviewerSkillsList)
+                        {
+                            var obj = new InterviewerListsVM();
+                            obj.UserId = item.id;
+                            obj.EmailId = item.EmailId;
+                            obj.FirstName = item.FirstName;
+                            obj.InterviewerSkillId = item.InterviewerSkillId;
+                            obj.IsAdded = false;
+                            objLists.Add(obj);
+                        }
+                        model.InterviewerListsCollection = (IList<InterviewerListsVM>)(objLists);
                         if (TempData["SuccessErrorMessageCandidate"] != null)
                         {
                             ViewBag.Message = TempData["SuccessErrorMessageCandidate"].ToString();
@@ -613,9 +624,51 @@ namespace Risebird.Web.Controllers
             }
 
         }
+
+        [HttpGet]
+        public IActionResult AddInterviewerList(string id, string SkillName)
+        {
+
+            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+            {
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                profileName = profileName.Replace("\"", "");
+                if (profileName == "Admin" || profileName == "HR")
+                {
+                    TempData["InterviewerSkillName"] = SkillName;
+                    TempData["id"] = id;
+                    ViewBag.InterviewerName = SkillName;
+                    ViewBag.Id = id;
+                    var model = new InterviewerSkillsVM();
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetLeadInterviewer();
+                    var objList = new List<InterviewerListsVM>();
+                    foreach (var item in InterviewerSkillsList)
+                    {
+                        var obj = new InterviewerListsVM();
+                        obj.UserId = item.id;
+                        obj.EmailId = item.EmailId;
+                        obj.FirstName = item.FirstName;
+                        obj.InterviewerSkillId = item.InterviewerSkillId;
+                        obj.IsAdded = false;
+                        objList.Add(obj);
+                    }
+                    model.InterviewerListsCollection = (IList<InterviewerListsVM>)(objList);
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            else
+            {
+                return RedirectToAction("SignOut", "Session");
+            }
+        }
+
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> IsApprovedLeadInterviewer(InterviewerSkillsVM Model)
+        public async Task<IActionResult> AddInterviewer(InterviewerSkillsVM Model)
         {
             try
             {
@@ -625,15 +678,15 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (_iInterviewerSkillsService.UpdateInterviewerIsApproved(Model))
+                        if (_iInterviewerSkillsService.AddInterviewer(Model))
                         {
-                            TempData["SuccessErrorMessage"] = "Selected Interviewer is Approved Successfully";
+                            TempData["SuccessErrorMessage"] = "Selected Interviewer Added Successfully";
                             return RedirectToAction("Interviewer", new RouteValueDictionary(
     new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has Failed";
+                            TempData["SuccessErrorMessage"] = "Selected Interviewer Added has Failed";
                             return RedirectToAction("Interviewer", new RouteValueDictionary(
   new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
                         }
@@ -651,91 +704,53 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has failed";
+                TempData["SuccessErrorMessage"] = "Selected Interviewer Added has failed";
                 return RedirectToAction("Interviewer");
             }
         }
-  //      public async Task<IActionResult> IsApprovedLeadInterviewerForSkill(int id, bool IsChecked)
-  //      {
-  //          try
-  //          {
-  //              if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-  //              {
-  //                  var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-  //                  profileName = profileName.Replace("\"", "");
-  //                  if (profileName == "Admin" || profileName == "HR")
-  //                  {
-  //                      if (_iInterviewerSkillsService.UpdateInterviewerIsApproved(id, IsChecked))
-  //                      {
-  //                          TempData["SuccessErrorMessage"] = "Selected Interviewer is Approved Successfully";
-  //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
-  //  new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
-  //                      }
-  //                      else
-  //                      {
-  //                          TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has Failed";
-  //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
-  //new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
-  //                      }
-  //                  }
-  //                  else
-  //                  {
-  //                      return RedirectToAction("SignOut", "Session");
-  //                  }
-  //              }
-  //              else
-  //              {
-  //                  return RedirectToAction("SignOut", "Session");
-  //              }
-  //          }
-  //          catch (Exception ex)
-  //          {
-  //              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-  //              TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has failed";
-  //              return RedirectToAction("Interviewer");
-  //          }
-  //      }
 
-        [HttpGet]
-        public IActionResult GetLeadInterviewerForApprove(string id, string SkillName)
-        {
+        //      public async Task<IActionResult> AddInterviewer(int id, bool IsChecked)
+        //      {
+        //          try
+        //          {
+        //              if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+        //              {
+        //                  var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+        //                  profileName = profileName.Replace("\"", "");
+        //                  if (profileName == "Admin" || profileName == "HR")
+        //                  {
+        //                      if (_iInterviewerSkillsService.AddInterviewer(id, IsChecked))
+        //                      {
+        //                          TempData["SuccessErrorMessage"] = "Selected Interviewer is Approved Successfully";
+        //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
+        //  new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
+        //                      }
+        //                      else
+        //                      {
+        //                          TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has Failed";
+        //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
+        //new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
+        //                      }
+        //                  }
+        //                  else
+        //                  {
+        //                      return RedirectToAction("SignOut", "Session");
+        //                  }
+        //              }
+        //              else
+        //              {
+        //                  return RedirectToAction("SignOut", "Session");
+        //              }
+        //          }
+        //          catch (Exception ex)
+        //          {
+        //              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+        //              TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has failed";
+        //              return RedirectToAction("Interviewer");
+        //          }
+        //      }
 
-            if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-            {
-                var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-                profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR")
-                {
-                    TempData["InterviewerSkillName"] = SkillName;
-                    TempData["id"] = id;
-                    ViewBag.InterviewerName = SkillName;
-                    ViewBag.Id = id;
-                    var model = new InterviewerSkillsVM();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetLeadInterviewerForApprove();
-                    var objList = new List<InterviewerVM>();
-                    foreach (var item in InterviewerSkillsList)
-                    {
-                        var obj = new InterviewerVM();
-                        obj.userId = item.UserId;
-                        obj.EmailId = item.EmailId;
-                        obj.FirstName = item.FirstName;
-                        obj.InterviewerSkillId = item.InterviewerSkillId;
-                        obj.IsApproved = false;
-                        objList.Add(obj);
-                    }
-                    model.InterviewerDetailsCollection = (IList<InterviewerVM>)(objList);
-                    return View(model);
-                }
-                else
-                {
-                    return RedirectToAction("SignOut", "Session");
-                }
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Session");
-            }
-        }
+   
         public IActionResult ShowCalendly(string InterviewerSkillName, string calendlyLink)
         {
             ViewBag.IRFName = InterviewerSkillName;

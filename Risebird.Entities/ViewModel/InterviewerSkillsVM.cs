@@ -46,7 +46,10 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public IList<TransInterviewerSkillsSelectability> Selectability { get; set; }
         public IList<TransInterviewerSkillsLeadInterviewer> InterviewerCollection { get; set; }
-        public IList<InterviewerVM> InterviewerDetailsCollection { get; set; }
+        public IList<InterviewerListsVM> InterviewerListsCollection { get; set; }
+
+        public IList<InterviewerVM> InterviewersCollection { get; set; }
+
 
         public SelectList SelectabilityTypeList { get; set; }
         public SelectList SkillGeneralTypeList { get; set; }
@@ -64,38 +67,10 @@ namespace Risebird.Entities.ViewModel
         [Required(ErrorMessage = "Please enter First Name")]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
-        [Required(ErrorMessage = "Please Enter Last Name")]
-        [Display(Name = "Last Name")]
-        public string LastName { get; set; }
-        [Display(Name = "Mobile Number")]
-        public string MobileNumber { get; set; }
-
-        public int userId { get; set; }
+     
         [Display(Name = "Resume Link")]
         [Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
-
-        [Required(ErrorMessage = "Please mention available slots")]
-        [Display(Name = "Available Slots")]
-        public string Slots { get; set; }
-
-        [Display(Name = "Number Of Interview")]
-        public int NoOfInterview { get; set; }
-        [Display(Name = "Success Rate")]
-        public double SuccessRate { get; set; }
-        [Display(Name = "Approved")]
-        public bool IsApproved { get; set; }
-
-        [Display(Name = "Upload Resume")]
-        public IFormFile File { get; set; }
-
-        //[Required(ErrorMessage = "Please mention skill")]
-        public int[] SelectedSkillIds { get; set; }
-        //public int SelectedSkillId { get; set; }
-
-        [Display(Name = "Skills")]
-        public SelectList PrimarySkills { get; set; }
-
     }
 
     public class InterviewerSkillsModel

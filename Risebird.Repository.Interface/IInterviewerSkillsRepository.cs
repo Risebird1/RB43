@@ -34,11 +34,11 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id);
         IEnumerable<TransInterviewerSkillsSelectability> GetTransSelectability(int id);
         Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM irfDetails);
-        Task<IEnumerable<InterviewerSkillsVM>> GetLeadInterviewerForApprove();
+        Task<IEnumerable<InterviewerSkillsVM>> GetLeadInterviewer();
         Task<bool> DeleteInterviewerSkills(int InterviewerSkillId);
         //Task<bool> UnArchiveInterviewerSkills(int InterviewerSkillId);
-        bool UpdateInterviewerIsApproved(InterviewerSkillsVM model);
-        bool UpdateInterviewerIsApproved(int id, bool IsChecked);
+        bool AddInterviewer(InterviewerSkillsVM model);
+        bool AddInterviewer(int id, bool IsChecked);
 
         IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id);
         int GetUserId(string emailId, string profile);
