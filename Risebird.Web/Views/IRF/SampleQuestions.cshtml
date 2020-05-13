@@ -138,6 +138,9 @@
     .trash-btn {
         background: #d20505 !important;
     }
+    #btnPlus {
+        top: -3px;
+    }
 </style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
@@ -261,9 +264,11 @@
 
                                                             <td class="text-center">
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddRowComments()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">

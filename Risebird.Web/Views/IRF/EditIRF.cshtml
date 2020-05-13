@@ -221,6 +221,10 @@
     .trash-btn {
         background: #d20505 !important;
     }
+    #btnPlus{
+    top:-3px;
+
+    }
 
 </style>
 
@@ -565,13 +569,18 @@
                                                         </td>
 
                                                         <td class="action text-center">
-                                                            <div >
+                                                            <div>
 
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
+                                                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z">
+                                                                    </path>
+                                                                    </svg>
+                                                                    </span>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -582,7 +591,7 @@
 
 
                                                                 <!--<span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-        <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillCollection','LevelId','SkillId','Weightage','', 'TechDelete')" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>-->
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -646,12 +655,12 @@
                                                         <td class="action text-center">
 
                                                             <div>
+                                                                <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
 
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddJoinabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -668,7 +677,7 @@
 
 
                                                                 <!-- <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-          <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>-->
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -728,11 +737,11 @@
                                                         <td class="action text-center">
                                                             <div>
 
+                                                                <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddSelectabilityRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -743,7 +752,7 @@
 
 
                                                                 <!--       <span id="btnPlus" onclick="AddSelectabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRowSkills(this, 'Selectability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-selectability"><i class="far fa  fa-trash"></i></span>-->
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -803,10 +812,10 @@
                                                         <td class="action text-center">
 
                                                             <div>
-
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddSkillGeneralRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -822,7 +831,7 @@
 
 
                                                                 <!--  <span id="btnPlus" onclick="AddSkillGeneralRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-          <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRowSkills(this, 'SkillGeneral','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-skillgeneral"><i class="far fa  fa-trash"></i></span>-->
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -869,10 +878,11 @@
                                                         </td>
 
                                                         <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                 <span id="btnPlus" onclick="AddRowClient()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -880,9 +890,9 @@
                                                             </button>
 
                                                             <!--  <div class="form-control">
-               <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-               <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
-           </div>-->
+        <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+        <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'Role')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
+    </div>-->
                                                         </td>
                                                     </tr>
 
@@ -927,11 +937,12 @@
                                                         <td class="action text-center">
 
                                                             <div>
+                                                                <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
 
-                                                                <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddRowInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                </button>
+                                                                </button>*@
 
 
                                                                 <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -940,8 +951,8 @@
 
 
 
- <!--<span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-    <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>   -->
+                                                                <!--<span id="btnPlus" onclick="AddRowInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+       <span id="btnMinus" onclick="DeleteRow(this, 'InterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>   -->
 
                                                             </div>
                                                         </td>
@@ -986,10 +997,11 @@
                                                         </td>
 
                                                         <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
+            <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
+        </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1002,8 +1014,8 @@
 
 
                                                             <!--
-                                                                <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>-->
+        <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+        <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>-->
 
                                                         </td>
                                                     </tr>
@@ -1023,9 +1035,10 @@
                                                             </td>
                                                             <td class="action text-center">
                                                                 <div>
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                    <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                         <span id="btnPlus" onclick="AddRowQualityController()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                    </button>
+                                                                    </button>*@
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1034,7 +1047,7 @@
 
 
                                                                     <!-- <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-         <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>-->
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1080,9 +1093,10 @@
                                                         </td>
 
                                                         <td class="action text-center">
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                 <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1090,7 +1104,7 @@
                                                             </button>
 
                                                             <!--      <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-               <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
 
                                                         </td>
                                                     </tr>
@@ -1114,10 +1128,11 @@
 
                                                                 <div>
 
+                                                                    <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                         <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                    </button>
+                                                                    </button>*@
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1129,7 +1144,7 @@
 
 
                                                                     <!--  <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-          <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'PrimarySkill')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1169,11 +1184,11 @@
                                                         </td>
 
                                                         <td class="action text-center">
+                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                 <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1187,7 +1202,7 @@
 
 
                                                             <!-- <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-         <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
 
                                                         </td>
                                                     </tr>
@@ -1205,11 +1220,13 @@
                                                             <td class="action text-center">
 
                                                                 <div>
+                                                                    <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
 
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add">
+
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                         <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                    </button>
+                                                                    </button>*@
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1222,8 +1239,8 @@
 
 
                                                                     <!--
-     <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-     <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+    <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1264,10 +1281,10 @@
 
                                                         <td class="action text-center">
 
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                 <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1278,7 +1295,7 @@
 
 
                                                             <!--    <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-            <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
 
                                                         </td>
                                                     </tr>
@@ -1296,11 +1313,11 @@
                                                             <td class="action text-center">
 
                                                                 <div>
+                                                                    <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                         <span id="btnPlus" onclick="AddRowHR()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                    </button>
+                                                                    </button>*@
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1310,7 +1327,7 @@
 
 
                                                                     <!--          <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                  <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -1358,10 +1375,10 @@
 
                                                         <td class="action text-center">
 
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+                                                            @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                 <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                            </button>
+                                                            </button>*@
 
 
                                                             <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1370,7 +1387,7 @@
 
 
                                                             <!--         <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                   <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm "><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm "><i class="far fa  fa-trash"></i></span>-->
 
                                                         </td>
                                                     </tr>
@@ -1393,11 +1410,11 @@
                                                             <td class="action text-center">
 
                                                                 <div>
+                                                                    <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
-
-                                                                    <button class="mdc-fab app-fab--absolute" aria-label="Add">
+                                                                    @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                         <span id="btnPlus" onclick="AddRowRecruiter()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg></span>
-                                                                    </button>
+                                                                    </button>*@
 
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
@@ -1408,7 +1425,7 @@
 
 
                                                                     <!-- <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-         <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
+    <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>-->
                                                                 </div>
                                                             </td>
                                                         </tr>
