@@ -521,7 +521,7 @@ namespace Risebird.Web.Controllers
                         }
                         model.InterviewersCollection = (IList<InterviewerVM>)(objList);
 
-                        var InterviewerSkillsList = _iInterviewerSkillsService.GetLeadInterviewer();
+                        var InterviewerSkillsList = _iInterviewerSkillsService.GetUnApprovedInterviewerList(Convert.ToInt32(id));
                         var objLists = new List<InterviewerListsVM>();
                         foreach (var item in InterviewerSkillsList)
                         {
@@ -626,7 +626,7 @@ namespace Risebird.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddInterviewerList(string id, string SkillName)
+        public IActionResult AddInterviewerList(int id, string SkillName)
         {
 
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
@@ -640,7 +640,7 @@ namespace Risebird.Web.Controllers
                     ViewBag.InterviewerName = SkillName;
                     ViewBag.Id = id;
                     var model = new InterviewerSkillsVM();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetLeadInterviewer();
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetUnApprovedInterviewerList(id);
                     var objList = new List<InterviewerListsVM>();
                     foreach (var item in InterviewerSkillsList)
                     {

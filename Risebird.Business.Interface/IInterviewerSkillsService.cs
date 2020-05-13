@@ -21,7 +21,7 @@ namespace Risebird.Business.Interface
         Task<InterviewerSkillsVM> GetEditInterviewerSkills(int id);
         bool UpdateInterviewerSkills(InterviewerSkillsVM model);
         bool AddInterviewer(int id, bool IsChecked);
-        IEnumerable<InterviewerSkillsVM> GetLeadInterviewer();
+        IEnumerable<InterviewerSkillsVM> GetUnApprovedInterviewerList(int id);
         Task<bool> DeleteInterviewerSkills(int id);
         //Task<bool> UnArchiveDeleteInterviewerSkills(int id);
         IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id);

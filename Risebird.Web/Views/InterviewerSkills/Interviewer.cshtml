@@ -187,7 +187,7 @@
                                 <div class="row">
 
                                     <div class="col-md-6 ml-md-auto">
-                                            
+                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Click here to add Interviewer for Primary Skill." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Select Interviewer</span></button>
                                         <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-edit" data-toggle="tooltip" data-placement="top" title="Click here to add Interviewer List for Skill " onclick="location.href='@Url.Action("AddInterviewerList", "InterviewerSkills", new {  id = ViewBag.InterviewerSkillId, SkillName=@ViewBag.InterviewerName})'" data-original-title="Tooltip on top"> Select Interviewer</span></button>
 
                                         @*<button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Click here to add Candidates from an excel file." onclick="ModalButtonClick()" data-original-title="Tooltip on top"> Add Candidates</span></button>*@

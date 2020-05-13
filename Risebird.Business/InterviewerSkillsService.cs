@@ -330,11 +330,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<InterviewerSkillsVM> GetLeadInterviewer()
+        public IEnumerable<InterviewerSkillsVM> GetUnApprovedInterviewerList(int id )
         {
             try
             {
-                var InterviewerSkillsList = _interviewerSkillsRepository.GetLeadInterviewer().Result.ToList();
+                var InterviewerSkillsList = _interviewerSkillsRepository.GetUnApprovedInterviewerList(id).Result.ToList();
                 return InterviewerSkillsList;
             }
 

@@ -905,21 +905,13 @@ namespace Risebird.Repository
             return false;
 
         }
-        public async Task<IEnumerable<InterviewerSkillsVM>> GetLeadInterviewer()
+        public async Task<IEnumerable<InterviewerSkillsVM>> GetUnApprovedInterviewerList(int id)
         {
 
             try
             {
-                //using (SqlConnection con = new SqlConnection(connectionString))
-                //{
-                //    var parameters = new DynamicParameters();
-                //    parameters.Add("@id", id);
-                //    parameters.Add("@InterviewerId", InterviewerId);
-                //    var query = "Select TISI.* ,Ul.EmailId from TransInterviewerSkillsInterviewer TISI inner join UserList Ul on TISI.UserId=Ul.id where TISI.InterviewerSkillId=@id and TISI.UserId=@InterviewerId and TISI.IsApproved=0";
-
-                //    return await SqlMapper.QueryAsync<InterviewerVM>(con, query, parameters);
-                //}
-
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@InterviewerSkillId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     return SqlMapper.Query<InterviewerSkillsVM>(con, "[dbo].[sp_UnApprovedInterviewerForInterviewerSkills]", null,
