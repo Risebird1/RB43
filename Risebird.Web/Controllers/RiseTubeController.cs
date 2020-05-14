@@ -695,6 +695,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
+                        NewModel.IreportModel.joiningTime = model.joiningTime;
+                        NewModel.IreportModel.expectedPerHourRate = model.expectedPerHourRate;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
@@ -1016,7 +1018,8 @@ namespace Risebird.Web.Controllers
                         NewModel.IsShortlisted = model.IsShortlisted;
                         NewModel.ThumbnailImage = model.ThumbnailImage;
                         NewModel.IsIntrested = model.IsIntrested;
-
+                        NewModel.IreportModel.joiningTime = model.joiningTime;
+                        NewModel.IreportModel.expectedPerHourRate = model.expectedPerHourRate;
                         if (NewModel.IreportModel.QuestionsCollection == null)
                         {
                             ViewBag.QuestionsDiscussedCount = 0;
