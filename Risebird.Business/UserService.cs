@@ -579,13 +579,19 @@ namespace Risebird.Business
             }
         }
 
-        //// Added to retrieve the Nick names
-        //public IEnumerable<string> GetNickNames(int UserId)
-        //{
-        //    try
-        //    {
-        //        return _userRepository.GetNickNames(UserId);
-        //    }
+        public void UpdateUserSigInDetails(string emailId)
+        {
+            try
+            {
+                 _userRepository.UpdateUserSigInDetails(emailId);
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+              
+            }
+        }
 
         //    catch (Exception e)
         //    {

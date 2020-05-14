@@ -6,74 +6,126 @@
 
 <style>
 
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
+
+    body {
+        font-family: Roboto, sans-serif;
     }
 
-    .no-sort::after {
-        display: none !important;
+    .fa-spinner {
+        font-size: 18px;
+        position: relative;
+        top: 6px;
+        left: 4px;
     }
 
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
     }
 
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
     }
 
-    table {
-        white-space: nowrap !important;
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
     }
 
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
     }
 
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
     }
 
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
+    .talk-bubble textarea {
+        resize: none;
+        border: 0;
+        background: #fff;
+        padding: 5px;
     }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important;
     }
 </style>
 
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
 <div class="main-panel" id="main-panel">
@@ -104,134 +156,144 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Edit Candidate for <strong>'@Model.IRFName'</strong></h4>
-                    </div>
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                    
 
-                    <div class="card-body">
+                     
 
-                        @using (Html.BeginForm("EditCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-                        {
-                            <div class="row">
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            @using (Html.BeginForm("EditCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                            {
+                        <div class="row">
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+                            <div class="card-header">
+                                <h4 class="card-title">Edit Candidate for <strong>'@Model.IRFName'</strong></h4>
+                            </div>
+                            <div style="width: 100%;">&nbsp;</div>
+                            <div class="col-lg-4  col-md-4 col-sm-4 pr-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
-
-                                    </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
-                                    </div>
-
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
-
-
-                                    </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ResumeLink, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.ResumeLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.ResumeLink, "", new { @class = "text-danger" })
 
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Type, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
 
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
-
-
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
-                                        @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
-
-
-                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Location, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Location, "", new { @class = "text-danger" })
 
                                 </div>
                             </div>
+                            <div class="col-lg-4  col-md-4 col-sm-4 px-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CurrentLocation, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.CurrentLocation, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.CurrentLocation, "", new { @class = "text-danger" })
 
-                            
-                            @Html.HiddenFor(x => x.IRFId)
-                            @Html.HiddenFor(x => x.IRFName)
-                            @Html.HiddenFor(x => x.id)
-                            <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
-                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Save</button>
+                                </div>
+
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Skill, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Skill, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Skill, "", new { @class = "text-danger" })
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.WorkAuth, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.WorkAuth, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.WorkAuth, "", new { @class = "text-danger" })
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.TotalExperience, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.TotalExperience, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.TotalExperience, "", new { @class = "text-danger" })
+
+
                                 </div>
                             </div>
+                            <div class="col-lg-4  col-md-4 col-sm-4 pl-1">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CurrentEmployer, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.CurrentEmployer, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.CurrentEmployer, "", new { @class = "text-danger" })
 
-                        }
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.CurrentSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.CurrentSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.CurrentSalary, "", new { @class = "text-danger" })
 
 
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.ExpectedSalary, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.ExpectedSalary, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.ExpectedSalary, "", new { @class = "text-danger" })
 
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Notice, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                    @Html.EditorFor(model => model.Notice, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
+                                    @Html.ValidationMessageFor(model => model.Notice, "", new { @class = "text-danger" })
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                                @Html.HiddenFor(x => x.IRFId)
+                                @Html.HiddenFor(x => x.IRFName)
+                                @Html.HiddenFor(x => x.id)
+                                <!--  <div class="row">
+
+                    <div class="col-md-12 mc-button-area">
+                        @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
                     </div>
+                </div>-->
 
+                            }
+
+
+
+                    
+                    </div>
                     <div class="card-footer ">
+                        <div class="row">
 
+                            <div class="col-md-12 mc-button-area">
+                                @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>
+                            </div>
+                        </div>
                     </div>
                     <!-- end content-->
                 </div>
@@ -241,35 +303,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+  
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />

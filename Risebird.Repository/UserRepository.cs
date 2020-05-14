@@ -1812,6 +1812,34 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task UpdateUserSigInDetails(string emailId)
+        {
+            try
+            {
+                var currentDate = DateTime.Now;
+                var query = "update UserList set LastLogin= @LastLogin where EmailId = @EmailId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@LastLogin", currentDate);              
+                dynamicParameters.Add("@EmailId", emailId);
+               
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<int>(query, dynamicParameters);                   
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+               
+            }
+        }
 
 
     }

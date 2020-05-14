@@ -75,7 +75,9 @@ namespace Risebird.Entities.Data
         public int? ClientInterviewStatus { get; set; }
         public int? IsSelected { get; set; }
         public int? IsApproved { get; set; }
-
+        public string ThumbnailImage { get; set; }
+        public int? TotalView { get; set; }
+        public string IsShared { get; set; }
 
     }
 }

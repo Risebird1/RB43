@@ -53,5 +53,7 @@ namespace Risebird.Business.Interface
         bool PauseIRF(int irfId, string irfName);
         bool PlayIRF(int irfId, string irfName);
         IEnumerable<IRF> GetAllIRFs(string emailId, string profileName);
+        Task<bool> SubscribeIRF(int id, string emailId, string profile);
+        Task<bool> UnSubscribeIRF(int id, string emailId, string profile);
     }
 }

@@ -122,35 +122,7 @@
             </div>
         </div>
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    
 </div>
 <script type="text/javascript">
     $.ajax({
@@ -358,8 +330,7 @@
         //contentType: "application/json",
         //dataType: "json",
         success: function (chData) {
-            //myFunnelChart
-            console.log(chData);
+          
             var chart = new CanvasJS.Chart("myFunnelChart", {
                 animationEnabled: true,
                 title: {

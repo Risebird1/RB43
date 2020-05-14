@@ -37,7 +37,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
-        [Display(Name = "Expected Per Hour Rate")]
+        [Display(Name = "Salary Range")]
         public string expectedPerHourRate { get; set; }
 
         public ProctoringReport Proctoring { get; set; }
@@ -86,7 +86,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Meeting Status")]
         public SelectList MeetingStatusList { get; set; }
 
-        [Display(Name = "Upload Audio")]
+        [Display(Name = "Upload Image")]
         public IFormFile AudioFile { get; set; }
 
         [Display(Name = "Upload Video")]
@@ -130,6 +130,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateMobileNumber { get; set; }
         [Display(Name = "Candidate Visa")]
         public string CandidateVisa { get; set; }
+        public string ThumbnailImage { get; set; }
+        public string PrimarySkill { get; set; }
 
     }
 }

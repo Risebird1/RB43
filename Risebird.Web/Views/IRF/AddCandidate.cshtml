@@ -6,74 +6,153 @@
 
 <style>
 
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-    .no-sort::after {
-        display: none !important;
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
     }
 
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
+    }
+    /* Modal */
+
+    .talktext {
+        padding: 8px 8px 4px 8px;
+        text-align: left;
+        line-height: 1.5em;
     }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
     }
 
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
     }
 
-    table {
-        white-space: nowrap !important;
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
     }
 
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
     }
 
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
     }
 
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
+
+    .border-bubble {
+        border: 1px solid #620bee21;
     }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
     }
 </style>
 
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 
 <div class="main-panel" id="main-panel">
@@ -104,17 +183,24 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Candidate for <strong>'@Model.IRFName'</strong></h4>
-                    </div>
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        
 
-                    <div class="card-body">
+                      
 
-                        @using (Html.BeginForm("AddCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
-                        {
-                           
+                            @using (Html.BeginForm("AddCandidate", "IRF", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
+                            {
+
                         <div class="row">
+
+
+                            <div class="card-header">
+                                <h4 class="card-title">Add Candidate for <strong>'@Model.IRFName'</strong></h4>
+                            </div>
+
+                            <div style="width: 100%;">&nbsp;</div>
+
                             <div class="col-md-4 col-sm-4 pr-1">
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -212,30 +298,36 @@
 
                             </div>
                         </div>
-                        
-                            
-                        
-                        
-                            @Html.HiddenFor(x => x.IRFId)
-                            @Html.HiddenFor(x => x.IRFName)
 
-                            <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
-                                    @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
-                                </div>
+
+
+
+                                @Html.HiddenFor(x => x.IRFId)
+                                @Html.HiddenFor(x => x.IRFName)
+
+                   
+                    <div class="card-footer">
+                        <div class="row">
+
+                            <div class="col-md-12 mc-button-area">
+                                @Html.ActionLink("Back", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
                             </div>
+                        </div>
+                    </div>
 
-                        }
+                            }
+
+
+
+                  
+
+
 
 
 
                     </div>
 
-                    <div class="card-footer ">
-
-                    </div>
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -244,35 +336,7 @@
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+  
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
