@@ -83,6 +83,7 @@
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
                             <div class="row">
+                                @Html.HiddenFor(m => m.UserId)
 
                                 <div class="col-md-3 col-sm-3 pr-1">
                                     <div class="form-group">
@@ -114,7 +115,7 @@
                                     </div>
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.DropDownList("PrimarySkill", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+                                        @Html.DropDownListFor(model => model.PrimarySkill, (SelectList)ViewBag.Skill, new { @class = "form-control" })
                                         @Html.ValidationMessageFor(model => model.PrimarySkill, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
@@ -171,19 +172,14 @@
                                                     <tr>
 
                                                         <td>
-
                                                             @Html.DropDownListFor(m => m.SkillCollection[i].LevelId, (SelectList)ViewBag.LevelTech, new { @class = "form-control" })
-
                                                         </td>
                                                         <td>
                                                             @Html.DropDownListFor(m => m.SkillCollection[i].SkillId, (SelectList)ViewBag.Skill, new { @class = "form-control", @onchange = "TechSkillChanged()" })
                                                         </td>
-
                                                         <td>
                                                             @Html.EditorFor(m => m.SkillCollection[i].Weightage, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @max = "100", @min = "1" } })
-
                                                         </td>
-
                                                         <td>
                                                             <div class="form-control">
                                                                 <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
@@ -191,7 +187,6 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-
                                                 }
                                             </tbody>
                                         </table>

@@ -51,7 +51,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
                 {
                     var model = new InterviewerSkillsViewModel();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills(profileName);
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills("HR");
                     model.InterviewerSkillsModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.InterviewerSkillsModelList)
                     {
@@ -574,12 +574,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.DeleteInterviewerList(Convert.ToInt16(id)).Result)
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate deleted Successfully";
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer deleted Successfully";
                             return RedirectToAction("Interviewer", new { id = Convert.ToInt32(SkillId), InterviewerSkillidName = SkillName });
                         }
                         else
                         {
-                            TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                            TempData["SuccessErrorMessageInterviewer"] = "Interviewer delete Failed";
                             return RedirectToAction("Interviewer", new { id = Convert.ToInt32(SkillId), InterviewerSkillidName = SkillName });
                         }
                     }
@@ -597,7 +597,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageCandidate"] = "Candidate delete Failed";
+                TempData["SuccessErrorMessageInterviewer"] = "Interviewer delete Failed";
                 return RedirectToAction("Index");
             }
 

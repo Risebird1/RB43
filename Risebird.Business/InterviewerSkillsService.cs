@@ -222,6 +222,7 @@ namespace Risebird.Business
                 model.SkillCollection = (IList<TransInterviewerSkillsofSkills>)(transTechSkills);
                 model.SkillGeneral = (IList<TransInterviewerSkillsofGeneralSkill>)(transSkillsGeneral);
                 model.Selectability = (IList<TransInterviewerSkillsSelectability>)(transSelectability);
+                model.PrimarySkill = _interviewerSkillsRepository.GetPrimarySkill(id);
                 model.StartDate = InterviewerSkills.StartDate;
                 model.EndDate = InterviewerSkills.EndDate;
                 model.CalendlyLink = InterviewerSkills.CalendlyLink;

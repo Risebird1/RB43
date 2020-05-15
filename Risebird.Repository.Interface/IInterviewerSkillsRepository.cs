@@ -33,6 +33,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransInterviewerSkillsofGeneralSkill> GetSkillsGeneralbyInterviewerSkillId(int id);
         IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id);
         IEnumerable<TransInterviewerSkillsSelectability> GetTransSelectability(int id);
+        string GetPrimarySkill(int id);
         Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM irfDetails);
         Task<IEnumerable<InterviewerSkillsVM>> GetUnApprovedInterviewerList(int id);
         Task<bool> DeleteInterviewerSkills(int InterviewerSkillId);
