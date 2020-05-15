@@ -926,5 +926,55 @@ namespace Risebird.Repository
             return parameters;
         }
         #endregion
+
+        #region unapproved interviewer
+        //GetCandidateIRFInvites
+        public IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId)
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@emailId", emailId);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = SqlMapper.Query<InterviewerInvites>(con, "usp_GetUnapprovedInterviewerInvites", dynamicParameters,
+                       commandType: CommandType.StoredProcedure);
+                    return results;
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_GetUnapprovedInterviewerScheduledInterviews", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
+        #endregion
+
     }
 }

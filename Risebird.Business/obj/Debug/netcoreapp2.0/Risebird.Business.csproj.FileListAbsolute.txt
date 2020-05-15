@@ -264,8 +264,6 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.Business\obj\Debug\netcoreapp2.0
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
-C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
-C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.deps.json
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.dll
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\bin\Debug\netcoreapp2.0\Risebird.Business.pdb
@@ -282,3 +280,5 @@ C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\R
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.AssemblyInfo.cs
 C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.csproj.CopyComplete
+C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.Business\obj\Debug\netcoreapp2.0\Risebird.Business.pdb

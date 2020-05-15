@@ -224,8 +224,6 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository\obj\Debug\netcoreapp2
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
-C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
-C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.deps.json
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.dll
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\bin\Debug\netcoreapp2.0\Risebird.Repository.pdb
@@ -240,3 +238,5 @@ C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.AssemblyInfo.cs
 C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.csproj.CopyComplete
+C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.Repository\obj\Debug\netcoreapp2.0\Risebird.Repository.pdb

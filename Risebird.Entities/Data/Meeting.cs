@@ -81,7 +81,7 @@ namespace Risebird.Entities.Data
         public string CompanyDetails { get; set; }
         public string Status { get; set; }
         public string DateRequired { get; set; }
-
+        public int iscIntId { get; set; }
 
     }
 }

@@ -322,8 +322,6 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.Web\obj\Debug\netcoreapp2.0\Rise
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.genruntimeconfig.cache
-C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
-C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.deps.json
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.json
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\bin\Debug\netcoreapp2.0\Risebird.Web.runtimeconfig.dev.json
@@ -349,3 +347,5 @@ C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\UserSe
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.AssemblyInfo.cs
 C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.csproj.CopyComplete
+C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.Web\obj\Debug\netcoreapp2.0\Risebird.Web.pdb

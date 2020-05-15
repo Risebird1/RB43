@@ -302,5 +302,39 @@ namespace Risebird.Business
         }
 
         #endregion
+        #region  unapproved interviewers
+        public IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId)
+        {
+            try
+            {
+                return _interviewerRepository.GetInterviewerInvites(emailId);
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
+
+        public List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status)
+        {
+            try
+            {
+                ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
+                var assignedMeeting = _interviewerRepository.GetUnapprovedInterviewerScheduledInterviews(emailID, status).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        #endregion
+
+
     }
 }

@@ -26,5 +26,7 @@ namespace Risebird.Business.Interface
         List<JobFunction> GetJobFunction();
         List<Industry> GetIndustry();
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
+        IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
+        List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status);
     }
 }

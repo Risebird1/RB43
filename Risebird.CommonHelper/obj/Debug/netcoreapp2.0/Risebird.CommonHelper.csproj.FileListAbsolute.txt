@@ -192,8 +192,6 @@ C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper\obj\Debug\netcoreap
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 C:\Users\Harish\Source\Repos\Risebird5\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
-C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
-C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.deps.json
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\bin\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
@@ -206,3 +204,5 @@ C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.AssemblyInfo.cs
 C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.csproj.CopyComplete
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.dll
+C:\Users\Admin\source\repos\Risebird\Risebird.CommonHelper\obj\Debug\netcoreapp2.0\Risebird.CommonHelper.pdb
