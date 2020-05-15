@@ -182,7 +182,6 @@ C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\bin\Debug\netco
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Business.Interface.pdb
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.dll
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\bin\Debug\netcoreapp2.0\Risebird.Entities.pdb
-C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csprojAssemblyReference.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.csproj.CoreCompileInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfoInputs.cache
 C:\Users\Admin\source\repos\Risebird\Risebird.Business.Interface\obj\Debug\netcoreapp2.0\Risebird.Business.Interface.AssemblyInfo.cs

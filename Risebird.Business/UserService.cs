@@ -7,20 +7,19 @@ using System.Linq;
 using Risebird.Entities.ViewModel;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Enum;
-using System.Threading.Tasks;
 
 namespace Risebird.Business
 {
     public class UserService : IUserService
     {
-        private IUserRepository _userRepository;
+        private IUserRepository _userRepository;        
         private IApplicationErrorLogger _applicationErrorLogger;
 
         public UserService(IUserRepository userRepository, IApplicationErrorLogger applicationErrorLogger)
         {
             _userRepository = userRepository;
             _applicationErrorLogger = applicationErrorLogger;
-        }
+    }
 
         public List<Menu> GetMenuBasedOnUserEmailld(string emailId)
         {
@@ -137,7 +136,7 @@ namespace Risebird.Business
                     return clientUser.Result;
             }
 
-            catch (Exception e)
+            catch(Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return null;
@@ -151,7 +150,7 @@ namespace Risebird.Business
                 return _userRepository.AddClientUser(clientUser).Result;
             }
 
-            catch (Exception e)
+            catch(Exception e)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
                 return false;
@@ -385,7 +384,7 @@ namespace Risebird.Business
         {
             try
             {
-                return _userRepository.GetResumeEvaluator(id);
+                return _userRepository.GetResumeEvaluator(id);               
             }
 
             catch (Exception e)
@@ -430,7 +429,7 @@ namespace Risebird.Business
                 if (_userRepository.GetRecruiters() != null)
                     return _userRepository.GetRecruiters().ToList();
                 else
-                    return new List<Recruiter>();
+                   return new List<Recruiter>(); 
             }
             catch (Exception e)
             {
