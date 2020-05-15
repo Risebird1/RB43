@@ -1,4 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.SupportList
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Support";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -696,7 +699,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
+
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -1151,26 +1154,28 @@
 
 
 </script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
+        var enjoyhint_script_steps = [
 
-    var enjoyhint_script_steps = [
-        
-         {
-             'click .firstsupport': 'Contact these people in case any support needed'
-          }
-       
+            {
+                'click .firstsupport': 'Contact these people in case any support needed'
+            }
 
 
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 5000)
-</script>
+
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
+    </script>
+}
 
 
 <!-- PAGE CONTENT WRAPPER -->
