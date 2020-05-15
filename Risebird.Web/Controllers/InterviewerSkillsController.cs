@@ -51,7 +51,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
                 {
                     var model = new InterviewerSkillsViewModel();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills("HR");
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills(profileName);
                     model.InterviewerSkillsModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
                     foreach (var item in model.InterviewerSkillsModelList)
                     {
