@@ -133,5 +133,7 @@ namespace Risebird.Entities.ViewModel
         public string ThumbnailImage { get; set; }
         public string PrimarySkill { get; set; }
 
+        public string joiningTime { get; set; }
+
     }
 }
