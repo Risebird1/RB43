@@ -296,6 +296,7 @@
         color: #5f5c5c !important;
         font-weight: normal !important;
     }
+    #btnPlus{top:-3px;}
 </style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -312,7 +313,7 @@
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
           
-            <div class="navbar-wrapper" style="width: 100%;
+            <div class="navbar-wrapper" style="        width: 100%;
         float: left;
         display: block;
 ">
@@ -679,7 +680,7 @@
                                                             </td>
 
                                                             <td class="action text-center">
-                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
                                                                     <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
@@ -733,7 +734,7 @@
                                                                 </td>
 
                                                                 <td class="action text-center">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
