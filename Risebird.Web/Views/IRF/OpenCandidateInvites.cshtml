@@ -1,11 +1,40 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.Candidate>
+@using Newtonsoft.Json;
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Open Candidate Invites";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    
+
 }
 
 <style>
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+
+    @@media (max-width: 767px) {
+        #irf-card-footer {
+            padding-left: 0px !important;
+            padding-top: 5px;
+            padding-right: 0px !important;
+        }
+    }
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
     .spanclass {
         color: black;
         font-size: 11px;
@@ -29,11 +58,7 @@
         margin-bottom: 35px;
     }
 
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
-    }
+
 
     .thumbnail {
         border-top: 5px solid #443f3f;
@@ -46,17 +71,13 @@
         padding-bottom: 15px;
     }
 
-    .list-group-item-text {
-        padding-top: 20px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 20px;
-    }
 
-        .list-group-item-text span {
-            float: left;
-            font-weight: 700;
-            padding-right: 5px;
-        }
+
+    /*.list-group-item-text span {
+        float: left;
+        font-weight: 700;
+        padding-right: 5px;
+    }*/
 
     .icon span {
         padding-top: 15px;
@@ -68,8 +89,360 @@
     .list-group {
         margin-bottom: 150px;
     }
+
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+
+
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+
+
+    /* Modal */
+    .modal-wrap .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+    /* Modal */
+
+
+
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: 500;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+
+    .mdc-card .modal .form-control:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid;
+    }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
 </style>
 
+<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
+<style>
+
+
+    .card-body {
+        margin: 0px;
+        padding: 5px;
+    }
+
+    #irf-card-footer {
+        padding-left: 25px;
+        padding-top: 5px;
+        padding-right: 0px;
+    }
+
+
+    .card-header-buttons {
+        padding: 5px 5px 0px 0px;
+        text-align: right;
+    }
+
+
+    .card-content-holder {
+        background-color: white;
+    }
+
+    .list-group-item-text {
+        line-height: 80%;
+    }
+
+        .list-group-item-text span {
+            font-weight: bold;
+            padding-right: 7px;
+        }
+
+    .pskill {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .clientName {
+        display: inline-block;
+        float: left;
+        padding-bottom: 3px;
+        width: 240px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: normal !important;
+    }
+
+
+
+    .mdc-card .modal .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .mdc-card .modal .form-control, .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+
+    .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .modal .form-group {
+        margin-bottom: 10px;
+    }
+
+        .modal .form-group .btn {
+            margin: 0px;
+        }
+
+
+
+    .dropdown-toggle {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke !important;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .dropdown-toggle::after {
+            color: rgba(0, 0, 0, 0.29);
+            position: absolute;
+            right: 30px;
+            top: 14px;
+        }
+
+    .mdc-card button.dropdown-toggle:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid !important;
+    }
+
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .card label {
+        font-size: 12px;
+        margin-bottom: 5px;
+        color: #9A9A9A;
+        padding: 0px 20px;
+    }
+
+
+    .card-blue {
+        border: 1px #6fb6ff59 solid !important;
+        border-radius: 4px;
+        background-color: #fff;
+        background-color: var(--mdc-theme-surface, #fff);
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+
+        .card-blue .card-header h6 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 20px;
+            color: #0c2642;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card-blue .card-body {
+            margin: 0px;
+            padding: 12px 5px 10px 5px;
+        }
+
+            .card-blue .card-body .client-field {
+                color: #1b4775;
+                display: block;
+                float: left;
+                font-weight: bold;
+                padding-right: 4px;
+            }
+
+
+
+        .card-blue:hover {
+            box-shadow: 0 0 25px #134e8c45;
+        }
+
+    .card-header-buttons button.btn-danger {
+        background: #FF3636 !important;
+    }
+
+
+    .card-blue .card-footer {
+        text-align: center;
+        padding: 8px 0px 8px 0px;
+    }
+
+
+
+
+        .card-blue .card-footer .stats-bttm-btn {
+            padding: 0px 25px 0px 0px;
+            text-align: right;
+        }
+
+    .card-blue .statistics .card-header {
+        padding: 10px 0px 10px 0;
+    }
+
+    .card-blue .statistics .card-body {
+        padding: 12px 20px 10px 20px;
+    }
+
+    .can-details {
+        width: 100%;
+        float: left;
+        font-weight: normal !important;
+        padding: 0px 0px 10px 0px;
+        font-size: 14px;
+        line-height: 16px;
+    }
+
+        .can-details span {
+            font-weight: normal;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+</style>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -82,9 +455,6 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">
-                    Open Interview Invites
-                </a>
             </div>
         </div>
     </nav>
@@ -94,112 +464,159 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Open Interview Invites</h4>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 ml-md-auto">
-                            <div class="form-group">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="row">
+                            <div class="card-header">
+                                <div class="pull-left">
+                                    <h4 class="card-title">Open Interview Invites</h4>
+                                </div>
 
+
+                                <div class="pull-right">
+                                    <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                        <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "IRF", actMethod ="OpenCandidateInvites" } )'" data-original-title="Tooltip on top"><font style="font-family:arial;"> Support</font></span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-auto">
-                            <button type="button" class="btn btn-primary " style="margin-top: 2px;margin-right:10px"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "IRF", actMethod ="OpenCandidateInvites" } )'" data-original-title="Tooltip on top"> Support</span></button>
+
 
                         </div>
-                      
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-lg-4 col-sm-6" style="margin-top: 15px;">
+                                    <div class="card card-stats border card-blue">
+
+
+                                        <div class="statistics statistics-horizontal">
+                                            <div class="info info-horizontal">
+                                                <div class="card-header">
+                                                    <div class="row">
+
+
+                                                        <div class=" col-md-6 col-sm-6 first">
+                                                            <h6> @item.IRFId </h6>
+                                                        </div>
+
+                                                        <div class="col-md-6 col-sm-6 card-header-buttons action">
+
+                                                            <button class="mdc-fab app-fab--absolute itemques" aria-label="Edit">
+                                                                <span onclick="window.open('@item.CalendlyLink')" title="Schedule Meeting" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" /></svg></span>
+                                                            </button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="card-body ">
+                                                    <div class="row" style="font-size:smaller;">
+
+                                                        <div class="col-12">
+                                                            <div class="group inner list-group-item-text">
+                                                                <div class="can-details second">   <span class="client-field">Client Name:</span> <span class="clientName">@item.ClientCompName (@item.ClientName)</span></div>
+                                                                <div class="can-details three">  <b>Primary Skills:</b> <span>@item.JDTiltle.Split('|')[0]  </span></div>
+                                                                <div class="can-details four">  <b>Job Ends on :</b> <span>@item.EndDate.ToString("dd MMM yyyy")  </span></div>
+                                                                <div class="can-details five"> <b>Jd Link:</b> <span><a href="@item.JDLink" target="_blank">Job Description</a></span></div>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--  <div class="card-footer ">
+                                            <div class="stats text-center">
+
+
+                                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
+                                                    <i class="now-ui-icons fa fa-calendar"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>--->
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- end row -->
+
                     </div>
-                    
-
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div class="row">
-            @foreach (var item in Model)
-            {
-                <div class="col-lg-3 col-sm-6">
-                    <div class="card card-stats">
-                        <div class="card-body ">
 
-                            <div class="statistics statistics-horizontal">
-                                <div class="info info-horizontal">
-                                    <div class="row">
-                                        <div class="col-12 text-center">
-                                            <h3 class="info-title" style="font-size:smaller;"> @item.IRFName</h3>
-                                        </div>
-                                    </div>
-                                    <hr>
-
-                                    <div class="row" style="font-size:smaller;">
-
-                                        <div class="col-12">
-                                            <div class="group inner list-group-item-text">
-                                                <span>Client Name:</span> <p>@item.ClientCompName (@item.ClientName)</p>
-                                                <span>Primary Skills:</span> <p>@item.JDTiltle.Split('|')[0]  </p>
-                                                <span>Job Ends on :</span> <p>@item.EndDate.ToString("dd MMM yyyy")  </p>
-                                                <span>Jd Link:</span><p><a href="@item.JDLink" target="_blank">Job Description</a></p>
-
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-footer ">
-                            <div class="stats text-center">
-                               
-                               
-                                <button type="button" onclick="window.open('@item.CalendlyLink')" class="btn btn-info btn-icon btn-sm" title="Schedule Meeting">
-                                    <i class="now-ui-icons fa fa-calendar"></i>
-                                </button>
-                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-        <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>\
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+
+        var enjoyhint_instance = new EnjoyHint({});
+
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Open interview invites and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+
+            {
+                'next .first': 'Skill Channel ID',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Client Name',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .three': 'Primary Skill',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .four': 'Job End Date',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .five': 'Job Description link',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .itemques': 'Click here to schedule your interview based on your availability',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .icimenu': 'Click on Scheduled Interview menu to see its features',
+
+            },
+
+        ];
+
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+
+    </script>
+}

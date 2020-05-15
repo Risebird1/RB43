@@ -7503,6 +7503,8 @@
       "type": "package",
       "path": "runtime.native.system.security.cryptography.apple/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -7539,6 +7541,8 @@
       "type": "package",
       "path": "runtime.opensuse.42.1-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "runtime.opensuse.42.1-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -7551,6 +7555,8 @@
       "type": "package",
       "path": "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.apple/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.apple.4.3.0.nupkg.sha512",
@@ -7575,6 +7581,8 @@
       "type": "package",
       "path": "runtime.rhel.7-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "runtime.rhel.7-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -7587,6 +7595,8 @@
       "type": "package",
       "path": "runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
@@ -8036,6 +8046,7 @@
       "path": "system.collections.nongeneric/4.3.0",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -8596,6 +8607,8 @@
       "type": "package",
       "path": "system.diagnostics.fileversioninfo/4.3.0",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -10837,6 +10850,7 @@
       "path": "system.runtime.serialization.primitives/4.3.0",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -12361,19 +12375,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Prabha\\.nuget\\packages\\": {}
+    "C:\\Users\\rumab\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "projectUniqueName": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
       "projectName": "Risebird.Business",
-      "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
-      "packagesPath": "C:\\Users\\Prabha\\.nuget\\packages\\",
-      "outputPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business\\obj\\",
+      "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj",
+      "packagesPath": "C:\\Users\\rumab\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Prabha\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\rumab\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -12386,14 +12400,14 @@
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "D:\\RiseBird\\Repo\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\rumab\\Source\\Repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             }
           }
         }
