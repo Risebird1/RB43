@@ -23,6 +23,7 @@ using MediaToolkit.Options;
 using Microsoft.AspNetCore.Http.Internal;
 using System.Text;
 using Risebird.Web.Controllers.AzureMediaservice;
+using Microsoft.Extensions.Configuration;
 
 namespace Risebird.Web.Controllers
 {
@@ -38,7 +39,8 @@ namespace Risebird.Web.Controllers
         private IIRFRepository _iRFRepository;
         private INotificationHelper _notificationHelper;
         private IAzureFaceApi _azureFaceApi;
-        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi)
+        private IConfiguration _configuration;
+        public InterviewController(IMeetingService meetingService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper, ISkillService skillService, IIRFRepository iRFRepository, IIRFService iRFService, ISettingsService settingsService, INotificationHelper notificationHelper, IAzureFaceApi azureFaceApi, IConfiguration configuration)
         {
             _meetingService = meetingService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -49,7 +51,7 @@ namespace Risebird.Web.Controllers
             _settingsService = settingsService;
             _notificationHelper = notificationHelper;
             _azureFaceApi = azureFaceApi;
-
+            _configuration = configuration;
         }
 
 
@@ -3809,7 +3811,7 @@ namespace Risebird.Web.Controllers
                             //var blob = containerRef.GetBlockBlobReference(model.VideoFile.FileName);
                             //uploadedvideoFileURL = blob.Uri.ToString();
                             //model.VideoLink = uploadedvideoFileURL;
-                            AzureCall _call = new AzureCall();
+                            AzureCall _call = new AzureCall(_configuration);
                             var resulttype = _call.CallApi(model.VideoFile, model.VideoFile.FileName, model.VideoFile.Length);
                             resulttype = resulttype.Replace("\"", "");
                             uploadedvideoFileURL = resulttype;

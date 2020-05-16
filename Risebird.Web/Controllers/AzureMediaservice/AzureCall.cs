@@ -17,7 +17,10 @@ namespace Risebird.Web.Controllers.AzureMediaservice
     public class AzureCall
     {
         IConfiguration _configuration;
-      
+        public AzureCall(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public string CallApi(IFormFile file, string filename, long filesize)
         {
             Reservation reservation = new Reservation();
@@ -32,9 +35,11 @@ namespace Risebird.Web.Controllers.AzureMediaservice
             }
             reservation.chunk = chunk;
             //string _chunk = Convert.ToBase64String(chunk);
-           // var baseurl = _configuration["Azure:ApiCall"];
-            RestClient _client = new RestClient("https://localhost:44310");
+            var baseurl = _configuration["Azure:ApiCall"];
+            string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes("FaceApi:FaceApi"));
+            RestClient _client = new RestClient(baseurl);
             var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
+            request1.AddHeader("Authorization", "Basic " + UserDetails);
             request1.AddBody(reservation);
             request1.AddHeader("content-type", "application/json");
 
