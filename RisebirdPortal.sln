@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.CommonHelper.Inter
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Risebird.Web", "Risebird.Web\Risebird.Web.csproj", "{AFD4F211-4BF0-44F9-BFA6-4D25BFCBE784}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.WebAPI", "..\..\..\Downloads\WebApplication1\WebApplication1\WebApplication1\Risebird.WebAPI.csproj", "{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Risebird.WebAPI", "Risebird.WebApi\Risebird.WebAPI.csproj", "{56A55964-5707-4ECE-A32C-C1F4C6A0B62D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
