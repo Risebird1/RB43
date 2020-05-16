@@ -5816,11 +5816,11 @@ namespace Risebird.Web.Controllers
                 _mail.TO = Email.Comment;
                 if (Status == "Interest Accepted")
                 {
-                    _mail.Subject = "Candidate has Accepted your interest";
+                    _mail.Subject = "A candidate has accepted your interest";
                 }
                 else
                 {
-                    _mail.Subject = "Candidate has Passed your interest";
+                    _mail.Subject = "A candidate has passed your interest";
 
                 }
                 //var usernames = nameuser.Trim().Split(" ");
