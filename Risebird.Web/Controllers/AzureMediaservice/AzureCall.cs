@@ -36,7 +36,10 @@ namespace Risebird.Web.Controllers.AzureMediaservice
             reservation.chunk = chunk;
             //string _chunk = Convert.ToBase64String(chunk);
             var baseurl = _configuration["Azure:ApiCall"];
-            string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes("FaceApi:FaceApi"));
+            var username = _configuration["Azure:UserName"];
+            var Password = _configuration["Azure:Password"];
+
+            string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
             RestClient _client = new RestClient(baseurl);
             var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
             request1.AddHeader("Authorization", "Basic " + UserDetails);

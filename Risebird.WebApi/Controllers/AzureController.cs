@@ -8,6 +8,7 @@ using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
+    [BasicAuth]
     public class AzureController : ApiController
     {
         // GET api/<controller>
