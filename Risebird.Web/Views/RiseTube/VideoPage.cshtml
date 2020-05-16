@@ -37,6 +37,16 @@
     IsShortListed = filter.IsShortListed != null ? filter.IsShortListed : new string[] { };
     IsIntrested = filter.IsIntrested != null ? filter.IsIntrested : new string[] { };
 }
+
+<link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/latest/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap"
+</script>
+
 <style>
     .canvasjs-chart-credit {
         display: none;
@@ -844,6 +854,11 @@
         }
     }
 
+    .vid1-dimensions {
+        width: 100%;
+        height: 400px;
+    }
+
     @@media screen and (max-width: 360px) {
         .single-video-left .comment-area textarea {
             width: 72%;
@@ -1338,12 +1353,20 @@
 
                                                                 @if (@Model.VideoLink.Contains(".mp4"))
                                                                 {
-                                                                    <video controls style=" background:black!important;width:100% " autoplay class="btnvideo">
+                                                                    <video controls style="background:black!important;width:100% " autoplay class="btnvideo">
                                                                         <source src="@Model.VideoLink" type="video/mp4">
+                                                                    </video>
+                                                                }
+                                                                else if (Model.VideoLink.Contains("/manifest"))
+                                                                {
+                                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                        <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
+
                                                                     </video>
                                                                 }
                                                                 else
                                                                 {
+
                                                                     <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
                                                                 }
                                                             }
@@ -1418,7 +1441,12 @@
                                                                                 }
                                                                                 else if (Model.IsIntrested == "Interest Accepted")
                                                                                 {
-                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="border:none;background-color:limegreen; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                                    <input type="button" class="form-control btninterest showinter" id="btnIntrest" value="Interest Accepted" Shortvalue="2" style="        border: none;
+        background-color: limegreen;
+        font-weight: bold;
+        font-size: 13px !important;
+        padding: 0px 0px;
+        height: 30px;" />
                                                                                 }
                                                                                 else
                                                                                 {
@@ -3662,7 +3690,7 @@
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
-                },                
+                },
                 {
                     'next .shortlist': 'Click here to Shortlist the Candidate',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3714,7 +3742,7 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                },                
+                },
                 {
                     'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
                 }
