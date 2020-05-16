@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Text;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
-
 namespace WebApplication1.Models
 {
     public class BasicAuth : AuthorizationFilterAttribute
