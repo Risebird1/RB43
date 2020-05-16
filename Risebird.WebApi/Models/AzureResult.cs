@@ -25,8 +25,8 @@ namespace WebApplication1.Models
     {
         private static readonly bool useAESRestriction = false;
 
-        private static readonly string mediaServiceStorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=risebirdtest;AccountKey=7jVJYb07V6vJwoQakqUieolrzecu+G/ovFGFLg8MivrwR3OsWL3553rsl5GMrqx37ONG5fPWMR9riZz+LaIl7Q==;EndpointSuffix=core.windows.net";
-        private static readonly string mediaServiceStorageContainerReference = "temporary-video-storage";
+        private static readonly string mediaServiceStorageConnectionString = ConfigurationManager.AppSettings["mediaServiceStorageConnectionString"]; //"DefaultEndpointsProtocol=https;AccountName=risebirdtest;AccountKey=7jVJYb07V6vJwoQakqUieolrzecu+G/ovFGFLg8MivrwR3OsWL3553rsl5GMrqx37ONG5fPWMR9riZz+LaIl7Q==;EndpointSuffix=core.windows.net";
+        private static readonly string mediaServiceStorageContainerReference = ConfigurationManager.AppSettings["mediaServiceStorageContainerReference"]; //"temporary-video-storage";
 
         //// DEPRECATED method
         //private static readonly string mediaServiceAccountName = ConfigurationManager.AppSettings["MediaServiceAccountName"];
@@ -34,10 +34,10 @@ namespace WebApplication1.Models
         //private static readonly CloudMediaContext context = new CloudMediaContext(new MediaServicesCredentials(mediaServiceAccountName, mediaServiceAccountKey));
 
         //// Azure Active Directory (AAD)
-        private static readonly string mediaServiceADTenantDomain = "talentrisebird.onmicrosoft.com";
-        private static readonly string mediaServiceADRestApiEndpoint = "https://risebirdtest.restv2.southindia.media.azure.net/api/";
-        private static readonly string mediaServiceADApplicationId = "13ca1deb-ccb6-4c8e-9c98-dd475e7c794b";
-        private static readonly string mediaServiceADApplicationSecret = "0bYjljv3w6.eAa7rWzuObXyfJa]edM?]";
+        private static readonly string mediaServiceADTenantDomain = ConfigurationManager.AppSettings["mediaServiceADTenantDomain"]; //"talentrisebird.onmicrosoft.com";
+        private static readonly string mediaServiceADRestApiEndpoint = ConfigurationManager.AppSettings["mediaServiceADRestApiEndpoint"]; //"https://risebirdtest.restv2.southindia.media.azure.net/api/";
+        private static readonly string mediaServiceADApplicationId = ConfigurationManager.AppSettings["mediaServiceADApplicationId"]; // "13ca1deb-ccb6-4c8e-9c98-dd475e7c794b";
+        private static readonly string mediaServiceADApplicationSecret = ConfigurationManager.AppSettings["mediaServiceADApplicationSecret"]; // "0bYjljv3w6.eAa7rWzuObXyfJa]edM?]";
         private static readonly AzureAdTokenCredentials azureAdTokenCredentials = new AzureAdTokenCredentials(mediaServiceADTenantDomain, new AzureAdClientSymmetricKey(mediaServiceADApplicationId, mediaServiceADApplicationSecret), AzureEnvironments.AzureCloudEnvironment);
         private static readonly AzureAdTokenProvider azureAdTokenProvider = new AzureAdTokenProvider(azureAdTokenCredentials);
         private static readonly CloudMediaContext context = new CloudMediaContext(new Uri(mediaServiceADRestApiEndpoint), azureAdTokenProvider);
