@@ -87,12 +87,12 @@ namespace Risebird.Business
                 var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
                 if (clientDetails.RoleId == 1)
                 {
-                    meetings = meetings.Where(x => x.ClientHrContact == emailId).ToList();
+                    meetings = meetings.Where(x => x.ClientHrContact?.ToLower() == emailId?.ToLower()).ToList();
                 }
 
                 else if (clientDetails.RoleId == 4)
                 {
-                    meetings = meetings.Where(x => x.staffingAgency == emailId).ToList();
+                    meetings = meetings.Where(x => x.staffingAgency?.ToLower() == emailId?.ToLower()).ToList();
                 }
                 else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
                 {
@@ -638,7 +638,7 @@ namespace Risebird.Business
             try
             {
                 var reportModel = new InterviewReport();
-                var irfName = _meetingRespository.GetIRFName(irfId).FirstOrDefault();
+                var irfDetails = _meetingRespository.GetIRFDetails(irfId);
                 var levels = _meetingRespository.GetLevels();
                 //check whether an IRF exists for the given IRFId
                 var check = _meetingRespository.GetIRFbyId(irfId);
@@ -741,7 +741,7 @@ namespace Risebird.Business
                     model.interviewDate = interviewDetails.interviewDate.ToString();
                     model.resumeLink = interviewDetails.resumeLink;
                     model.IRFId = irfId;
-                    model.IRFName = irfName;
+                   
                     model.JobLevelName = Enum.GetName(typeof(JobLevels), interviewDetails.JobLevel);
                     model.currentEmployerName = interviewDetails.currentEmployerName;
                     model.expectedPerHourRate = interviewDetails.expectedPerHourRate;
@@ -759,7 +759,7 @@ namespace Risebird.Business
                 // joinability and Selectability
 
                 //get candidateId
-                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfName);
+                reportModel.CandidateId = _meetingRespository.GetCandidateId(interviewId, irfDetails.IRFId);
                 reportModel.SelectabilityComments = _evaluatorRespository.GetSelectabilityComments(irfId, interviewDetails.candidateEmail);
                 reportModel.CandidateEmail = interviewDetails.candidateEmail;
                 reportModel.CandidateVisa = interviewDetails.CandidateVisa;
@@ -817,7 +817,8 @@ namespace Risebird.Business
                     reportModel.JoinabilityHRReportCollection = (IList<JoinabilityHRReport>)joinabilityList;
                 }
 
-
+                reportModel.IRFName = irfDetails.IRFId;
+                reportModel.PrimarySkill = irfDetails.JDTiltle.Split("|")[0];
                 return reportModel;
             }
 
@@ -906,9 +907,15 @@ namespace Risebird.Business
 
                         if(reportModel.InterviewStatus.Value == 2)
                         {
+                            var namemodel = String.Empty;
+
+                            if (reportModel.CandidateName != null && reportModel.CandidateName.Length >= 2)
+                                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0] + reportModel.CandidateName?.ToCharArray()[1];
+                            else if (reportModel.CandidateName != null && reportModel.CandidateName.Length == 1)
+                                namemodel = namemodel + reportModel.CandidateName?.ToCharArray()[0];
                             //get curated users
                             var curatedMailIds = _irfRepository.GetCuratedUserMailId(reportModel.IRFId);
-                            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName);
+                            _notificationHelper.SendCuratedUserMail(curatedMailIds.ToList(), reportModel.interviewDate, reportModel.IRFName, reportModel.PrimarySkill, namemodel);
                         }
                         
                     }

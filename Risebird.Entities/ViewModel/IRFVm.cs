@@ -57,6 +57,9 @@ namespace Risebird.Entities.ViewModel
         [Required]
         public string JDLink { get; set; }
 
+        [DisplayName("Company Details")]
+         public string CompanyDetails { get; set; }
+
         [DisplayName("No of Positions")]
         [Required]
         public int NoOfPosition { get; set; }
@@ -99,6 +102,7 @@ namespace Risebird.Entities.ViewModel
 
         [Required]
         public IFormFile JDFile { get; set; }
+        public IFormFile CompanyDetailFile { get; set; }
 
         [DisplayName("Calendly Link")]
         public string CalendlyLink { get; set; }
@@ -176,6 +180,7 @@ namespace Risebird.Entities.ViewModel
         public string ImageUrl { get; set; }
         public string IRFStatus { get; set; }
         public bool CuratedLink { get; set; }
+        public string CompanyDetails { get; set; }
         public bool IsSubscribed { get; set; }
         public int? SubId { get; set; }
     }

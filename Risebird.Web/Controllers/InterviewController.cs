@@ -227,7 +227,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 21].Value = "Interview Duration";
                 Sheet.Cells[1, 22].Value = "Expected Joining Time";
                 Sheet.Cells[1, 23].Value = "Preferred Location";
-                Sheet.Cells[1, 24].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1, 24].Value = "Expected Salary";
                 Sheet.Cells[1, 25].Value = "Current Employer";
                 Sheet.Cells[1, 26].Value = "Approval Status";
                 Sheet.Cells[1, 27].Value = "Approval Comments";
@@ -4569,7 +4569,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 12].Value = "Resume";
                 Sheet.Cells[1, 13].Value = "Candidate Contact";
                 Sheet.Cells[1, 14].Value = "Current Employer";
-                Sheet.Cells[1, 15].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1, 15].Value = "Expected Salary";
                 Sheet.Cells[1, 16].Value = "Expected Joining Time";
                 Sheet.Cells[1, 17].Value = "Preferred Location";
                 Sheet.Cells[1, 18].Value = "Staffing Agency";
@@ -5812,32 +5812,26 @@ namespace Risebird.Web.Controllers
                 Mail _mail = new Mail();
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                // var nameuser = _meetingService.Fetchusername(emailid);
+               // var nameuser = _meetingService.Fetchusername(emailid);
                 _mail.TO = Email.Comment;
                 if (Status == "Interest Accepted")
                 {
-                    _mail.Subject = "A candidate has accepted your interest";
+                    _mail.Subject = "Candidate has accepted your interest";
                 }
                 else
                 {
-                    _mail.Subject = "A candidate has passed your interest";
+                    _mail.Subject = "Candidate has passed your interest";
 
                 }
-                //var usernames = nameuser.Trim().Split(" ");
-                //var namemodel = String.Empty;
-                //foreach (var name in usernames)
-                //{
-                //    namemodel = namemodel + name.ToCharArray()[0];
-                //}
-                //Email.UserName = namemodel;
+               
                 StringBuilder bulider = new StringBuilder();
                 if (Status == "Interest Accepted")
                 {
-                    bulider.Append("A candidate has accepted your interest");
+                    bulider.Append("Candidate has accepted your interest");
                 }
                 else
                 {
-                    bulider.Append("A candidate has passed your interest");
+                    bulider.Append("Candidate has passed your interest");
 
 
                 }

@@ -79,12 +79,12 @@
         white-space: nowrap !important;
     }
 
-   
 
 
-    table.dataTable > thead > tr > th {
-        padding: 5px;
-    }
+
+        table.dataTable > thead > tr > th {
+            padding: 5px;
+        }
 
 
     .table > tfoot > tr > th {
@@ -472,7 +472,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">My Interviews</a>
+
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -509,7 +509,7 @@
                                             <div>
 
 
-                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded first" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
                                                     <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
                                                     <div class="mdc-button__ripple"></div>
@@ -670,11 +670,11 @@
                                                                     </button>
 
 
-                                                                    <button id="submitFilter" type="submit"  class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <button id="submitFilter" type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
                                                                         <font style="font-size:12px;"> Apply Filter</font>
                                                                     </button>
-                                                          </div>
-                                                              
+                                                                </div>
+
                                                             </div>
                                                         </div>
 
@@ -689,7 +689,7 @@
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
+                                <div id="tableID" class="second">
                                     <table id="MyInterviewList" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
@@ -701,10 +701,11 @@
                                                 <th>Candidate Email</th>
                                                 @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Company Detail</th>
+                                                <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
-                                                <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
@@ -719,10 +720,11 @@
                                                 <th>Candidate Email</th>
                                                 @*<th>Candidate Contact</th>*@
                                                 <th>Resume</th>
+                                                <th>JD Link</th>
+                                                <th>Company Detail</th>
+                                                <th>Zoom ID</th>
                                                 <th>Meeting Status</th>
                                                 <th>Interview Status</th>
-                                                <th>JD Link</th>
-                                                <th>Zoom ID</th>
                                                 <th class="disabled-sorting text-right">Actions</th>
                                                 <th style="text-align:center">Call</th>
                                             </tr>
@@ -750,9 +752,6 @@
                                                     {
                                                         <td>No Resume</td>
                                                     }
-                                                    <td>@item.MeetingStatusDesc</td>
-                                                    <td>@item.InterviewStatusDesc</td>
-
                                                     @if (item.JDLink != null && item.JDLink != "")
                                                     {
                                                         <td>  <a id="jdlinkId" target="_blank" title="JDLink" href=@item.JDLink>JDLink</a></td>
@@ -761,46 +760,44 @@
                                                     {
                                                         <td>No JD</td>
                                                     }
+                                                    @if (item.CompanyDetails != null && item.CompanyDetails != "")
+                                                    {
+                                                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Company Instructions</td>
+                                                    }
 
                                                     <td> @item.risebirdHR</td>
-                                                    <td class="text-right action">
+                                                    <td>@item.MeetingStatusDesc</td>
+                                                    <td>@item.InterviewStatusDesc</td>
+                                                    <td class="text-right">
                                                         @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                         {
 
 
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="UnAssigned Yourself">
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
                                                                 <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
                                                             </button>
 
 
-                                                        }
-
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Sample Questions">
-                                                            <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new {id= item.irfIntId})'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
-                                                        </button>
-                                                        <button class="mdc-fab app-fab--absolute mdc-fab-secondary" aria-label="Upload audio for verification">
-                                                            <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId= item.irfIntId, meetingId = item.id})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
-                                                        </button>
-
-
-
-
-
-                                                        @{
-                                                            @*<span onclick="location.href = '@Url.Action("UploadAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, rfName = item.IRFID })'" title="Audio files" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>*@
-
-
-                                                            
-
-
-
-                                                            <button class="mdc-fab app-fab--absolute" aria-label="Feedback Report">
-                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId= item.irfIntId})'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                                <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
                                                             </button>
-
+                                                            <button class="mdc-fab app-fab--absolute mdc-fab-secondary voicebiobtn" aria-label="Upload audio for verification">
+                                                                <span onclick="location.href = '@Url.Action("VerifyMyInterviewAudio", "Interview", new { candidateId = item.CandidateMasterId, irfId = item.irfIntId, meetingId = item.id })'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                            </button>
+                                                            <button class="mdc-fab app-fab--absolute feedbackreportbtn" aria-label="Feedback Report">
+                                                                <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                            </button>
                                                         }
+
                                                     </td>
-                                                    <td>
+                                                    <td class="callcandidatebtn">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
                                                         {
 
@@ -899,6 +896,7 @@
             right: 30px;
             top: 14px;
         }
+
     .modal .form-group {
         margin-bottom: 10px;
     }
@@ -1398,6 +1396,88 @@
     </script>
 
 }
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var openInterview = localStorage.getItem('openinterview');
+
+        if (openInterview == "true") {
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Your assigned interviews and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .first': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .second': 'Interview Details, scroll right or expand first column to see action buttons',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .unassignIntr': 'Click here to Unassign interview incase you will not able to take interview in case of emergency only',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .sampleQues': 'Click here to fill questions discussed during interview and each questions need to be filled in seperate row based on its skill',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
+                    'next .voicebiobtn': 'Click here to upload voice biometric audio sample of candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .feedbackreportbtn': 'Click here to open and fill candidate interview feedback report, Upload Video, Interviewer Comment, Questions, Tech Skill Report and General Skill report. All these section are mandatory',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .callcandidatebtn': 'Click here to call candidate incase it is require',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .iqcomenu': 'Click on Open QC Interviews menu to see its features',
+
+                }
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 5000)
+        }
+        else {
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'click .inoi': 'Click here to navigate to Open Interview menu to see its features then return back to this menu again',
+
+                }
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
+
+        }
+
+    </script>
+}
 
 
 
@@ -1417,5 +1497,4 @@
 
 
 
-
-<!-- PAGE CONTENT WRAPPER -->
+    <!-- PAGE CONTENT WRAPPER -->

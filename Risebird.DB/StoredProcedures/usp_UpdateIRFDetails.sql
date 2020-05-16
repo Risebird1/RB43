@@ -21,7 +21,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @JobCountry varchar(50),
 @StartDate datetime,
 @EndDate datetime,
-@JDLink varchar(200),
+@JDLink varchar(1000),
 @NoOfPosition int,
 @NoOfIntterview int,
 @RisebirdHr int,
@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[usp_UpdateIRFDetails]
 @TotalBudget int,
 @IsBiometricEnabled bit,
 @PriorityLevel int,
+@CompanyDetails varchar(1000),
 @idIrf int output
 
 AS
@@ -54,6 +55,7 @@ set
 		   ,[TotalBudget]=@TotalBudget
 		   ,[IsBiometricEnabled]=@IsBiometricEnabled
 		   ,[PriorityLevel]=@PriorityLevel
+           ,[CompanyDetails]=@CompanyDetails
 Where id =@id
 
 delete from TransClientUser where IRFId=@id

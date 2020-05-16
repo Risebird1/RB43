@@ -16,11 +16,12 @@ namespace Risebird.Web.Controllers
     {
         private IApplicationErrorLogger _applicationErrorLogger;
         private ISupportService _supportService;
-        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger)
+        private IUserService _userService;
+        public SupportController(ISupportService supportService, IApplicationErrorLogger applicationErrorLogger, IUserService userService)
         {
             _supportService = supportService;
             _applicationErrorLogger = applicationErrorLogger;
-           
+            _userService = userService;
         }
 
         [Authorize]
@@ -32,9 +33,15 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    //var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    //emailid = emailid.Replace("\"", "");
-                    HttpContext.Session.SetString("NavigationShow", "false");
+                   
+                    if (HttpContext.Session.GetString("NavigationShow") == "true")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        _userService.UpdateUserSigInDetails(emailid);
+                        HttpContext.Session.SetString("NavigationShow", "false");
+                    }
+
                     var model = new SupportList();
                     model.Supports = _supportService.GetAllSupportHR();
                     ViewBag.Profile = profileName;
