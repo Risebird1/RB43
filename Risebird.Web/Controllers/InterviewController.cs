@@ -225,7 +225,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 21].Value = "Interview Duration";
                 Sheet.Cells[1, 22].Value = "Expected Joining Time";
                 Sheet.Cells[1, 23].Value = "Preferred Location";
-                Sheet.Cells[1, 24].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1, 24].Value = "Expected Salary";
                 Sheet.Cells[1, 25].Value = "Current Employer";
                 Sheet.Cells[1, 26].Value = "Approval Status";
                 Sheet.Cells[1, 27].Value = "Approval Comments";
@@ -4543,7 +4543,7 @@ namespace Risebird.Web.Controllers
                 Sheet.Cells[1, 12].Value = "Resume";
                 Sheet.Cells[1, 13].Value = "Candidate Contact";
                 Sheet.Cells[1, 14].Value = "Current Employer";
-                Sheet.Cells[1, 15].Value = "Expected Per Hour Rate";
+                Sheet.Cells[1, 15].Value = "Expected Salary";
                 Sheet.Cells[1, 16].Value = "Expected Joining Time";
                 Sheet.Cells[1, 17].Value = "Preferred Location";
                 Sheet.Cells[1, 18].Value = "Staffing Agency";
