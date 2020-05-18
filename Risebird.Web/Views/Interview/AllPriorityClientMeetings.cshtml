@@ -914,6 +914,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Client HR</th>
+                                                <th>Interview Link</th>
                                                 <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Confirmation Status</th>
@@ -932,6 +933,7 @@
                                                 <th>Interview Date</th>
                                                 <th>Candidate Name</th>
                                                 <th>Client HR</th>
+                                                <th>Interview Link</th>
                                                 <th>End Client Name</th>
                                                 <th>Primary Skill</th>
                                                 <th>Confirmation Status</th>
@@ -948,45 +950,53 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.ClientName </td>
-                                                    <td> @item.JDTiltle.Split("|")[0] </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc</td>
-                                                    @if (item.QCInterview > 0)
-                                                    {
-                                                        <td> @item.intervieweStatusStatDesc</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td></td>
-                                                    }
-                                                    @if (item.QCInterview > 0)
-                                                    {
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                <td> @item.ClientHrContact </td>
+                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                {
+                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Interview Link</td>
+                                                }
+                                                <td> @item.ClientName </td>
+                                                <td> @item.JDTiltle.Split("|")[0] </td>
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc</td>
+                                                @if (item.QCInterview > 0)
+                                                {
+                                                    <td> @item.intervieweStatusStatDesc</td>
+                                                }
+                                                else
+                                                {
+                                                    <td></td>
+                                                }
+                                                @if (item.QCInterview > 0)
+                                                {
 
-                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Report</td>
-                                                    }
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Report</td>
+                                                }
 
-                                                    @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
-                                                    {
-                                                        <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Video</td>
-                                                    }
-                                                    <td>@item.NextLevelApprovalStat</td>
-                                                    <td>@item.FinalSelectionStat</td>
-                                                    <td>@item.OfferStatusStatDesc</td>
-                                                    <td>@item.JoiningStatusStatDesc</td>
-                                                </tr>
+                                                @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
+                                                {
+                                                    <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Video</td>
+                                                }
+                                                <td>@item.NextLevelApprovalStat</td>
+                                                <td>@item.FinalSelectionStat</td>
+                                                <td>@item.OfferStatusStatDesc</td>
+                                                <td>@item.JoiningStatusStatDesc</td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
