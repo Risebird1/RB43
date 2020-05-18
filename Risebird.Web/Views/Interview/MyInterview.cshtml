@@ -762,11 +762,11 @@
                                                     }
                                                     @if (item.CompanyDetails != null && item.CompanyDetails != "")
                                                     {
-                                                        <td>  <a id="companylinkId" target="_blank" title="companyLink" href=@item.CompanyDetails>CompanyDetail</a></td>
+                                                        <td>  <a id="companylinkId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Company Instructions</a></td>
                                                     }
                                                     else
                                                     {
-                                                        <td>No Company Detail</td>
+                                                        <td>No Company Instructions</td>
                                                     }
 
                                                     <td> @item.risebirdHR</td>
@@ -775,7 +775,15 @@
                                                     <td class="text-right">
                                                         @if (item.interviewDate.Date >= DateTime.Now.Date)
                                                         {
-                                                            <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-remove"></i></span>
+
+
+
+
+
+                                                            <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
+                                                                <span onclick="javascript:CheckTimeDifference('@item.id','@item.interviewDate');" title="UnAssigned Yourself" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg></span>
+                                                            </button>
+
 
                                                             <button class="mdc-fab app-fab--absolute sampleQues" aria-label="Sample Questions">
                                                                 <span onclick="location.href = '@Url.Action("SampleQuestions", "Interview", new { id = item.irfIntId })'" title="Sample Questions" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z" /></svg></span>
@@ -787,6 +795,7 @@
                                                                 <span onclick="location.href = '@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })'" title="Feedback Report" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
                                                             </button>
                                                         }
+
                                                     </td>
                                                     <td class="callcandidatebtn">
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty && DateTime.Now.AddMinutes(-5) <= item.interviewDate && item.interviewDate <= DateTime.Now.AddMinutes(65))
