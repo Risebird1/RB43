@@ -9,7 +9,7 @@ namespace Risebird.Repository.Interface
 {
     public interface IInterviewerSkillsRepository
     {
-        Task<IEnumerable<InterviewerSkillsModel>> GetAllInterviewerSkills(string profileName);
+        Task<IEnumerable<InterviewerSkillsChannelModel>> GetAllInterviewerSkillsChannel(string profileName, string emailId);
         IEnumerable<Level> GetLevels();
         IEnumerable<Skill> GetSkills();
         IEnumerable<Users> GetCientUsers();
@@ -28,7 +28,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<Interviewer> GetInterviewerSkillofInterviewerSkills();
         Skill GetSkillById(int id);
         bool CheckUniqueness(string value);
-        InterviewerSkillsModel EditInterviewerSkills(int InterviewerSkillId);
+        InterviewerSkillsChannelModel EditInterviewerSkills(int InterviewerSkillId);
         IEnumerable<TransInterviewerSkillsofSkills> GetSkillsbyInterviewerSkillId(int id);
         IEnumerable<TransInterviewerSkillsofGeneralSkill> GetSkillsGeneralbyInterviewerSkillId(int id);
         IEnumerable<TransInterviewerSkillsLeadInterviewer> GetTransInterviewer(int id);
@@ -50,7 +50,7 @@ namespace Risebird.Repository.Interface
         //Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string InterviewerSkillId);
         // IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         //IEnumerable<Users> GetQualityController();
-        //IEnumerable<InterviewerSkillsModel> GetAllInterviewerSkill(string emailid, string profileName);
+        //IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkill(string emailid, string profileName);
         //IEnumerable<TransClientUser> GetTransClientUser(int id);
         //IEnumerable<TransJoinability> GetTransJoinability(int id);
         //IEnumerable<TransQualityController> GetTransQualityController(int id);
@@ -67,7 +67,7 @@ namespace Risebird.Repository.Interface
         //Task<string> AddCandidate(Candidate obj);
         //Task<string> AddMultipleCandidates(List<Candidate> candidateList, int userId);
         //bool UpdateCandidate(Candidate obj);
-        //InterviewerSkillsModel GetInterviewerSkillsbyId(int id);
+        //InterviewerSkillsChannelModel GetInterviewerSkillsbyId(int id);
         //bool UpdateInterviewerSkillsInvites(int id, int totalInvites);
         //bool UpdateCandidateInvites(int id, int totalInvites);
         //InterviewPlanner GetInterviewPlanner(int id);

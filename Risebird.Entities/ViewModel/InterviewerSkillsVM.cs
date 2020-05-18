@@ -58,10 +58,8 @@ namespace Risebird.Entities.ViewModel
         public string CalendlyLink { get; set; }
         public string PrimarySkill { get; set; }
         public string LoggedEmail { get; set; }
-        public string EmailId { get; set; }
-        public string Name { get; set; }
+        public string SkillName { get; set; }
         public bool IsPaused { get; set; }
-        public int UserId { get; set; }
         //=================================================================
 
         [Required(ErrorMessage = "Please enter First Name")]
@@ -71,9 +69,11 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Resume Link")]
         [Required(ErrorMessage = "Please enter a link.")]
         public string ResumeLink { get; set; }
+        public string HREmailId { get; set; }
+        public int UserId { get; set; }
     }
 
-    public class InterviewerSkillsModel
+    public class InterviewerSkillsChannelModel
     {
         public int id { get; set; }
         public string InterviewerSkillId { get; set; }
@@ -84,13 +84,12 @@ namespace Risebird.Entities.ViewModel
         public double PerMintuteRate { get; set; }
         public string CalendlyLink { get; set; }
         public string PrimarySkill { get; set; }
-        public string EmailId { get; set; }
-        public string Name { get; set; }
+        public string SkillName { get; set; }
         public bool IsPaused { get; set; }
         public string ImageUrl { get; set; }
         public string InterviewerSkillStatus { get; set; }
         public bool IsApproved { get; set; }
-        public int UserId { get; set; }
+        public string HREmailId { get; set; }
 
     }
 }

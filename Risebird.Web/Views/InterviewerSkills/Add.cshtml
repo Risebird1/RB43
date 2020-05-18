@@ -221,59 +221,7 @@
 
 
 
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Joinability Metric</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="JoinabilityTable">
-                                                <thead>
-                                                    <tr>
-
-                                                        <th width="15%" class="table_heading">Level</th>
-                                                        <th width="25%" class="table_heading">Type</th>
-                                                        <th width="40%" class="table_heading">Value</th>
-                                                        <th width="10%" class="table_heading">Weightage</th>
-                                                        <th width="10%" class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("Joinability[0].LevelId", (SelectList)ViewBag.Level, new { @class = "form-control" })
-
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("Joinability[0].Type", (SelectList)Model.JoinabilityTypeList, new { @class = "form-control" })
-
-
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="Joinability_0__Value" name="Joinability[0].Value" type="text" value="">
-                                                        </td>
-                                                        <td>
-                                                            <input class="form-control text-box single-line" id="Joinability_0__Weightage" name="Joinability[0].Weightage" type="number" max="100" min="1" value="100">
-                                                        </td>
-
-                                                        <td>
-
-                                                            <span id="btnPlus" onclick="AddJoinabilityRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRowSkills(this, 'Joinability','LevelId','Type','Value','Weightage')" class="btn btn-round btn-danger btn-icon btn-sm delete-joinability"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="Joinability_WeightageError" style="color:red; margin-left:913px"></label>
-
-                                        </div>
-                                    </div>
-                                </div>*@
+                            
 
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -382,53 +330,7 @@
                                     </div>
                                 </div>
                             </div>
-
-
-
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Client Information</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="ClientTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Role</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("ClientCollection[0].ClientUserId", (SelectList)ViewBag.ClientUser, new { @class = "form-control", @onchange = "ClientUserChanged(this.value, this.id)" })
-                                                        </td>
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
-                                                            @Html.TextBox("ClientCollection[0].ClientRoleId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-
-                                                            <span id="btnPlus" onclick="AddRowClient()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ClientCollection', 'ClientUserId', 'ClientRoleId')" class="btn btn-round btn-danger btn-icon btn-sm delete-client"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>*@
-
-
-
-
+                            
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
@@ -469,212 +371,8 @@
                             </div>
 
 
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Approved Quality Controllers</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="QualityControllerTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="20%" class="table_heading">User</th>
-                                                        <th width="70%" class="table_heading">Skills</th>
-                                                        <th width="10%" class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("QualityController[0].UserId", (SelectList)ViewBag.QualityController, new { @class = "form-control", @onchange = "QCChanged(this.value, this.id)" })
-                                                        </td>
-
-                                                        <td>
-                                                            @Html.TextBox("QualityController[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-
-
-                                                            <span id="btnPlus" onclick="AddRowQualityController()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QualityController', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-qualityController"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>*@
-
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Approved Emergency Interviewer</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="EmergencyInterviewerTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th width="20%" class="table_heading">User</th>
-                                                        <th width="70%" class="table_heading">Skills</th>
-                                                        <th width="10%" class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("EmergencyInterviewerCollection[0].UserId", (SelectList)ViewBag.EmergencyInterviewers, new { @class = "form-control", @onchange = "EmergencyInterviewerChanged(this.value, this.id)" })
-                                                        </td>
-
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
-                                                            @Html.TextBox("EmergencyInterviewerCollection[0].SkillId", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-
-                                                            <span id="btnPlus" onclick="AddRowEmergencyInterviewer()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'EmergencyInterviewerCollection', 'UserId', 'SkillId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
-
-                                        </div>
-                                    </div>
-                                </div>*@
-
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Resume Evaluator</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="ResumeEvaluatorTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("ResumeEvaluatorCollection[0].UserId", (SelectList)ViewBag.ResumeEvaluators, new { @class = "form-control" })
-                                                        </td>
-
-                                                        <td>
-
-                                                            <span id="btnPlus" onclick="AddRowResumeEvaluator()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'ResumeEvaluatorCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
-
-                                        </div>
-                                    </div>
-                                </div>*@
-
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Risebird HR</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="HRTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("HRCollection[0].UserId", (SelectList)ViewBag.HRs, new { @class = "form-control" })
-                                                        </td>
-
-                                                        <td>
-
-
-                                                            <span id="btnPlus" onclick="AddRowHR()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'HRCollection', 'UserId')" class="btn btn-round btn-danger btn-icon btn-sm delete-interviewer"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
-
-                                        </div>
-                                    </div>
-                                </div>*@
-
-                            @*<div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Recruiters</h2>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered mbn" id="recruiterTable">
-                                                <thead>
-                                                    <tr>
-                                                        <th class="table_heading">User</th>
-                                                        <th class="table_heading">Domain</th>
-                                                        <th class="table_heading">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-
-                                                    <tr>
-                                                        <td>
-                                                            @Html.DropDownList("RecruiterCollection[0].UserId", (SelectList)ViewBag.Recruiters, new { @class = "form-control", @onchange = "RecruiterChanged(this.value, this.id)" })
-                                                        </td>
-
-                                                        <td>
-                                                            @Html.DropDownList("InterviewerCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
-                                                            @Html.TextBox("RecruiterCollection[0].Domain", null, new { @class = "form-control", @readonly = "readonly" })
-
-                                                        </td>
-
-                                                        <td>
-
-                                                            <span id="btnPlus" onclick="AddRowRecruiter()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                            <span id="btnMinus" onclick="DeleteRow(this, 'RecruiterCollection', 'UserId', 'Domain')" class="btn btn-round btn-danger btn-icon btn-sm"><i class="far fa  fa-trash"></i></span>
-
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            <label class="text-danger" id="noInterviewer" style="color:red; margin-left:913px"></label>
-
-                                        </div>
-                                    </div>
-                                </div>*@
+                            
                             <label class="text-danger" id="SkillCollection_WeightageErrorDown" style="color:red; margin-left:415px"></label>
-                            <label class="text-danger" id="Joinability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="Selectability_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="SkillGeneral_WeightageErrorDown" style="color:red; margin-left:415px"></label>
                             <label class="text-danger" id="noInterviewerDown" style="color:red; margin-left:415px"></label>
@@ -734,14 +432,7 @@
 </div>
 
 <script>
-    //$(document).ready(function () {
-    //        var LoginMailId = $("#LoginMailId").val();
-    //        var drp_RiseBirdHRMailId = $("#drp_RiseBirdHR option:selected").text();
-    //        if (LoginMailId !== drp_RiseBirdHRMailId) {
-    //            alert("Please Select Your MailId in in Job Detail Risebird Hr!" + LoginMailId + drp_RiseBirdHRMailId);
-    //        }
-    //    });
-
+   
 
     $(document).ready(function () {
         var inputs = document.getElementsByTagName("input");
@@ -855,41 +546,7 @@
 
     }
 
-
-    //function ClientChanged(clientId) {
-
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/IRF/GetClientUser",
-    //        data: { 'clientId': clientId },
-    //        success: function (data) {
-
-
-    //            var drpdwnId = $("#ClientCollection_0__ClientUserId");
-    //            //drpdwnId.options.length = 0;
-    //            $("#ClientCollection_0__ClientUserId option").remove();
-
-    //            if (data.length > 0) {
-    //                $(data).each(function () {
-    //                    var option = $("<option />");
-
-    //                    //Set Text part.
-    //                    option.html(this.text);
-
-    //                    //Set Value part.
-    //                    option.val(this.value);
-
-    //                    //Add the Option element to DropDownList.
-    //                    drpdwnId.append(option);
-    //                });
-    //            }
-
-
-    //        }
-    //    });
-
-    //}
-
+    
     function SkillChanged() {
 
         //var index = id.charAt(16);
@@ -1201,57 +858,6 @@
 
     }
 
-    function AddJoinabilityRow() {
-        document.getElementById("btnUpload").disabled = false;
-
-        var table = document.getElementById("JoinabilityTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Rows.");
-            return;
-        }
-
-
-        var $ttc = $("#JoinabilityTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#JoinabilityTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#JoinabilityTable").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-
-    }
-
     function AddSelectabilityRow() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -1303,53 +909,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-
-
-    //function AddRowClient() {
-
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var $ttc = $("#ClientTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#ClientTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#ClientTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
-
+    
     function AddRowInterviewer() {
         document.getElementById("btnUpload").disabled = false;
 
@@ -1397,252 +957,7 @@
         //document.getElementById("btnUpload").disabled = false;
 
     }
-    //function AddRowEmergencyInterviewer() {
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var table = document.getElementById("EmergencyInterviewerTable");
-    //    var rowCount = table.rows.length;
-    //    //if (rowCount == 6) {
-    //    //    alert("Cannot add more than 5 Interviewers.");
-    //    //    return;
-    //    //}
-
-    //    var $ttc = $("#EmergencyInterviewerTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#EmergencyInterviewerTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#EmergencyInterviewerTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
-
-
-    //function AddRowRecruiter() {
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var table = document.getElementById("recruiterTable");
-    //    var rowCount = table.rows.length;
-    //    //if (rowCount == 6) {
-    //    //    alert("Cannot add more than 5 Interviewers.");
-    //    //    return;
-    //    //}
-
-    //    var $ttc = $("#recruiterTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#recruiterTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#recruiterTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
-
-    //function AddRowResumeEvaluator() {
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var table = document.getElementById("ResumeEvaluatorTable");
-    //    var rowCount = table.rows.length;
-    //    //if (rowCount == 6) {
-    //    //    alert("Cannot add more than 5 Interviewers.");
-    //    //    return;
-    //    //}
-
-    //    var $ttc = $("#ResumeEvaluatorTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#ResumeEvaluatorTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#ResumeEvaluatorTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
-
-    //HRTable
-
-    //function AddRowHR() {
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var table = document.getElementById("HRTable");
-    //    var rowCount = table.rows.length;
-
-    //    var $ttc = $("#HRTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#HRTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#HRTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
-
-
-    //function AddRowQualityController() {
-    //    document.getElementById("btnUpload").disabled = false;
-
-    //    var $ttc = $("#QualityControllerTable").find("tbody tr:last");
-    //    var $tr = $ttc.clone();
-    //    var trIndexReplaced = $("#QualityControllerTable tr").length - 1;
-
-    //    $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-    //    }).attr("id", function () { // change id also
-    //        var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-    //        return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-    //    });
-    //    $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-    //        var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-    //        return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-    //    })
-
-
-
-    //    // reset fields in the new row
-    //    $tr.find("select").val("");
-    //    $tr.find("input[type=text]").val("");
-    //    $tr.find("input[type=hidden]").val("");
-
-    //    $tr.find("a").val("");
-
-    //    // add cloned row as last row
-    //    $("#QualityControllerTable").find("tbody tr:last").after($tr);
-
-    //    // Find the affected form
-    //    var $form = $tr.closest("FORM");
-
-    //    // Unbind existing validation
-    //    $form.unbind();
-    //    $form.data("validator", null);
-
-    //    // Check document for changes
-    //    $.validator.unobtrusive.parse(document);
-    //    //document.getElementById("btnUpload").disabled = false;
-
-    //}
+    
     function InterviewerChanged(val, id) {
 
         var index = id.charAt(22);
@@ -1658,10 +973,7 @@
 
 
     }
-
-
-
-
+    
     $(document).ready(function () {
 
         TechSkillChanged();
@@ -1674,110 +986,16 @@
             data: { 'id': id },
             success: function (data) {
                 $("#InterviewerCollection_0__SkillId").val(data);
-                $("#QualityController_0__SkillId").val(data);
-                $("#EmergencyInterviewerCollection_0__SkillId").val(data);
+               
 
             }
         });
 
-        //var userId = $("#RecruiterCollection_0__UserId").val();
-        //$.ajax({
-        //    type: "GET",
-        //    url: "/IRF/GetRecruiterDomain",
-        //    data: { 'userId': userId },
-        //    success: function (data) {
-        //        $("#RecruiterCollection_0__Domain").val(data);
-        //    }
-        //});
-
-        //Get Client Users based on clietn ID
-        //var clientId = $("#ClientId").val();
-        //$.ajax({
-        //    type: "GET",
-        //    url: "/IRF/GetClientUser",
-        //    data: { 'clientId': clientId },
-        //    success: function (data) {
-
-
-        //        var drpdwnId = $("#ClientCollection_0__ClientUserId");
-        //        //drpdwnId.options.length = 0;
-        //        $("#ClientCollection_0__ClientUserId option").remove();
-
-        //        if (data.length > 0) {
-        //            $(data).each(function () {
-        //                var option = $("<option />");
-
-        //                //Set Text part.
-        //                option.html(this.text);
-
-        //                //Set Value part.
-        //                option.val(this.value);
-
-        //                //Add the Option element to DropDownList.
-        //                drpdwnId.append(option);
-        //            });
-        //        }
-
-
-        //    }
-        //});
+        
 
     });
 
-
-
-    function AddRowController() {
-
-        var table = document.getElementById("ControllerTable");
-        var rowCount = table.rows.length;
-        if (rowCount == 6) {
-            alert("Cannot add more than 5 Quality Controllers.");
-            return;
-        }
-
-        var $ttc = $("#ControllerTable").find("tbody tr:last");
-        var $tr = $ttc.clone();
-        var trIndexReplaced = $("#ControllerTable tr").length - 1;
-
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
-        }).attr("id", function () { // change id also
-            var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts
-            return parts[1] + "_" + ++parts[2] + "__" + parts[3]; // build new id
-        });
-        $tr.find("span[data-valmsg-for]").attr("data-valmsg-for", function () { // find validation message
-            var parts = $(this).attr("data-valmsg-for").match(/(\D+)\[(\d+)]\.(\D+)$/); // extract parts from the referring attribute
-            return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new value
-        })
-
-
-
-        // reset fields in the new row
-        $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
-        $tr.find("input[type=hidden]").val("");
-
-        $tr.find("a").val("");
-
-        // add cloned row as last row
-        $("#AddRowController").find("tbody tr:last").after($tr);
-
-        // Find the affected form
-        var $form = $tr.closest("FORM");
-
-        // Unbind existing validation
-        $form.unbind();
-        $form.data("validator", null);
-
-        // Check document for changes
-        $.validator.unobtrusive.parse(document);
-        document.getElementById("btnUpload").disabled = false;
-
-    }
-
-
-
+    
     function DeleteRow(element, collectionName, tdOne, tdTwo) {
         if ($(element).parents('tbody').find('tr').length === 1) {
 

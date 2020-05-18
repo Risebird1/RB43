@@ -10,7 +10,7 @@ namespace Risebird.Business.Interface
 {
     public interface IInterviewerSkillsService
     {
-        IEnumerable<InterviewerSkillsModel> GetAllInterviewerSkills(string profileName);
+        IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkillsChannel(string profileName, string emailId);
         Task<bool> AddInterviewerSkillsDetails(InterviewerSkillsVM InterviewerSkillsDetails);
         IEnumerable<Users> GetRiseBirdHR();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();

@@ -30,7 +30,7 @@ namespace Risebird.Repository
             _applicationErrorLogger = applicationErrorLogger;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
         }
-        public async Task<IEnumerable<InterviewerSkillsModel>> GetAllInterviewerSkills(string profileName)
+        public async Task<IEnumerable<InterviewerSkillsChannelModel>> GetAllInterviewerSkillsChannel(string profileName, string emailId)
         {
             try
             {
@@ -38,7 +38,8 @@ namespace Risebird.Repository
                 {
                     var parameters = new DynamicParameters();
                     parameters.Add("@Profile", profileName);
-                    return await SqlMapper.QueryAsync<InterviewerSkillsModel>(con, "usp_GetAllInterviewerSkills", parameters,
+                    parameters.Add("@EmailId", emailId);
+                    return await SqlMapper.QueryAsync<InterviewerSkillsChannelModel>(con, "usp_GetAllInterviewerSkillsChannel", parameters,
                          commandType: CommandType.StoredProcedure);
                 }
 
@@ -254,21 +255,16 @@ namespace Risebird.Repository
         {
             try
             {
-                int userid = 0;
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
                 //parameters.Add("@id", InterviewerSkillsDetails.id);
-                foreach (var item in InterviewerSkillsDetails.InterviewerCollection)
-                {
-                    userid = item.UserId;
-                }
-                parameters.Add("@UserId", userid);
+                
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsDetails", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_AddInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     var irfList = SqlMapper.QueryAsync<InterviewerSkillsVM>(
-                        con, "select * from [dbo].[InterviewerSkills] orderby ", null, commandType: Text).Result.AsList();
+                        con, "select * from [dbo].[InterviewerSkillsChannel] orderby ", null, commandType: Text).Result.AsList();
                     var InterviewerSkillId = irfList.Where(x => x.InterviewerSkillId == InterviewerSkillsDetails.InterviewerSkillId).Last().id;//irfList.Find(x => x.IRFId == InterviewerSkillsDetails.IRFId).id;
 
 
@@ -318,21 +314,13 @@ namespace Risebird.Repository
                     //update trans interviewer table
                     foreach (var item in InterviewerSkillsDetails.InterviewerCollection)
                     {
-                        DynamicParameters objDynamicParameters = new DynamicParameters();
-                        objDynamicParameters.Add("@InterviewerUserId", item.UserId);
-                        objDynamicParameters.Add("@InterviewerSkillId", item.InterviewerSkillID);
+                        DynamicParameters param = new DynamicParameters();
+                        param.Add("@InterviewerSkillId", InterviewerSkillId);
+                        param.Add("@InterviewerUserId", item.UserId);
+                        var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
+                                commandType: CommandType.StoredProcedure);
 
-                        var querys = "select COUNT(*) from[dbo].[TransInterviewerSkillsLeadInterviewer] where InterviewerSkillId = @InterviewerSkillId and UserId = @InterviewerUserId";
-                        var Count = con.QuerySingle<int>(querys, objDynamicParameters);
-                        if (Convert.ToInt32(Count) == 0)
-                        {
-                            DynamicParameters param = new DynamicParameters();
-                            param.Add("@InterviewerSkillId", InterviewerSkillId);
-                            param.Add("@InterviewerUserId", item.UserId);
-                            var result = await SqlMapper.QueryAsync<int>(con, "usp_AddTransInterviewerSkillsLeadInterviewer", param,
-                                    commandType: CommandType.StoredProcedure);
-
-                        }
+                     
                     }
                     return true;
                 }
@@ -491,7 +479,7 @@ namespace Risebird.Repository
             }
 
         }
-        public InterviewerSkillsModel EditInterviewerSkills(int InterviewerSkillID)
+        public InterviewerSkillsChannelModel EditInterviewerSkills(int InterviewerSkillID)
         {
             try
             {
@@ -500,7 +488,7 @@ namespace Risebird.Repository
                 dynamicParameters.Add("@id", InterviewerSkillID);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.Query<InterviewerSkillsModel>(query, dynamicParameters);
+                    var results = con.Query<InterviewerSkillsChannelModel>(query, dynamicParameters);
                     return results.FirstOrDefault();
                 }
             }
@@ -616,18 +604,13 @@ namespace Risebird.Repository
         {
             try
             {
-                int userid = 0;
                 DynamicParameters parameters = SetStoredProcedureParameterForInterviewerSkills(InterviewerSkillsDetails);
-                foreach (var item in InterviewerSkillsDetails.InterviewerCollection)
-                {
-                    userid = item.UserId;
-                }
+                
                 parameters.Add("@id", InterviewerSkillsDetails.id);
-                parameters.Add("@UserId", userid);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerSkillsDetails", parameters,
+                    await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewerSkillsChannel", parameters,
                        commandType: CommandType.StoredProcedure);
 
                     if (InterviewerSkillsDetails.Selectability != null)

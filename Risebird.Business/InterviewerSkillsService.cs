@@ -31,11 +31,11 @@ namespace Risebird.Business
             _clientService = clientService;
             _configuration = configuration;
         }
-        public IEnumerable<InterviewerSkillsModel> GetAllInterviewerSkills(string profileName)
+        public IEnumerable<InterviewerSkillsChannelModel> GetAllInterviewerSkillsChannel(string profileName, string emailId)
         {
             try
             {
-                var InterviewerSkillsList = _interviewerSkillsRepository.GetAllInterviewerSkills(profileName).Result.ToList();
+                var InterviewerSkillsList = _interviewerSkillsRepository.GetAllInterviewerSkillsChannel(profileName, emailId).Result.ToList();
                 return InterviewerSkillsList;
 
             }
@@ -226,7 +226,8 @@ namespace Risebird.Business
                 model.StartDate = InterviewerSkills.StartDate;
                 model.EndDate = InterviewerSkills.EndDate;
                 model.CalendlyLink = InterviewerSkills.CalendlyLink;
-                var skillCount = transTechSkills.Count();
+                model.RisebirdHr = InterviewerSkills.RisebirdHr;
+                //var skillCount = transTechSkills.Count();
                 return model;
 
             }

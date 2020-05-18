@@ -46,14 +46,14 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                var emailid = HttpContext.Session.GetString("email")?.Trim();
+                var emailid =  HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
+                if (profileName == "Admin" || profileName == "HR" )
                 {
                     var model = new InterviewerSkillsViewModel();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills(profileName);
-                    model.InterviewerSkillsModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
-                    foreach (var item in model.InterviewerSkillsModelList)
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
+                    model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(x => x.EndDate.Date > DateTime.Now).OrderByDescending(y => y.EndDate);
+                    foreach (var item in model.InterviewerSkillsChannelModelList)
                     {
                         if (item.IsPaused)
                         {
@@ -76,21 +76,21 @@ namespace Risebird.Web.Controllers
                         var filter = JsonConvert.DeserializeObject<InterviewerSkillsFilter>(HttpContext.Session.GetString("InterviewerSkillsFilter"));
                         if (filter.StartDate != null && filter.EndDate != null)
                         {
-                            model.InterviewerSkillsModelList = InterviewerSkillsList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
+                            model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(t => t.StartDate >= filter.StartDate && t.EndDate <= filter.EndDate).ToList();
                         }
                         else
                         {
-                            model.InterviewerSkillsModelList = InterviewerSkillsList.Where(x => x.EndDate >= DateTime.Now);
+                            model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(x => x.EndDate >= DateTime.Now);
                         }
-                        filter.ISID = filter.ISID == null ? filter.ISID = model.InterviewerSkillsModelList.Select(x => x.InterviewerSkillId).ToArray() : filter.ISID = filter.ISID;
+                        filter.ISID = filter.ISID == null ? filter.ISID = model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).ToArray() : filter.ISID = filter.ISID;
 
-                        model.InterviewerSkillsModelList = model.InterviewerSkillsModelList.Where(c => filter.ISID.Contains(c.InterviewerSkillId)).ToList();
+                        model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.Where(c => filter.ISID.Contains(c.InterviewerSkillId)).ToList();
 
-                        if (model.InterviewerSkillsModelList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
+                        if (model.InterviewerSkillsChannelModelList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
                         {
-                            model.InterviewerSkillsModelList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
+                            model.InterviewerSkillsChannelModelList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
                         }
-                        foreach (var item in model.InterviewerSkillsModelList)
+                        foreach (var item in model.InterviewerSkillsChannelModelList)
                         {
                             if (item.IsPaused)
                             {
@@ -108,7 +108,7 @@ namespace Risebird.Web.Controllers
                                 item.InterviewerSkillStatus = "Archived";
                             }
                         }
-                        model.InterviewerSkillsModelList = model.InterviewerSkillsModelList.OrderByDescending(x => x.EndDate).ToList();
+                        model.InterviewerSkillsChannelModelList = model.InterviewerSkillsChannelModelList.OrderByDescending(x => x.EndDate).ToList();
                     }
 
                     model.Profile = profileName;
@@ -142,7 +142,7 @@ namespace Risebird.Web.Controllers
                 if (profileName == "Admin" || profileName == "HR" /*|| profileName == "Client" || profileName == "Recruiter"*/)
                 {
                     var model = new InterviewerSkillsViewModel();
-                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills(profileName);
+                    var InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid);
                     if (filter.StartDate != null && filter.EndDate != null)
                     {
                         InterviewerSkillsList = InterviewerSkillsList.Where(t => t.StartDate.Date >= filter.StartDate && t.EndDate.Date <= filter.EndDate).ToList();
@@ -156,7 +156,7 @@ namespace Risebird.Web.Controllers
                     InterviewerSkillsList = InterviewerSkillsList.Where(c => filter.ISID.Contains(c.InterviewerSkillId)).ToList();
 
                     if (InterviewerSkillsList.Count() == 0 && filter.StartDate != null && filter.EndDate != null)
-                        InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkills(profileName).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
+                        InterviewerSkillsList = _iInterviewerSkillsService.GetAllInterviewerSkillsChannel(profileName, emailid).Where(x => x.StartDate.Date >= filter.StartDate && x.EndDate.Date <= filter.EndDate);
                     foreach (var item in InterviewerSkillsList)
                     {
                         if (item.IsPaused)
@@ -175,7 +175,7 @@ namespace Risebird.Web.Controllers
                             item.InterviewerSkillStatus = "Archived";
                         }
                     }
-                    model.InterviewerSkillsModelList = InterviewerSkillsList.OrderByDescending(x => x.EndDate).ToList();
+                    model.InterviewerSkillsChannelModelList = InterviewerSkillsList.OrderByDescending(x => x.EndDate).ToList();
                     model.Profile = profileName;
                     return View(model);
 
@@ -197,7 +197,6 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") != null)
             {
-                //ViewBag.LoginMailId = "interview@risebird.io";
                 var model = new InterviewerSkillsVM();
                 var interviewers = _interviewerSkillsRepository.GetInterviewers();
                 model.SkillGeneralTypeList = new SelectList(_iInterviewerSkillsService.GetGeneralSkillMatrix(), "id", "Name");
@@ -208,21 +207,7 @@ namespace Risebird.Web.Controllers
                 ViewBag.LevelTech = new SelectList(_interviewerSkillsRepository.GetLevelTech(), "id", "Name");
                 ViewBag.Skill = new SelectList(_interviewerSkillsRepository.GetSkills(), "id", "Name");
 
-                //ViewBag.Clients = new SelectList(_interviewerSkillsRepository.GetClients(), "id", "Name");
-                //ViewBag.ClientUser = new SelectList(_interviewerSkillsRepository.GetCientUsers(), "id", "EmailId");
-                //ViewBag.ClientRole = new SelectList(_interviewerSkillsRepository.GetClientRoles(), "id", "Name");
-                //ViewBag.Recruiters = new SelectList(_interviewerSkillsRepository.GetRecruiters(), "UserId", "EmailId");
-                //ViewBag.ResumeEvaluators = new SelectList(_interviewerSkillsRepository.GetResumeEvaluators(), "UserId", "EmailId");
-                //ViewBag.HRs = new SelectList(_interviewerSkillsRepository.GetHRs(), "UserId", "EmailId");
-                //ViewBag.QualityController = new SelectList(interviewers, "id", "EmailId");
-                //ViewBag.EmergencyInterviewers = new SelectList(interviewers, "id", "EmailId");
-                //var jobLevels = from JobLevels s in Enum.GetValues(typeof(JobLevels))
-                //                select new { ID = (int)s, Name = s.GetDescription() };
-                //ViewBag.JobLevelList = new SelectList(jobLevels, "ID", "Name"); ;
-
-                //var companyTypes = from CompanyType s in Enum.GetValues(typeof(CompanyType))
-                //                   select new { ID = (int)s, Name = s.GetDescription() };
-                //model.CompanyTypeList = new SelectList(companyTypes, "ID", "Name");
+                
                 return View(model);
             }
             else
@@ -245,12 +230,12 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(InterviewerSkillsDetails).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer Skills is added Successfully";
+                            TempData["SuccessErrorMessage"] = "Interviewer Skills Channel is added successfully!";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Adding Interviewer Skills has Failed";
+                            TempData["SuccessErrorMessage"] = "Adding Interviewer Skills Channel has failed!";
                             return RedirectToAction("Index");
                         }
                     }
@@ -337,7 +322,7 @@ namespace Risebird.Web.Controllers
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Interviewer Skills edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Interviewer Skills edits were not saved!";
                                 return RedirectToAction("Index");
                             }
 
@@ -346,12 +331,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (_iInterviewerSkillsService.UpdateInterviewerSkills(model))
                             {
-                                TempData["SuccessErrorMessage"] = "Interviewer Skills saved Successfully";
+                                TempData["SuccessErrorMessage"] = "Interviewer Skills saved successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessage"] = "Interviewer Skills edits were not saved.";
+                                TempData["SuccessErrorMessage"] = "Interviewer Skills edits were not saved!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -511,7 +496,7 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new InterviewerVM();
                             obj.userId = item.id;
-                            obj.EmailId = item.EmailId;
+                            obj.EmailId = item.HREmailId;
                             obj.PrimarySkill = item.PrimarySkill;
                             obj.FirstName = item.FirstName;
                             obj.ResumeLink = item.ResumeLink;
@@ -527,7 +512,7 @@ namespace Risebird.Web.Controllers
                         {
                             var obj = new InterviewerListsVM();
                             obj.UserId = item.id;
-                            obj.EmailId = item.EmailId;
+                            obj.EmailId = item.HREmailId;
                             obj.FirstName = item.FirstName;
                             obj.InterviewerSkillId = item.InterviewerSkillId;
                             obj.IsAdded = false;
@@ -646,7 +631,7 @@ namespace Risebird.Web.Controllers
                     {
                         var obj = new InterviewerListsVM();
                         obj.UserId = item.id;
-                        obj.EmailId = item.EmailId;
+                        obj.EmailId = item.HREmailId;
                         obj.FirstName = item.FirstName;
                         obj.InterviewerSkillId = item.InterviewerSkillId;
                         obj.IsAdded = false;

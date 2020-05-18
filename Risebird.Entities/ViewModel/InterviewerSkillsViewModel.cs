@@ -6,7 +6,7 @@ namespace Risebird.Entities.ViewModel
 {
     public class InterviewerSkillsViewModel
     {
-        public IEnumerable<InterviewerSkillsModel> InterviewerSkillsModelList { get; set; }
+        public IEnumerable<InterviewerSkillsChannelModel> InterviewerSkillsChannelModelList { get; set; }
         public string Profile { get; set; }
         public string Message { get; set; }
         public bool IsClientUser { get; set; }

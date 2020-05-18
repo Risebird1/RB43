@@ -242,7 +242,7 @@
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">RFID</label>
                                                         <div class="col-md-6 col-sm-6">
                                                             <select id="RFID" name="RFID" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
+                                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.InterviewerSkillId).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
                                                                     {
@@ -258,7 +258,7 @@
                                                             <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">JD Tiltle</label>
                                                             <div class="col-md-6 col-sm-6">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                    @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.JDTiltle).Distinct().ToList())
+                                                                    @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                     {
                                                                         @if (item != null && item != "")
                                                                         {
@@ -277,7 +277,7 @@
                                                         <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
                                                         <div class="col-md-6 col-sm-6">
                                                             <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.InterviewerSkillsModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
+                                                                @foreach (var item in Model.InterviewerSkillsChannelModelList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                                 {
                                                                 @if (item != null && item != "")
                                                                     {
@@ -316,7 +316,7 @@
         <!-- Start Card -->
 
         <div class="row">
-            @foreach (var item in Model.InterviewerSkillsModelList)
+            @foreach (var item in Model.InterviewerSkillsChannelModelList)
             {
                 <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" style="margin-top: 15px;">
                     <div class="card-content-holder border border-dark">
@@ -358,10 +358,10 @@
 
                                         <div class="row"> <span>End Date:</span>@item.EndDate</div> <br />
                                         <div class="row">
-                                            <span>Primary Skill:</span> @(item.Name!= null ? item.Name : "")
+                                            <span>Primary Skill:</span> @(item.SkillName!= null ? item.SkillName : "")
                                         </div> <br />
                                         <div class="row">
-                                            <span>Risebird Hr:</span> @(item.EmailId!= null ? item.EmailId : "")
+                                            <span>Risebird Hr:</span> @(item.HREmailId!= null ? item.HREmailId : "")
                                         </div> <br />
                                         @if (Model.Profile != "Recruiter")
                                         {
@@ -641,7 +641,7 @@
 
 
 
-            if (msg.includes("Success")) {
+            if (msg.toLowerCase().includes("success")) {
                 swal({
                     title: 'Successful',
                     text: '@Model.Message',
