@@ -6,396 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
 
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: normal !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    .multiple_row > h2 {
-        font-size: 16px;
-        background: #42a5f5 !important;
-        padding: 4px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 0px;
-        margin-bottom: 10px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .navbar .navbar-wrapper {
-        color: #143e67 !important;
-    }
-
-        .navbar .navbar-wrapper .navbar-brand {
-            margin-right: 0.5rem;
-        }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-            border-top: 0;
-            border-left: 0;
-            border-right: 0;
-        }
-
-    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-        border-color: #53a5f5 !important;
-    }
-
-
-
-
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .table-responsive {
-        overflow: hidden;
-    }
-
-    #AudioFile {
-        margin: 0px 0px 15px 0px;
-    }
-
-
-
-    #PageVideoLink {
-        margin: 0px 0px 10px 0px;
-    }
-
-
-    #VideoFile {
-        margin: 0px 0px 10px 0px;
-    }
-
-    .top-gap {
-        padding-top: 40px;
-        display: block
-    }
-
-
-
-    .table {
-        white-space: nowrap;
-    }
-
-    .canvasjs-chart-credit {
-        display: none;
-    }
-
-    #ProctoringTable .label-type {
-        background: #e8f5ff;
-        padding: 8px 10px;
-        border: 0;
-    }
-
-    .video-choose {
-        position: relative;
-        top: -28px;
-    }
-
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
-    .click {
-        color: #53a5f5;
-        text-decoration: underline;
-    }
-
-    .file-lable {
-        color: #000 !important;
-        font-size: 14px !important;
-    }
-
-    .card-text-label {
-        font-size: 13px !important;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: normal !important;
-    }
-
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-</style>
-<style>
-    /* The Modal (background) */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-
-    /* Modal Content */
-    .modal-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 40%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        /*-webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s*/
-    }
-
-    /* The Close Button */
-    .close {
-        color: #fefefe;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-
-    .modal-wrap .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        color: #fff;
-    }
-
-    .modal-content .modal-header {
-        font-size: 10px;
-    }
-
-
-  
-    .modal-wrap .modal-content {
-        width: 690px;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px;
-    }
-</style>
 <meta charset="utf-8" />
 <link rel="apple-touch-icon" sizes="76x76" href="~/Newassets/img/apple-icon.png">
 <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
@@ -421,6 +32,7 @@
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -1371,66 +983,70 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div id="myModal" class="modal modal-wrap">
+        <div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
-                    <span class="close" id="approvePopUp">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="font-size:20px;">Approved For Next Round</h5>
+                        <span class="close" id="approvePopUp">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
 
-                        <label class="control-label" for="approveDropdown">Approved For Next Round</label>
-                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                            <label class="control-label" for="approveDropdown">Approved For Next Round</label>
+                            <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                        </div>
+                        <div id="approvalComments" class="form-group">
+                            <label class="control-label">Approval Comments</label>
+                            <input type="text" name="appComments" class="form-control" id="appComments">
+                        </div>
+                        <div class="">
+                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
+                        </div>
                     </div>
-                    <div id="approvalComments" class="form-group">
-                        <label class="control-label">Approval Comments</label>
-                        <input type="text" name="appComments" class="form-control" id="appComments">
-                    </div>
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
-                    </div>
-                </div>
-                <div class="modal-footer">
+                    <div class="modal-footer">
 
+                    </div>
                 </div>
+
             </div>
+        </div>
+        <div id="mySelectionModal" class="modal modal-bg">
+
+            <!-- Modal content -->
+
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
+                        <span class="close" id="selectPopUp">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+
+                            <label class="control-label" for="selectionDropdown">Final Selection</label>
+                            <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                        </div>
+                        <div id="selectionComments" class="form-group">
+                            <label class="control-label">Final Comments</label>
+                            <input type="text" name="selecComments" class="form-control" id="selecComments">
+                        </div>
+                        <div class="">
+                            <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary pull-right" id="btnSelectUpload" value="Save">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        @*<h3>Modal Footer</h3>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+            <!-- end row -->
 
         </div>
-
-        <div id="mySelectionModal" class="modal modal-wrap">
-
-            <!-- Modal content -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:20px;">Final Selection Status</h5>
-                    <span class="close" id="selectPopUp">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-
-                        <label class="control-label" for="selectionDropdown">Final Selection</label>
-                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                    </div>
-                    <div id="selectionComments" class="form-group">
-                        <label class="control-label">Final Comments</label>
-                        <input type="text" name="selecComments" class="form-control" id="selecComments">
-                    </div>
-                    <div class="">
-                        <input type="button" onclick="SaveSelecPopUp()" class="btn btn-fill btn-primary pull-right" id="btnSelectUpload" value="Save">
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    @*<h3>Modal Footer</h3>*@
-                </div>
-            </div>
-
-        </div>
-        <!-- end row -->
-
-    </div>
     <footer class="footer">
         <div class=" container-fluid ">
 

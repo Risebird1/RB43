@@ -11089,7 +11089,7 @@ div.dataTables_wrapper div.dataTables_length label {
 }
 
 div.dataTables_wrapper div.dataTables_length select {
-    width: 75px;
+    width: 75px!important;
     display: inline-block;
 }
 
@@ -11349,6 +11349,11 @@ div.dataTables_scrollFoot table {
     }
 
 
+    .table-responsive-sm input.form-control, .table-responsive-sm select.form-control {
+        width: auto!important;
+    }
+
+        
     .table-responsive-sm input.form-control {
         width: auto;
     }
@@ -11361,7 +11366,7 @@ div.dataTables_scrollFoot table {
     .talk-bubble {
         display: block !important;
         position: relative;
-        width: calc(100% - 10px) !important;
+     
         height: auto;
         border-radius: 10px;
         margin: 5px 0px;
