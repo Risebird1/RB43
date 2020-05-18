@@ -29,386 +29,13 @@
 <style>
 
 
-    @@media (max-width: 767px) {
-        #irf-card-footer {
-            padding-left: 0px !important;
-            padding-top: 5px;
-            padding-right: 0px !important;
-        }
-    }
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-    .spanclass {
-        color: black;
-        font-size: 11px;
-    }
-
-    .desc {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
-    }
-
-
-
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
-
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-
-
-    /*.list-group-item-text span {
-        float: left;
-        font-weight: 700;
-        padding-right: 5px;
-    }*/
-
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
-    }
-
-    .list-group {
-        margin-bottom: 150px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-
-
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: 500;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-
-    .mdc-card .modal .form-control:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid;
-    }
-</style>
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-
-
-    .card-header-buttons {
-        padding: 5px 5px 0px 0px;
-        text-align: right;
-    }
-
-    .card-blue .card-header {
-        padding: .5rem 1.25rem 0.3rem 1.25rem;
-    }
-
-        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
-            margin-top: 0px;
-            margin-bottom: 5px;
-        }
-
-    .card-content-holder {
-        background-color: white;
-    }
-
-    .list-group-item-text {
-        line-height: 80%;
-    }
-
-        .list-group-item-text span {
-            font-weight: bold;
-            padding-right: 7px;
-        }
-
-    .pskill {
-        display: inline-block;
-        width: 160px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .clientName {
-        display: inline-block;
-        float: left;
-        padding-bottom: 3px;
-        width: 235px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: normal !important;
-    }
-
-
-    .card-blue {
-        border: 1px #6fb6ff59 solid !important;
-        border-radius: 4px;
-        background-color: #fff;
-        background-color: var(--mdc-theme-surface, #fff);
-        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    }
-
-
-        .card-blue .card-header h6 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            line-height: 20px;
-            color: #0c2642;
-            padding: 0;
-            margin: 0;
-        }
-
-        .card-blue .card-body {
-            margin: 0px;
-            padding: 12px 5px 10px 5px;
-        }
-
-            .card-blue .card-body .client-field {
-                color: #1b4775;
-                display: block;
-                float: left;
-                font-weight: bold;
-                padding-right: 4px;
-            }
-
-
-        .card-blue:hover {
-            box-shadow: 0 0 25px #134e8c45;
-        }
-
-    .card-header-buttons button.btn-danger {
-        background: #FF3636 !important;
-    }
-
-
-    .card-blue .card-footer {
-        text-align: center;
-        padding: 8px 0px 8px 0px;
-    }
-
-        .card-blue .card-footer .stats-bttm-btn {
-            padding: 0px 25px 0px 0px;
-            text-align: right;
-        }
-
-
-
-    .mdc-card .modal .modal-content .modal-body, .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .mdc-card .modal .form-control, .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-
-
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
-
-
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .card label {
-        font-size: 12px;
-        margin-bottom: 5px;
-        color: #9A9A9A;
-        padding: 0px 20px;
-    }
-
-
-
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
-
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-
-
-    @@media screen and (max-width: 767px) {
-        .clientName {
-            width: 170px;
-        }
-
-        .card-header-buttons {
-            text-align: center;
-        }
-    }
-
-    @@media screen and (max-width: 640px) {
-        .card-blue .card-header h6 {
-            text-align: center;
-        }
-    }
 </style>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
+<link href="~/Newassets/css/account.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -430,7 +57,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content pa">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -495,13 +122,18 @@
                                                 <div class="statistics statistics-horizontal">
                                                     <div class="info info-horizontal">
                                                         <div class="row">
-                                                            <div class="col-12">
+                                                            <div class="col-md-12">
                                                                 <div class="group inner list-group-item-text">
 
-                                                                    <span>Total Projects:</span> <p>@item.TotalProjects</p>
-                                                                    <span>Client:</span> <p> @item.Client </p>
-                                                                    <span>End Client:</span> <p> @item.EndClient</p>
-                                                                    <span>Location:</span> <p> @item.Location</p>
+                                                                    <div class="clearfix col-md-12"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
+                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
+                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
+                                                                    <div class="clearfix col-md-12">
+                                                                        <span class="pull-left"><b>Location:</b></span> <span class="pull-left"> @item.Location</span>
+                                                                    </div>
+                                                                    
+                                                                      
+
 
                                                                 </div>
                                                             </div>
@@ -566,7 +198,7 @@
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                        <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -575,30 +207,30 @@
 
                                         <div class="modal-body">
                                             <div class="row">
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                             Start Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                             End Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6 col-sm-6">
+                                                <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="AccountId">AccountId</label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="AccountId">AccountId</label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
                                                                 {
@@ -611,8 +243,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.AccountList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                                 {
@@ -627,8 +259,8 @@
                                                     @if (!Model.IsClientUser)
                                                     {
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
                                                                     {
@@ -646,8 +278,8 @@
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="Location">Location</label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
 
                                                                 @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
@@ -663,15 +295,24 @@
 
                                                     <div class="form-group col-md-12">
                                                         <div class="row">
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
-                                                            </div>
-                                                            <div class="col-md-6 col-sm-6">
-                                                                <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                            <div class="col-md-12 col-sm-12">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <font style="font-size:12px;"> Reset Filter</font>
+                                                                </button>
+
+
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <font style="font-size:12px;"> Apply Filter</font>
+                                                                </button>
+
+
+
+                                                               
+
                                                             </div>
                                                         </div>
                                                     </div>
-
 
                                                 </div>
                                             </div>

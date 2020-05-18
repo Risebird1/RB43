@@ -2128,7 +2128,6 @@ p.description {
 .card-category {
     font-size: 1em;
 }
-
 .text-primary,
 a.text-primary:focus,
 a.text-primary:hover {
@@ -2329,7 +2328,14 @@ a[data-toggle="collapse"][aria-expanded="true"] .caret,
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
 }
-
+.mdc-checkbox__ripple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40px!important;
+    height: 40px!important;
+    pointer-events: none;
+}
 .pull-left {
     float: left;
 }
@@ -7267,8 +7273,8 @@ input.theatre-btn:focus {
 }
 
 .panel-header {
-    height: 260px;
-    padding-top: 80px;
+    /*height: 260px;
+    /* padding-top: 80px;*/
     padding-bottom: 45px;
     background: #141E30;
     /* fallback for old browsers */
@@ -7276,6 +7282,7 @@ input.theatre-btn:focus {
     background: linear-gradient(to right, #0c2646 0%, #204065 60%, #2a5788 100%);
     position: relative;
     overflow: hidden;
+    height:135px;
 }
 
     .panel-header .header .title {
@@ -7292,10 +7299,13 @@ input.theatre-btn:focus {
         .panel-header .header .category a {
             color: #FFFFFF;
         }
-
-.panel-header-sm {
+/*
+    .panel-header-sm {
     height: 135px;
 }
+
+
+*/
 
 .panel-header-lg {
     height: 380px;
@@ -10977,48 +10987,6 @@ select.selectpicker {
     color: #999;
 }
 
-.btn-call {
-    width: 32px !important;
-    height: 32px;
-    border-radius: 15px;
-    text-align: center;
-    font-size: 12px;
-    BORDER: 0px;
-    line-height: 1.42857;
-    background: #4a93de;
-    display: inline-block;
-}
-
-
-
-.call i {
-    color: #fff
-}
-
-.call-txt {
-    border: 1px #4a93de solid;
-    position: relative;
-    padding: 6px 15px;
-    left: -10px;
-    top: 1px;
-    font-size: 14px;
-    font-family: arial;
-    color: #1675de;
-    border-left: 0px;
-    border-top-right-radius: 13px;
-    border-bottom-right-radius: 13px;
-}
-
-
-.talk-bubble textarea {
-    font-size: 13px;
-}
-
-.talktext {
-    padding: 8px 8px 4px 8px;
-    text-align: left;
-    line-height: 1.5em;
-}
 
 .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
     background: #56a9ff;
@@ -11071,70 +11039,6 @@ button {
 
 textarea:focus {
     outline: 0;
-}
-
-
-#meeting_length label {
-    font-size: 14px;
-}
-
-#meeting_length select.form-control {
-    padding: 8px 8px;
-}
-
-#meeting_length select:focus {
-    border-color: #4a93de;
-}
-
-#meeting_filter input {
-    outline: none;
-}
-
-#meeting input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: content-box;
-    font-family: inherit;
-    font-size: 100%;
-}
-
-#meeting_filter input::-webkit-search-decoration,
-#meeting_filter input::-webkit-search-cancel-button {
-    display: none;
-}
-
-
-#meeting_filter input[type=search] {
-    background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-    border: solid 1px #ccc;
-    padding: 9px 10px 9px 32px;
-    width: 135px;
-    font-family: arial;
-    -webkit-border-radius: 10em;
-    -moz-border-radius: 10em;
-    border-radius: 10em;
-    -webkit-transition: all .5s;
-    -moz-transition: all .5s;
-    transition: all .5s;
-}
-
-    #meeting_filter input[type=search]:focus {
-        width: 200px;
-        background-color: #fff;
-        border-color: #4a93de;
-        font-family: arial;
-        margin: 3px;
-        -webkit-box-shadow: 0 0 5px #4a93de;
-        -moz-box-shadow: 0 0 5px #4a93de;
-        box-shadow: 0 0 5px #4a93de;
-    }
-
-
-#meeting_filter input:-moz-placeholder {
-    color: #999;
-}
-
-#meeting_filter input::-webkit-input-placeholder {
-    color: #999;
 }
 
 
@@ -11331,7 +11235,10 @@ div.dataTables_scrollFoot table {
         padding: 0px 0px 0px 0px !important;
         text-align: center !important;
     }
-
+    .mdc-radio {
+        padding: 0px !important;
+        margin: 0px !important;
+    }
     .player-main {
         width: 100% !important;
         text-align: center !important;
