@@ -514,7 +514,8 @@ namespace WebApplication1.Controllers
         public byte[] chunk { get; set; }
         public string filename { get; set; }
         public long fileSize { get; set; }
-
+        public int noofblocks { get; set; }
+        public int id { get; set; }
     }
 }
 

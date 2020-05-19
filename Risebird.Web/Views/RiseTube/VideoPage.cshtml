@@ -1353,7 +1353,7 @@
 
                                                                 @if (@Model.VideoLink.Contains(".mp4"))
                                                                 {
-                                                                    <video controls style="background:black!important;width:100% " autoplay class="btnvideo">
+                                                                    <video controls class="vjs-tech" style="background:black!important;width:100% " autoplay class="btnvideo">
                                                                         <source src="@Model.VideoLink" type="video/mp4">
                                                                     </video>
                                                                 }
@@ -1367,7 +1367,7 @@
                                                                 else
                                                                 {
 
-                                                                    <iframe width="100%" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                                    <iframe width="100%" class="vjs-tech" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
                                                                 }
                                                             }
                                                             else
@@ -1382,9 +1382,10 @@
                                                             }
                                                             <div class="row counts-liks">
 
-                                                                <div class="k col-md-3">
-                                                                    @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
-                                                                    {
+                                                                @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
+                                                                {
+                                                                    <div class="k col-md-6">
+
                                                                         @if (Model.IsLike == "Liked")
                                                                         {
                                                                             <div class="btn2">
@@ -1404,16 +1405,18 @@
                                                                             <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px"> &nbsp;<label id="pTotalvediolike">@Model.TotalVedioLike</label> </i>
                                                                             <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px"> <label id="pTotalvediodislike"> @Model.TotalVedioDisLike</label></i>
                                                                         }
+                                                                    </div>
 
-                                                                    }
-                                                                </div>
-                                                                <div class="col-md-3 shortlist" style="text-align: end;">
-                                                                    @if (Model.VideoLink != null)
+                                                                }
+                                                                @if (Model.VideoLink != null)
+                                                                {
+                                                                    @if (ViewBag.VedioStatus != "Public")
                                                                     {
-                                                                        @if (ViewBag.VedioStatus != "Public")
+                                                                        @if (ViewBag.ProfileName == "CuratedUser")
                                                                         {
-                                                                            @if (ViewBag.ProfileName == "CuratedUser")
-                                                                            {
+                                                                            <div class="col-md-3"></div>
+                                                                            <div class="col-md-3 shortlist" style="text-align: end;">
+
                                                                                 @if (Model.IsShortlisted > 0)
                                                                                 {
                                                                                     <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortListed(@Model.ShortListCount)" Shortvalue="2" />
@@ -1423,10 +1426,11 @@
                                                                                 {
                                                                                     <i class="fa fa-check"></i> <input type="button" class="form-control btnShortlist shortlist" id="btnShortlist" value="ShortList(@Model.ShortListCount)" Shortvalue="1" />
                                                                                 }
-                                                                            }
+                                                                            </div>
+
                                                                         }
                                                                     }
-                                                                </div>
+                                                                }
                                                                 <div class="col-md-2 showinter" style="text-align: end;padding-top:5px">
                                                                     @if (Model.VideoLink != null)
                                                                     {
@@ -1823,7 +1827,7 @@
                                                                                                 {
                                                                                                     for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
                                                                                                     {
-                                                                                                        <tr>
+                                                                                                        <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)">
                                                                                                             <td>
                                                                                                                 @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
@@ -2191,7 +2195,15 @@
                                                                                     }
                                                                                     else
                                                                                     {
-                                                                                        <img src="~/RiseTube/img/video-icon.png" />
+                                                                                        @if (videolist.ThumbnailImage != null)
+                                                                                        {
+                                                                                            <img src="@videolist.ThumbnailImage" style="height: 100%;width:100% ; position: absolute; z-index: auto; " />
+
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <img src="~/RiseTube/img/video-icon.png" />
+                                                                                        }
                                                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = videolist.imid })'" style=" cursor: pointer;"></a>
                                                                                     }
 
@@ -3561,6 +3573,14 @@
         var modal = document.getElementById("myModalComment");
         modal.style.display = "none";
     }
+
+        function switchtoquestionVedio(questiontime) {
+            debugger;
+        var time = 1;
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
 </script>
 
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
@@ -3759,3 +3779,6 @@
         </script>
     }
 }
+
+
+
