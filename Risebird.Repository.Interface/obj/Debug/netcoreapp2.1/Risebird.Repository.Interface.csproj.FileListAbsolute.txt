@@ -1,8 +1,0 @@
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.1\Risebird.Repository.Interface.deps.json
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.1\Risebird.Repository.Interface.dll
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\bin\Debug\netcoreapp2.1\Risebird.Repository.Interface.pdb
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.1\Risebird.Repository.Interface.csproj.CoreCompileInputs.cache
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.1\Risebird.Repository.Interface.AssemblyInfoInputs.cache
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.1\Risebird.Repository.Interface.AssemblyInfo.cs
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.1\Risebird.Repository.Interface.dll
-C:\Sample Sol\Risebird\Risebird.Repository.Interface\obj\Debug\netcoreapp2.1\Risebird.Repository.Interface.pdb
