@@ -47,13 +47,9 @@ body {
     padding-bottom: 15px;
 }
 
-
-
-/*.list-group-item-text span {
-        float: left;
-        font-weight: 700;
-        padding-right: 5px;
-    }*/
+.m10-b {
+    margin-bottom: 10px;
+}
 
 .icon span {
     padding-top: 15px;

@@ -94,7 +94,7 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
                             
-                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                    <div class="mdc-form-field  m10-b" >
 
                                         <div class="mdc-checkbox">
                                             @Html.CheckBoxFor(m => m.IsBiometricEnabled, new { @class = "mdc-checkbox__native-control"})
@@ -123,7 +123,7 @@
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="multiple_row">
-                                        <h2 style="margin-top:0px;">Job Details</h2>
+                                        <h2 class="mt-0" >Job Details</h2>
                                     </div><!--end of multiple location-->
                                 </div><!--end of col-md-12-->
                                 <div class="col-md-4 col-sm-4 pr-1">
@@ -223,13 +223,13 @@
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
                                     </div>
 
-                                    <div class="form-group"  style="margin-bottom:0px;">
+                                    <div class="form-group mb-0" >
                                         @Html.LabelFor(model => model.JobLevel, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.DropDownList("JobLevel", (SelectList)ViewBag.JobLevelList, new { @class = "form-control" })
                                         @Html.ValidationMessageFor(model => model.RisebirdHr, "", new { @class = "text-danger" })
 
                                     </div>
-                                    <div class="form-group" style="margin-bottom:0px;">
+                                    <div class="form-group mb-0">
 
 
                                         Upload JD
