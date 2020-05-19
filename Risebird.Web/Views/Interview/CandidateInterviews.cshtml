@@ -8,288 +8,7 @@
 
 }
 
-<style>
 
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-
-    .card-blue .card-header {
-        padding: .5rem 1.25rem 0.3rem 1.25rem;
-    }
-
-        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
-            margin-top: 0px;
-            margin-bottom: 5px;
-        }
-
-    .card-content-holder {
-        background-color: white;
-    }
-
-    .list-group-item-text {
-        line-height: 80%;
-    }
-
-        .list-group-item-text span {
-            font-weight: bold;
-            padding-right: 7px;
-        }
-
-    .pskill {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .clientName {
-        display: inline-block;
-        float: left;
-        padding-bottom: 3px;
-        width: 240px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: normal !important;
-    }
-
-
-    .card-blue {
-        border: 1px #6fb6ff59 solid !important;
-        border-radius: 4px;
-        background-color: #fff;
-        background-color: var(--mdc-theme-surface, #fff);
-        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    }
-
-
-        .card-blue .card-header h6 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            line-height: 20px;
-            color: #0c2642;
-            padding: 0;
-            margin: 0;
-        }
-
-        .card-blue .card-body {
-            margin: 0px;
-            padding: 12px 5px 10px 5px;
-        }
-
-            .card-blue .card-body .client-field {
-                color: #1b4775;
-                display: block;
-                float: left;
-                font-weight: bold;
-                padding-right: 4px;
-            }
-
-
-
-        .card-blue:hover {
-            box-shadow: 0 0 25px #134e8c45;
-        }
-
-    .card-header-buttons button.btn-danger {
-        background: #FF3636 !important;
-    }
-
-
-    .card-blue .card-footer {
-        text-align: center;
-        padding: 8px 0px 8px 0px;
-    }
-
-
-
-
-        .card-blue .card-footer .stats-bttm-btn {
-            padding: 0px 25px 0px 0px;
-            text-align: right;
-        }
-
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .card label {
-        font-size: 12px;
-        margin-bottom: 5px;
-        color: #9A9A9A;
-        padding: 0px 20px;
-    }
-
-    .can-details {
-        width: 100%;
-        float: left;
-        font-weight: normal !important;
-        padding: 0px 0px 10px 0px;
-        font-size: 14px;
-        line-height: 16px;
-    }
-
-        .can-details span {
-            font-weight: normal;
-        }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .card-blue .statistics .card-header {
-        padding: 10px 0px 10px 0;
-    }
-
-    .card-blue .statistics .card-body {
-        padding: 12px 20px 10px 20px;
-    }
-
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
-
-    .mdc-card .modal .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .mdc-card .modal .form-control, .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-
-    table {
-        border: 1px #ccc solid !important;
-    }
-
-    #divIntrestedShown table, #divshortlist table {
-        border: 1px #ccc solid;
-        margin: 20px;
-    }
-
-    #divIntrestedShown tr, #divshortlist tr {
-        border: 1px #ccc solid;
-    }
-
-    #divIntrestedShown td, #divshortlist td {
-        padding: 3px;
-        text-align: center;
-    }
-
-
-    #divIntrestedShown table tbody tr:nth-of-type(odd), #divshortlist table tbody tr:nth-of-type(odd) {
-        background-color: rgba(0,0,0,.05);
-    }
-
-    .client-nme {
-        width: 25%;
-    }
-
-    .client-date {
-        width: 15%;
-    }
-
-    .client-cmt {
-        width: 47%;
-    }
-
-    .client-action {
-        width: 25%;
-    }
-
-    @@media (min-width: 576px) {
-        .modal-dialog {
-            max-width: 600px;
-            margin: 1.75rem auto;
-        }
-    }
-
-    @@media screen and (max-width:480px) {
-        .client-cmt {
-            width: 25% !important;
-        }
-
-        .client-action {
-            width: 27% !important;
-        }
-    }
-</style>
 
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
@@ -297,7 +16,7 @@
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
+<link href="~/Newassets/css/interview.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -469,17 +188,7 @@
             <!-- end col-md-12 -->
         </div>
 
-        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+        <div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
             <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
                 <div class="modal-header">
@@ -492,15 +201,11 @@
 
                     </div>
 
-                    <div class="">
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                    <div class="text-center">
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton"  class="btn btn-fill btn-danger" value="Hang Up">
                     </div>
                 </div>
-                <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #fff;
-        color: white;">
-
-                </div>
+         
             </div>
 
         </div>
@@ -508,7 +213,7 @@
     </div>
 
 </div>
-<div id="myShorlList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+<div id="myShorlList" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -516,27 +221,23 @@
                 <h5 class="modal-title">Shortlisted</h5>
                 <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeshortlistPopUp()">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body">
                 <div class="row" id="divshortlist">
 
 
                 </div>
 
-                <div class="">
-                    <input type="button" onclick="closeshortlistPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                <div class="text-center">
+                    <input type="button" onclick="closeshortlistPopUp()" id="hangUpButton"  class="btn btn-fill btn-danger" value="Close">
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #fff;
-        color: white;">
-
-            </div>
+          
         </div>
 
     </div>
 </div>
 
-<div id="myintrestList" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+<div id="myintrestList" class="modal modal-bg">
     <!-- Modal content -->
 
 
@@ -546,14 +247,14 @@
                 <h5 class="modal-title">Interest shown by client(s)</h5>
                 <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPopUp()">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body">
                 <div class="row" id="divIntrestedShown">
 
 
                 </div>
 
-                <div class="">
-                    <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
+                <div class="text-center">
+                    <input type="button" onclick="closeIntrestPopUp()" id="hangUpButton"  class="btn btn-fill btn-danger" value="Close">
                 </div>
             </div>
 
@@ -561,7 +262,7 @@
     </div>
 </div>
 
-<div id="myintrestConfirmAccept" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+<div id="myintrestConfirmAccept" class="modal modal-bg">
     <!-- Modal content -->
 
 
@@ -571,9 +272,9 @@
                 <h5 class="modal-title">Accept Interest</h5>
                 <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestAccept()">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
+            <div class="modal-body" >
                 <div class="row ">
-                    <p class="text-center col-md-12" style="padding:10px 0px 0pxm 0px"> Are you sure, you want to accept this interest? </p>
+                    <p class="text-center col-md-12" > Are you sure, you want to accept this interest? </p>
                     <input type="text" id="txtConfirmAccept" value="" hidden />
                 </div>
                 <div class="row">
@@ -587,7 +288,7 @@
         </div>
     </div>
 </div>
-<div id="myintrestConfirmPass" class="modal" style="display: none; position: fixed; z-index: 1;padding-top: 100px; left: 0;top: 0;width: 100%; height: 100%; overflow: auto;background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4);">
+<div id="myintrestConfirmPass" class="modal modal-bg">
     <!-- Modal content -->
 
 
@@ -597,19 +298,20 @@
                 <h5 class="modal-title">Pass Interest</h5>
                 <span style="cursor:pointer;" class="close" id="callPopUp" onclick="closeIntrestPass()">&times;</span>
             </div>
-            <div class="modal-body" style="padding: 2px 16px;">
-                <div class="row" style="padding-left:50px">
-                    Are you sure, you want to pass this interest?
-                    <input tupe="text" id="txtConfirmPass" value="" hidden />
-                </div>
+            <div class="modal-body" >
+                <div class="row" >
+                    <p class="text-center col-md-12">
+                        Are you sure, you want to pass this interest?
+                        </p>
+                        <input tupe="text" id="txtConfirmPass" value="" hidden />
+</div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                        <input type="button" onclick="interestConfirmPass()" style="margin-left:43%" class="btn btn-fill btn-danger" value="OK">
+                    <div class="col-md-12 text-center">
+                        <input type="button" onclick="interestConfirmPass()"  class="mdc-button mdc-button--raised mdc-ripple-upgraded" value="OK">
+                        <input type="button" onclick="closeIntrestPass()" id="hangUpButton"  class="btn btn-fill btn-danger" value="Close">
                     </div>
-                    <div class="col-md-6">
-                        <input type="button" onclick="closeIntrestPass()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Close">
-                    </div>
+                  
                 </div>
             </div>
 

@@ -15,7 +15,7 @@
         <a href="#" class="simple-text logo-mini">
             Rb
         </a>
-        <a href="#" class="simple-text logo-normal">
+        <a href="#" class="simple-text logo-normal" >
             Risebird
         </a>
         <div class="navbar-minimize">
@@ -31,7 +31,7 @@
                 <img src="~/img/man.png" />
             </div>
             <div class="info">
-                <a data-toggle="collapse" href="#collapseExample" class="collapsed">
+                <a data-toggle="collapse" href="#collapseExample" class="collapsed" id="header">
                     @if (User.Identity.IsAuthenticated)
                     {
                         @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
@@ -86,7 +86,7 @@
         </div>
 
 
-        <ul class="nav">
+        <ul class="nav"  id="content">
             @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));

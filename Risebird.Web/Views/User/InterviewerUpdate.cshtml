@@ -4,169 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
 
-
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-    .modal input, .modal .dropdown-toggle {
-        background: #99d1fc0f !important;
-    }
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-
-    .navbar .navbar-wrapper .navbar-brand {
-        margin-right: 0.5rem;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-        border-color: #53a5f5 !important;
-    }
-
-    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-        border-color: #53a5f5 !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .upload a {
-        text-decoration: none;
-        width: 160px;
-        margin: 10px auto;
-        display: block;
-        padding: 8px 0px;
-        font-size: 13px;
-        text-align: center;
-    }
-</style>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
+<link href="~/Newassets/css/interviewer.css" rel="stylesheet" />
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
@@ -228,7 +69,7 @@
                                         </div>
 
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -238,7 +79,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 pl-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -263,7 +104,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
 
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkill, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -275,7 +116,7 @@
                                         </div>
 
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 pl-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.PrimarySkills, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -326,7 +167,7 @@
 
 
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 px-1 pull-left">
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.Slots, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -337,7 +178,7 @@
                                         </div>
 
 
-                                        <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="col-md-4 col-sm-4 pl-1 pull-left">
 
                                             <div class="form-group" style="margin-bottom:0px;">
                                                 Upload File
@@ -414,7 +255,7 @@
                                     <div class="col-md-12" style="width:100%; float:left;">
                                         <div class="card-footer">
                                             <div class="row">
-                                               
+
                                                 <div class="col-md-12 mc-button-area">
                                                     @Html.ActionLink("Back to List", "Interviewers", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
@@ -442,25 +283,8 @@
     </div>
 
 </div>
-<style>
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
 
-    .webkitEnabled {
-        -webkit-appearance: menulist;
-    }
 
-    .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
-        color: #000 !important;
-        text-decoration: none;
-        background-color: #fff !important;
-        outline: 0;
-    }
-</style>
 <script type="text/javascript">
     var j = jQuery.noConflict();
     j(document).ready(function () {
