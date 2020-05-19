@@ -41,7 +41,6 @@
             <div class="col-md-12">
                 <div class="mdc-card card">
                     
-
                     <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("Edit", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
@@ -54,7 +53,7 @@
                             </div>
                             <div style="width: 100%;">&nbsp;</div>
                     
-                                <div class="form-horizontal" style="width:100%;">
+                                <div class="form-horizontal w-full">
                                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                     <div class="col-md-4 col-sm-4 pr-1 pull-left">
                                         <div class="form-group">
@@ -115,9 +114,8 @@
                                 </div>
                          
                         </div>
-                            <div class="card-footer ">
+                            <div class="card-footer">
                                 <div class="row">
-                               
                                    <div class="col-md-12 mc-button-area">
                                     @Html.ActionLink("Back to List", "Index", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                     <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Save</button>

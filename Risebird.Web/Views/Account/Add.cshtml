@@ -43,8 +43,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
-                   
-
                     <div class="mdc-card-wrapper__text-section">
 
                         @using (Html.BeginForm("Add", "Account", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
@@ -132,13 +130,10 @@
                                                 <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
                                                 <td class="text-center" width="30%">@Model.AccountProjectMappings[i].Client</td>
                                                 <td class="text-center" width="20%">
-
-
-                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                 <div class="mdc-form-field m10-b">
                                                         <div class="mdc-checkbox">
 
                                                             @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
-
 
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark"
@@ -155,11 +150,6 @@
                                                         </div>
                                                     </div>
 
-
-
-
-
-
                                                 </td>
                                                 @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)
 
@@ -171,7 +161,7 @@
                             </div>
 
 
-                            <div class="card-footer ">
+                            <div class="card-footer">
                              <div class="row">
                                     <div class="col-md-12 mc-button-area">
                                         @Html.ActionLink("Back to List", "Index", "Account", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })

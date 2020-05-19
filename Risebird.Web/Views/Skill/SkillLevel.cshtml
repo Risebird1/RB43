@@ -64,12 +64,11 @@
                                     </div>
 
 
-
                                 </div>
                             </div>
 
 
-                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <table id="skillLevel" class="table table-striped table-bordered" cellspacing="0" style="width:100%" >
                                 <thead>
                                     <tr>
                                         <th hidden></th>
@@ -93,8 +92,7 @@
                                             <td hidden>@item.id</td>
                                             <td>@item.Name</td>
                                             <td>@item.Description</td>
-                                            <td class="text-right" >
-
+                                            <td class="text-right actions" >
 
 
                                                 <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit skill level">
@@ -107,8 +105,7 @@
                                                     <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                 </button>
 
-                                                <!---  <span onclick="location.href = '@Url.Action("EditSkillLevel", "Skill", new { id = item.id})'" title="Click here to edit skill level" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-edit"></i></span>
-      <span onclick="javascript:DeleteEntityfromEnvironment('@item.id','@item.Name');" title="Click here to delete skill level" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-trash-alt"></i></span>-->
+                                            
                                             </td>
                                         </tr>
                                     }

@@ -6,7 +6,6 @@
     border-radius: 5px;
 }
 
-
 textarea::-webkit-scrollbar {
     width: 2px;
     height: 6px;
@@ -19,7 +18,6 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
 
 
 .no-sort::after {
@@ -44,8 +42,6 @@ textarea::-webkit-scrollbar-thumb {
 table {
     white-space: nowrap !important;
 }
-
-
 
     table.dataTable > thead > tr > th {
         padding: 5px;
@@ -178,8 +174,6 @@ table {
     margin-bottom: 150px;
 }
 
-
-
 .panel-header-sm {
     height: 85px;
     padding-top: 65px;
@@ -193,8 +187,6 @@ table {
     border-color: #4e9bea;
     color: #FFFFFF;
 }
-
-
 
 .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
@@ -224,8 +216,6 @@ table {
 .sidebar:after, .off-canvas-sidebar:after {
     background: #42a5f5 !important;
 }
-
-
 
 
 .mdc-card {
@@ -662,9 +652,11 @@ table {
     .clientName {
         width: 170px;
     }
+
     .table > tbody > tr > td {
         padding: 12px 5px !important;
     }
+
     .card-header-buttons {
         text-align: center;
     }
@@ -674,9 +666,11 @@ table {
         padding-top: 5px;
         padding-right: 0px !important;
     }
+}
 
     @media screen and (max-width: 640px) {
         .card-blue .card-header h6 {
             text-align: center;
         }
-         }
+    }
+    
