@@ -34,7 +34,7 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: 2px;
 }
 
-
+.w-full{width:100%;}
 
 .no-sort::after {
     display: none !important;
@@ -265,6 +265,16 @@ table {
     top: 6px;
     left: 4px;
 }
+.webkitEnabled {
+    -webkit-appearance: menulist;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    color: #000 !important;
+    text-decoration: none;
+    background-color: #fff !important;
+    outline: 0;
+}
+
     .card .card-header .card-title, .card .card-header h4.card-title {
     margin: 0 0px 10px 0;
 }
@@ -272,8 +282,10 @@ table {
 .control-label {
     color: #5f5c5c !important;
 }
-
-
+.w-full{width:100%!important}
+.m10-b {
+    margin-bottom: 10px;
+}
 .mdc-card-wrapper__text-section {
     padding: 16px;
 }

@@ -47,8 +47,6 @@
                                         </div>
 
                                     <div class="pull-right">
-
-
                                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
                                             <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Recruiter" onclick="location.href='@Url.Action("AddRecruiter","User")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Risebird User</font></span>
                                         </button>
@@ -94,19 +92,14 @@
 
                                                 <td class="text-right action">
 
-
                                                     <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
                                                         <span onclick="location.href = '@Url.Action("EditRecruiter", "User", new { id = item.id})'" title="Click here to edit risebird user" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                     </button>
 
 
-
                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
                                                         <span onclick="javascript:DeleteEntityfromEnvironment('@item.UserId','@item.EmailId');"  class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
                                                     </button>
-
-
-
 
     
                                                 </td>

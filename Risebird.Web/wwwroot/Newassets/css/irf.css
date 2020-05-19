@@ -114,8 +114,13 @@ table th {
     padding: 8px 10px;
     border: 0;
 }
-
-
+.m10-b {
+    margin-bottom: 10px;
+}
+.mb-0{margin-bottom:0px;}
+.mt-0 {
+    margin-top: 0px;
+}
 .multiple_row > h2 {
     font-size: 16px;
     background: #42a5f5 !important;
