@@ -38,546 +38,7 @@
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-<style>
-
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
-    }
-
-
-    @@media (max-width: 767px) {
-        #irf-card-footer {
-            padding-left: 0px !important;
-            padding-top: 5px;
-            padding-right: 0px !important;
-        }
-    }
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-    .spanclass {
-        color: black;
-        font-size: 11px;
-    }
-
-    .desc {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
-    }
-
-
-
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
-
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-
-
-    /*.list-group-item-text span {
-        float: left;
-        font-weight: 700;
-        padding-right: 5px;
-    }*/
-
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
-    }
-
-    .list-group {
-        margin-bottom: 150px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-
-
-    /* Modal */
-    .modal-wrap .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: 500;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-
-    .mdc-card .modal .form-control:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid;
-    }
-</style>
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-</style>
-
-<!-- Bleow New Style added by Vishwanath for IRF Chanbge -->
-<style>
-
-
-    .card-body {
-        margin: 0px;
-        padding: 5px;
-    }
-
-    #irf-card-footer {
-        padding-left: 25px;
-        padding-top: 5px;
-        padding-right: 0px;
-    }
-
-
-    .card-header-buttons {
-        padding: 5px 5px 0px 0px;
-        text-align: right;
-    }
-
-    .card-blue .card-header {
-        padding: .5rem 1.25rem 0.3rem 1.25rem;
-    }
-
-        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
-            margin-top: 0px;
-            margin-bottom: 5px;
-        }
-
-    .card-content-holder {
-        background-color: white;
-    }
-
-    .list-group-item-text {
-        line-height: 80%;
-    }
-
-        .list-group-item-text span {
-            font-weight: bold;
-            padding-right: 7px;
-        }
-
-    .pskill {
-        display: inline-block;
-        width: 160px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
-
-    .clientName {
-        display: inline-block;
-        float: left;
-        padding-bottom: 3px;
-        width: 235px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: normal !important;
-    }
-
-
-    .card-blue {
-        border: 1px #6fb6ff59 solid !important;
-        border-radius: 4px;
-        background-color: #fff;
-        background-color: var(--mdc-theme-surface, #fff);
-        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12);
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    }
-
-
-        .card-blue .card-header h6 {
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            line-height: 20px;
-            color: #0c2642;
-            padding: 0;
-            margin: 0;
-        }
-
-        .card-blue .card-body {
-            margin: 0px;
-            padding: 12px 5px 10px 5px;
-        }
-
-            .card-blue .card-body .client-field {
-                color: #1b4775;
-                display: block;
-                float: left;
-                font-weight: bold;
-                padding-right: 4px;
-            }
-
-
-
-        .card-blue:hover {
-            box-shadow: 0 0 25px #134e8c45;
-        }
-
-    .card-header-buttons button.btn-danger {
-        background: #FF3636 !important;
-    }
-
-
-    .card-blue .card-footer {
-        text-align: center;
-        padding: 8px 0px 8px 0px;
-    }
-
-
-
-
-        .card-blue .card-footer .stats-bttm-btn {
-            padding: 0px 25px 0px 0px;
-            text-align: right;
-        }
-
-
-
-
-    .mdc-card .modal .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .mdc-card .modal .form-control, .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-
-
-    .modal-wrap .modal-content {
-        width: 690px;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px;
-    }
-
-
-
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .card label {
-        font-size: 12px;
-        margin-bottom: 5px;
-        color: #9A9A9A;
-        padding: 0px 20px;
-    }
-
-
-    .modal-wrap .text-danger {
-        margin: 0px;
-        position: absolute;
-        line-height: 14px;
-    }
-
-    .modal-wrap input[type=button] {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-    .border-bottom {
-        border-bottom: 1px #cccccc63 solid;
-    }
-
-
-    .modal-wrap input[type=button]:hover {
-        background: #4fa4fb;
-        box-shadow: 0 4px #3884d2 !important;
-        top: 0px;
-    }
-
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
-
-    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-        border-color: #53a5f5 !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .mdc-checkbox {
-        display: inline-block;
-        position: relative;
-        flex: 0 0 18px;
-        box-sizing: content-box;
-        width: 18px;
-        height: 18px;
-        line-height: 0;
-        white-space: nowrap;
-        cursor: pointer;
-        vertical-align: bottom;
-        padding: 15px 11px;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .statusImg {
-        -ms-flex: 0 0 12.666667%;
-        flex: 0 0 12.666667%;
-        max-width: 12.666667%;
-        float: left;
-        padding: 0px 15px;
-    }
-
-    .statusInfo {
-        -ms-flex: 0 0 82.333333%;
-        flex: 0 0 82.333333%;
-        max-width: 82.333333%;
-        float: left;
-        padding: 0px 15px;
-    }
-
-    .jobs-user {
-        font-size: 18px;
-        font-weight: normal;
-        line-height: 100px;
-        text-align: center;
-        display: block;
-        width: 100%;
-        padding: 0;
-        font-weight: bold;
-    }
-
-        .jobs-user span {
-            font-weight: normal;
-        }
-
-    @@media screen and (max-width: 767px) {
-        .clientName {
-            width: 170px;
-        }
-
-        .card-header-buttons {
-            text-align: center;
-        }
-    }
-
-    @@media screen and (max-width: 640px) {
-        .card-blue .card-header h6 {
-            text-align: center;
-        }
-    }
-</style>
-
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -610,6 +71,12 @@
 
                                 <div class="pull-right">
                                     <div>
+
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+
+                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
                                         @if (Model.Profile != "CuratedUser")
                                         {
 
@@ -626,11 +93,7 @@
                                             }
 
                                         }
-                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded filter" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
 
-                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
-                                            <div class="mdc-button__ripple"></div>
-                                        </button>
 
                                     </div>
                                 </div>
@@ -654,31 +117,31 @@
                                             <div class="row">
                                                 <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                             Start Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                             End Date
                                                         </label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <div class="col-md-12 col-sm-12">
                                                             <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 col-sm-6 border-rv">
-                                                  
+
                                                     @if (!Model.IsClientUser && Model.Profile != "CuratedUser")
                                                     {
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
@@ -695,8 +158,8 @@
                                                     @if (Model.Profile == "CuratedUser")
                                                     {
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SubscriptionStatus">Subscription Status</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SubscriptionStatus">Subscription Status</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="SubscriptionStatus" name="SubscriptionStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.IRFList.Select(x => x.SubscriptionStatus).Distinct().ToList())
                                                                     {
@@ -712,10 +175,10 @@
 
                                                 </div>
                                                 <div class="col-md-6 col-sm-6">
-                                                                                                        
+
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">PrimarySkill</label>
-                                                        <div class="col-md-6 col-sm-6">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">PrimarySkill</label>
+                                                        <div class="col-md-12 col-sm-12">
                                                             <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
                                                                 @foreach (var item in Model.IRFList.Select(x => x.JDTiltle).Distinct().ToList())
                                                                 {
@@ -869,9 +332,20 @@
                                                         </div> <br />
                                                         @if (Model.Profile != "CuratedUser")
                                                         {
-                                                            <div class="row six">
-                                                                <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
-                                                            </div>
+                                                            if (@item.CompanyDetails != null && @item.CompanyDetails != "None")
+                                                            {
+                                                                <div class="row">
+                                                                    <span>Company Instructions:</span> <p style="color: blue;"><a id="companyId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Link</a></p>
+
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="row">
+                                                                    <span>Company Instructions:</span> <p></p>
+
+                                                                </div>
+                                                            }
 
                                                         }
 
@@ -992,7 +466,7 @@
                                                             <button class="mdc-fab app-fab--absolute allshort" aria-label="ShortListed">
                                                                 <span onclick="location.href='@Url.Action("VideoPage", "RiseTube",new { irfid=item.id,actionstatus="ShortList"})'" title="Shortlisted Candidates" class="mdc-fab__icon material-icons">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zM2 16h8v-2H2v2zm19.5-4.5L23 13l-6.99 7-4.51-4.5L13 14l3.01 3 5.49-5.5z" /></svg>
-                                                                  
+
 
 
                                                                 </span>
@@ -1032,177 +506,161 @@
                         </div>
 
                         <!-- End Card-->
-                        <div id="myModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-">
+                        <div id="myModal" class="modal" style=" display: none; /* Hidden by default */ position: fixed; /* Stay in place */ z-index: 1; /* Sit on top */ padding-top: 100px; /* Location of the box */ left: 0; top: 0; width: 100%; /* Full width */ height: 100%; /* Full height */ overflow: auto; /* Enable scroll if needed */ background-color: rgb(0,0,0); /* Fallback color */ background-color: rgba(0,0,0,0.4); /* Black w/ opacity */ ">
                             <!-- Modal content -->
-                            <div class="modal-content" style="
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px
-    ">
-                                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                                    <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
-                                    <span class="close" id="invoicePopUp" style="cursor:pointer;">&times;</span>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 border-rv">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                                    Start Date
-                                                </label>
-                                                <div>
-                                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                                    End Date
-                                                </label>
-                                                <div>
-                                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                                        <h5 class="modal-title" style="font-size:20px;">Invoice</h5>
+                                        <span class="close" id="invoicePopUp" style="cursor:pointer;">&times;</span>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 border-rv">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                                    SR Number
-                                                </label>
-                                                <div>
-                                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                                    PO Number
-                                                </label>
-                                                <div>
-                                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 border-rv">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                                    Request Number
-                                                </label>
-                                                <div>
-                                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                                    Project Code
-                                                </label>
-                                                <div>
-                                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-6 border-rv">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                                    Client Address
-                                                </label>
-                                                <div>
-                                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                                    Discount
-                                                </label>
-                                                <div>
-                                                    <input id="discountId" name="discountId" type="text" class="form-control">
-                                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row border-bottom">
-                                        <div class="col-md-6 col-sm-6 border-rv">
-                                            <div class="form-group">
-                                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                                    Currency Code
-                                                </label>
-                                                <div>
-                                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="form-group">
-
-                                                <div>
-                                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="" style="">
-                                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                                    <label class="control-label  desp-label" for="gstCheck" style="margin-top:26px; padding-right:10px;">
-                                                        Apply GST
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="stDate">
+                                                        Start Date
                                                     </label>
+                                                    <div>
+                                                        <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
+                                                        <label class="text-danger" id="stDate_Error" style="color:red"></label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="EndDateInvoice">
+                                                        End Date
+                                                    </label>
+                                                    <div>
+                                                        <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
+                                                        <label class="text-danger" id="endDate_Error" style="color:red"></label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="srNumber">
+                                                        SR Number
+                                                    </label>
+                                                    <div>
+                                                        <input id="srNumberId" name="srNumberId" type="text" class="form-control">
+                                                        <label class="text-danger" id="srNumber_Error" style="color:red"></label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="poNumber">
+                                                        PO Number
+                                                    </label>
+                                                    <div>
+                                                        <input id="poNumberId" name="poNumberId" type="text" class="form-control">
+                                                        <label class="text-danger" id="poNumber_Error" style="color:red"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="requestNumber">
+                                                        Request Number
+                                                    </label>
+                                                    <div>
+                                                        <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
+                                                        <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="projectCode">
+                                                        Project Code
+                                                    </label>
+                                                    <div>
+                                                        <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
+                                                        <label class="text-danger" id="projectCode_Error" style="color:red"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="clientAddress">
+                                                        Client Address
+                                                    </label>
+                                                    <div>
+                                                        <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
+                                                        <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="discount">
+                                                        Discount
+                                                    </label>
+                                                    <div>
+                                                        <input id="discountId" name="discountId" type="text" class="form-control">
+                                                        <label class="text-danger" id="discount_Error" style="color:red"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row border-bottom">
+                                            <div class="col-md-6 col-sm-6 border-rv">
+                                                <div class="form-group">
+                                                    <label class="control-label col-md-12 col-sm-12 desp-label" for="currencyCode">
+                                                        Currency Code
+                                                    </label>
+                                                    <div>
+                                                        <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
+                                                        <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="form-group">
+
+                                                    <div>
+                                                        <input id="gstCheckId" name="gstCheckId" type="checkbox" class="" style="">
+                                                        <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
+                                                        <label class="control-label  desp-label" for="gstCheck" style="margin-top:26px; padding-right:10px;">
+                                                            Apply GST
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
 
 
 
-                                    <div style="margin: 10px 10px 0px 10px;
+                                        <div style="margin: 10px 10px 0px 10px;
     float: right;">
-                                        <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
+                                            <input style="box-shadow:none!important" type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Generate Invoice">
+                                        </div>
                                     </div>
+
                                 </div>
 
                             </div>
-
                         </div>
 
                         <!-- end row -->
                     </div>
 
-
-
+                </div>
+            </div>
+            </div></div>
+    </div>
 
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
@@ -1584,37 +1042,37 @@
             $("#RFID").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ClientName").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ArchiveStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#SubscriptionStatus").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
             $("#ClientRole").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                buttonWidth: '100%',
                 maxHeight: 200
             });
              $("#PrimarySkill").multiselect({
                 includeSelectAllOption: true,
                 selectedClass: 'active1',
-                buttonWidth: '270px',
+                 buttonWidth: '100%',
                 maxHeight: 200
             });
         });

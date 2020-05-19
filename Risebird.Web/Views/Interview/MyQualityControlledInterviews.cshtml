@@ -10,7 +10,7 @@
     string strtDte = String.Empty;
     string endDte = String.Empty;
     string[] InterviewSlot = new string[] { };
-    string[] CandidateName = new string[] { };  
+    string[] CandidateName = new string[] { };
     string[] RisebirdHR = new string[] { };
     string[] InterviewDate = new string[] { };
     string[] JobLevel = new string[] { };
@@ -29,332 +29,13 @@
 
     //InterviewDuration = filter.InterviewDuration != null ? filter.InterviewDuration : new string[] { };
 }
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-    .table > thead > tr > th, .table > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-
-    table {
-        border: 1px #ccc solid !important;
-        white-space: nowrap !important;
-    }
-
-
-        table td {
-            color: #504e4e;
-        }
-
-        table th {
-            color: #000000e0;
-        }
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-    .btn-call {
-        width: 30px !important;
-        height: 30px;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 12px;
-        BORDER: 0px;
-        line-height: 1.42857;
-        background: #53a4f4;
-        display: inline-block;
-    }
-
-        .btn-call .fa {
-            color: #fff;
-            font-size: 14px;
-            padding: 0px;
-            top: 8px;
-            position: relative;
-        }
-
-    .call i {
-        color: #fff
-    }
-
-    .call-txt {
-        border: 1px #53a5f5 solid;
-        position: relative;
-        padding: 5px 15px;
-        left: -10px;
-        top: 8px;
-        font-size: 14px;
-        font-family: arial;
-        color: #53a5f5;
-        border-left: 0px;
-        border-top-right-radius: 13px;
-        border-bottom-right-radius: 13px;
-    }
-
-    #MyInterviewList_length, #MyInterviewList_filter {
-        margin: 10px 0px
-    }
-
-        #MyInterviewList_length label {
-            font-size: 14px;
-        }
-
-        #MyInterviewList_length select.form-control {
-            padding: 8px 8px;
-        }
-
-        #MyInterviewList_length select:focus {
-            border-color: #4a93de;
-        }
-
-        #MyInterviewList_filter input {
-            outline: none;
-        }
-
-
-            #MyInterviewList_filter input::-webkit-search-decoration,
-            #MyInterviewList_filter input::-webkit-search-cancel-button {
-                display: none;
-            }
-
-
-            #MyInterviewList_filter input[type=search] {
-                background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-                border: solid 1px #ccc;
-                padding: 9px 10px 9px 32px;
-                width: 135px;
-                font-family: arial;
-                -webkit-border-radius: 10em;
-                -moz-border-radius: 10em;
-                border-radius: 10em;
-                -webkit-transition: all .5s;
-                -moz-transition: all .5s;
-                transition: all .5s;
-            }
-
-                #MyInterviewList_filter input[type=search]:focus {
-                    width: 200px;
-                    background-color: #fff;
-                    border-color: #4a93de;
-                    font-family: arial;
-                    margin: 3px;
-                    -webkit-box-shadow: 0 0 5px #4a93de;
-                    -moz-box-shadow: 0 0 5px #4a93de;
-                    box-shadow: 0 0 5px #4a93de;
-                }
-
-
-            #MyInterviewList_filter input:-moz-placeholder {
-                color: #999;
-            }
-
-            #MyInterviewList_filter input::-webkit-input-placeholder {
-                color: #999;
-            }
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-    #resumeId, #zoomlinkId {
-        background: #e2f0ff;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-
-    #reportId {
-        background: #b3d2f1;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-    #jdlinkId {
-        background: #fff;
-        color: #1d3b5e;
-        padding: 4px 10px;
-        border-radius: 16px;
-        border: 1px #79c0f3 solid;
-    }
-
-    #videoId {
-        background: #53a5f53d;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .mdc-card .modal .form-control, .modal .form-control, .mdc-card .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus, .modal .form-control:focus, .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
-        border-color: #53a5f5 !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .mdc-checkbox {
-        display: inline-block;
-        position: relative;
-        flex: 0 0 18px;
-        box-sizing: content-box;
-        width: 18px;
-        height: 18px;
-        line-height: 0;
-        white-space: nowrap;
-        cursor: pointer;
-        vertical-align: bottom;
-    }
-
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-
-    .mc-button-area {
-        text-align: right;
-    }
-    .enjoyhint_disable_events {
-        width: auto !important;
-        
-    }
-</style>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<link href="~/Newassets/css/interview.css" rel="stylesheet" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <div class="main-panel" id="main-panel">
@@ -530,21 +211,11 @@
                 </div>
                 <!-- end col-md-12 -->
             </div>
-            <div id="myModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <div id="myModal" class="modal modal-bg">
                 <!-- Modal content -->
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
+                        <div class="modal-header">
                             <h5 class="modal-title" style="font-size:20px;">QC Feedback</h5>
                             <span style="cursor:pointer" class="close" id="feedbackPopUp">&times;</span>
                         </div>
@@ -1420,55 +1091,53 @@
     </script>
 
 }
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
 
-    var enjoyhint_instance = new EnjoyHint({});
+        var enjoyhint_instance = new EnjoyHint({});
 
-    var enjoyhint_script_steps = [
-        {
-            'next .card-title': 'Assigned Quality Check Interviews and click on continue to know its features',
-            'nextButton': { className: "myNext", text: "Continue" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .second': 'Interview Details and scroll right to see action buttons',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },        
-        {
-            'next .four': 'Click here to Unassign interview incase of emergency you will not able to perform quality check',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },        
-        {
-            'next .six': 'Click here to see candidate interview feedback report and based on this you need to perform Quality Check',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'next .five': 'Click here to open and fill Quality Check feedback report and make sure you fill all the section in it',
-            'nextButton': { className: "myNext", text: "Next" },
-            'skipButton': { className: "mySkip", text: "Skip" }
-        },
-        {
-            'click .supportmenu': 'Click on Support Menu to see its features'
+        var enjoyhint_script_steps = [
+            {
+                'next .card-title': 'Assigned Quality Check Interviews and click on continue to know its features',
+                'nextButton': { className: "myNext", text: "Continue" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .second': 'Interview Details and scroll right to see action buttons',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .four': 'Click here to Unassign interview incase of emergency you will not able to perform quality check',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .six': 'Click here to see candidate interview feedback report and based on this you need to perform Quality Check',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'next .five': 'Click here to open and fill Quality Check feedback report and make sure you fill all the section in it',
+                'nextButton': { className: "myNext", text: "Next" },
+                'skipButton': { className: "mySkip", text: "Skip" }
+            },
+            {
+                'click .supportmenu': 'Click on Support Menu to see its features'
 
-        }
+            }
 
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 10000)
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
 
-</script>
-
-
-
-
-
+    </script>
+}
 
 
 
@@ -1484,4 +1153,9 @@
 
 
 
-<!-- PAGE CONTENT WRAPPER -->
+
+
+
+
+
+    <!-- PAGE CONTENT WRAPPER -->

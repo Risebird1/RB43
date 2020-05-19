@@ -131,6 +131,9 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Candidate Visa")]
         public string CandidateVisa { get; set; }
         public string ThumbnailImage { get; set; }
+        public string PrimarySkill { get; set; }
+
+        public string joiningTime { get; set; }
 
     }
 }

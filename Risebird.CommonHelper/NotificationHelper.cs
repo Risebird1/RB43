@@ -460,7 +460,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf)
+        public string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName)
         {
             try
             {
@@ -471,7 +471,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { irf, meetingDate };
+                object[] parameters = new object[] { irf,primarySkill, codedName, meetingDate };
                 mailMessage.Subject = "New candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
                 string msgBody = string.Format(rawEmail, parameters);
