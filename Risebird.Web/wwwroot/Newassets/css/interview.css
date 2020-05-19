@@ -842,8 +842,12 @@ select.minimal {
             width: 100%;
         }
         #ProctoringTable .label-type {
-            white-space: nowrap
+            white-space: nowrap;
         }
+   #meeting_length, #meeting_filter, #OpeninterviewList_length, #OpeninterviewList_filter, #MyInterviewList_length, #MyInterviewList_filter, #dupmeeting_length, #dupmeeting_filter {
+            margin: 7px 0 0 0px !important;
+        }
+
     }
 
     @media (min-width: 576px) {
