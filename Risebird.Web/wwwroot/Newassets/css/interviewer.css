@@ -451,4 +451,12 @@ table {
     .table > tbody > tr > td {
         padding: 12px 5px !important;
     }
+
+    #interviewer_length, #interviewer_filter {
+        margin: 7px 0px 0px 0px!important;
+    }
+    .upload {
+        margin:10px 0px;
+    }
+
 }

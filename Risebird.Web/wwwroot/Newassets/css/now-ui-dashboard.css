@@ -11235,6 +11235,8 @@ div.dataTables_scrollFoot table {
         padding: 0px 0px 0px 0px !important;
         text-align: center !important;
     }
+
+
     .mdc-radio {
         padding: 0px !important;
         margin: 0px !important;
@@ -11414,7 +11416,9 @@ div.dataTables_scrollFoot table {
     .card .card-header h4.card-title {
         font-size: 21px !important;
         text-transform: none;
+        margin:0px!important;
     }
+    .dataTables_length select.form-control{    background-size: 9%;}
 }
 
 
