@@ -1589,21 +1589,21 @@
 
                                                                             </div>
                                                                             @*<div class="row">
-                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="col-md-6 col-sm-6">
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                                                        </div>
-                                                                                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                    @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                </div>
+            </div>
 
-                                                                                </div>*@
+        </div>*@
                                                                             <div class="row">
                                                                                 <div class="col-md-6 col-sm-6">
                                                                                     <div class="form-group">
@@ -1646,19 +1646,23 @@
                                                                             @if (ViewBag.ProfileName != "CuratedUser")
                                                                             {
                                                                                 <div class="row">
-                                                                                    <div class="col-md-12 col-sm-12">
+                                                                                    <div class="col-md-6 col-sm-6">
                                                                                         <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
-
-                                                                                            @{
-                                                                                                if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                {
-                                                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
-                                                                                                }
-                                                                                            }
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateEmail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateEmail, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                                                                         </div>
                                                                                     </div>
+                                                                                    <div class="col-md-6 col-sm-6">
+                                                                                        <div class="form-group">
+                                                                                            @Html.LabelFor(model => model.IreportModel.CandidateMobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                                                            @Html.TextBoxFor(m => m.IreportModel.CandidateMobileNumber, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                                <div class="row">
+
                                                                                     @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                                     {
                                                                                         <div class="col-md-6 col-sm-6">
@@ -1670,34 +1674,34 @@
                                                                                     }
                                                                                 </div>
                                                                             }
-                                                                            @if (Model.IsIntrested == "Accept" && ViewBag.ProfileName == "CuratedUser")
+                                                                            @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
                                                                             {
-                                                                                <div class="row">
-                                                                                    <div class="col-md-12 col-sm-12">
-                                                                                        <div class="form-group">
-                                                                                            @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+                                                                                <div class="col-md-6 col-sm-6">
 
-                                                                                            @{
-                                                                                                if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
-                                                                                                {
-                                                                                                    <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
-                                                                                                }
-                                                                                            }
+                                                                                    <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
 
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    @if (!string.IsNullOrEmpty(Model.IreportModel.CandidateMobileNumber))
-                                                                                    {
-                                                                                        <div class="col-md-6 col-sm-6">
-
-                                                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="ModalButtonClick('@Model.IreportModel.CandidateMobileNumber','@Model.IreportModel.CandidateName')" data-original-title="Tooltip on top"> Call Candidate</span></button>
-
-                                                                                        </div>
-
-                                                                                    }
                                                                                 </div>
+
                                                                             }
                                                                         </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                        <div class="col-md-6 col-sm-6">
+                                                                            <div class="form-group">
+                                                                                @Html.LabelFor(model => model.IreportModel.resumeLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 upload-label" })
+
+                                                                                @{
+                                                                                    if (Model.IreportModel.resumeLink != null && Model.IreportModel.resumeLink != "")
+                                                                                    {
+                                                                                        <a id="resumeID" target="_blank" title="Resume" href=@Model.IreportModel.resumeLink.ToString().Replace(" ", " %20") class=" col-lg-12 col-md-12 col-sm-12 col-xs-12 click">Click here</a>
+                                                                                    }
+                                                                                }
+
+                                                                            </div>
+                                                                        </div>
+                                                                        }
+                                                                    </div>
                                                                         <div class="tab-pane tab_content" id="link3">
                                                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                                                 <div class="table-responsive-sm">
@@ -3429,7 +3433,7 @@
                     url: "/RiseTube/CandidateShortList",
                     data: { vedioid: $("#txtVedioId").val() },
                     success: function (data) {
-                        $("#btnShortlist").val("ShortListed(" + data + ")");
+                        $("#btnShortlist").val("Shortlisted(" + data + ")");
                     }
                 });
 
@@ -3588,18 +3592,18 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-            console.log("Client")
+
 
             var enjoyhint_instance = new EnjoyHint({});
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Video will be playing over here',
-                    'nextButton': { className: "myNext", text: "Next" },
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3625,48 +3629,48 @@
 
                 },
                 {
-                    'next .item2': 'Click here to see the Candidate Details',
+                    'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item3': 'Click here to see Tech Skill Report',
+                    'next .item3': 'Tech Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item4': 'Click here to see Questions Discussed during interview',
+                    'next .item4': 'Questions Discussed during interview',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item5': 'Click here to see General Skill Report',
+                    'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item6': 'Click here to see Joinability Report',
+                    'next .item6': 'Joinability Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item7': 'Click here to see Selectability Report',
+                    'next .item7': 'Selectability Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .comment2': 'Write your comment here',
+                    'next .post': 'Write your comment and click on Post',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .post': 'For Post your comment click here',
+                    'next .videosidelist': 'Same skill Candidates Video ',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
@@ -3691,19 +3695,14 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-
-
+            localStorage.setItem('risetube', true)
+            localStorage.setItem('subscribe', false)
             var enjoyhint_instance = new EnjoyHint({});
 
             var enjoyhint_script_steps = [
                 {
-                    'next .card-title': 'Selected Candidate Video will be playing over here',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .btn1': 'Filter here based on available attributes and reset filter if applied earlier',
-                    'nextButton': { className: "myNext", text: "Next" },
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
@@ -3728,44 +3727,49 @@
 
                 },
                 {
-                    'next .item2': 'Click here to see Candidate Details',
+                    'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item3': 'Click here to see Tech Skill Report',
+                    'next .item3': 'Tech Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item4': 'Click here to see Questions Discussed during interview',
+                    'next .item4': 'Questions discussed during interview',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item5': 'Click here to see General Skill Report',
+                    'next .item5': 'General Skill Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item6': 'Click here to see Joinability Report',
+                    'next .item6': 'Joinability Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'next .item7': 'Click here to see Selectability Report',
+                    'next .item7': 'Selectability Report',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
                 {
-                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                }
+                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel menu and to see its remaining features',
+                },
 
             ];
             setTimeout(function () {

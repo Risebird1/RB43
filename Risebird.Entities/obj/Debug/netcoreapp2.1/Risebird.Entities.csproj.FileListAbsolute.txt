@@ -1,9 +1,0 @@
-C:\Sample Sol\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.1\Risebird.Entities.deps.json
-C:\Sample Sol\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.1\Risebird.Entities.dll
-C:\Sample Sol\Risebird\Risebird.Entities\bin\Debug\netcoreapp2.1\Risebird.Entities.pdb
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.csproj.CoreCompileInputs.cache
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.AssemblyInfoInputs.cache
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.AssemblyInfo.cs
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.dll
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.pdb
-C:\Sample Sol\Risebird\Risebird.Entities\obj\Debug\netcoreapp2.1\Risebird.Entities.csprojAssemblyReference.cache
