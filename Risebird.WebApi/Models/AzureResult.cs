@@ -41,7 +41,7 @@ namespace WebApplication1.Models
         private static readonly AzureAdTokenCredentials azureAdTokenCredentials = new AzureAdTokenCredentials(mediaServiceADTenantDomain, new AzureAdClientSymmetricKey(mediaServiceADApplicationId, mediaServiceADApplicationSecret), AzureEnvironments.AzureCloudEnvironment);
         private static readonly AzureAdTokenProvider azureAdTokenProvider = new AzureAdTokenProvider(azureAdTokenCredentials);
         private static readonly CloudMediaContext context = new CloudMediaContext(new Uri(mediaServiceADRestApiEndpoint), azureAdTokenProvider);
-        public string SetMetadata(byte[] chunk, string filename, long filesize)
+        public string SetMetadata(byte[] chunk, string filename, long filesize, int noofblocks, int id)
         {
 
             string fileName = filename;
@@ -67,7 +67,7 @@ namespace WebApplication1.Models
                 UploadStatusMessage = string.Empty
             };
             //Session.Add("CurrentFile", fileToUpload);
-            var urluri = UploadChunk(1, chunk, fileToUpload);
+            var urluri = UploadChunk(id, chunk, fileToUpload);
             return urluri;
         }
         public string UploadChunk(int id, byte[] chunk, CloudFile fileToUpload)
@@ -484,6 +484,7 @@ namespace WebApplication1.Models
         public byte[] chunk { get; set; }
         public string filename { get; set; }
         public long fileSize { get; set; }
-
+        public int noofblocks { get; set; }
+        public int id { get; set; }
     }
 }
