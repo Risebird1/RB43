@@ -796,7 +796,14 @@
                                                     }
                                                     else
                                                     {
-                                                        <img src="~/RiseTube/img/video-icon.png" style="height: 179px !important;" />
+                                                        @if (item.ThumbnailImage != null)
+                                                        {
+                                                            <img src="@item.ThumbnailImage" style="height: 179px !important; " />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="~/RiseTube/img/video-icon.png" style="height: 179px !important;" />
+                                                        }
                                                         <a class="play-icon" onclick="location.href='@Url.Action("VideoPage", "Risetube", new { id = item.imid})'" style=" cursor: pointer;"></a>
                                                     }
 
@@ -1071,7 +1078,7 @@
     <script src="~/Newassets/js/enjoyhint.min.js"></script>
     <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
     <script>
-          localStorage.setItem('risetube', true)
+        localStorage.setItem('risetube', true)
         var enjoyhint_instance = new EnjoyHint({});
 
         var enjoyhint_script_steps = [
@@ -1079,7 +1086,7 @@
                 'next #risetubeid': 'Risetube! Selected Candidates Video will be available over here  and click on continue to know its features',
                 'nextButton': { className: "myNext", text: "Continue" },
                 'skipButton': { className: "mySkip", text: "Skip" }
-            },           
+            },
             {
                 'next .btn3': 'Enter Skill or Candidate name and Search result',
                 'nextButton': { className: "myNext", text: "Next" },
@@ -1091,8 +1098,8 @@
                 'skipButton': { className: "mySkip", text: "Skip" }
             },
             {
-               'click .supportmenu': 'Click on Support Menu to see its features'
-            }           
+                'click .supportmenu': 'Click on Support Menu to see its features'
+            }
 
         ];
         setTimeout(function () {
