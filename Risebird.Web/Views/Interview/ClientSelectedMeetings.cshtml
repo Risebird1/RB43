@@ -34,472 +34,12 @@
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
     ClientName = filter.ClientName != null ? filter.ClientName : new string[] { };
 }
-<style>
 
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-
-        table.dataTable > thead > tr > th {
-            padding: 5px;
-        }
-
-
-    .table > tfoot > tr > th {
-        padding: 5px 7px;
-    }
-
-    td .wordwrap {
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-    .table > thead > tr > th, .table > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-
-    table {
-        border: 1px #ccc solid !important;
-    }
-
-        table td {
-            color: #504e4e;
-        }
-
-        table th {
-            color: #000000e0;
-        }
-
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-
-    .btn-call {
-        width: 30px !important;
-        height: 30px;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 12px;
-        BORDER: 0px;
-        line-height: 1.42857;
-        background: #53a4f4;
-        display: inline-block;
-    }
-
-        .btn-call .fa {
-            color: #fff;
-            font-size: 14px;
-            padding: 0px;
-            top: 8px;
-            position: relative;
-        }
-
-    .call i {
-        color: #fff
-    }
-
-    .call-txt {
-        border: 1px #53a5f5 solid;
-        position: relative;
-        padding: 5px 15px;
-        left: -10px;
-        top: 8px;
-        font-size: 14px;
-        font-family: arial;
-        color: #53a5f5;
-        border-left: 0px;
-        border-top-right-radius: 13px;
-        border-bottom-right-radius: 13px;
-    }
-
-    #meeting_length, #meeting_filter {
-        margin: 10px 0px
-    }
-
-        #meeting_length label {
-            font-size: 14px;
-        }
-
-        #meeting_length select.form-control {
-            padding: 8px 8px;
-        }
-
-        #meeting_length select:focus {
-            border-color: #4a93de;
-        }
-
-        #meeting_filter input {
-            outline: none;
-        }
-
-    #meeting input[type=search] {
-        -webkit-appearance: textfield;
-        -webkit-box-sizing: content-box;
-        font-family: inherit;
-        font-size: 100%;
-    }
-
-    #meeting_filter input::-webkit-search-decoration,
-    #meeting_filter input::-webkit-search-cancel-button {
-        display: none;
-    }
-
-
-    #meeting_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 135px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-    }
-
-        #meeting_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            -webkit-box-shadow: 0 0 5px #4a93de;
-            -moz-box-shadow: 0 0 5px #4a93de;
-            box-shadow: 0 0 5px #4a93de;
-        }
-
-
-    #meeting_filter input:-moz-placeholder {
-        color: #999;
-    }
-
-    #meeting_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
-
-
-
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #807e7e;
-        font-size: 12px;
-    }
-
-
-
-
-    #resumeId, #zoomlinkId {
-        background: #e2f0ff;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-
-    #reportId {
-        background: #b3d2f1;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-    #jdlinkId {
-        background: #fff;
-        color: #1d3b5e;
-        padding: 4px 10px;
-        border-radius: 16px;
-        border: 1px #79c0f3 solid;
-    }
-
-    #videoId {
-        background: #53a5f53d;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 16px;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-    }
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-    }
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .mdc-card .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-</style>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -521,7 +61,7 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content client">
         <div class="row">
             <div class="col-md-12">
                 <div class="mdc-card card">
@@ -579,20 +119,20 @@
                                                 <div class="row">
                                                     <div class="col-md-6 col-sm-6 border-rv ">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                                 Start Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                                 End Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
@@ -600,8 +140,8 @@
                                                     <div class="col-md-6 col-sm-6 border-rv ">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
@@ -617,10 +157,10 @@
 
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="MeetingStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                 Interview Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.interviewDate).Distinct().ToList())
                                                                     {
@@ -633,10 +173,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
                                                                 Candidate Name
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
                                                                     {
@@ -649,11 +189,11 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
                                                                 Client
                                                                 HR
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.ClientHrContact).Distinct().ToList())
                                                                     {
@@ -666,8 +206,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.ClientName).Distinct().ToList())
                                                                     {
@@ -683,10 +223,10 @@
                                                     <div class="col-md-6 col-sm-6">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
                                                                 Approval Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
                                                                     {
@@ -699,10 +239,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SelectionStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
                                                                 Selection Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
                                                                     {
@@ -715,10 +255,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                 Joining Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -731,10 +271,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
                                                                 Offer Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -803,7 +343,7 @@
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -825,7 +365,7 @@
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -901,27 +441,7 @@
     </div>
 
 </div>
-<style>
-    .caret {
-        display: none !important;
-    }
 
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-</style>
 <script>
     $(document).ready(function () {
          $("#ResetFilter").click(function () {
@@ -933,57 +453,57 @@
         $("#PrimarySkill").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
 
         $("#CandidateName").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
 
         $("#ClientHR").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#ApprovalStatus").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#SelectionStatus").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#JoiningStatus").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#OfferStatus").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#InterviewDate").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         $("#ClientName").multiselect({
             includeSelectAllOption: true,
             selectedClass: 'active1',
-            buttonWidth: '270px',
+            buttonWidth: '100%',
             maxHeight: 200
         });
         //FilterInterviews("All");// on page load default dropdownlist value set

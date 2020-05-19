@@ -4,7 +4,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/admin.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -18,7 +23,7 @@
                     </button>
                 </div>
                 <a class="navbar-brand breadcrumscolor" href="/User/Recruiters">Recruiter</a>
-                <a class="navbar-brand">Update Recruiter</a>
+                <a class="navbar-brand">/ &nbsp; Update Recruiter</a>
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -33,77 +38,91 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Update Recruiter</h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+                
+                    <div class="mdc-card-wrapper__text-section">
                         @using (Html.BeginForm("EditRecruiter", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
                         {
 
                             @Html.AntiForgeryToken()
 
                             <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-horizontal">
-                                        <div class="col-md-6 col-sm-6 pr-1">
-                                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="card-header">
+                                    <h4 class="card-title">Update Recruiter</h4>
+                                </div>
+                                <div style="width: 100%;">&nbsp;</div>
+                                <div class="form-horizontal w-full">
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-
-                                            </div>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
-
-                                            </div>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-
-                                            </div>
-
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
-
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
-                                                @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
-
-                                            </div>
-                                            @Html.HiddenFor(m => m.UserId)
+                                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
 
                                         </div>
-                                        <div class="card-footer ">
-                                            <div class="row">
-                                                <label class="col-md-2"></label>
-                                                <div class="col-md-9">
-                                                    @Html.ActionLink("Back to List", "Recruiters", "User", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Save</button>
-                                                </div>
-                                            </div>
+                                    </div>
+
+
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-4 pl-1 pull-left">
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.EmailId, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-md-4 col-sm-4 pr-1 pull-left">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Domain, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.Domain, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Domain, "", new { @class = "text-danger" })
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 px-1 pull-left">
+
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.MobileNumber, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                            @Html.EditorFor(model => model.MobileNumber, new { htmlAttributes = new { @class = "form-control", @type = "text" } })
+                                            @Html.ValidationMessageFor(model => model.MobileNumber, "", new { @class = "text-danger" })
+
+                                        </div>
+                                        @Html.HiddenFor(m => m.UserId)
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="card-footer ">
+                                <div class="row">
+
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Recruiters", "User", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Save</button>
                                     </div>
                                 </div>
                             </div>
-
-
 
                         }
                     </div>
@@ -119,25 +138,6 @@
     </div>
 
 </div>
-<style>
-    .fa-spinner {
-        font-size: 18px;
-        position: relative;
-        top: 6px;
-        left: 4px;
-    }
-
-    .webkitEnabled {
-        -webkit-appearance: menulist;
-    }
-
-    .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
-        color: #000 !important;
-        text-decoration: none;
-        background-color: #fff !important;
-        outline: 0;
-    }
-</style>
 
 
 

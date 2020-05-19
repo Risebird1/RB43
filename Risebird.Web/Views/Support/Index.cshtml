@@ -1,687 +1,20 @@
 ﻿@model Risebird.Entities.ViewModel.SupportList
+@using Microsoft.AspNetCore.Http
+@using Risebird.Entities.ViewModel
+@inject IHttpContextAccessor HttpContextAccessor
 @{
     ViewData["Title"] = "Support";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!-- Keep the Page Content Here.-->
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    td.wordwrap {
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    table {
-        border: 1px #ccc solid !important;
-    }
-
-        table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-            max-width: 300px !important;
-        }
-
-        table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-            padding: 7px;
-            font-weight: normal !important;
-        }
-
-    .table > thead > tr > th, .table > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-
-    .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #fff;
-    }
-
-    .table-striped tbody tr:nth-of-type(even) {
-        background-color: rgb(233,247,247,0.2);
-    }
-
-    table.dataTable thead .sorting:after {
-        opacity: 1;
-        content: "\f0dc";
-        color: #fff;
-    }
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-    #resumeId {
-        background: #e2f0ff;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-    #reportId {
-        background: #b3d2f1;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-    #jdlinkId {
-        background: #fff;
-        color: #1d3b5e;
-        padding: 4px 10px;
-        border-radius: 10px;
-        border: 1px #56a9ff solid;
-    }
-
-    #videoId {
-        background: #56a9ff63;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: #cee0f3;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-
-    td.wordwrap {
-        max-width: 200px !important;
-        min-width: 200px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-    }
-
-    .border-bubble {
-        border: 2px solid #eff7ff;
-    }
-
-    .talk-bubble textarea {
-        resize: none;
-        border: 0;
-        background: #f7fbff;
-        padding: 5px;
-    }
-
-        .talk-bubble textarea:focus {
-            outline: hidden;
-            padding: 5px;
-        }
-
-
-
-    /* Right triangle placed top left flush. */
-    .tri-right.border.left-top:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -40px;
-        right: auto;
-        top: -8px;
-        bottom: auto;
-        border: 32px solid;
-        border-color: #666 transparent transparent transparent;
-    }
-
-    .tri-right.left-top:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -20px;
-        right: auto;
-        top: 0px;
-        bottom: auto;
-        border: 22px solid;
-        border-color: #eff7ff transparent transparent transparent;
-    }
-
-    /* Right triangle, left side slightly down */
-    .tri-right.border.left-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -40px;
-        right: auto;
-        top: 30px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 38px;
-        bottom: auto;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom left side slightly in*/
-    .tri-right.border.btm-left:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -8px;
-        right: auto;
-        top: auto;
-        bottom: -40px;
-        border: 32px solid;
-        border-color: transparent transparent transparent #666;
-    }
-
-    .tri-right.btm-left:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 0px;
-        right: auto;
-        top: auto;
-        bottom: -20px;
-        border: 22px solid;
-        border-color: transparent transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom left side slightly in*/
-    .tri-right.border.btm-left-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 30px;
-        right: auto;
-        top: auto;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 transparent transparent #666;
-    }
-
-    .tri-right.btm-left-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 38px;
-        right: auto;
-        top: auto;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom right side slightly in*/
-    .tri-right.border.btm-right-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 30px;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.btm-right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 38px;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff #eff7ff transparent transparent;
-    }
-
-    .tri-right.border.btm-right:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -8px;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.btm-right:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 0px;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff #eff7ff transparent transparent;
-    }
-
-    /* Right triangle, right side slightly down*/
-    .tri-right.border.right-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -40px;
-        top: 30px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #666 transparent transparent #666;
-    }
-
-    .tri-right.right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 38px;
-        bottom: auto;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /* Right triangle placed top right flush. */
-    .tri-right.border.right-top:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -40px;
-        top: -8px;
-        bottom: auto;
-        border: 32px solid;
-        border-color: #666 transparent transparent transparent;
-    }
-
-    .tri-right.right-top:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 0px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #eff7ff transparent transparent transparent;
-    }
-
-    /* talk bubble contents */
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-    .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #84c0ff;
-        color: #fff;
-        font-weight: bold;
-        box-shadow: 0 3px #5794d4;
-    }
-
-
-    .action .btn-warning, .action .btn-warning:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #fff;
-        color: #56a9ff;
-        font-weight: bold;
-        border: 1px #deedfd solid;
-        box-shadow: 0 3px #5794d4;
-    }
-
-
-    .action .btn {
-        width: 32px !important;
-        height: 30px !important;
-    }
-
-    .action span {
-        -webkit-transition: -webkit-transform .8s ease-in-out;
-        transition: transform .8s ease-in-out;
-        font-weight: bold;
-    }
-
-        .action span:hover {
-            -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-
-
-    #supportList_length, #supportList_filter {
-        margin: 10px 0px
-    }
-
-        #supportList_length label {
-            font-size: 14px;
-        }
-
-        #supportList_length select.form-control {
-            padding: 8px 8px;
-        }
-
-        #supportList_length select:focus {
-            border-color: #4a93de;
-        }
-
-        #supportList_filter input {
-            outline: none;
-        }
-
-    #meeting input[type=search] {
-        -webkit-appearance: textfield;
-        -webkit-box-sizing: content-box;
-        font-family: inherit;
-        font-size: 100%;
-    }
-
-    #supportList_filter input::-webkit-search-decoration,
-    #supportList_filter input::-webkit-search-cancel-button {
-        display: none;
-    }
-
-    #supportList_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 135px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-    }
-
-        #supportList_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            -webkit-box-shadow: 0 0 5px #4a93de;
-            -moz-box-shadow: 0 0 5px #4a93de;
-            box-shadow: 0 0 5px #4a93de;
-        }
-
-
-    #supportList_filter input:-moz-placeholder {
-        color: #999;
-    }
-
-    #supportList_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-
-
-        table.dataTable > thead > tr > th {
-            padding: 5px;
-        }
-
-
-    .table > tfoot > tr > th {
-        padding: 5px 7px;
-    }
-
-
-    .btn-call {
-        width: 32px !important;
-        height: 32px;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 12px;
-        BORDER: 0px;
-        line-height: 1.42857;
-        background: #4a93de;
-        display: inline-block;
-    }
-
-        .btn-call .fa {
-            color: #fff;
-            font-size: 17px;
-            padding: 6px;
-        }
-
-    .call i {
-        color: #fff
-    }
-
-    .call-txt {
-        border: 1px #4a93de solid;
-        position: relative;
-        padding: 6px 15px;
-        left: -10px;
-        top: 1px;
-        font-size: 14px;
-        font-family: arial;
-        color: #1675de;
-        border-left: 0px;
-        border-top-right-radius: 13px;
-        border-bottom-right-radius: 13px;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-
-
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-
-    .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .mdc-card .modal .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-</style>
-
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/support.css" rel="stylesheet" />
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 <div class="main-panel" id="main-panel">
@@ -696,7 +29,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-               
+
             </div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -714,26 +47,6 @@
                 <div class="mdc-card card">
 
                     <div class="mdc-card-wrapper__text-section">
-
-
-                        <div class="toolbar">
-                            <!--        Here you can write extra buttons/actions for the toolbar              -->
-                            <div class="row">
-
-                                <div @*class="col-md-6 ml-md-auto" *@>
-                                    @if (ViewBag.Profile == "Admin")
-                                    {
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;margin-left:1231px"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Support." onclick="location.href='@Url.Action("AddSupport", "Support")'" data-original-title="Tooltip on top"> Add Support</span></button>
-                                    }
-                                    @if (Model.BackController != null && Model.BackMethod != null)
-                                    {
-                                        @Html.ActionLink("Back", Model.BackMethod, Model.BackController, null, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button", @style = "margin-left:1252px" })
-                                    }
-                                </div>
-
-
-                            </div>
-                        </div>
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
@@ -741,11 +54,28 @@
                             <div class="toolbar">
                                 <div class="row">
                                     <div class="card-header">
-                                        <h4 class="card-title">Support</h4>
+                                        <div class="pull-left">   <h4 class="card-title">Support</h4></div>
+                                        <div class="pull-right">
+                                            @if (ViewBag.Profile == "Admin")
+                                            {
+
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                    <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Support" onclick="location.href='@Url.Action("AddSupport", "Support")'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">  Add Support</font></span>
+                                                </button>
+
+                                               
+                                            }
+                                            @if (Model.BackController != null && Model.BackMethod != null)
+                                            {
+                                                @Html.ActionLink("Back", Model.BackMethod, Model.BackController, null, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-left:1252px" })
+                                            }
+                                        </div>
+
+
                                     </div>
                                 </div>
                             </div>
-
 
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
                                 <div id="tableID">
@@ -782,99 +112,96 @@
                                             @foreach (var item in Model.Supports)
                                             {
 
-                                                <tr id="@item.id">
-                                                    <td> @item.Name</td>
-                                                    @if (item.EmailId != null && item.EmailId != "")
-                                                    {
-                                                        <td>@item.EmailId</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Not available</td>
-                                                    }
+                                            <tr id="@item.id">
+                                                <td> @item.Name</td>
+                                                @if (item.EmailId != null && item.EmailId != "")
+                                                {
+                                                    <td>@item.EmailId</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                }
+
+                                                @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
+                                                {
+                                                    <td>@item.WhatsappNumber</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>Not available</td>
+                                                }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-                                                    @if (item.WhatsappNumber != null && item.WhatsappNumber != "")
-                                                    {
-                                                        <td>@item.WhatsappNumber</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>Not available</td>
-                                                    }
-
-
-                                                    @if (item.OnVoiceCall)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.OnWhatsapp)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.OnEmail)
-                                                    {
-                                                        <td>Yes</td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No</td>
-                                                    }
-                                                    @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
-                                                    {
-                                                        <td>
-                                                            <span style="font-size:12px;">  @item.AvailabilityHours </span>
-                                                        </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td> </td>
-                                                    }
-
+                                                @if (item.OnVoiceCall)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.OnWhatsapp)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.OnEmail)
+                                                {
+                                                    <td>Yes</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No</td>
+                                                }
+                                                @if (item.AvailabilityHours != null && item.AvailabilityHours != "")
+                                                {
                                                     <td>
-
-                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
-                                                        {
-                                                            <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
-
-
-
-                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
-
-
-                                                        }
-
+                                                        <span style="font-size:12px;">  @item.AvailabilityHours </span>
                                                     </td>
-                                                    <td class="text-center">
-                                                        @if (ViewBag.Profile == "Admin")
-                                                        {
-                                                            <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="btn btn-round btn-warning btn-icon btn-sm edit"><i class="fas fa-edit"></i></span>
-                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-trash"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <td> </td>
+                                                }
 
-                                                        }
+                                                <td>
 
-                                                    </td>
-                                                </tr>
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty && item.OnVoiceCall)
+                                                    {
+                                                        <!--<button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')" data-original-title="Tooltip on top"> Call HR</span></button>-->
+
+
+
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the HR." onclick="ModalButtonClick('@item.MobileNumber','@item.Name')"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt">Call HR</span></span>
+
+
+                                                    }
+
+                                                </td>
+                                                <td class="text-right action">
+                                                    @if (ViewBag.Profile == "Admin")
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Click here to edit Recruiter">
+                                                            <span onclick="location.href = '@Url.Action("Edit", "Support", new { id = item.id})'" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+
+
+
+                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Click here to delete risebird user">
+                                                            <span onclick="javascript:Delete('@item.id');" title="Delete" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg></span>
+                                                        </button>
+
+
+                                                        
+
+                                                    }
+
+                                                </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -890,42 +217,24 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal " style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+        <div id="myModal" class="modal modal-bg">
             <!-- Modal content -->
             <div class="modal-dialog modal-lg" role="document">
 
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" style="font-size:20px;">Call HR!</h5>
-                        <span class="close" id="callPopUp">&times;</span>
+                        <h5 class="modal-title ft20">Call HR!</h5>
+                        <span class="close" id="callPopUp" style="cursor:pointer;">&times;</span>
                     </div>
                     <div class="modal-body" style="padding: 2px 16px;">
-                        <div class="row">
-                            <label id="callingLabel" style="    margin-top: 30px;
-    /* text-align: center; */
-    font-size: 20px;
-    text-align: center;
-    margin: 20px auto;
-    display: block"><b>Calling...</b></label>
-
-                        </div>
-
-                        <div class="">
-                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+          
+                            <h5 class="modal-title text-center mt-20" id="callingLabel"><b>Calling...</b></h5>
+                            <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
     display: block;" class="btn btn-fill btn-danger" value="Hang Up">
-                        </div>
+                      
+
                     </div>
-                    <div class="modal-footer" style="background:#fff;"></div>
+                   
                 </div>
             </div>
 
@@ -1151,26 +460,28 @@
 
 
 </script>
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    <script src="~/Newassets/js/enjoyhint.min.js"></script>
+    <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+    <script>
+        var enjoyhint_instance = new EnjoyHint({});
 
-<script src="~/Newassets/js/enjoyhint.min.js"></script>
-<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
-<script>
-    var enjoyhint_instance = new EnjoyHint({});
+        var enjoyhint_script_steps = [
 
-    var enjoyhint_script_steps = [
-        
-         {
-             'click .firstsupport': 'Contact these people in case any support needed'
-          }
-       
+            {
+                'click .firstsupport': 'Contact these people in case any support needed'
+            }
 
 
-    ];
-    setTimeout(function () {
-        enjoyhint_instance.set(enjoyhint_script_steps);
-        enjoyhint_instance.run();
-    }, 5000)
-</script>
+
+        ];
+        setTimeout(function () {
+            enjoyhint_instance.set(enjoyhint_script_steps);
+            enjoyhint_instance.run();
+        }, 5000)
+    </script>
+}
 
 
 <!-- PAGE CONTENT WRAPPER -->

@@ -27,98 +27,14 @@
 }
 
 <style>
-    .spanclass {
-        color: black;
-        font-size: 11px;
-    }
 
-    .desc {
-        display: inline-block;
-        width: 120px;
-        white-space: nowrap;
-        overflow: hidden !important;
-        text-overflow: ellipsis;
-    }
 
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #5f95b1;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 35px;
-        margin-bottom: 35px;
-    }
-
-    @@media (min-width: 1200px) {
-        .container {
-            width: 1125px;
-        }
-    }
-
-    .thumbnail {
-        border-top: 5px solid #443f3f;
-    }
-
-    .list-group-item-heading {
-        font-size: 13px;
-        font-weight: 700;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 15px;
-    }
-
-    .list-group-item-text {
-        padding-top: 20px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 20px;
-    }
-
-        .list-group-item-text span {
-            float: left;
-            font-weight: 700;
-            padding-right: 5px;
-        }
-
-    .icon span {
-        padding-top: 15px;
-        font-size: 19px;
-        color: #5f95b1;
-        padding-left: 5px;
-    }
-
-    .list-group {
-        margin-bottom: 150px;
-    }
 </style>
-<style>
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-</style>
-
-
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/account.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -140,98 +56,163 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content pa">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Accounts</h4>
-                    </div>
-                    <div class="row" style="margin-left:1008px">
-                        @if (Model.IsClientUser == false)
-                        {
-                            <div class="toolbar">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
+                        <div class="row">
+                            @if (Model.IsClientUser == false)
+                            {
                                 <!--        Here you can write extra buttons/actions for the toolbar              -->
-                                <div class="text-right">
-                                    <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Account" onclick="location.href='@Url.Action("Add", "Account")'" data-original-title="Tooltip on top"> Add Account</span></button>
+
+                                <div class="card-header">
+                                    <div class="pull-left"><h4 class="card-title">Accounts</h4></div>
+
+                                    <div class="pull-right">
+                                        <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+                                            <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                            <div class="mdc-button__ripple"></div>
+                                        </button>
+
+
+
+                                        <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                            <span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add Account" onclick="location.href='@Url.Action("Add", "Account")'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;"> Add Account</font></span>
+                                        </button>
+                                    </div>
+
                                 </div>
-                            </div>
-                        }
-                        <div>
-                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+
+
+                            }
+
+
+
                         </div>
-                    </div>
+
+                        <div class="row">
+                            @if (Model != null && Model.AccountList.Count() != 0)
+                            {
+                                @foreach (var item in Model.AccountList)
+                                {<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6" style="margin-top: 15px;">
+                                        <div class="card-content-holder border card-blue">
+
+                                            <div class="card-header">
+                                                <div class="row">
+                                                    <div>
+
+                                                        <h6> @item.Name</h6>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
 
 
-                    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                    <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <form action="@Url.Action("Index","Account")" method="post" id="form">
+                                            <div class="card-body">
+                                                <div class="statistics statistics-horizontal">
+                                                    <div class="info info-horizontal">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="group inner list-group-item-text">
 
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
-                                                        Start Date
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                                    <div class="clearfix col-md-12"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
+                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
+                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
+                                                                    <div class="clearfix col-md-12">
+                                                                        <span class="pull-left"><b>Location:</b></span> <span class="pull-left"> @item.Location</span>
+                                                                    </div>
+                                                                    
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
-                                                        End Date
-                                                    </label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <input id="EndDate" name="EndDate" type="date" class="form-control">
-                                                    </div>
+                                            <div class="card-footer">
+                                                <div class="stats text-center">
+                                                    @if (!@item.IsClientUser)
+                                                    {
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                            <span onclick="javascript:EditAccount('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
+                                                        </button>
+
+                                                    }
+
+                                                    @if (!@item.IsClientUser)
+                                                    {
+                                                        if (!item.IsDeleted)
+                                                        {
+
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                                <span onclick="javascript:ArchiveAccount('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                            </button>
+
+
+
+                                                        }
+                                                        else
+                                                        {
+                                                          
+                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="UnArchive">
+                                                                <span onclick="javascript:UnArchiveAccount('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                            </button>
+                                                        }
+
+                                                    }
+
                                                 </div>
                                             </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="AccountId">AccountId</label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
-                                                            {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                    <option value="@item">@item</option>
-                                                                }
-                                                            }
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="ArchiveStatus">Archive Status</label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
-                                                            @foreach (var item in Model.AccountList.Select(x => x.ArchiveStatus).Distinct().ToList())
-                                                            {
-                                                                @if (item != null && item != "")
-                                                                {
-                                                                    <option value="@item">@item</option>
-                                                                }
-                                                            }
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                @if (!Model.IsClientUser)
-                                                {
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
+                                        <h5 class="modal-title" id="filterModalLabel">Filter</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form action="@Url.Action("Index","Account")" method="post" id="form">
+
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
                                                     <div class="form-group">
-                                                        <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientName">End Client Name</label>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
-                                                                @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
+                                                            Start Date
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="StartDate" name="StartDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
+                                                            End Date
+                                                        </label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <input id="EndDate" name="EndDate" type="date" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="AccountId">AccountId</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="AccountId" name="AccountId" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.AccountList.Select(x => x.Name).Distinct().ToList())
                                                                 {
                                                                     @if (item != null && item != "")
                                                                     {
@@ -241,128 +222,96 @@
                                                             </select>
                                                         </div>
                                                     </div>
-                                                }
-
-
-                                            </div>
-                                            <div class="col-md-6 col-sm-6">
-                                                <div class="form-group">
-                                                    <label class="control-label col-md-6 col-sm-4 desp-label" for="Location">Location</label>
-                                                    <div class="col-md-6 col-sm-6">
-                                                        <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
-
-                                                            @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
-                                                            {
-                                                                @if (item != null && item != "")
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="ArchiveStatus">Archive Status</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="ArchiveStatus" name="ArchiveStatus" class="form-control multiselect" multiple="multiple">
+                                                                @foreach (var item in Model.AccountList.Select(x => x.ArchiveStatus).Distinct().ToList())
                                                                 {
-                                                                    <option value="@item">@item</option>
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
                                                                 }
-                                                            }
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
-                                                        </div>
-                                                        <div class="col-md-6 col-sm-6">
-                                                            <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
+                                                            </select>
                                                         </div>
                                                     </div>
+                                                    @if (!Model.IsClientUser)
+                                                    {
+                                                        <div class="form-group">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientName">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
+                                                                <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
+                                                                    @foreach (var item in Model.AccountList.Select(x => x.EndClient).Distinct().ToList())
+                                                                    {
+                                                                        @if (item != null && item != "")
+                                                                        {
+                                                                            <option value="@item">@item</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    }
+
+
                                                 </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label col-md-12 col-sm-12 desp-label" for="Location">Location</label>
+                                                        <div class="col-md-12 col-sm-12">
+                                                            <select id="Location" name="Location" class="form-control multiselect" multiple="multiple">
+
+                                                                @foreach (var item in Model.AccountList.Select(x => x.Location).Distinct().ToList())
+                                                                {
+                                                                    @if (item != null && item != "")
+                                                                    {
+                                                                        <option value="@item">@item</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-sm-12">
+
+                                                                <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                    <font style="font-size:12px;"> Reset Filter</font>
+                                                                </button>
 
 
+                                                                <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                    <font style="font-size:12px;"> Apply Filter</font>
+                                                                </button>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </div>
+
                                         </div>
-
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
 
+                        </div>
+                        <!-- end content-->
                     </div>
-                    <!-- end content-->
                 </div>
+
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div class="row">
-            @if (Model != null && Model.AccountList.Count() != 0)
-            {
-                @foreach (var item in Model.AccountList)
-                {
-                    <div class="col-lg-3 col-sm-6">
-                        <div class="card card-stats">
-                            <div class="card-body ">
-
-                                <div class="statistics statistics-horizontal">
-                                    <div class="info info-horizontal">
-                                        <div class="row">
-                                            <div class="col-12 text-center">
-                                                <h3 class="info-title" style="font-size:smaller;"> @item.Name</h3>
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                        <div class="row" style="font-size:smaller;">
-
-                                            <div class="col-12">
-                                                <div class="group inner list-group-item-text">
-
-                                                    <span>Total Projects:</span> <p>@item.TotalProjects</p>
-                                                    <span>Client:</span> <p> @item.Client </p>
-                                                    <span>End Client:</span> <p> @item.EndClient</p>
-                                                    <span>Location:</span> <p> @item.Location</p>
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer ">
-                                <div class="stats text-center">
-                                    @if (!@item.IsClientUser)
-                                    {
-                                        <button type="button" onclick="javascript:EditAccount('@item.id');" class="btn btn-primary btn-icon btn-sm " title="Edit">
-                                            <i class="now-ui-icons fa fa-edit"></i>
-                                        </button>
-
-                                    }
-
-                                    @if (!@item.IsClientUser)
-                                    {
-                                        if (!item.IsDeleted)
-                                        {
-                                            <button type="button" onclick="javascript:ArchiveAccount('@item.id');" class="btn btn-danger btn-icon btn-sm " title="Archive">
-                                                <i class="now-ui-icons fa fa-archive"></i>
-                                            </button>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" onclick="javascript:UnArchiveAccount('@item.id');" class="btn btn-success btn-icon btn-sm" title="UnArchive">
-                                                <i class="now-ui-icons fa fa-undo"></i>
-                                            </button>
-                                        }
-
-                                    }
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-
-        </div>
+        
         <!-- end row -->
     </div>
- 
+
 </div>
 
 

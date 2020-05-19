@@ -3,62 +3,14 @@
     ViewData["Title"] = "Mail";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<style type="text/css">
-    .required-field::after {
-        content: "*";
-        color: red;
-    }
 
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-    }
-
-
-    .mdc-card .modal .form-control, .mdc-card .form-control {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-</style>
 
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<link href="~/Newassets/css/mail.css" rel="stylesheet" />
 <script src="~/js/CustomValidation/EmailValidation.js"></script>
 @using (Html.BeginForm("Mail", "Mail", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "return validateEmail()" }))
 {
