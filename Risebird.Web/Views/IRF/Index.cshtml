@@ -332,9 +332,20 @@
                                                         </div> <br />
                                                         @if (Model.Profile != "CuratedUser")
                                                         {
-                                                            <div class="row six">
-                                                                <span>Budget Consumed:</span> <p style="color: blue;">@item.BudgetConsumed</p>
-                                                            </div>
+                                                            if (@item.CompanyDetails != null && @item.CompanyDetails != "None")
+                                                            {
+                                                                <div class="row">
+                                                                    <span>Company Instructions:</span> <p style="color: blue;"><a id="companyId" target="_blank" title="Company Instructions" href=@item.CompanyDetails>Link</a></p>
+
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div class="row">
+                                                                    <span>Company Instructions:</span> <p></p>
+
+                                                                </div>
+                                                            }
 
                                                         }
 

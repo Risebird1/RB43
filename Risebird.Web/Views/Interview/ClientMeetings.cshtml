@@ -404,11 +404,12 @@
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
+                                                <th>Interview Link</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -422,11 +423,12 @@
                                                 <th>Resume</th>
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
+                                                <th>Interview Link</th>
                                                 <th>Confirmation Status</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -436,37 +438,45 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                                <tr id=@item.imid>
-                                                    <td> @item.interviewDate </td>
-                                                    <td> @item.candidateName </td>
-                                                    @if (item.resumeLink != null && item.resumeLink != "")
-                                                    {
-                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Resume</td>
-                                                    }
-                                                    @if (item.MobileNumber != null)
-                                                    {
-                                                        <td>@item.MobileNumber</td>
+                                            <tr id=@item.imid>
+                                                <td> @item.interviewDate </td>
+                                                <td> @item.candidateName </td>
+                                                @if (item.resumeLink != null && item.resumeLink != "")
+                                                {
+                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Resume</td>
+                                                }
+                                                @if (item.MobileNumber != null)
+                                                {
+                                                    <td>@item.MobileNumber</td>
 
-                                                    }
-                                                    else
-                                                    {
-                                                        <td>No Contact</td>
-                                                    }
-                                                    <td> @item.ClientHrContact </td>
-                                                    <td> @item.confirmationStatus</td>
-                                                    <td> @item.MeetingStatusStatusDesc </td>
-                                                    <td> @item.intervieweStatusStatDesc </td>
-                                                    <td> @item.currentEmployerName </td>
-                                                    <td> @item.expectedPerHourRate </td>
-                                                    <td> @item.joiningTime </td>
-                                                    <td> @item.preferredLocation </td>
-                                                    <td>@item.staffingAgency</td>
-                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Contact</td>
+                                                }
+                                                <td> @item.ClientHrContact </td>
+                                                @if (item.zoomLink != null && item.zoomLink != "")
+                                                {
+                                                    <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                }
+                                                else
+                                                {
+                                                    <td>No Interview Link</td>
+                                                }
+                                                <td> @item.confirmationStatus</td>
+                                                <td> @item.MeetingStatusStatusDesc </td>
+                                                <td> @item.intervieweStatusStatDesc </td>
+                                                <td> @item.currentEmployerName </td>
+                                                <td> @item.expectedPerHourRate </td>
+                                                <td> @item.joiningTime </td>
+                                                <td> @item.preferredLocation </td>
+                                                <td>@item.staffingAgency</td>
+                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
+                                            </tr>
                                             }
                                         </tbody>
                                     </table>

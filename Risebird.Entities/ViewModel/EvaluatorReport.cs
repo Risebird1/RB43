@@ -41,7 +41,7 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "Current Employer")]
         public string currentEmployerName { get; set; }
 
-        //[Display(Name = "Expected Per Hour Rate")]
+        //[Display(Name = "Expected Salary")]
         //public string expectedPerHourRate { get; set; }
         
         public IList<SelectabilityEvaluatorReport> SelectabilityEvaluatorReportCollection { get; set; }
