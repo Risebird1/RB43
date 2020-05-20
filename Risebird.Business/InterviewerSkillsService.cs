@@ -121,18 +121,7 @@ namespace Risebird.Business
         {
             try
             {
-                var interviewers = _interviewerSkillsRepository.GetInterviewerSkills();
-                string Name = string.Empty;
-                foreach (var item in interviewers)
-                {
-                    if (item.UserId == id)
-                    {
-                        Name = item.PrimarySkill;
-                        break;
-                    }
-
-                }
-                return Name;
+                return  _interviewerSkillsRepository.GetInterviewerSkills(id).FirstOrDefault().PrimarySkill;
             }
 
             catch (Exception e)
@@ -277,11 +266,11 @@ namespace Risebird.Business
         //        return false;
         //    }
         //}
-        public IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id)
+        public IEnumerable<ISCInterviewer> GetISCInterviewers(int id)
         {
             try
             {
-                return _interviewerSkillsRepository.GetInterviewerSkillsInterviewer(id);
+                return _interviewerSkillsRepository.GetISCInterviewers(id);
             }
             catch (Exception e)
             {
@@ -319,11 +308,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public bool AddInterviewer(int id, bool IsChecked)
+        public bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId)
         {
             try
             {
-                return _interviewerSkillsRepository.AddInterviewer(id, IsChecked);
+                return _interviewerSkillsRepository.AddUnApprovedInterviewer(model.Where(x=>x.IsAdded), iscId);
             }
 
             catch (Exception e)
@@ -332,12 +321,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public IEnumerable<InterviewerSkillsVM> GetUnApprovedInterviewerList(int id )
+        public IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id )
         {
             try
             {
-                var InterviewerSkillsList = _interviewerSkillsRepository.GetUnApprovedInterviewerList(id).Result.ToList();
-                return InterviewerSkillsList;
+                return _interviewerSkillsRepository.GetUnApprovedInterviewerList(id).Result.ToList();
             }
 
             catch (Exception e)
@@ -406,11 +394,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> DeleteInterviewerList(int id)
+        public async Task<bool> DeleteISCInterviewer(int id)
         {
             try
             {
-                return _interviewerSkillsRepository.DeleteInterviewerList(id).Result;
+                return _interviewerSkillsRepository.DeleteISCInterviewer(id).Result;
             }
 
             catch (Exception e)

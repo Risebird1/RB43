@@ -264,7 +264,7 @@ namespace Risebird.Repository
                        commandType: CommandType.StoredProcedure);
 
                     var irfList = SqlMapper.QueryAsync<InterviewerSkillsVM>(
-                        con, "select * from [dbo].[InterviewerSkillsChannel] orderby ", null, commandType: Text).Result.AsList();
+                        con, "select * from [dbo].[InterviewerSkillsChannel]", null, commandType: Text).Result.AsList();
                     var InterviewerSkillId = irfList.Where(x => x.InterviewerSkillId == InterviewerSkillsDetails.InterviewerSkillId).Last().id;//irfList.Find(x => x.IRFId == InterviewerSkillsDetails.IRFId).id;
 
 
@@ -403,14 +403,16 @@ namespace Risebird.Repository
             }
             return null;
         }
-        public IEnumerable<Interviewer> GetInterviewerSkills()
+        public IEnumerable<Interviewer> GetInterviewerSkills(int userId)
         {
             try
             {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@UserId", userId);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Interviewer>(
-                        con, "select Interviewer.*, UserList.[EmailId] from Interviewer inner join UserList on Interviewer.UserId = UserList.id inner join InterviewerProfile on  InterviewerProfile.UserId = UserList.id where InterviewerProfile.IsLeadInterviewer=1", null, commandType: Text);
+                    return SqlMapper.Query<Interviewer>(con, "usp_GetInterviewerSkills", param,
+                        commandType: StoredProcedure);
                 }
             }
             catch (SqlException ex)
@@ -425,8 +427,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<Interviewer>(
-                        con, "select inv.UserId, inv.PrimarySkill, UserList.[EmailId] from Interviewer inv inner join UserList on inv.UserId = UserList.id inner join InterviewerProfile IP  on IP.UserId = UserList.id where IP.IsLeadInterviewer=1", null, commandType: Text);
+                    return SqlMapper.Query<Interviewer>(con, "usp_GetLeadInterviewersSkills",
+                        commandType: StoredProcedure);
                 }
             }
             catch (SqlException ex)
@@ -746,15 +748,15 @@ namespace Risebird.Repository
 
         //}
 
-        public IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id)
+        public IEnumerable<ISCInterviewer> GetISCInterviewers(int id)
         {
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@InterviewerSkillId", id);
+                parameters.Add("@ISCId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerSkillsVM>(con, "sp_RisebirdInterviewerForInterviewerSkills", parameters,
+                    return SqlMapper.Query<ISCInterviewer>(con, "usp_GetInterviewerSkillsChannelInterviewers", parameters,
                         commandType: StoredProcedure);
                 }
             }
@@ -797,16 +799,26 @@ namespace Risebird.Repository
                 return result;
             }
         }
-        public bool AddInterviewer(int id, bool IsChecked)
+        public bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId)
         {
             try
             {
-                var query = "insert into [dbo].[TransInterviewerListForSkills] (UserId,InterviewerSkillId,IsApproved) Values(" + 1 + "," + id + "," + IsChecked + ") ";
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var results = con.ExecuteAsync(query, null).Result;
+                    foreach (var item in model)
+                    {
+                        string sqlAddInterviewer = "INSERT INTO TransInterviewerListInterviewerSkills Values (@UserId, @ISCId, @InterviewerProfileId);";
+                        var result1 = con.ExecuteAsync(sqlAddInterviewer, new
+                        {
+                            UserId = item.UserId,
+                            ISCId = iscId,
+                            InterviewerProfileId = item.InterviewerProfileId
+
+                        }).Result;
+                    }
+                    return true;
+
                 }
-                return true;
 
             }
             catch (SqlException ex)
@@ -922,16 +934,16 @@ namespace Risebird.Repository
             return false;
 
         }
-        public async Task<IEnumerable<InterviewerSkillsVM>> GetUnApprovedInterviewerList(int id)
+        public async Task<IEnumerable<UnApprovedInterviewer>> GetUnApprovedInterviewerList(int id)
         {
 
             try
             {
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@InterviewerSkillId", id);
+                dynamicParameters.Add("@ISCId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    return SqlMapper.Query<InterviewerSkillsVM>(con, "sp_UnApprovedInterviewerForInterviewerSkills", null,
+                    return SqlMapper.Query<UnApprovedInterviewer>(con, "usp_GetUnApprovedInterviewers", dynamicParameters,
                         commandType: StoredProcedure);
                 }
             }
@@ -946,7 +958,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> DeleteInterviewerList(int id)
+        public async Task<bool> DeleteISCInterviewer(int id)
         {
             try
             {

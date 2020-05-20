@@ -24,7 +24,7 @@ namespace Risebird.Repository.Interface
         IEnumerable<GeneralSkillMatrix> GetGeneralSkillMatrix();
         IEnumerable<SelectabilityMatrix> GetSelectabilityMatrix();
         IEnumerable<Users> GetUsers();
-        IEnumerable<Interviewer> GetInterviewerSkills();
+        IEnumerable<Interviewer> GetInterviewerSkills(int userId);
         IEnumerable<Interviewer> GetInterviewerSkillofInterviewerSkills();
         Skill GetSkillById(int id);
         bool CheckUniqueness(string value);
@@ -35,17 +35,16 @@ namespace Risebird.Repository.Interface
         IEnumerable<TransInterviewerSkillsSelectability> GetTransSelectability(int id);
         string GetPrimarySkill(int id);
         Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM irfDetails);
-        Task<IEnumerable<InterviewerSkillsVM>> GetUnApprovedInterviewerList(int id);
+        Task<IEnumerable<UnApprovedInterviewer>> GetUnApprovedInterviewerList(int id);
         Task<bool> DeleteInterviewerSkills(int InterviewerSkillId);
         //Task<bool> UnArchiveInterviewerSkills(int InterviewerSkillId);
         bool AddInterviewer(InterviewerSkillsVM model);
-        bool AddInterviewer(int id, bool IsChecked);
-
-        IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id);
+        bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId);
+        IEnumerable<ISCInterviewer> GetISCInterviewers(int id);
         int GetUserId(string emailId, string profile);
         bool PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName);
         bool PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName);
-        Task<bool> DeleteInterviewerList(int id);
+        Task<bool> DeleteISCInterviewer(int id);
 
         //Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string InterviewerSkillId);
         // IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();

@@ -196,7 +196,7 @@
 
                                                     </td>
                                                     <td>
-                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control", @onchange = "TechSkillChanged()" })
+                                                        @Html.DropDownList("SkillCollection[0].SkillId", (SelectList)ViewBag.Skill, new { @class = "form-control" })
                                                     </td>
                                                     <td>
                                                         <input class="form-control text-box single-line" id="SkillCollection_0__Weightage" name="SkillCollection[0].Weightage" type="number" max="100" min="1" value="100">
@@ -548,7 +548,7 @@
 
     
     function SkillChanged() {
-
+        debugger;
         //var index = id.charAt(16);
         var Skills = $('[id$="PrimarySkill"]');
         //var arr = [];
@@ -600,57 +600,57 @@
     }
 
 
-    function TechSkillChanged() {
+    //function TechSkillChanged() {
 
-        //var index = id.charAt(16);
-        var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
-        //var arr = [];
-        var skills = "";
-        for (i = 0; i < techSkills.length; i++) {
-            //arr.push(techSkills[i].value);
-            skills = skills + ',' + techSkills[i].value;
-        }
-        $.ajax({
-            type: "GET",
-            url: "/InterviewerSkills/GetInterviewers",
-            data: { 'skills': skills },
-            success: function (data) {
+    //    //var index = id.charAt(16);
+    //    var techSkills = $('[id^="SkillCollection"][id$="SkillId"]');
+    //    //var arr = [];
+    //    var skills = "";
+    //    for (i = 0; i < techSkills.length; i++) {
+    //        //arr.push(techSkills[i].value);
+    //        skills = skills + ',' + techSkills[i].value;
+    //    }
+    //    $.ajax({
+    //        type: "GET",
+    //        url: "/InterviewerSkills/GetInterviewers",
+    //        data: { 'skills': skills },
+    //        success: function (data) {
 
-                var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
-                for (i = 0; i < drpdowns.length; i++) {
-                    $("#" + drpdowns[i].id + " option").remove();
-                }
+    //            var drpdowns = $('[id^="InterviewerCollection"][id$="UserId"]');
+    //            for (i = 0; i < drpdowns.length; i++) {
+    //                $("#" + drpdowns[i].id + " option").remove();
+    //            }
 
-                if (data.length > 0) {
+    //            if (data.length > 0) {
 
-                    for (i = 0; i < drpdowns.length; i++) {
-                        //$("#" + drpdowns[i].id).append(option);
+    //                for (i = 0; i < drpdowns.length; i++) {
+    //                    //$("#" + drpdowns[i].id).append(option);
 
 
-                        $(data).each(function () {
-                            var option = $("<option />");
+    //                    $(data).each(function () {
+    //                        var option = $("<option />");
 
-                            //Set Text part.
-                            option.html(this.text);
+    //                        //Set Text part.
+    //                        option.html(this.text);
 
-                            //Set Value part.
-                            option.val(this.value);
+    //                        //Set Value part.
+    //                        option.val(this.value);
 
-                            //Add the Option element to DropDownList.
+    //                        //Add the Option element to DropDownList.
 
-                            $("#" + drpdowns[i].id).append(option);
+    //                        $("#" + drpdowns[i].id).append(option);
 
-                            InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
+    //                        InterviewerChanged(drpdowns[i].value, drpdowns[i].id);
 
-                            //drpdwnId.append(option);
-                        });
-                    }
+    //                        //drpdwnId.append(option);
+    //                    });
+    //                }
 
-                }
-            }
-        });
+    //            }
+    //        }
+    //    });
 
-    }
+    //}
 
     function checkStartDate(val) {
 
@@ -976,7 +976,7 @@
     
     $(document).ready(function () {
 
-        TechSkillChanged();
+        SkillChanged();
         //Perform Ajax request.
 
         var id = $("#InterviewerCollection_0__UserId").val();
@@ -1084,9 +1084,9 @@
 
         }
 
-        if (tdFive != null && tdFive == 'TechDelete')
-            //call TechSkillChanged
-            TechSkillChanged();
+        //if (tdFive != null && tdFive == 'TechDelete')
+        //    //call TechSkillChanged
+        //    TechSkillChanged();
 
 
     }

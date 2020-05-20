@@ -6,7 +6,6 @@ BEGIN
 CREATE TABLE [dbo].[InterviewerSkillsChannel](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[InterviewerSkillId] [nvarchar](max) NULL,
-	[UserId] [int] NOT NULL,
 	[JDTiltle] [nvarchar](500) NULL,
 	[StartDate] [datetime] NOT NULL,
 	[EndDate] [datetime] NOT NULL,
@@ -15,11 +14,12 @@ CREATE TABLE [dbo].[InterviewerSkillsChannel](
 	[PerMintuteRate] [real] NULL,
 	[CalendlyLink] [varchar](500) NULL,
 	[IsPaused] [bit] NULL,
- CONSTRAINT [PK_InterviewerSkillsChannel] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_InterviewerSkills] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
 )WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY] 
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
 
 END
 GO

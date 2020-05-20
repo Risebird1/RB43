@@ -20,16 +20,16 @@ namespace Risebird.Business.Interface
         bool CheckUniqueness(string value);
         Task<InterviewerSkillsVM> GetEditInterviewerSkills(int id);
         bool UpdateInterviewerSkills(InterviewerSkillsVM model);
-        bool AddInterviewer(int id, bool IsChecked);
-        IEnumerable<InterviewerSkillsVM> GetUnApprovedInterviewerList(int id);
+        bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId);
+        IEnumerable<UnApprovedInterviewer> GetUnApprovedInterviewerList(int id);
         Task<bool> DeleteInterviewerSkills(int id);
         //Task<bool> UnArchiveDeleteInterviewerSkills(int id);
-        IEnumerable<InterviewerSkillsVM> GetInterviewerSkillsInterviewer(int id);
+        IEnumerable<ISCInterviewer> GetISCInterviewers(int id);
         int GetUserId(string emailId, string profile);
         bool AddInterviewer(InterviewerSkillsVM model);
         bool PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillsName);
         bool PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillsName);
-        Task<bool> DeleteInterviewerList(int id);
+        Task<bool> DeleteISCInterviewer(int id);
 
         //IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();GetAllInterviewerSkills
         //IEnumerable<Skill> GetTechSkills(int id);

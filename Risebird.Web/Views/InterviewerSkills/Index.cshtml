@@ -366,7 +366,7 @@
                                         @if (Model.Profile != "Recruiter")
                                         {
                                             <div class="row">
-                                                <span>Per Interviewer Rate:</span> @(item.PerMintuteRate != null? item.PerMintuteRate : 0)
+                                                <span>Per Interviewer Rate:</span> @item.PerMintuteRate
                                             </div> <br />
                                         }
                                     </div>
@@ -393,7 +393,7 @@
                                     }
                                 </div>
                                 <div class="stats text-center col-lg-8 col-md-8 col-sm-8 col-xs-8 ">
-                                    <button type="button" onclick="javascript:Interviewer('@item.id', '@item.InterviewerSkillId');" class="btn btn-info btn-icon btn-sm" title="Interviewer List">
+                                    <button type="button" onclick="javascript:InterviewerList('@item.id', '@item.InterviewerSkillId');" class="btn btn-info btn-icon btn-sm" title="Interviewer List">
                                         <i class="now-ui-icons fa fa-list"></i>
                                     </button>
                                     <button type="button" onclick="location.href='@Url.Action("ShowCalendly", "InterviewerSkills" , new
@@ -737,9 +737,9 @@
 
 
     //Interviewer
-    function Interviewer(Id, InterviewerSkillid) {
+    function InterviewerList(Id, InterviewerSkillid) {
 
-        var url = '/InterviewerSkills/Interviewer?id=' + Id + '&InterviewerSkillidName=' + InterviewerSkillid;
+        var url = '/InterviewerSkills/GetISCInterviewers?id=' + Id + '&InterviewerSkillidName=' + InterviewerSkillid;
         window.location.href = url;
     };
     function EditInterviewerSkills(id) {
