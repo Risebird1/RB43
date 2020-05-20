@@ -44,6 +44,11 @@ textarea::-webkit-scrollbar-thumb {
         float:left;
         padding: 0;
     }
+.video-width {
+    background: black !important;
+    width: 100%;
+    height: 406px;
+}
  .comment-area .talktext {
         padding: 0px 8px 0px 8px;
         text-align: left;
