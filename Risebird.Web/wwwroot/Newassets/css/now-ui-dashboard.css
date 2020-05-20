@@ -4881,9 +4881,7 @@ Created using IcoMoon - icomoon.io
     background-color: #FF3636;
 }
 
-.tab-space {
-    padding: 20px 0 50px 0px;
-}
+
 
 .tab-content.tab-subcategories {
     margin-top: 20px;
@@ -11241,28 +11239,15 @@ div.dataTables_scrollFoot table {
         padding: 0px !important;
         margin: 0px !important;
     }
-    .player-main {
-        width: 100% !important;
-        text-align: center !important;
-        margin: 0px auto !important;
-    }
+  
 
-    #wrapper #content-wrapper .container-wrap {
-        padding: 0px 0px 30px 0px !important;
-    }
 
-    .mn-section {
-        width: calc(100% - 40px) !important;
-    }
 
     .videoTop {
         margin-top: 1000px !important;
     }
 
-    #scoreChart .canvasjs-chart-canvas {
-        width: 100% !important;
-        height: auto !important;
-    }
+
 
     .detail {
         height: auto !important;
