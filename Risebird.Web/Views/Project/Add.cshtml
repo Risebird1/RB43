@@ -4,78 +4,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-</style>
 
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/project.css" rel="stylesheet" />
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -104,19 +42,21 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Project</h4>
-                    </div>
-
-                    <div class="card-body">
+                <div class="mdc-card card">
+                  
+                    <div class="mdc-card-wrapper__text-section">
 
                         @using (Html.BeginForm("Add", "Project", FormMethod.Post, new { enctype = "multipart/form-data", @class = "ng-pristine ng-valid" }))
                         {
-                           
+
 
                             <div class="row">
 
+                                <div class="card-header">
+                                    <h4 class="card-title">Add Project</h4>
+                                </div>
+
+                                <div style="width: 100%;">&nbsp;</div>
                                 <div class="col-md-4 col-sm-4 pr-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -126,7 +66,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ProjectOwnerId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -135,11 +75,11 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-4 col-sm-4 pl-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.ClientId, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)", @style ="width:430px"})
+                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)" })
                                         @Html.ValidationMessageFor(model => model.Client, "", new { @class = "text-danger" })
 
                                     </div>
@@ -157,7 +97,7 @@
 
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-4 pr-1">
+                                <div class="col-md-4 col-sm-4 px-1">
                                     <div class="form-group">
                                         @Html.LabelFor(model => model.Location, htmlAttributes: new { @class = "control-label  col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
@@ -167,35 +107,55 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr />
+                         
                             @*<div class="row">
-                                <div class="col-md-3 col-sm-3 px-1">
-                                    <div class="form-group">
-                                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
-                                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)",@style="margin-left:11px" })
-                                    </div>
-                                </div>
-                            </div>*@
+                <div class="col-md-3 col-sm-3 px-1">
+                    <div class="form-group">
+                        <label class="control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" for="Name">Client Name</label>
+                        @Html.DropDownList("ClientId", Model.ClientList, new { @class = "form-control", @onchange = "ClientChanged(this.value)",@style="margin-left:11px" })
+                    </div>
+                </div>
+            </div>*@
                             <div id="tableID">
                                 <table class="table table-bordered mbn" id="IRFList">
                                     <thead>
                                         <tr>
-                                            <th class="text-center">IRF ID</th>
-                                            <th class="text-center">Primary Skills</th>
-                                            <th class="text-center">Client</th>
-                                            <th class="text-center">Add</th>
+                                            <th class="text-center" style="font-size:15px!important;">IRF ID</th>
+                                            <th class="text-center" style="font-size:15px!important;">Primary Skills</th>
+                                            <th class="text-center" style="font-size:15px!important;">Client</th>
+                                            <th class="text-center" style="font-size:15px!important;">Add</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @for (int i = 0; i < Model.ProjectIRFMappings.Count(); i++)
                                         {
                                             <tr>
-                                               
-                                                <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
-                                                <td class="text-center">@Model.ProjectIRFMappings[i].PrimarySkills</td>
-                                                <td class="text-center">@Model.ProjectIRFMappings[i].Client</td>
-                                                <td class="text-right">
-                                                    @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "form-control" @*, @style = "margin-left:25%"*@})
+
+                                                <td class="text-center"> <a style="color:#007bff;" id="@("irflink_"+i)" target="_blank" title="IRF" href='@Url.Action("EditIRF", "IRF", new { id = Model.ProjectIRFMappings[i].IRFId })'> @Model.ProjectIRFMappings[i].IRFName</a> </td>
+                                                <td class="text-center" width="30%">@Model.ProjectIRFMappings[i].PrimarySkills</td>
+                                                <td class="text-center" width="20%">@Model.ProjectIRFMappings[i].Client</td>
+                                                <td class="text-center" width="20%">
+                                                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                                                        <div class="mdc-checkbox">
+                                                            @Html.CheckBoxFor(m => m.ProjectIRFMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+
+
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark"
+                                                                     viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path"
+                                                                          fill="none"
+                                                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                            <div class="mdc-checkbox__ripple"></div>
+
+
+                                                        </div>
+                                                    </div>
+
+
 
                                                 </td>
                                                 @Html.HiddenFor(m => m.ProjectIRFMappings[i].IRFId)
@@ -206,27 +166,27 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
 
 
+                            <div class="card-footer ">
 
-                            <div class="row">
-                                <label class="col-md-2"></label>
-                                <div class="col-md-9">
-                                    @Html.ActionLink("Back to List", "Index", "Project", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Submit">Submit</button>
+                                <div class="row">
+                                    <div class="col-md-12 mc-button-area">
+                                        @Html.ActionLink("Back to List", "Index", "Project", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Submit">Submit</button>
+                                    </div>
                                 </div>
                             </div>
 
-                        }
+                                }
 
 
 
-                    </div>
+                            </div>
 
-                    <div class="card-footer ">
 
-                    </div>
+
+                       
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -235,7 +195,7 @@
         </div>
         <!-- end row -->
     </div>
-   
+
 </div>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />

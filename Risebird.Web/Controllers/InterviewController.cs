@@ -3848,7 +3848,7 @@ namespace Risebird.Web.Controllers
                             var inputFile = new MediaFile { Filename = path };
                             string outputFileName = path.Substring(0, path.LastIndexOf(".")) + ".jpg";
                             var outputFile = new MediaFile { Filename = @outputFileName };
-                            for (int i = 0; i < 100; i++)
+                            for (int i = 0; i < 1000; i++)
                             {
                                 using (var engine = new Engine())
                                 {

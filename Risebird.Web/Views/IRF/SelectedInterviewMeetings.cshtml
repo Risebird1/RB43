@@ -4,995 +4,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
 
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-
-
-
-    table.dataTable > thead > tr > th {
-        padding: 5px;
-    }
-
-
-    .table > tfoot > tr > th {
-        padding: 5px 7px;
-    }
-
-    td .wordwrap {
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: middle !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    /*table.dataTable > thead > tr > th {
-        max-width: 200px !important;
-    }*/
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-    .table > thead > tr > th, .table > tfoot > tr > th {
-        padding: 7px;
-        font-weight: normal !important;
-    }
-
-    thead,  tfoot {
-        /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3f9eff+0,59adff+50,8ac4ff+100 */
-        background: #3f9eff; /* Old browsers */
-        background: -moz-linear-gradient(top, #3f9eff 0%, #59adff 50%, #8ac4ff 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, #3f9eff 0%,#59adff 50%,#8ac4ff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3f9eff', endColorstr='#8ac4ff',GradientType=0 ); /* IE6-9 */
-        COLOR: #FFF;
-    }
-
- .table-striped tbody tr:nth-of-type(odd) {
-        background-color: #fff;
-    }
-
-    .table-striped tbody tr:nth-of-type(even) {
-        background-color: rgb(233,247,247,0.2);
-    }
-
-   table.dataTable thead .sorting:after {
-        opacity: 1;
-        content: "\f0dc";
-        color: #fff;
-    }
-
-    .btn-call {
-        width: 32px !important;
-        height: 32px;
-        border-radius: 15px;
-        text-align: center;
-        font-size: 12px;
-        BORDER: 0px;
-        line-height: 1.42857;
-        background: #4a93de;
-        display: inline-block;
-    }
-
-        .btn-call .fa {
-            color: #fff;
-            font-size: 17px;
-            padding: 6px;
-        }
-
-    .call i {
-        color: #fff
-    }
-
-    .call-txt {
-        border: 1px #4a93de solid;
-        position: relative;
-        padding: 6px 15px;
-        left: -10px;
-        top: 1px;
-        font-size: 14px;
-        font-family: arial;
-        color: #1675de;
-        border-left: 0px;
-        border-top-right-radius: 13px;
-        border-bottom-right-radius: 13px;
-    }
-
-    #meeting_length, #meeting_filter {
-        margin: 10px 0px
-    }
-
-        #meeting_length label {
-            font-size: 14px;
-        }
-
-        #meeting_length select.form-control {
-            padding: 8px 8px;
-        }
-
-        #meeting_length select:focus {
-            border-color: #4a93de;
-        }
-
-        #meeting_filter input {
-            outline: none;
-        }
-
-    #meeting input[type=search] {
-        -webkit-appearance: textfield;
-        -webkit-box-sizing: content-box;
-        font-family: inherit;
-        font-size: 100%;
-    }
-
-    #meeting_filter input::-webkit-search-decoration,
-    #meeting_filter input::-webkit-search-cancel-button {
-        display: none;
-    }
-
-
-    #meeting_filter input[type=search] {
-        background: #fff url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
-        border: solid 1px #ccc;
-        padding: 9px 10px 9px 32px;
-        width: 135px;
-        font-family: arial;
-        -webkit-border-radius: 10em;
-        -moz-border-radius: 10em;
-        border-radius: 10em;
-        -webkit-transition: all .5s;
-        -moz-transition: all .5s;
-        transition: all .5s;
-    }
-
-        #meeting_filter input[type=search]:focus {
-            width: 200px;
-            background-color: #fff;
-            border-color: #4a93de;
-            font-family: arial;
-            margin: 3px;
-            -webkit-box-shadow: 0 0 5px #4a93de;
-            -moz-box-shadow: 0 0 5px #4a93de;
-            box-shadow: 0 0 5px #4a93de;
-        }
-
-
-    #meeting_filter input:-moz-placeholder {
-        color: #999;
-    }
-
-    #meeting_filter input::-webkit-input-placeholder {
-        color: #999;
-    }
-
-    .card .card-header {
-        padding: 0px 0px 0;
-        border: 0;
-        border-bottom: 1px dashed #dcd0d0;
-        margin: 0px 20px;
-        width: 100%;
-    }
-
-    .buttons {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px;
-        display: inline-block;
-        margin: 20px 5px;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
-
-        .buttons:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .button-2 {
-        background: #4fa4fb;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2;
-        -moz-box-shadow: 0 3px #3884d2;
-        box-shadow: 0 3px #3884d2;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-    }
-
-    .button-2b {
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-        .button-2b:hover {
-            box-shadow: 0 4px #3884d2;
-            top: 0px;
-        }
-
-        .button-2b:active {
-            outline: 0;
-            border: 0;
-        }
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #9A9A9A;
-        font-size: 13px;
-    }
-
-
-    .modal .btn {
-        font-size: 12px;
-        padding: 11px 8px;
-    }
-
-    .btn-group .btn:after {
-        content: '';
-        position: absolute;
-        z-index: 1;
-        top: 16px;
-        color: #9A9A9A;
-    }
-    .modal-wrap .form-group {
-        margin-bottom: 5px;
-    }
-
-
-        .modal-wrap .form-group textarea {
-            margin-left: 6px;
-            border: 1px solid #E3E3E3;
-            height: 48px;
-            width: 95%;
-        }
-    .modal-wrap .modal-content {
-        width: 690px;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px;
-    }
-    .action .btn-info, .action .btn-info:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #84c0ff;
-        color: #fff;
-        font-weight: bold;
-        box-shadow: 0 3px #5794d4!important;
-    }
-
-
-    .action .btn-warning, .action .btn-warning:not([data-action]):not([class*="btn-outline-"]):hover {
-        background: #fff;
-        color: #56a9ff;
-        font-weight: bold;
-        border: 1px #deedfd solid;
-        box-shadow: 0 3px #5794d4;
-    }
-
-
-    .action .btn {
-        width: 32px !important;
-        height: 30px !important;
-    }
-
-    .action span {
-        -webkit-transition: -webkit-transform .8s ease-in-out;
-        transition: transform .8s ease-in-out;
-        font-weight: bold;
-    }
-
-        .action span:hover {
-            -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-
-
-    #resumeId {
-        background: #e2f0ff;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-
-    #reportId {
-        background: #b3d2f1;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-    #jdlinkId {
-        background: #fff;
-        color: #1d3b5e;
-        padding: 4px 10px;
-        border-radius: 10px;
-        border: 1px #56a9ff solid;
-    }
-
-    #videoId {
-        background: #56a9ff63;
-        color: #1d3b5e;
-        padding: 5px 10px;
-        border-radius: 10px;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        width: 200px;
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-    }
-
-    .border-bubble {
-        border: 2px solid #eff7ff;
-    }
-
-    .talk-bubble textarea {
-        resize: none !important;
-        border: 0 !important;
-        background: #f7fbff !important;
-        padding: 5px !important;
-    }
-
-        .talk-bubble textarea:focus {
-            outline: hidden;
-            padding: 5px;
-        }
-
-    .modal .talk-bubble {
-        width:300px;
-
-    }
-    /* Right triangle placed top left flush. */
-    .tri-right.border.left-top:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -40px;
-        right: auto;
-        top: -8px;
-        bottom: auto;
-        border: 32px solid;
-        border-color: #666 transparent transparent transparent;
-    }
-
-    .tri-right.left-top:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -20px;
-        right: auto;
-        top: 0px;
-        bottom: auto;
-        border: 22px solid;
-        border-color: #eff7ff transparent transparent transparent;
-    }
-
-    /* Right triangle, left side slightly down */
-    .tri-right.border.left-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -40px;
-        right: auto;
-        top: 30px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 38px;
-        bottom: auto;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom left side slightly in*/
-    .tri-right.border.btm-left:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: -8px;
-        right: auto;
-        top: auto;
-        bottom: -40px;
-        border: 32px solid;
-        border-color: transparent transparent transparent #666;
-    }
-
-    .tri-right.btm-left:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 0px;
-        right: auto;
-        top: auto;
-        bottom: -20px;
-        border: 22px solid;
-        border-color: transparent transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom left side slightly in*/
-    .tri-right.border.btm-left-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 30px;
-        right: auto;
-        top: auto;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 transparent transparent #666;
-    }
-
-    .tri-right.btm-left-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: 38px;
-        right: auto;
-        top: auto;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /*Right triangle, placed bottom right side slightly in*/
-    .tri-right.border.btm-right-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 30px;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.btm-right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 38px;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff #eff7ff transparent transparent;
-    }
-
-    .tri-right.border.btm-right:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -8px;
-        bottom: -40px;
-        border: 20px solid;
-        border-color: #666 #666 transparent transparent;
-    }
-
-    .tri-right.btm-right:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: 0px;
-        bottom: -20px;
-        border: 12px solid;
-        border-color: #eff7ff #eff7ff transparent transparent;
-    }
-
-    /* Right triangle, right side slightly down*/
-    .tri-right.border.right-in:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -40px;
-        top: 30px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #666 transparent transparent #666;
-    }
-
-    .tri-right.right-in:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 38px;
-        bottom: auto;
-        border: 12px solid;
-        border-color: #eff7ff transparent transparent #eff7ff;
-    }
-
-    /* Right triangle placed top right flush. */
-    .tri-right.border.right-top:before {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -40px;
-        top: -8px;
-        bottom: auto;
-        border: 32px solid;
-        border-color: #666 transparent transparent transparent;
-    }
-
-    .tri-right.right-top:after {
-        content: ' ';
-        position: absolute;
-        width: 0;
-        height: 0;
-        left: auto;
-        right: -20px;
-        top: 0px;
-        bottom: auto;
-        border: 20px solid;
-        border-color: #eff7ff transparent transparent transparent;
-    }
-
-    /* talk bubble contents */
-    .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        color: #fff;
-    }
-
-    .modal input, .modal .dropdown-toggle {
-        background: #99d1fc0f !important;
-        border: 1px #3b74b3fa dotted !important;
-    }
-
-
-    .modal-wrap input[type=button] {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-
-
-        .modal-wrap input[type=button]:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-        }
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-    .search-show {
-        display: block;
-        float: left;
-        width: auto;
-    }
-
-    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
-        background-color: #4e9bea !important;
-        border-color: #4e9bea;
-        color: #FFFFFF;
-    }
-
-
-
-    #style-4::-webkit-scrollbar, #selecComments::-webkit-scrollbar, #appComments::-webkit-scrollbar, #offComments::-webkit-scrollbar, #joinComments::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: #cee0f3;
-    }
-
-    #style-4::-webkit-scrollbar-thumb, #selecComments::-webkit-scrollbar-thumb, #appComments::-webkit-scrollbar-thumb, #offComments::-webkit-scrollbar-thumb, #joinComments::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-    .btn {
-        border: none;
-        font-family: inherit;
-        font-size: inherit;
-        color: inherit;
-        background: none;
-        cursor: pointer;
-        padding: 8px 16px !important;
-        display: inline-block;
-        margin: 0px 5px !important;
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        outline: none;
-        position: relative;
-        -webkit-transition: all 0.3s;
-        -moz-transition: all 0.3s;
-        transition: all 0.3s;
-        font-family: Arial, sans-serif;
-    }
-
-        .btn:after {
-            content: '';
-            position: absolute;
-            z-index: -1;
-            -webkit-transition: all 0.3s;
-            -moz-transition: all 0.3s;
-            transition: all 0.3s;
-        }
-
-    .btn-primary, .btn-fill {
-        background: #4fa4fb !important;
-        color: #fff;
-        -webkit-box-shadow: 0 3px #3884d2 !important;
-        -moz-box-shadow: 0 3px #3884d2 !important;
-        box-shadow: 0 3px #3884d2 !important;
-        -webkit-transition: none;
-        -moz-transition: none;
-        transition: none;
-        border-radius: 5px 5px 5px 5px;
-        box-shadow: 0 3px #3884d2;
-    }
-
-
-        .btn-primary:hover, .btn-fill:hover {
-            background: #4fa4fb;
-            box-shadow: 0 4px #3884d2 !important;
-            top: 0px;
-        }
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-</style>
-
-<style>
-    /* The Modal (background) */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-
-    /* Modal Content */
-    .modal-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 40%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        /*-webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s*/
-    }
-
-    /* The Close Button */
-    .modal .modal-header .close {
-        color: #fb1128!important;
-        text-shadow: none;
-        font-size: 30px !important;
-        position: relative;
-        top: -7px;
-        opacity: 0.7 !important;
-        right: 0px;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    .close:hover,
-    .close:focus {
-        opacity: 1!important;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .modal-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    .modal-body {
-        padding: 2px 16px;
-    }
-
-    .modal-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .modal-content .modal-header {
-        font-size: 10px;
-    }
-
-    .modal-wrap .modal-content {
-        width: 690px;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px;
-    }
-
-    .modal-wrap .form-group {
-        margin-bottom: 5px;
-    }
-
-
-        .modal-wrap .form-group textarea {
-            margin-left: 6px;
-        
-            height: 48px;
-            width: 95%;
-        }
-
-    .control-labeled {
-        font-size: 12px;
-        margin-bottom: 5px;
-        color: #5f5c5c;
-        padding: 0px 20px;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .modal-header {
-        border-bottom: 3px solid #316b9e !important;
-        background: #419dff !important;
-        padding-top: 15px !important;
-        padding-bottom: 15px !important;
-        color: #fff;
-    }
-
-    .modal input, .modal .dropdown-toggle {
-        background: #99d1fc0f !important;
-       
-    }
-
-
-    .modal textarea {
-       
-        width: 100%;
-        display: inline-block;
-        position: relative;
-        /* width: 200px; */
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-        border: 0;
-        font-size: 13px;
-        padding: 10px;
-       
-    }
-
-    .multiselect-selected-text {
-        text-transform: capitalize;
-        font-weight: normal;
-        letter-spacing: normal;
-        color: #9A9A9A;
-        font-size: 13px;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-    }
-
-    .border-rv {
-        border-right: 1px dotted #ccc;
-    }
-
-    .modal input, .modal .dropdown-toggle, .modal select {
-        background: #99d1fc0f !important;
-      
-    }
-
-    td textarea {
-
-    width:200px!important;
-        display: inline-block;
-        position: relative;
-        /* width: 200px; */
-        min-height:50px;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-        border: 0;
-        font-size: 13px;
-        padding: 10px;
-    }
-</style>
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -1020,311 +41,295 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                   
-                      
-                        <div class="card-body">
-                            <div class="loader text-center">
-                                <img src="~/Newassets/img/lazyload.gif" />
-                            </div>
-                            <div class="dataloading">
-                                <div class="toolbar">
+                <div class="mdc-card card">
 
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                <div class="row">
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">         Selected Candidate list for <b>@ViewBag.IRF</b></h4></div>
 
-
-                                    <div class="row">
-
-
-                                        <div class="card-header">
-                                            <div class="pull-left"> <h4 class="card-title">         Selected Candidate list for <b>@ViewBag.IRF</b></h4></div>
-
-                                            <div class="pull-right">
-                                                <div>
-                                                    <div class="form-group" style="width:100px;float:left;">
-                                                        @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
-                                                    </div>
-                                                    @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                        <div class="pull-right">
+                                            <div>
+                                                <div class="form-group" style="width:100px;float:left;">
+                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
                                                 </div>
+                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
                                             </div>
                                         </div>
-
-
-
-
-
                                     </div>
 
 
 
 
-
-
-
-
-
-
-
-
-
-                                    
-
-                                </div>
-
-                                <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                    <div id="tableID">
-                                        <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr>
-                                                    <th>Interview Date</th>
-                                                    <th>Candidate Name</th>
-                                                    <th>Report Link</th>
-                                                    <th>Resume</th>
-                                                    @*<th>Candidate Contact</th>*@
-                                                    <th>Client HR</th>
-                                                    <th>Confirmation Status</th>
-                                                    <th>Meeting Status</th>
-                                                    <th>Selection Status</th>
-                                                    <th>Current Employer</th>
-                                                    <th>Expected Salary</th>
-                                                    <th>Expected Joining Time</th>
-                                                    <th>Preferred Location</th>
-                                                    <th>Staffing Agency</th>
-                                                    <th>Approval Status</th>
-                                                    <th>Approval Comments</th>
-                                                    <th class="no-sort"></th>
-                                                    <th>Final Selection Status</th>
-                                                    <th>Final Selection Comments</th>
-                                                    <th class="no-sort"></th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>Interview Date</th>
-                                                    <th>Candidate Name</th>
-                                                    <th>Report Link</th>
-                                                    <th>Resume</th>
-                                                    @*<th>Candidate Contact</th>*@
-                                                    <th>Client HR</th>
-                                                    <th>Confirmation Status</th>
-                                                    <th>Meeting Status</th>
-                                                    <th>Selection Status</th>
-                                                    <th>Current Employer</th>
-                                                    <th>Expected Salary</th>
-                                                    <th>Expected Joining Time</th>
-                                                    <th>Preferred Location</th>
-                                                    <th>Staffing Agency</th>
-                                                    <th>Approval Status</th>
-                                                    <th>Approval Comments</th>
-                                                    <th class="no-sort"></th>
-                                                    <th>Final Selection Status</th>
-                                                    <th>Final Selection Comments</th>
-                                                    <th class="no-sort"></th>
-                                                    <th>Action</th>
-
-                                                </tr>
-                                            </tfoot>
-                                            <tbody>
-
-
-                                                @foreach (var item in Model)
-                                                {
-                                                    var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
-
-                                                    <tr id=@item.imid>
-                                                        <td> @item.interviewDate </td>
-                                                        <td> @item.candidateName </td>
-                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
-                                                        @if (item.resumeLink != null && item.resumeLink != "")
-                                                        {
-                                                            <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                        }
-                                                        else
-                                                        {
-                                                            <td>No Resume</td>
-                                                        }
-
-                                                        @*@if (item.MobileNumber != null)
-                            {
-                                <td>@item.MobileNumber</td>
-
-                            }
-                            else
-                            {
-                                <td>No Contact</td>
-                            }*@
-                                                        <td> @item.ClientHrContact </td>
-                                                        <td> @item.confirmationStatus</td>
-                                                        <td> @item.MeetingStatusStatusDesc </td>
-                                                        <td> @item.intervieweStatusStatDesc </td>
-                                                        <td> @item.currentEmployerName </td>
-                                                        <td> @item.expectedPerHourRate </td>
-                                                        <td> @item.joiningTime </td>
-                                                        <td> @item.preferredLocation </td>
-                                                        <td>@item.staffingAgency</td>
-                                                        <td>
-                                                            @item.NextLevelApprovalStat
-                                                        </td>
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td></td>
-
-                                                        <td>
-                                                            @item.FinalSelectionStat
-                                                        </td>
-                                                        <td>
-                                                            <div class="talk-bubble tri-right border-bubble right-in">
-                                                                <div class="talktext">
-                                                                    <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.FinalComments</textarea>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td></td>
-                                                        <td class="text-right action">
-                                                            @if (ViewBag.ProfileName == "client")
-                                                            {
-                                                                <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
-                                                            }
-                                                            @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
-                                                            {
-                                                                <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
-                                                                <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
-
-                                                            }
-                                                        </td>
-
-
-
-
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
 
                                 </div>
 
                             </div>
 
+                            <div style="overflow-x:scroll" class="scrollbar" id="style-2">
+                                <div id="tableID">
+                                    <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Interview Date</th>
+                                                <th>Candidate Name</th>
+                                                <th>Report Link</th>
+                                                <th>Resume</th>
+                                                @*<th>Candidate Contact</th>*@
+                                                <th>Client HR</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Meeting Status</th>
+                                                <th>Selection Status</th>
+                                                <th>Current Employer</th>
+                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Joining Time</th>
+                                                <th>Preferred Location</th>
+                                                <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
+                                                <th>Approval Comments</th>
+                                                <th class="no-sort"></th>
+                                                <th>Final Selection Status</th>
+                                                <th>Final Selection Comments</th>
+                                                <th class="no-sort"></th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Interview Date</th>
+                                                <th>Candidate Name</th>
+                                                <th>Report Link</th>
+                                                <th>Resume</th>
+                                                @*<th>Candidate Contact</th>*@
+                                                <th>Client HR</th>
+                                                <th>Confirmation Status</th>
+                                                <th>Meeting Status</th>
+                                                <th>Selection Status</th>
+                                                <th>Current Employer</th>
+                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Joining Time</th>
+                                                <th>Preferred Location</th>
+                                                <th>Staffing Agency</th>
+                                                <th>Approval Status</th>
+                                                <th>Approval Comments</th>
+                                                <th class="no-sort"></th>
+                                                <th>Final Selection Status</th>
+                                                <th>Final Selection Comments</th>
+                                                <th class="no-sort"></th>
+                                                <th>Action</th>
+
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+
+
+                                            @foreach (var item in Model)
+                                            {
+                                                var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(item);
+
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName </td>
+                                                    <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId, IsSelected = true})'>Report</a> </td>
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+
+                                                    @*@if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }*@
+                                                    <td> @item.ClientHrContact </td>
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                    <td> @item.intervieweStatusStatDesc </td>
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                    <td>
+                                                        @item.NextLevelApprovalStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+
+                                                    <td>
+                                                        @item.FinalSelectionStat
+                                                    </td>
+                                                    <td>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.FinalComments</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td></td>
+                                                    <td class="text-right action">
+                                                        @if (ViewBag.ProfileName == "client")
+                                                        {
+                                                            <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                        }
+                                                        @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                        {
+                                                            <span onclick="callCandidate(@item.MobileNumber)" title="Call Candidate" class="btn btn-round btn-info btn-icon btn-sm like callButton"><i class="fa fa-phone"></i></span>
+                                                            <span onclick="hangUp()" title="Hang up" class="btn btn-round btn-danger btn-icon btn-sm like hangUpButton"><i class="fa fa-phone"></i></span>
+
+                                                        }
+                                                    </td>
+
+
+
+
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
 
                         </div>
-                 
+
+
+                    </div>
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal modal-wrap">
+        <div id="myModal" class="modal">
             <!-- Modal content -->
-            <div class="modal-content" >
-                <div class="modal-header">
-                    <h5 class="modal-title" style="    font-size: 20px;">Client Feedback</h5>
-                    <span class="close" id="feedbackPopUp">&times;</span>
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="    font-size: 20px;">Client Feedback</h5>
+                        <span class="close" id="feedbackPopUp">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label" for="approveDropdown">Approved For Next Round</label>
+                                    <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="approvalComments" class="form-group">
+                                    <label class="control-label" style="display:block">Approval Comments</label>
+
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="appComments" class="form-control text-box single-line scrollbar" id="appComments" style="height:35px"></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label" for="selectionDropdown" style="display:block">Final Selection</label>
+                                    <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 pr-1">
+                                <div id="selectionComments" class="form-group">
+                                    <label class="control-label" style="display:block">Final Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="selecComments" class="form-control text-box single-line scrollbar" id="selecComments" style="height:35px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv ">
+                                <div class="form-group">
+
+                                    <label class="control-label" for="offerDropdown" style="display:block"><b>Offer Status</b></label>
+                                    <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="offerComments" class="form-group">
+                                    <label class="control-label" style="display:block">Offer Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="height:32px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+
+                                    <label class="control-label" for="joiningDropdown" style="display:block">Joining Status</label>
+                                    <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="joiningComments" class="form-group">
+                                    <label class="control-label" style="display:block">Joining Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="height:35px"></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
+                        </div>
+                    </div>
+
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 border-rv">
-                            <div class="form-group">
-                                <label class="control-label" for="approveDropdown">Approved For Next Round</label>
-                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                            </div>
 
-                        </div>
-
-                        <div class="col-md-6 col-sm-6 ">
-                            <div id="approvalComments" class="form-group">
-                                <label class="control-label" style="display:block">Approval Comments</label>
-
-                                <div class="talk-bubble tri-right border-bubble right-in">
-                                    <div class="talktext">
-                                        <textarea name="appComments" class="form-control text-box single-line scrollbar" id="appComments" style="height:35px"></textarea>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 border-rv">
-                            <div class="form-group">
-                                <label class="control-label" for="selectionDropdown" style="display:block">Final Selection</label>
-                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="selectionComments" class="form-group">
-                                <label class="control-label" style="display:block">Final Comments</label>
-                                <div class="talk-bubble tri-right border-bubble right-in">
-                                    <div class="talktext">
-                                        <textarea name="selecComments" class="form-control text-box single-line scrollbar" id="selecComments" style="height:35px"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 border-rv ">
-                            <div class="form-group">
-
-                                <label class="control-label" for="offerDropdown" style="display:block"><b>Offer Status</b></label>
-                                <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 ">
-                            <div id="offerComments" class="form-group">
-                                <label class="control-label" style="display:block">Offer Comments</label>
-                                <div class="talk-bubble tri-right border-bubble right-in">
-                                    <div class="talktext">
-                                        <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="height:32px"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                                </div>
-                            </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 border-rv">
-                            <div class="form-group">
-
-                                <label class="control-label" for="joiningDropdown" style="display:block">Joining Status</label>
-                                <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div id="joiningComments" class="form-group">
-                                <label class="control-label" style="display:block">Joining Comments</label>
-                                <div class="talk-bubble tri-right border-bubble right-in">
-                                    <div class="talktext">
-                                        <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="height:35px"></textarea>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            </div>
-
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
-                    </div>
-                </div>
-            
             </div>
-
         </div>
+
+
 
 
         <!-- end row -->
     </div>
-   
+
 </div>
 
 
@@ -1348,9 +353,9 @@
     });
 </script>
 <script>
-    
+
     $(document).ready(function () {
-       
+
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
@@ -1359,7 +364,7 @@
 
     /* Callback to let us know Twilio Client is ready */
     Twilio.Device.ready(function (device) {
-      
+
         //callCandidateButtons.prop("disabled", false);
 
     });
@@ -1373,12 +378,12 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        
+
 
     });
 
     Twilio.Device.disconnect(function (connection) {
-       
+
     });
 
 
@@ -1407,7 +412,7 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-        
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -1501,11 +506,11 @@
 
             }
         });
-        
+
 
     }
 
-   
+
 
     function SavePopUp() {
 

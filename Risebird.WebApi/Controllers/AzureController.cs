@@ -29,7 +29,7 @@ namespace WebApplication1.Controllers
             string fileName = reservation.filename;
             long fileSize = reservation.fileSize;
             AzureResult _result = new AzureResult();
-            var reslutset=_result.SetMetadata(reservation.chunk,fileName,fileSize);
+            var reslutset=_result.SetMetadata(reservation.chunk,fileName,fileSize,reservation.noofblocks,reservation.id);
             return reslutset;
         }
 
