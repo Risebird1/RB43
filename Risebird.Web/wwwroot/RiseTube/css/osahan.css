@@ -899,7 +899,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
 
 .video-card-body {
     padding: 10px;
-    height: 100px;
+    height: 90px;
 }
 
 .video-card-list .video-card-image {
@@ -917,7 +917,7 @@ a:hover, h1, h2, h3, h4, h5, h6 {
     background: transparent none repeat scroll 0 0;
     box-shadow: none;
     display: inline-block;
-    margin-bottom: 1rem;
+    margin-bottom: 0rem;
     width: 100%;
 }
 
