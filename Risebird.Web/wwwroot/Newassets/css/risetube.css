@@ -1,6 +1,25 @@
 ﻿body {
     font-family: Roboto, sans-serif;
 }
+#style-2::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+
+textarea::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+    background-color: var(--mdc-theme-primary, #018786) !important;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background-color: #56a9ff;
+    border: 1px solid #56a9ff;
+    margin: 2px;
+    border-radius: 2px;
+}
+
 
 .pagination-container > ul > li {
     padding: 5px 12px !important;
@@ -13,7 +32,36 @@
 .pagination-container {
     float: right !important;
 }
+.mn-section {
+    position: absolute;
+    width: calc(100% - 30px);
+}
+.comment-area{width:100%;float:left;}
 
+ .comment-area .talk-bubble {
+        width: 90%;
+        margin: 0;
+        float:left;
+        padding: 0;
+    }
+ .comment-area .talktext {
+        padding: 0px 8px 0px 8px;
+        text-align: left;
+        line-height: 1.5em;
+    }
+    .comment-area textarea {
+        min-height: 50px;
+        background: #fff!important;
+        width: 100%!important;
+        border: 0!important;
+        padding: 7px 0px;
+    }
+    .side-player {
+        margin-left: auto !important;
+        margin-top: 10px
+    }
+
+.video-contop{margin-top:430px;}
 
 #myForm input {
     outline: none;
@@ -373,10 +421,7 @@
     font-size: 13px !important;
 }
 
-.comment-area textarea {
-    width: 89%;
-    float: left
-}
+
 
 .comment-area .mdc-button--raised {
     padding: 24px 16px;
