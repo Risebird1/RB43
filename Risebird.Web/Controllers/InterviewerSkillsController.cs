@@ -267,9 +267,9 @@ namespace Risebird.Web.Controllers
                 if (HttpContext.Session.GetString("email") != null)
                 {
                     var model = _iInterviewerSkillsService.GetEditInterviewerSkills(Convert.ToInt16(id)).Result;
-                    string skills = string.Empty;
-                    skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
-                    var interviewers = _iInterviewerSkillsService.GetInterviewers(skills);
+                    //string skills = string.Empty;
+                    //skills = string.Join(",", from item in model.SkillCollection select item.SkillId);
+                    var interviewers = _iInterviewerSkillsService.GetInterviewers(model.PrimarySkill);
                     model.SkillGeneralTypeList = new SelectList(_iInterviewerSkillsService.GetGeneralSkillMatrix(), "id", "Name");
                     model.SelectabilityTypeList = new SelectList(_iInterviewerSkillsService.GetSelectabilityMatrix(), "id", "Name");
                     ViewBag.RiseBirdHR = new SelectList(_iInterviewerSkillsService.GetRiseBirdHR(), "id", "EmailId");
