@@ -77,6 +77,15 @@
           }
         }
       },
+      "MediaToolkit/1.1.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/net40/MediaToolkit.dll": {}
+        },
+        "runtime": {
+          "lib/net40/MediaToolkit.dll": {}
+        }
+      },
       "Microsoft.ApplicationInsights/2.4.0": {
         "type": "package",
         "dependencies": {
@@ -5744,7 +5753,7 @@
       ]
     },
     "Libuv/1.10.0": {
-      "sha512": "lgDqozqVhVQ+YeXZdD/nh1s0noRPw12Z6XJ4EEmdcZYd8qIbiAIg6sfiQeHWpglurv2TPj8pSfRiUNGaRGSBWw==",
+      "sha512": "GsCf4q+eyaI49rCPlgYxdxa1SQCysXFFdSJWdstrwxytg4+VPYLYrXD4AT2rjHVJ+UF7SSWX9CapWEYaU4ejVQ==",
       "type": "package",
       "path": "libuv/1.10.0",
       "files": [
@@ -5761,6 +5770,20 @@
         "runtimes/win-arm/native/libuv.dll",
         "runtimes/win-x64/native/libuv.dll",
         "runtimes/win-x86/native/libuv.dll"
+      ]
+    },
+    "MediaToolkit/1.1.0.1": {
+      "sha512": "R3u+udQOUDBGUzx4wOHsp6yiSLMdJle7a9E7JK4/btL4w/pdXAmNHP2JMe2Fpt35kLjKNE74oNKUM1hc6RceIA==",
+      "type": "package",
+      "path": "mediatoolkit/1.1.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/readme.txt",
+        "lib/net20/MediaToolkit.dll",
+        "lib/net40/MediaToolkit.dll",
+        "mediatoolkit.1.1.0.1.nupkg.sha512",
+        "mediatoolkit.nuspec"
       ]
     },
     "Microsoft.ApplicationInsights/2.4.0": {
@@ -5786,7 +5809,7 @@
       ]
     },
     "Microsoft.ApplicationInsights.AspNetCore/2.1.1": {
-      "sha512": "HsN6IUHa3Wg0jltWR7e2N/eji6JmfUTsNiBSoagK5e+nTeXz1Sn5W0P8X7K1cxCAZTK4xHMIUlD/EFk+/7b7Fw==",
+      "sha512": "kiGmzl9Cav34dF7AHVMoJxdJJQEeLB8KZGNwX1LjImG9iem5hGk4DkHpW7/m9Nh3DrL8IKSL3mqQo+IPqWfMRQ==",
       "type": "package",
       "path": "microsoft.applicationinsights.aspnetcore/2.1.1",
       "files": [
@@ -6341,7 +6364,7 @@
       ]
     },
     "Microsoft.AspNetCore.HttpsPolicy/2.1.1": {
-      "sha512": "8pHFcicNlPyEuPsjsUHpROdAHmM0j+StbRekbncft/5kbMKPVJAp7y6PusFbYmizOVXNKGKfHNwo3UA/lG5Ckw==",
+      "sha512": "NpdDAjvK2ElehzeOO8nB3tHj8SOFxbSvTSTsPHA5hfeY782BqSvEl9+o5YMVosIRES0o5jkqgzJDlLdn3kT2OQ==",
       "type": "package",
       "path": "microsoft.aspnetcore.httpspolicy/2.1.1",
       "files": [
@@ -6949,7 +6972,7 @@
       ]
     },
     "Microsoft.Azure.KeyVault/2.3.2": {
-      "sha512": "yDH55c/EKEv4n3wUajrgh7KGm801/hbdkbOD+A2Axyie+4IKhzf+9CH3k8E90DfCO6OdcChKPS2YqmckVl6J2A==",
+      "sha512": "A82ESUdfLz2wMhYuPxrwf/fA7JVt3IARgeMCG3TsaLtxUxa9RBKX3f0zdnKmvBvJ/u1/5g03OLR26GPekqY5HQ==",
       "type": "package",
       "path": "microsoft.azure.keyvault/2.3.2",
       "files": [
@@ -6966,7 +6989,7 @@
       ]
     },
     "Microsoft.Azure.KeyVault.WebKey/2.0.7": {
-      "sha512": "1dGRG0RqG4fCYzb+TXex9aPnMdTkRv+2TlCqmvp/MAyNZ1B3cZJ8tGSTKNE9MtDbxxTHJJlsFiX9Qx/HpwFG7Q==",
+      "sha512": "MVSYao62R9rwl9KF+IsJm+XBLupJj1ma2lfwNeFlSWziXGAopnYK+YkDWqABOqNIV9kpza/MvNBxITzhlJIyIw==",
       "type": "package",
       "path": "microsoft.azure.keyvault.webkey/2.0.7",
       "files": [
@@ -9096,7 +9119,7 @@
       ]
     },
     "Newtonsoft.Json.Bson/1.0.1": {
-      "sha512": "W5Ke5xei9yS0ljQZuT75VgSp5M43eCPm5hHAelvKyGGU4dV7hYCmtwdsxoADb/exO6pYHeu/Iki43TdYPzfESQ==",
+      "sha512": "5PYT/IqQ+UK31AmZiSS102R6EsTo+LGTSI8bp7WAUqDKaF4wHXD8U9u4WxTI1vc64tYi++8p3dk3WWNqPFgldw==",
       "type": "package",
       "path": "newtonsoft.json.bson/1.0.1",
       "files": [
@@ -9313,7 +9336,7 @@
       ]
     },
     "runtime.native.System.Security.Cryptography.Apple/4.3.0": {
-      "sha512": "DloMk88juo0OuOWr56QG7MNchmafTLYWvABy36izkrLI5VledI0rq28KGs1i9wbpeT9NPQrx/wTf8U2vazqQ3Q==",
+      "sha512": "jwjwlEL0Elv6gwoyaokRn12nv/JE+UW/DXJEbzhjCPvGbef36StnHKc9XaZD/rGWqYicrphZ7eumR/jdmNcjRg==",
       "type": "package",
       "path": "runtime.native.system.security.cryptography.apple/4.3.0",
       "files": [
@@ -9368,11 +9391,12 @@
       ]
     },
     "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.Apple/4.3.0": {
-      "sha512": "kVXCuMTrTlxq4XOOMAysuNwsXWpYeboGddNGpIgNSZmv1b6r/s/DPk0fYMB7Q5Qo4bY68o48jt4T4y5BVecbCQ==",
+      "sha512": "Kh9W4agE0r/hK8AX1LvyQI2NrKHBL8pO0gRoDTdDb0LL6Ta1Z2OtFx3lOaAE0ZpCUc/dt9Wzs3rA7a3IsKdOVA==",
       "type": "package",
       "path": "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.apple/4.3.0",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "runtime.osx.10.10-x64.runtime.native.system.security.cryptography.apple.4.3.0.nupkg.sha512",
@@ -9651,7 +9675,7 @@
       ]
     },
     "StackExchange.Redis.StrongName/1.2.4": {
-      "sha512": "xUEJG7H/l8cMd0C1Q4ImP6RRfivfwRZrvlscxPH1s9ffRLSXyhMsaGriq7x3ulGejqneN/zzwYf4guAsv7DA5g==",
+      "sha512": "qrfSB1BnmM17V20A4yvvNA0HNiDgnBd/CcjaeMKMA4qtup1uuBUMyhl20oj31fRVo71E/fXTbmQCuM9ytBJs6w==",
       "type": "package",
       "path": "stackexchange.redis.strongname/1.2.4",
       "files": [
@@ -9908,7 +9932,7 @@
       ]
     },
     "System.Collections.NonGeneric/4.3.0": {
-      "sha512": "prtjIEMhGUnQq6RnPEYLpFt8AtLbp9yq2zxOSrY7KJJZrw25Fi97IzBqY7iqssbM61Ek5b8f3MG/sG1N2sN5KA==",
+      "sha512": "LE/oChpRvkSi3U25u0KnJcI44JeDZ1QJCyN4qFDx2uusEypdqR24w7lKYw21eYe5esuCBuc862wRmpF63Yy1KQ==",
       "type": "package",
       "path": "system.collections.nongeneric/4.3.0",
       "files": [
@@ -10588,7 +10612,7 @@
       ]
     },
     "System.Diagnostics.FileVersionInfo/4.3.0": {
-      "sha512": "omCF64wzQ3Q2CeIqkD6lmmxeMZtGHUmzgFMPjfVaOsyqpR66p/JaZzManMw1s33osoAb5gqpncsjie67+yUPHQ==",
+      "sha512": "6WVi7gArhxRiC+3qI5V2mFe1gHENj/F7xT5PQiy/lI/RsxXeivrt09WF0huwSQK2ubnmyyRFeA9z3w743/w32A==",
       "type": "package",
       "path": "system.diagnostics.fileversioninfo/4.3.0",
       "files": [
@@ -11053,7 +11077,7 @@
       ]
     },
     "System.Interactive.Async/3.1.1": {
-      "sha512": "x9y2omkjEudKbIVuhUzeWw7ZlouEzpk4W98woCEq1lq9gJxERBKRKDTHF5JPEws9E0f4/Uei/2vLxEy1IrfmMg==",
+      "sha512": "hZccYiIE5RS1/J9Tb/BNtosAGVggdlsJm4Ojdu+gDV0p4AIi+LUfUogMKkRacljQEJd2AG6vYzvcjhQFkqoZmw==",
       "type": "package",
       "path": "system.interactive.async/3.1.1",
       "files": [
@@ -12893,11 +12917,12 @@
       ]
     },
     "System.Runtime.Serialization.Formatters/4.3.0": {
-      "sha512": "voaCUwVE/liZ5gecwXh9BRq1X3cw2F9VA64kCjek1gF0ec25iQAPqPUPCQDYtYtbSHP0aIYg2ktcJoAt3NKeWg==",
+      "sha512": "KT591AkTNFOTbhZlaeMVvfax3RqhH1EJlcwF50Wm7sfnBLuHiOeZRRKrr1ns3NESkM20KPZ5Ol/ueMq5vg4QoQ==",
       "type": "package",
       "path": "system.runtime.serialization.formatters/4.3.0",
       "files": [
         ".nupkg.metadata",
+        ".signature.p7s",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -12979,7 +13004,7 @@
       ]
     },
     "System.Runtime.Serialization.Primitives/4.3.0": {
-      "sha512": "Wz+0KOukJGAlXjtKr+5Xpuxf8+c8739RI1C+A2BoQZT+wMCCoMDDdO8/4IRHfaVINqL78GO8dW8G2lW/e45Mcw==",
+      "sha512": "2Z5t70a2SwMsfQDp9KOclaZNyQhfIga2gppq9lIUDM1A4ohTshn4JqT7ir8bvIhXgorWKYDAr6rPzEbi/nTGKg==",
       "type": "package",
       "path": "system.runtime.serialization.primitives/4.3.0",
       "files": [
@@ -14213,7 +14238,7 @@
       ]
     },
     "System.Threading.Tasks.Extensions/4.5.1": {
-      "sha512": "rckdhLJtzQ3EI+0BGuq7dUVtCSnerqAoAmL3S6oMRZ4VMZTL3Rq9DS8IDW57c6PYVebA4O0NbSA1BDvyE18UMA==",
+      "sha512": "WSKUTtLhPR8gllzIWO2x6l4lmAIfbyMAiTlyXAis4QBDonXK4b4S6F8zGARX4/P8wH3DH+sLdhamCiHn+fTU1A==",
       "type": "package",
       "path": "system.threading.tasks.extensions/4.5.1",
       "files": [
@@ -14624,7 +14649,7 @@
       ]
     },
     "System.Xml.XmlDocument/4.3.0": {
-      "sha512": "dk0n2ir9oSzrhduDhhJRE+3z6JssJsFs4U/6NEjEJLXXWVGv0i4qG1rMS0Y7HMY6X4ZOWfCDnlz2mwq3mhmVTw==",
+      "sha512": "lJ8AxvkX7GQxpC6GFCeBj8ThYVyQczx2+f/cWHJU8tjS7YfI6Cv6bon70jVEgs2CiFbmmM8b9j1oZVx0dSI2Ww==",
       "type": "package",
       "path": "system.xml.xmldocument/4.3.0",
       "files": [
@@ -14662,7 +14687,7 @@
       ]
     },
     "System.Xml.XmlSerializer/4.3.0": {
-      "sha512": "MYoTCP7EZ98RrANESW05J5ZwskKDoN0AuZ06ZflnowE50LTpbR5yRg3tHckTVm5j/m47stuGgCrCHWePyHS70Q==",
+      "sha512": "VShQJhOxgD/5M2Z1IWm1vMaSqlbjo1zdFf8H7Ahte6bTvSUhUko/gDpAVVhGgGgTDeue4QyNg1fu1Zz2GKSEuQ==",
       "type": "package",
       "path": "system.xml.xmlserializer/4.3.0",
       "files": [
@@ -15024,6 +15049,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
+      "MediaToolkit >= 1.1.0.1",
       "Microsoft.AspNetCore >= 2.0.3",
       "Microsoft.AspNetCore.All >= 2.0.6",
       "Microsoft.AspNetCore.Authentication >= 2.1.2",
@@ -15057,23 +15083,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\PrashantVish1S\\.nuget\\packages\\": {},
+    "C:\\Users\\Admin\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\CodeFile\\Risebird.Web\\Risebird.Web.csproj",
+      "projectUniqueName": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
       "projectName": "Risebird.Web",
-      "projectPath": "E:\\CodeFile\\Risebird.Web\\Risebird.Web.csproj",
-      "packagesPath": "C:\\Users\\PrashantVish1S\\.nuget\\packages\\",
-      "outputPath": "E:\\CodeFile\\Risebird.Web\\obj\\",
+      "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Web\\Risebird.Web.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\PrashantVish1S\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -15081,32 +15107,31 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "http://nuget.grapecity.com/nuget": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.0": {
           "projectReferences": {
-            "E:\\CodeFile\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Business.Interface\\Risebird.Business.Interface.csproj"
             },
-            "E:\\CodeFile\\Risebird.Business\\Risebird.Business.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.Business\\Risebird.Business.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Business\\Risebird.Business.csproj"
             },
-            "E:\\CodeFile\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper.Interface\\Risebird.CommonHelper.Interface.csproj"
             },
-            "E:\\CodeFile\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.CommonHelper\\Risebird.CommonHelper.csproj"
             },
-            "E:\\CodeFile\\Risebird.Entities\\Risebird.Entities.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.Entities\\Risebird.Entities.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Entities\\Risebird.Entities.csproj"
             },
-            "E:\\CodeFile\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Repository.Interface\\Risebird.Repository.Interface.csproj"
             },
-            "E:\\CodeFile\\Risebird.Repository\\Risebird.Repository.csproj": {
-              "projectPath": "E:\\CodeFile\\Risebird.Repository\\Risebird.Repository.csproj"
+            "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj": {
+              "projectPath": "C:\\Users\\Admin\\source\\repos\\Risebird\\Risebird.Repository\\Risebird.Repository.csproj"
             }
           }
         }
@@ -15120,6 +15145,10 @@
     "frameworks": {
       "netcoreapp2.0": {
         "dependencies": {
+          "MediaToolkit": {
+            "target": "Package",
+            "version": "[1.1.0.1, )"
+          },
           "Microsoft.AspNetCore": {
             "target": "Package",
             "version": "[2.0.3, )"
@@ -15216,16 +15245,10 @@
           }
         },
         "imports": [
-          "net461",
-          "net462",
-          "net47",
-          "net471",
-          "net472",
-          "net48"
+          "net461"
         ],
         "assetTargetFallback": true,
-        "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+        "warn": true
       }
     }
   },
@@ -15234,7 +15257,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'EPPlus 4.1.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'EPPlus 4.1.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "EPPlus",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15244,7 +15267,17 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Azure.ActiveDirectory.GraphClient 2.1.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'MediaToolkit 1.1.0.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "libraryId": "MediaToolkit",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Azure.ActiveDirectory.GraphClient 2.1.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Azure.ActiveDirectory.GraphClient",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15254,7 +15287,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Edm 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Edm",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15264,7 +15297,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.OData 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.OData",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15274,7 +15307,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.Data.Services.Client 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Data.Services.Client",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15284,7 +15317,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'Microsoft.IdentityModel.Protocol.Extensions 1.0.2.205111437' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.IdentityModel.Protocol.Extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15294,7 +15327,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'OfficeOpenXml.Extends 1.0.6' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'OfficeOpenXml.Extends 1.0.6' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "OfficeOpenXml.Extends",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15304,7 +15337,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'System.Spatial 5.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "System.Spatial",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15314,7 +15347,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'TransientFaultHandling.Core 5.1.1209.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "TransientFaultHandling.Core",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15324,7 +15357,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15334,7 +15367,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'windowsazure.mediaservices.extensions 4.2.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "windowsazure.mediaservices.extensions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
@@ -15344,7 +15377,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'X.PagedList.Mvc 7.9.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
+      "message": "Package 'X.PagedList.Mvc 7.9.1' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.0'. This package may not be fully compatible with your project.",
       "libraryId": "X.PagedList.Mvc",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.0"
