@@ -240,11 +240,11 @@ namespace Risebird.Business
                 return false;
             }
         }
-        public async Task<bool> DeleteInterviewerSkills(int id)
+        public async Task<bool> DeleteInterviewerSkillsChannel(int id)
         {
             try
             {
-                return _interviewerSkillsRepository.DeleteInterviewerSkills(id).Result;
+                return _interviewerSkillsRepository.DeleteInterviewerSkillsChannel(id).Result;
             }
 
             catch (Exception e)
@@ -253,19 +253,19 @@ namespace Risebird.Business
                 return false;
             }
         }
-        //public async Task<bool> UnArchiveDeleteInterviewerSkills(int id)
-        //{
-        //    try
-        //    {
-        //        return _interviewerSkillsRepository.UnArchiveInterviewerSkills(id).Result;
-        //    }
+        public async Task<bool> UnArchiveISC(int id)
+        {
+            try
+            {
+                return _interviewerSkillsRepository.UnArchiveISC(id).Result;
+            }
 
-        //    catch (Exception e)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
-        //        return false;
-        //    }
-        //}
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
         public IEnumerable<ISCInterviewer> GetISCInterviewers(int id)
         {
             try

@@ -36,7 +36,7 @@ namespace Risebird.Repository.Interface
         string GetPrimarySkill(int id);
         Task<bool> UpdateInterviewerSkillsDetails(InterviewerSkillsVM irfDetails);
         Task<IEnumerable<UnApprovedInterviewer>> GetUnApprovedInterviewerList(int id);
-        Task<bool> DeleteInterviewerSkills(int InterviewerSkillId);
+        Task<bool> DeleteInterviewerSkillsChannel(int id);
         //Task<bool> UnArchiveInterviewerSkills(int InterviewerSkillId);
         bool AddInterviewer(InterviewerSkillsVM model);
         bool AddUnApprovedInterviewer(IEnumerable<UnApprovedInterviewer> model, int iscId);
@@ -45,7 +45,7 @@ namespace Risebird.Repository.Interface
         bool PlayInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName);
         bool PauseInterviewerSkills(int InterviewerSkillId, string InterviewerSkillName);
         Task<bool> DeleteISCInterviewer(int id);
-
+        Task<bool> UnArchiveISC(int id);
         //Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string InterviewerSkillId);
         // IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         //IEnumerable<Users> GetQualityController();

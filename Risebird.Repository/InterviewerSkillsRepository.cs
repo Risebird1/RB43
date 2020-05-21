@@ -546,10 +546,10 @@ namespace Risebird.Repository
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@InterviewerSkillId", id);
+                param.Add("@ISCId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = SqlMapper.Query<TransInterviewerSkillsLeadInterviewer>(con, "usp_GetTransInterviewerSkillsLeadInterviewer", param,
+                    var result = SqlMapper.Query<TransInterviewerSkillsLeadInterviewer>(con, "usp_GetTransISCLeadInterviewer", param,
                                             commandType: CommandType.StoredProcedure);
                     return result;
                 }
@@ -697,16 +697,16 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        public async Task<bool> DeleteInterviewerSkills(int InterviewerSkillId)
+        public async Task<bool> DeleteInterviewerSkillsChannel(int id)
         {
             try
             {
 
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@InterviewerSkillId", InterviewerSkillId);
+                parameters.Add("@ISCId", id);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteInterviewerSkills", parameters,
+                    var result = await SqlMapper.QueryAsync<int>(con, "usp_DeleteInterviewerSkillsChannel", parameters,
                         commandType: CommandType.StoredProcedure);
                     return true;
 
@@ -726,27 +726,27 @@ namespace Risebird.Repository
                 return false;
             }
         }
-        //public async Task<bool> UnArchiveInterviewerSkills(int IRFId)
-        //{
-        //    try
-        //    {
-        //        var query = "update IRF set IsDeleted=0 where id = @IRFId;";
-        //        var dynamicParameters = new DynamicParameters();
-        //        dynamicParameters.Add("@IRFId", IRFId);
+        public async Task<bool> UnArchiveISC(int id)
+        {
+            try
+            {
+                var query = "update InterviewerSkillsChannel set IsDeleted=0 where id = @ISCId;";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ISCId", id);
 
-        //        using (SqlConnection con = new SqlConnection(connectionString))
-        //        {
-        //            var results = con.QueryAsync<int>(query, dynamicParameters);
-        //            return true;
-        //        }
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        return false;
-        //    }
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.QueryAsync<int>(query, dynamicParameters);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
 
-        //}
+        }
 
         public IEnumerable<ISCInterviewer> GetISCInterviewers(int id)
         {

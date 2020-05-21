@@ -312,17 +312,17 @@ namespace Risebird.Web.Controllers
                         {
                             if (!(_iInterviewerSkillsService.CheckUniqueness(model.InterviewerSkillId)))
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Sorry! Interviewer Skills with this name already exits!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Sorry! An Interviewer Skills Channel with this name already exits!";
                                 return RedirectToAction("Index");
                             }
                             if (_iInterviewerSkillsService.AddInterviewerSkillsDetails(model).Result)
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills saved Successfully";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved Successfully";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills edits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel dits were not saved!";
                                 return RedirectToAction("Index");
                             }
 
@@ -331,12 +331,12 @@ namespace Risebird.Web.Controllers
                         {
                             if (_iInterviewerSkillsService.UpdateInterviewerSkills(model))
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills saved successfully!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel saved successfully!";
                                 return RedirectToAction("Index");
                             }
                             else
                             {
-                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills edits were not saved!";
+                                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved!";
                                 return RedirectToAction("Index");
                             }
                         }
@@ -355,7 +355,7 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills edits were not saved";
+                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel edits were not saved";
                 return RedirectToAction("Index");
             }
         }
@@ -392,7 +392,7 @@ namespace Risebird.Web.Controllers
 
 
         [Authorize]
-        public IActionResult DeleteInterviewerSkills(string id)
+        public IActionResult DeleteInterviewerSkills(int id)
         {
             try
             {
@@ -402,14 +402,12 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     if (profileName == "Admin" || profileName == "HR")
                     {
-                        if (_iInterviewerSkillsService.DeleteInterviewerSkills(Convert.ToInt16(id)).Result)
+                        if (_iInterviewerSkillsService.DeleteInterviewerSkillsChannel(id).Result)
                         {
-                            TempData["SuccessErrorMessage"] = "InterviewerSkills deleted Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "InterviewerSkills delete Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -426,51 +424,50 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "InterviewerSkills delete Failed";
                 return RedirectToAction("Index");
             }
 
         }
-        //[Authorize]
-        //public IActionResult UnArchiveDeleteInterviewerSkills(string id)
-        //{
-        //    try
-        //    {
-        //        if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //        {
-        //            var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //            profileName = profileName.Replace("\"", "");
-        //            if (profileName == "Admin" || profileName == "HR")
-        //            {
-        //                if (_iInterviewerSkillsService.UnArchiveDeleteInterviewerSkills(Convert.ToInt16(id)).Result)
-        //                {
-        //                    TempData["SuccessErrorMessage"] = "InterviewerSkills restored Successfully";
-        //                    return RedirectToAction("Index");
-        //                }
-        //                else
-        //                {
-        //                    TempData["SuccessErrorMessage"] = "InterviewerSkills restore Failed";
-        //                    return RedirectToAction("Index");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("SignOut", "Session");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("SignOut", "Session");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //        TempData["SuccessErrorMessage"] = "InterviewerSkills restore Failed";
-        //        return RedirectToAction("Index");
-        //    }
+        [Authorize]
+        public IActionResult UnArchiveISC(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (_iInterviewerSkillsService.UnArchiveISC(id).Result)
+                        {
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restored Successfully.";
+                            return RedirectToAction("Index");
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageISCInterviewer"] = "Interviewer Skills Channel restore Failed.";
+                return RedirectToAction("Index");
+            }
 
-        //}
+        }
         [Authorize]
         [HttpGet]
         public IActionResult GetISCInterviewers(int id, string InterviewerSkillidName)

@@ -14,6 +14,7 @@ CREATE TABLE [dbo].[InterviewerSkillsChannel](
 	[PerMintuteRate] [real] NULL,
 	[CalendlyLink] [varchar](500) NULL,
 	[IsPaused] [bit] NULL,
+	[IsDeleted] [bit] NOT NULL DEFAULT 0,
  CONSTRAINT [PK_InterviewerSkills] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC

@@ -71,6 +71,8 @@ namespace Risebird.Entities.ViewModel
         public string ResumeLink { get; set; }
         public string HREmailId { get; set; }
         public int UserId { get; set; }
+        public bool IsDeleted { get; set; }
+
     }
 
     public class InterviewerSkillsChannelModel
@@ -90,6 +92,7 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerSkillStatus { get; set; }
         public bool IsApproved { get; set; }
         public string HREmailId { get; set; }
+        public bool IsDeleted { get; set; }
 
     }
 }
