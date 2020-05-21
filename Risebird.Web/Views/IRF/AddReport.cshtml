@@ -308,7 +308,7 @@
         border-bottom: 2px rgb(80, 158, 235) solid !important;
     }
 
-   
+
     .modal-content .modal-body {
         padding-top: 10px;
     }
@@ -500,23 +500,30 @@
                                             {
                                                 if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
-                                                    <video width="320" height="240" style="width:100%" controls>
+                                                    <video width="320" height="240" style="width:100%" controls class="vjs-tech">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/mp4">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/ogg">
 
                                                         Your browser does not support the video tag.
                                                     </video>
                                                 }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
                                                 else
                                                 {
-                                                    <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
                                                 }
                                             }
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                </div>*@
+                                            </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -538,7 +545,7 @@
                                             </div>
                                         </div>
 
-                                        <div  id="uploadDiv">
+                                        <div id="uploadDiv">
                                             @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
 
@@ -610,7 +617,7 @@
                                                         <th>Questions</th>
                                                         <th>SkillName</th>
                                                         <th width="15%">Rating</th>
-                                                        <th>Time(Min)</th>
+                                                        <th>Time(In Second)</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -648,7 +655,8 @@
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+
                                                                 <td>
                                                                     @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
@@ -765,15 +773,16 @@
 
                                                     @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-                                                    </div></div>
-                                                    @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                                 </div>
-
-
-
-                                            </div><!--end of col-md-12-->
-
+                                            </div>
+                                            @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                         </div>
+
+
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -864,12 +873,12 @@
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th >Required Level</th>
-                                                        <th >Type</th>
+                                                        <th>Required Level</th>
+                                                        <th>Type</th>
                                                         <th>Value</th>
-                                                        <th >Actual Level</th>
+                                                        <th>Actual Level</th>
                                                         <th>Required Weightage</th>
-                                                        <th >Actual Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -924,8 +933,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1001,11 +1010,11 @@
                                                     </div>
                                                 </div>
 
-                                                    </div>
+                                            </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
                                 <div class="row">
@@ -1711,7 +1720,18 @@
         $.validator.unobtrusive.parse(document);
 
     }
+      function switchtoquestionVedio(questiontime) {
 
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
     function AddRowInterviewer() {
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
