@@ -148,7 +148,26 @@ table {
     margin-bottom: 35px;
 }
 
+.statusImg {
+    -ms-flex: 0 0 12.666667%;
+    flex: 0 0 12.666667%;
+    max-width: 12.666667%;
+    float: left;
+    padding: 0px 15px;
+}
 
+.statusInfo {
+    -ms-flex: 0 0 82.333333%;
+    flex: 0 0 82.333333%;
+    max-width: 82.333333%;
+    float: left;
+    padding: 0px 15px;
+}
+
+.card-blue .card-footer .stats-bttm-btn {
+    padding: 0px 25px 0px 0px;
+    text-align: right;
+}
 
 .thumbnail {
     border-top: 5px solid #443f3f;
@@ -263,7 +282,7 @@ table {
 
 #irf-card-footer {
     padding-left: 25px;
-    padding-top: 5px;
+    padding-top: 10px;
     padding-right: 0px;
 }
 
