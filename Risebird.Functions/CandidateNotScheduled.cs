@@ -23,7 +23,7 @@ namespace Risebird.Functions
     public static class CandidateNotScheduled
     {
         [FunctionName("CandidateNotScheduled")]
-        public static void Run([TimerTrigger("0 0 19 * * *")]TimerInfo myTimer, TraceWriter log)
+        public static void Run([TimerTrigger("0 0 21 * * *")]TimerInfo myTimer, TraceWriter log)
         {
             log.Info($"C# Timer trigger function executed at: {DateTime.Now}");
             try
@@ -41,7 +41,7 @@ namespace Risebird.Functions
                 foreach (var item in unfilteredCandidates)
                 {
                     int checkScheduleCount = 0;
-                    var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId and confirmationStatus!=2";
+                    var checkQuery = "select id from InterviewMeetings where IRFId=@IRFId and candidateEmail = @EmailId";
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("@IRFId", item.IRFId);
                     dynamicParameters.Add("@EmailId", item.EmailId);
