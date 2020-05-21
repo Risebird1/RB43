@@ -115,16 +115,21 @@
                                                 <div class="statistics statistics-horizontal">
                                                     <div class="info info-horizontal">
                                                         <div class="row">
-                                                            <div class="col-md-12">
+
+
+                                                            <div class="statusImg">
+                                                                <img id="statusImage" src="/img/Cards_Png/01_Green-White.png" class="img-responsive">
+                                                            </div>
+                                                            <div class="statusInfo">
                                                                 <div class="group inner list-group-item-text">
 
-                                                                    <div class="clearfix col-md-12"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
-                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
-                                                                    <div class="clearfix col-md-12">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
-                                                                    <div class="clearfix col-md-12">
+                                                                    <div class="clearfix row"> <span class="pull-left"><b>Total Projects:</b></span> <span class="pull-left">@item.TotalProjects</span></div>
+                                                                    <div class="clearfix row">  <span class="pull-left"><b>Client:</b></span> <span class="pull-left"> @item.Client </span></div>
+                                                                    <div class="clearfix row">  <span class="pull-left"><b>End Client:</b></span> <span class="pull-left"> @item.EndClient</span></div>
+                                                                    <div class="clearfix row">
                                                                         <span class="pull-left"><b>Location:</b></span> <span class="pull-left"> @item.Location</span>
                                                                     </div>
-                                                                    
+
 
                                                                 </div>
                                                             </div>
@@ -135,37 +140,44 @@
                                                 </div>
                                             </div>
                                             <div class="card-footer">
-                                                <div class="stats text-center">
-                                                    @if (!@item.IsClientUser)
-                                                    {
-                                                        <button class="mdc-fab app-fab--absolute" aria-label="Edit">
-                                                            <span onclick="javascript:EditAccount('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
-                                                        </button>
+                                                <div class="row">
 
-                                                    }
+                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 " id="irf-card-footer">
 
-                                                    @if (!@item.IsClientUser)
-                                                    {
-                                                        if (!item.IsDeleted)
+                                                        <h6 style="color: green;"> Active</h6>
+                                                    </div>
+                                                    <div class="stats stats-bttm-btn col-lg-9 col-md-9 col-sm-9 col-xs-9 ">
+                                                        @if (!@item.IsClientUser)
                                                         {
-
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
-                                                                <span onclick="javascript:ArchiveAccount('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Edit">
+                                                                <span onclick="javascript:EditAccount('@item.id');" title="Edit" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" /></svg></span>
                                                             </button>
 
-
-
                                                         }
-                                                        else
+
+                                                        @if (!@item.IsClientUser)
                                                         {
-                                                          
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="UnArchive">
-                                                                <span onclick="javascript:UnArchiveAccount('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
-                                                            </button>
+                                                            if (!item.IsDeleted)
+                                                            {
+
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Archive">
+                                                                    <span onclick="javascript:ArchiveAccount('@item.id');" title="Archive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z" /></svg></span>
+                                                                </button>
+
+
+
+                                                            }
+                                                            else
+                                                            {
+
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="UnArchive">
+                                                                    <span onclick="javascript:UnArchiveAccount('@item.id');" title="UnArchive" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20.55 5.22l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.15.55L3.46 5.22C3.17 5.57 3 6.01 3 6.5V19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.49-.17-.93-.45-1.28zM12 9.5l5.5 5.5H14v2h-4v-2H6.5L12 9.5zM5.12 5l.82-1h12l.93 1H5.12z" /></svg></span>
+                                                                </button>
+                                                            }
+
                                                         }
 
-                                                    }
-
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

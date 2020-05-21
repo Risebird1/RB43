@@ -19,9 +19,18 @@ textarea::-webkit-scrollbar-thumb {
     margin: 2px;
     border-radius: 2px;
 }
-
-
-.pagination-container > ul > li {
+#QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
+    cursor: pointer !important;
+  
+}
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+        background-size: 25px;
+        background-repeat: no-repeat;
+        background-position: 45%;
+        z-index: 1000;
+    }
+        .pagination-container > ul > li {
     padding: 5px 12px !important;
     border-radius: 21px !important;
     border: 1px solid blanchedalmond !important;
