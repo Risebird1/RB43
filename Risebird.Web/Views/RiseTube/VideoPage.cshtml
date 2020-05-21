@@ -479,7 +479,7 @@
 
                                                                     @if (@Model.VideoLink.Contains(".mp4"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width"  class="btnvideo" autoplay>
+                                                                        <video controls class="vjs-tech video-width" class="btnvideo" autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                         </video>
                                                                     }
@@ -912,7 +912,7 @@
                                                                 <!-- #tab3 -->
                                                                 <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
                                                                 <div id="link4" class="tab_content">
-                                                                    <div >
+                                                                    <div>
                                                                         <div class="table-responsive-sm">
                                                                             @if (Model.IreportModel.QuestionsList != null)
                                                                             {
@@ -924,7 +924,7 @@
                                                                                             <th width="20%">Rating</th>
                                                                                             <th width="10%">Time(Min)</th>
                                                                                             @*
-                                    <th width="10%">Action</th>*@
+                                                                                                <th width="10%">Action</th>*@
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
@@ -952,19 +952,19 @@
                                                                                                 </td>
 
                                                                                                 @*
-                                        <td>
+                                                                                                    <td>
 
-                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                                                        <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                                        <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                        </td>*@
+                                                                                                    </td>*@
                                                                                             </tr>
                                                                                         }
                                                                                         else
                                                                                         {
                                                                                             for (int i = 0; i < Model.IreportModel.QuestionsCollection.Count(); i++)
                                                                                             {
-                                                                                                <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)">
+                                                                                                <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                     <td>
                                                                                                         @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
@@ -987,12 +987,12 @@
                                                                                                     </td>
 
                                                                                                     @*
-                                            <td>
+                                                                                                        <td>
 
-                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                                                            <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                                                            <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
 
-                                            </td>*@
+                                                                                                        </td>*@
                                                                                                 </tr>
 
 
@@ -1013,7 +1013,7 @@
 
                                                                 <h3 class="tab_drawer_heading" rel="link5">General Skill Report</h3>
                                                                 <div id="link5" class="tab_content">
-                                                                    <div >
+                                                                    <div>
                                                                         <div class="table-responsive-sm">
                                                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                                                 <thead>
@@ -1086,7 +1086,7 @@
                                                                 </div>
                                                                 <h3 class="tab_drawer_heading" rel="link6"> Joinability Report</h3>
                                                                 <div id="link6" class="tab_content">
-                                                                    <div >
+                                                                    <div>
                                                                         <div class="table-responsive-sm">
 
                                                                             <table class="table table-bordered mbn" id="JoinabilityTable">
@@ -1158,7 +1158,7 @@
                                                                 </div>
                                                                 <h3 class="tab_drawer_heading" rel="link7"> Selectability Report</h3>
                                                                 <div id="link7" class="tab_content">
-                                                                    <div >
+                                                                    <div>
                                                                         <div class="table-responsive-sm">
 
                                                                             <table class="table table-bordered mbn" id="SelectabilityTable">
@@ -2774,8 +2774,13 @@
     }
 
     function switchtoquestionVedio(questiontime) {
-        debugger;
+
         var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
         var vid = document.getElementsByClassName("vjs-tech");
         vid[0].currentTime = time;
         //time should be in seconds
