@@ -311,7 +311,7 @@ namespace Risebird.Business
                     var clients = _irfRepository.GetTransClientUser(id);
                     foreach (var item in clients)
                     {
-                        if (item.EmailId == email)
+                        if (item.EmailId.ToLower() == email.ToLower())
                         {
                             role = item.ClientRoleId;
                             break;

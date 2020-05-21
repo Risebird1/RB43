@@ -75,6 +75,8 @@
                                             <th>No Of Interview</th>
                                             <th>SuccessRate</th>
                                             <th class="disabled-sorting text-right">Actions</th>
+                                            <th style="text-align:center">Call</th>
+
                                         </tr>
                                     </thead>
                                     <tfoot>
@@ -90,6 +92,8 @@
                                             <th>No Of Interview</th>
                                             <th>SuccessRate</th>
                                             <th class="disabled-sorting text-right">Actions</th>
+                                            <th style="text-align:center">Call</th>
+
                                         </tr>
                                     </tfoot>
                                     <tbody>
@@ -145,6 +149,12 @@
 
 
                                                 </td>
+                                                <td>
+                                                    @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
+                                                    {
+                                                        <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the interviewer." onclick="CallButtonClick('@item.FirstName', '@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Interviewer</span></span>
+                                                    }
+                                                </td>
                                             </tr>
                                         }
                                     </tbody>
@@ -161,6 +171,44 @@
             <!-- end col-md-12 -->
         </div>
         <!-- end row -->
+
+        <div id="myCallModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:20px;">Call Interviewer!</h5>
+                    <span class="close" id="callPopUp">&times;</span>
+                </div>
+                <div class="modal-body" style="padding: 2px 16px;">
+                    <div class="row">
+                        <label id="callingLabel" style="    margin-top: 30px;
+    /* text-align: center; */
+    font-size: 20px;
+    text-align: center;
+    margin: 20px auto;
+    display: block"><b>Calling...</b></label>
+                    </div>
+
+                    <div class="">
+                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 0px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
+                    </div>
+                </div>
+                <div class="modal-footer" style="background:#fff;"></div>
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -171,6 +219,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+<script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
 @if (ViewBag.Message != null)
 {
@@ -340,4 +389,68 @@
         }, 2000);
     };
     //// script for loader ends here
+</script>
+<script>
+    var interviewer = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
+        });
+    });
+
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
+
+    });
+
+    function callInterviewer(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
+
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + interviewer + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
+
+    function afterTimeOut() {
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
+
+    });
+
+    function CallButtonClick(name, phoneNumber) {
+        interviewer = name;
+        // Get the modal
+        var modal = document.getElementById("myCallModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + interviewer + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callInterviewer(phoneNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myCallModal");
+        modal.style.display = "none";
+    }
+
+
 </script>
