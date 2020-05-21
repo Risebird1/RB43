@@ -31,13 +31,13 @@ namespace Risebird.Functions
                 var candidates = new List<NotScheduledCandidate>(); // will contain the candidates whose interviews arent scheduled.
                 var unfilteredCandidates = new List<NotScheduledCandidate>();
                 var str = ConfigurationManager.ConnectionStrings["sqldb_connection"].ConnectionString;
-                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, Candidate.EmailId, Candidate.Phone from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
+                var query = "select IRF.id,IRF.IRFId,IRF.EndDate, IRF.JDTiltle,Client.[Name] as Client, Candidate.EmailId, Candidate.Phone, Candidate.InviteDate from Candidate join IRF on Candidate.IRFId= IRF.id join Client on Client.id=IRF.ClientId where Candidate.TotalInvites!=0";
 
                 using (SqlConnection con = new SqlConnection(str))
                 {
                     unfilteredCandidates = con.Query<NotScheduledCandidate>(query).ToList();
                 }
-                unfilteredCandidates = unfilteredCandidates.Where(x => x.EndDate > DateTime.Now).ToList();
+                unfilteredCandidates = unfilteredCandidates.Where(x => x.InviteDate!= null && x.InviteDate >= DateTime.Now.AddDays(-5)).ToList();
                 foreach (var item in unfilteredCandidates)
                 {
                     int checkScheduleCount = 0;
@@ -235,6 +235,7 @@ namespace Risebird.Functions
         public string JDTiltle { get; set; }
         public string Client { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime InviteDate { get; set; }
     }
 
 }
