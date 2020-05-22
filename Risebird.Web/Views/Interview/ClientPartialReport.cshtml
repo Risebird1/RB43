@@ -36,6 +36,43 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -79,7 +116,7 @@
 
 
                                 <!--  <button title="Approved For Next Round" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" class="btn btn-success btn-icon btn-sm like fa fa-thumbs-up" style="width:145px"><font style="font-family:Arial;font-size:12px;"> Approve</font></button>
-            <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-primary btn-icon btn-sm like fa fa-check-circle" style="width:145px"> <font style="font-family:Arial;font-size:12px;">Select</font></button>-->
+                                <button title="Final Selection Status" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)" class="btn btn-primary btn-icon btn-sm like fa fa-check-circle" style="width:145px"> <font style="font-family:Arial;font-size:12px;">Select</font></button>-->
                             </div>
                         }
 
@@ -285,57 +322,57 @@
                                                     </div>
                                                 </div>
 
-                                                </div>
-
-
-
-
-
-
                                             </div>
-                                            <div class="col-md-7 col-sm-7">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
 
-                                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                                <div class="talktext">
-                                                                    @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
 
-                                                                </div>
+
+
+
+                                        </div>
+                                        <div class="col-md-7 col-sm-7">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+
+                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                            <div class="talktext">
+                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+
                                                             </div>
-                                                            @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                            @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                         </div>
-                                                        <div class="form-group">
-                                                            <span>
-
-                                                            </span>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                            @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                                        </div>
-
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        </div>
-                                                        <div class="form-group">
-                                                            @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                            @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        </div>
-
-
-
-
+                                                        @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
                                                     </div>
+                                                    <div class="form-group">
+                                                        <span>
+
+                                                        </span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                        @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+                                                    <div class="form-group">
+                                                        @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                        @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    </div>
+
+
+
+
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
 
                                     <div class="row">
@@ -344,7 +381,7 @@
 
                                             </div>
 
-                                            
+
                                         </div>
                                     </div>
 
@@ -363,9 +400,9 @@
                                                     <thead>
                                                         <tr>
 
-                                                            <th width="60%" class="table_heading">Questions</th>
+                                                            <th width="40%" class="table_heading">Questions</th>
                                                             <th class="table_heading">Skill Name</th>
-                                                            <th class="table_heading">Rating</th>
+                                                            <th width="10%" class="table_heading">Rating</th>
                                                             <th class="table_heading">Time(Min)</th>
                                                             <th width="10%">Action</th>
                                                         </tr>
@@ -374,7 +411,7 @@
                                                         @if (Model.QuestionsCollection == null || Model.QuestionsCollection.Count() == 0)
                                                         {
                                                             <tr>
-                                                                <td >
+                                                                <td>
 
 
                                                                     @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
@@ -407,47 +444,47 @@
                                                         {
                                                             for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                             {
-                                                    <tr>
-                                                        <td>
-                                                            @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
+                                                                <tr>
+                                                                    <td>
+                                                                        @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
 
 
-                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "form-control dropques text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
-                                                        </td>
+                                                                    </td>
 
-                                                        <td>
-                                                            @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        </td>
-                                                        <td>
-                                                            @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
+                                                                    <td>
+                                                                        @Html.TextBoxFor(m => m.QuestionsCollection[i].SkillName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                                    </td>
+                                                                    <td>
+                                                                        @*<input class="form-control" id="@("QuestionsCollection_"+i+"__RatingId")" name="QuestionsCollection[@i].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.Where(x=> x.Value == Model.QuestionsCollection[i].RatingId.ToString()).FirstOrDefault().Text">*@
 
-                                                            @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
-
-
-                                                        </td>
-
-                                                        <td>
-
-                                                            @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
-
-                                                        </td>
-
-                                                        <td class="action text-center">
-                                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
-
-                                                            <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
-                                                                <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
-                                                            </button>
+                                                                        @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control droprating" })
 
 
+                                                                    </td>
+
+                                                                    <td>
+
+                                                                        @Html.EditorFor(m => m.QuestionsCollection[i].Timing, new { htmlAttributes = new { @class = "form-control text-box single-line", @type = "number", @min = "1", @readonly = "readonly" } })
+
+                                                                    </td>
+
+                                                                    <td class="action text-center">
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
+
+                                                                        <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                            <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                        </button>
 
 
 
-                                                        </td>
 
-                                                    </tr>
+
+                                                                    </td>
+
+                                                                </tr>
 
 
                                                             }
@@ -1029,7 +1066,7 @@
                                     <div class="modal-body">
                                         <div class="form-group">
                                             @*<label>Approved</label>
-                            <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
+                                                <input type="checkbox" name="IsApproved" id="IsApproved" onclick="ApprovalChanged()" style="margin-left:17px">*@
                                             <label for="approveDropdown" class="control-label">Approved For Next Round</label>
                                             <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
                                         </div>
@@ -1072,14 +1109,14 @@
                                             </div>
                                             <div id="selectionComments" class="form-group">
                                                 <label class="control-label">Final Comments</label>
-                                                <input type="text" name="selecComments" class="form-control" id="selecComments" >
+                                                <input type="text" name="selecComments" class="form-control" id="selecComments">
                                             </div>
                                             <div class="">
                                                 <input type="button" onclick="SaveSelecPopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnSelectUpload" value="Save">
                                             </div>
 
                                         </div>
-                                       
+
                                     </div>
 
                                 </div>
@@ -1093,10 +1130,10 @@
                 <!-- end col-md-12 -->
             </div>
 
-            
-                <!-- end row -->
 
-            </div>
+            <!-- end row -->
+
+        </div>
         <footer class="footer">
             <div class=" container-fluid ">
 
