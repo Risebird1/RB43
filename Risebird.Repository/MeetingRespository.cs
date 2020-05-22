@@ -855,6 +855,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        /// <summary>
+        /// client meeting
+        /// </summary>
+        /// <param name="emailID"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeetingVM>> GetClientMeetings(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("EmailId", emailID);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                } 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
