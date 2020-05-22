@@ -370,7 +370,27 @@ body {
     text-align: right;
 }
 
+#irf-card-footer {
+    padding-left: 25px;
+    padding-top: 10px;
+    padding-right: 0px;
+}
 
+.statusImg {
+    -ms-flex: 0 0 12.666667%;
+    flex: 0 0 12.666667%;
+    max-width: 12.666667%;
+    float: left;
+    padding: 0px 15px;
+}
+
+.statusInfo {
+    -ms-flex: 0 0 82.333333%;
+    flex: 0 0 82.333333%;
+    max-width: 82.333333%;
+    float: left;
+    padding: 0px 15px;
+}
 
 @media screen and (max-width: 767px) {
     .clientName {

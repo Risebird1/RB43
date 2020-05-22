@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[Candidate](
 	[EmailId] [varchar](200) NULL,
 	[ResumeLink] [varchar](500) NULL,
 	[TotalInvites] INT NOT NULL DEFAULT 0,
+	[InviteDate] datetime NULL,
 	[Type] [varchar](100) NULL,
 	[Location] [varchar](100) NULL,
 	[Skill] [varchar](500) NULL,
@@ -259,6 +260,15 @@ IF NOT EXISTS(
 BEGIN
     ALTER TABLE Candidate
     Add VoiceItUserId NVARCHAR(max)
+END
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'InviteDate')
+      AND Object_ID = Object_ID(N'Candidate'))
+BEGIN
+    ALTER TABLE Candidate
+    Add InviteDate [datetime] NULL
 END
 
 

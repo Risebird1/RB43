@@ -927,20 +927,18 @@
                                                                                             <th width="40%">Questions</th>
                                                                                             <th width="20%">SkillName</th>
                                                                                             <th width="20%">Rating</th>
-                                                                                            <th width="10%">Time(Min)</th>
-                                                                                            @*
-                                                                                                <th width="10%">Action</th>*@
+                                                                                            <th width="10%">Time(In Second)</th>                                                                                            
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
                                                                                         @if (Model.IreportModel.QuestionsCollection == null || Model.IreportModel.QuestionsCollection.Count() == 0)
                                                                                         {
                                                                                             <tr>
-                                                                                                <td>
-                                                                                                    @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
-
+                                                                                              <td>
+                                                                                            @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.IreportModel.QuestionsList, new {  @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                                                                 </td>
+
                                                                                                 <td>
                                                                                                     @Html.TextBox("QuestionsCollection[0].SkillName", null, new { @class = "form-control", @readonly = "readonly" })
 
@@ -971,7 +969,7 @@
                                                                                             {
                                                                                                 <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                     <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { id = "dropques", disabled = "disabled" , @class = "form-control text-box single-line", @readonly = "readonly", @onchange = "QuestionChanged(this.id, this.value)" })
 
 
                                                                                                     </td>
@@ -1405,7 +1403,11 @@
 <script src="~/RiseTube/vendor/owl-carousel/owl.carousel.js"></script>
 <!-- Custom scripts for all pages-->
 <script src="~/RiseTube/js/custom.js"></script>
+
+
 <script>
+ 
+
     jQuery(document).ready(function ($) {
 
         $(".tab_content").hide();
@@ -1989,6 +1991,8 @@
             success: function (data) {
                 $("#" + skillElementid).val(data);
             }
+         
+
         });
 
 
