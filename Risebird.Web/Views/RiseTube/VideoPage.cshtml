@@ -57,11 +57,24 @@
 
 <script type="text/javascript">
 
-    var i = 0;
-    $('.groepen option').each(function () {
-        $(this).attr('title',// Get the correct description somehow?)
-            i++;
-    });
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
 </script>
 <script>
 
@@ -459,8 +472,7 @@
                                                             <div class="col-md-12 col-sm-12">
                                                                 <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;"> <font style="font-size:12px;"> Reset Filter</font> </button>
                                                                 <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right"> <font style="font-size:12px;"> Apply Filter</font> </button>
-                                                                <!-- <button type="button" id="ResetFilter" style="float: right; margin-top: 40px; " class="buttons button-2 button-2b"> Reset Filter</button>
-                                                                                                  <button type="submit" class="buttons button-2 button-2b" style="margin-top:40px;margin-right:5px;">Apply Filter</button>-->
+                                                              
                                                             </div>
                                                         </div>
                                                     </div>
@@ -975,7 +987,7 @@
                                                                                               
                                                                                                 <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                     <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { disabled = "disabled", @class = "form-control text-box single-line groepen", @readonly = "readonly", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new {  @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)"})
 
 
                                                                                                     </td>
@@ -984,7 +996,7 @@
                                                                                                     </td>
                                                                                                     <td>
 
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { disabled = "disabled", @class = "form-control" })
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].RatingId, (SelectList)Model.IreportModel.QuestionsLevelList, new { @class = "form-control droprating" })
 
 
                                                                                                     </td>
@@ -1305,17 +1317,7 @@
         </div>
     </div>
 </div>
-<div id="myModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-                                                                                        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-                                                                                        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+<div id="myModal" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -1325,20 +1327,18 @@
             </div>
             <div class="modal-body" style="padding: 2px 16px;">
                 <div class="row">
-                    <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+                    <label id="callingLabel text-center mt-20"><b>Calling...</b></label>
                 </div>
                 <div class="">
-                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                    <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin: 10px auto;
+    display: block;" class="btn btn-fill btn-danger" value="Hang Up">
                 </div>
             </div>
-            <div class="modal-footer" style="padding: 5px;
-        background-color: #fff;
-        color: white;"> </div>
+          
         </div>
     </div>
 </div>
-<div id="myModalComment" class="modal" style="display: none;position: fixed;z-index: 1;padding-top: 100px;left: 0;
-        top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0);background-color: rgba(0,0,0,0.4);">
+<div id="myModalComment" class="modal modal-bg">
     <!-- Modal content -->
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

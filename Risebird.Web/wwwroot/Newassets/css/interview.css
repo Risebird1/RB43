@@ -35,6 +35,8 @@ textarea::-webkit-scrollbar-thumb {
         z-index: 1000;
     }
 
+
+
 .no-sort::after {
     display: none !important;
 }
