@@ -1183,7 +1183,7 @@ namespace Risebird.Web.Controllers
             return Json("Success");
         }
         [HttpPost]
-        public JsonResult VedioShared(string Emailids, string vedioid, string Name)
+        public JsonResult VedioShared(string Emailids, string vedioid, string Name,string skills)
         {
             var email = HttpContext.Session.GetString("email");
             email = email.Replace("\"", "");
@@ -1196,9 +1196,7 @@ namespace Risebird.Web.Controllers
                 _mail1.TO = Emailids;
                 _mail1.CC = email;
                 _mail1.Subject = "Risebird: Interview video is shared with you";
-                StringBuilder bulider1 = new StringBuilder();
-                bulider1.Append(" a interview video is shared with you.<br/>Candidate Name: " + Name + "<br/><a href='" + currenturl + "' >" + currenturl + "</a> ");
-                var result1 = _notificationHelper.SharedVideoNofitication(_mail1, bulider1.ToString());
+                var result1 = _notificationHelper.SharedVideoNofitication(_mail1, Name,skills);
             }
             var modelemail = modelList.Split(";");
             foreach (var item in modelemail)
@@ -1212,9 +1210,7 @@ namespace Risebird.Web.Controllers
                 _mail.TO = Emailids;
                 _mail.CC = email;
                 _mail.Subject = "Risebird: Interview video is shared with you";
-                StringBuilder bulider = new StringBuilder();
-                bulider.Append(" a interview video is shared with you.<br/><a href='" + currenturl + "' >" + currenturl + "</a> ");
-                var result = _notificationHelper.SharedVideoNofitication(_mail, bulider.ToString());
+                var result = _notificationHelper.SharedVideoNofiticationExternal(_mail,Name, currenturl);
             }
             return Json("");
         }

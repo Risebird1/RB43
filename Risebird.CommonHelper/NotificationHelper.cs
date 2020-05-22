@@ -491,7 +491,7 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SharedVideoNofitication(Mail model, string UrlDetails)
+        public string SharedVideoNofitication(Mail model, string UrlDetails,string skills)
         {
             try
             {
@@ -504,8 +504,40 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { UserType, UrlDetails };
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
+                object[] parameters = new object[] { UrlDetails, skills };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+        public string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string url)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                var UserType = "Dear";
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { UrlDetails, url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
                 mailMessage.Subject = model.Subject;
