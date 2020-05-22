@@ -650,47 +650,6 @@ namespace Risebird.Web.Controllers
             }
         }
 
-        //      public async Task<IActionResult> AddInterviewer(int id, bool IsChecked)
-        //      {
-        //          try
-        //          {
-        //              if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-        //              {
-        //                  var profileName = HttpContext.Session.GetString("profileName")?.Trim();
-        //                  profileName = profileName.Replace("\"", "");
-        //                  if (profileName == "Admin" || profileName == "HR")
-        //                  {
-        //                      if (_iInterviewerSkillsService.AddInterviewer(id, IsChecked))
-        //                      {
-        //                          TempData["SuccessErrorMessage"] = "Selected Interviewer is Approved Successfully";
-        //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
-        //  new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
-        //                      }
-        //                      else
-        //                      {
-        //                          TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has Failed";
-        //                          return RedirectToAction("Interviewer", new RouteValueDictionary(
-        //new { controller = "InterviewerSkills", action = "Interviewer", id = TempData["id"], InterviewerSkillidName = TempData["InterviewerSkillName"] }));
-        //                      }
-        //                  }
-        //                  else
-        //                  {
-        //                      return RedirectToAction("SignOut", "Session");
-        //                  }
-        //              }
-        //              else
-        //              {
-        //                  return RedirectToAction("SignOut", "Session");
-        //              }
-        //          }
-        //          catch (Exception ex)
-        //          {
-        //              await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-        //              TempData["SuccessErrorMessage"] = "Selected Interviewer Approved has failed";
-        //              return RedirectToAction("Interviewer");
-        //          }
-        //      }
-
 
         public IActionResult ShowCalendly(string InterviewerSkillName, string calendlyLink)
         {
@@ -776,6 +735,56 @@ namespace Risebird.Web.Controllers
                 TempData["SuccessErrorMessage"] = "Interviewer Skills play Failed";
                 return RedirectToAction("Index");
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult SendInvite(int iscId, string iscName, string emailId, DateTime endDate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+                        if (endDate < DateTime.Now)
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite! The requested ISC has been terminated.";
+                            return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+                        }
+                        if (_iInterviewerSkillsService.SendInvite(iscId, emailId))
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation sent successfully!";
+                            return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite!";
+                            return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+            }
+
         }
     }
 }

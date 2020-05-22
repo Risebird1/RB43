@@ -18,5 +18,6 @@ namespace Risebird.Entities.ViewModel
         public string MobileNumber { get; set; }
         public string City { get; set; }
         public float Experience { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

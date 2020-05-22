@@ -986,5 +986,33 @@ namespace Risebird.Repository
             }
         }
 
+        public InterviewerSkillsChannelModel GetISCbyId(int id)
+        {
+            try
+            {
+
+                var query = "select isc.*, skill.[Name] as SkillName, ul.EmailId as HREmailId from InterviewerSkillsChannel isc join Skill on Skill.id = isc.PrimarySkill join UserList ul on ul.id = isc.RisebirdHr where isc.id = @id";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@id", id);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query<InterviewerSkillsChannelModel>(query, dynamicParameters);
+                    return results.FirstOrDefault();
+                }
+            }
+
+            catch (SqlException e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
     }
 }

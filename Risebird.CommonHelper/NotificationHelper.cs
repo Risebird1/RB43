@@ -491,6 +491,36 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress(mailFrom, "Discussion Invite");
+                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
+                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
+
+                
+                object[] parameters = new object[] { iscName, primarySkill, calendlyLink };
+                mailMessage.Subject = "Discussion invitation";
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
+                string msgBody = string.Format(rawEmail, parameters);
+
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
+
 
     }
 }

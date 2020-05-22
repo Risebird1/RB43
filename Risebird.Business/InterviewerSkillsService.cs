@@ -408,5 +408,25 @@ namespace Risebird.Business
             }
         }
 
+        public bool SendInvite(int iscId, string email)
+        {
+            try
+            {
+                var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
+                
+                if (email != null && isc != null)
+                {
+                    _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId,isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }
