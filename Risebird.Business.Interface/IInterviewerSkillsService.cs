@@ -32,6 +32,7 @@ namespace Risebird.Business.Interface
         Task<bool> DeleteISCInterviewer(int id);
         Task<bool> UnArchiveISC(int id);
         bool SendInvite(int iscId, string email);
+        bool CancelInvite(int iscId, string email);
         //IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();GetAllInterviewerSkills
         //IEnumerable<Skill> GetTechSkills(int id);
         //bool AddSkillComments(TechSkillComments skillComments);

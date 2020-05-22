@@ -21,5 +21,6 @@ namespace Risebird.CommonHelper.Interface
         string CuretatedNotification(Mail model, string UserType, string EmailParameter);
         string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName);
         string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId);
+        string CancelInterviewerInvite(string iscName, string primarySkill, string interviewerMailId, string hrEmailId);
     }
 }

@@ -428,5 +428,30 @@ namespace Risebird.Business
             }
         }
 
+        public bool CancelInvite(int iscId, string email)
+        {
+            try
+            {
+                var isc = _interviewerSkillsRepository.GetISCbyId(iscId);
+                
+                if (email != null)
+                {
+                    
+                    var result = _notificationHelper.CancelInterviewerInvite(isc.InterviewerSkillId, isc.SkillName, email, isc.HREmailId);
+                    if (result.ToLower().Contains("success"))
+                    {
+                        return true;
+                    }
+
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
     }
 }

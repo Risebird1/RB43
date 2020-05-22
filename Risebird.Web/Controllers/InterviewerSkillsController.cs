@@ -786,5 +786,51 @@ namespace Risebird.Web.Controllers
             }
 
         }
+        [Authorize]
+        [HttpGet]
+        public IActionResult CancelInvite(int iscId, string iscName, string emailId)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName == "Admin" || profileName == "HR")
+                    {
+
+                        if (_iInterviewerSkillsService.CancelInvite(iscId, emailId))
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Invite cancelled successfully!";
+                            return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+                        }
+                        else
+                        {
+                            TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not cancel invite!";
+                            return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+                        }
+
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageCandidate"] = "Sorry! Could not send invite!";
+                return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
+            }
+
+        }
+
     }
 }
