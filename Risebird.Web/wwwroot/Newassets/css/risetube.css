@@ -296,6 +296,9 @@ textarea::-webkit-scrollbar-thumb {
 .mdc-card button.dropdown-toggle:focus {
     border-bottom: 2px rgb(80, 158, 235) solid !important;
 }
+.mt-20 {
+    margin-top: 20px;
+}
 
 .modal-bg {
     display: none;

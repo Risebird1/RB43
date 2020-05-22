@@ -174,6 +174,8 @@ namespace Risebird.Entities.ViewModel
         public string CandidateCodedname { get; set; }
         public string IsIntrested { get; set; }
         public string ShortListstatus { get; set; }
+        public int shared { get; set; }
+        public string newprofielName { get; set; }
     }
     public class VedioComments
     {
