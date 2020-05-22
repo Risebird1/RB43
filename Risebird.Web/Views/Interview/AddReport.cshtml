@@ -458,7 +458,7 @@
                                                         {
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { disabled = "disabled", @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
 
                                                                 </td>
@@ -467,7 +467,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { disabled = "disabled", @class = "form-control" })
 
 
                                                                 </td>

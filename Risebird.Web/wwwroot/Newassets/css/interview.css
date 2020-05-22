@@ -24,10 +24,10 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 #QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
-    cursor: pointer !important;
+    cursor: pointer!important;
 }
 
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover, {
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
         background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
         background-size: 25px;
         background-repeat: no-repeat;

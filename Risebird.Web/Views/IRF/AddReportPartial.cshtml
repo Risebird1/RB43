@@ -354,7 +354,7 @@
                                                             <td>
 
 
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                             </td>
                                                             <td>
@@ -364,7 +364,7 @@
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">*@
 
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
                                                             </td>
 
