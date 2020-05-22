@@ -471,7 +471,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { irf,primarySkill, codedName, meetingDate };
+                object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
                 mailMessage.Subject = "New candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -491,6 +491,37 @@ namespace Risebird.CommonHelper
             }
         }
 
+        public string SharedVideoNofitication(Mail model, string UrlDetails)
+        {
+            try
+            {
+                var mailMessage = new MailMessage();
+                var UserType = "Dear";
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { UserType, UrlDetails };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "EmailNotification.html");
+                string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.Subject = model.Subject;
+                mailMessage.IsBodyHtml = true;
+                mailMessage.Body = msgBody;
+                SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
+                System.Net.NetworkCredential credentials = new System.Net.NetworkCredential(sendGridUserName, sendGridPassword);
+                smtpClient.Credentials = credentials;
+
+                smtpClient.Send(mailMessage);
+                return "Mail sent successfully.";
+            }
+            catch (Exception e)
+            {
+                return "Failed to send mail. Please check all filled and try again.";
+            }
+        }
     }
 }

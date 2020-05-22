@@ -1071,6 +1071,23 @@ namespace Risebird.Business
             }
 
         }
+        public string VedioShared(string value, string vedioid,string Userid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.VedioShared(value, vedioid, Userid);
+                return meeting.Result;
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
         public string VedioComment(string value, string vedioid, string email)
         {
             try
