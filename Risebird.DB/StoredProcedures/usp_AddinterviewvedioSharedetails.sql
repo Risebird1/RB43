@@ -15,13 +15,18 @@ Create Procedure [dbo].[usp_AddinterviewvedioSharedetails]
 @EmailAddress varchar(100)  
 AS    
 Begin    
+Declare @emailUser varchar(100)
+SELECT @emailUser= value FROM STRING_SPLIT(@Email,'@') ORDER BY (SELECT NULL)
+OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY
+declare @profileid int
+select @profileid= id from profile where name like 'ExternalUser'
 Declare @Icount int  
 Declare @id int  
 Select @id= Id from UserList where EmailId=@Email       
 select @Icount=Count(*) from UserList where EmailId=@Email    
 if(@Icount=0)  
 Begin  
-Insert into UserList values(27,'NewUser','NewUser',@Email,null,null,1,null,null) 
+Insert into UserList values(@profileid,@emailUser,@emailUser,@Email,null,null,1,null,null) 
 Select @id= Id from UserList where EmailId=@Email     
 Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress) 
 END
@@ -31,5 +36,6 @@ Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress)
 Select @Email
 end 
 
-END    
+END 
+go
 

@@ -23,6 +23,43 @@
 <script src="~/Newassets/js/interview.js"></script>
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+
+
+
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
@@ -463,7 +500,7 @@
                                                         {
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -472,7 +509,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new {  @class = "form-control" })
 
 
                                                                 </td>
