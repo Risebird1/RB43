@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[tblsharedVideo](
 	[Userid] [int] NULL,
 	[VideoId] [int] NULL,
 	[WhoShare] [varchar](100) NULL,
+	[SharedOn] [datetime] NULL,
  CONSTRAINT [PK_tblsharedVideo] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
