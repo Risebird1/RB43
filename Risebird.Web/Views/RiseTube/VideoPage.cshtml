@@ -71,117 +71,117 @@
 
 <script type="text/javascript">
 
-        $(document).ready(function () {
-                $('.dropques option').wrap('<span>');
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
 
-            var selectedOption = $('.dropques').find("[selected]");
-            $(selectedOption).unwrap();
-
-
-
-        })
-
-        $(document).ready(function () {
-                $('.droprating option').wrap('<span>');
-
-            var selectedOption = $('.droprating').find("[selected]");
-            $(selectedOption).unwrap();
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
 
 
-        })
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
 
 </script>
 <script>
 
-        window.onload = function () {
+    window.onload = function () {
 
-            var totalScore = 0;
-            var arr = [];
-            var obj = {y: "", legendText: "", label: "" }
-            //TechSkills actual weightage total
-            var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
-            var techTotal = 0;
-            for (i = 0; i < techItems.length; {
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; {
 
-                techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            obj.y = parseInt(techTotal) / 4;
-            obj.label = "Tech Skills Score";
-            obj.legendText = "Tech Skills Score";
-            arr.push(obj);
-
-            //SkillsGeneral actual weightage total
-            var objGen = {y: "", legendText: "", label: "" }
-            var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
-            var genTotal = 0;
-            for (i = 0; i < genSkillsItems.length; {
-                var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-                genTotal = parseInt(genTotal) + parseInt(weightage);
-
-            }
-
-            objGen.y = parseInt(genTotal) / 4;
-            objGen.label = "General Skills Score";
-            objGen.legendText = "General Skills Score";
-            arr.push(objGen);
-
-            //Joinability actual weightage total
-            var objJoin = {y: "", legendText: "", label: "" }
-            var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
-            var joinabilityTotal = 0;
-            for (i = 0; i < joinabilityItems.length; {
-
-                joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            objJoin.y = parseInt(joinabilityTotal) / 4;
-            objJoin.label = "Joinability Score";
-            objJoin.legendText = "Joinability Score";
-            arr.push(objJoin);
-
-            //Selectability actual weightage total
-            var objSelect = {y: "", legendText: "", label: "" }
-            var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-            var selectabilityTotal = 0;
-            for (i = 0; i < selectabilityItems.length; {
-
-                selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            objSelect.y = parseInt(selectabilityTotal) / 4;
-            objSelect.label = "Selectability Score";
-            objSelect.legendText = "Selectability Score";
-            arr.push(objSelect);
-
-            totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-            document.getElementById("totScore").innerHTML = totalScore;
-
-
-            var chart = new CanvasJS.Chart("scoreChart", {
-                theme: "light2", // "light1", "light2", "dark1", "dark2"
-                width: 400,//in pixels
-                height: 200,//in pixels
-                animationEnabled: true,
-                title: {
-                text: "Score Chart"
-                },
-                data: [{
-                type: "column",
-                    //startAngle: 60,
-                    //innerRadius: 55,
-                    indexLabelFontSize: 8,
-                    indexLabel: "{label}  {y}",
-                    toolTipContent: "<b>{label} </b>({y})",
-                    dataPoints: arr
-
-                }]
-            });
-            chart.render();
-
-
+            techTotal = parseInt(techTotal) + parseInt($("#TechSkillReportCollection_" + i + "__WeightageActual").val());
 
         }
+            obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj);
+
+        //SkillsGeneral actual weightage total
+        var objGen = { y: "", legendText: "", label: "" }
+        var genSkillsItems = $('[id^="SkillGeneralReportCollection"][id$="WeightageActual"]');
+        var genTotal = 0;
+        for (i = 0; i < genSkillsItems.length; {
+            var weightage = $("#SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+            genTotal = parseInt(genTotal) + parseInt(weightage);
+
+        }
+
+            objGen.y = parseInt(genTotal) / 4;
+        objGen.label = "General Skills Score";
+        objGen.legendText = "General Skills Score";
+        arr.push(objGen);
+
+        //Joinability actual weightage total
+        var objJoin = { y: "", legendText: "", label: "" }
+        var joinabilityItems = $('[id^="JoinabilityHRReportCollection"][id$="WeightageActual"]');
+        var joinabilityTotal = 0;
+        for (i = 0; i < joinabilityItems.length; {
+
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+        }
+            objJoin.y = parseInt(joinabilityTotal) / 4;
+        objJoin.label = "Joinability Score";
+        objJoin.legendText = "Joinability Score";
+        arr.push(objJoin);
+
+        //Selectability actual weightage total
+        var objSelect = { y: "", legendText: "", label: "" }
+        var selectabilityItems = $('[id^="SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+        var selectabilityTotal = 0;
+        for (i = 0; i < selectabilityItems.length; {
+
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+        }
+            objSelect.y = parseInt(selectabilityTotal) / 4;
+        objSelect.label = "Selectability Score";
+        objSelect.legendText = "Selectability Score";
+        arr.push(objSelect);
+
+        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+        document.getElementById("totScore").innerHTML = totalScore;
+
+
+        var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            width: 400,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: {
+                text: "Score Chart"
+            },
+            data: [{
+                type: "column",
+                //startAngle: 60,
+                //innerRadius: 55,
+                indexLabelFontSize: 8,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+                dataPoints: arr
+
+            }]
+        });
+        chart.render();
+
+
+
+    }
 </script>
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
@@ -600,13 +600,13 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                    @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                    <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                    <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                    <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                        @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
-                                                </h1>
+                                                    </h1>
                                                 }
                                                 <div class="row counts-liks">
                                                     @if (ViewBag.VedioStatus != "Public" && ViewBag.ProfileName != "CuratedUser")
@@ -688,7 +688,7 @@
                                                                 }
                                                                 else
                                                                 {
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
 
                                                                 }
 
@@ -1009,7 +1009,7 @@
 
                                                                                                 <tr onclick="switchtoquestionVedio(@Model.IreportModel.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                                                     <td>
-                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new {ID="drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                                                        @Html.DropDownListFor(m => m.IreportModel.QuestionsCollection[i].Comment, (SelectList)Model.IreportModel.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line ", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
                                                                                                         <span class="show_only"></span>
                                                                                                     </td>
@@ -1435,76 +1435,76 @@
 <script>
 
 
-        jQuery(document).ready(function ($) {
+    jQuery(document).ready(function ($) {
 
-                $(".tab_content").hide();
-            $(".tab_content:first").show();
+        $(".tab_content").hide();
+        $(".tab_content:first").show();
 
-            /* if in tab mode */
-            $("ul.tabs li").click(function () {
+        /* if in tab mode */
+        $("ul.tabs li").click(function () {
 
-                $(".tab_content").hide();
-                var activeTab = $(this).attr("rel");
-                $("#" + activeTab).fadeIn();
+            $(".tab_content").hide();
+            var activeTab = $(this).attr("rel");
+            $("#" + activeTab).fadeIn();
 
-                $("ul.tabs li").removeClass("active");
-                $(this).addClass("active");
+            $("ul.tabs li").removeClass("active");
+            $(this).addClass("active");
 
-                $(".tab_drawer_heading").removeClass("d_active");
-                $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(".tab_drawer_heading[rel^='" + activeTab + "']").addClass("d_active");
 
-            });
-            /* if in drawer mode */
-            $(".tab_drawer_heading").click(function () {
+        });
+        /* if in drawer mode */
+        $(".tab_drawer_heading").click(function () {
 
-                $(".tab_content").hide();
-                var d_activeTab = $(this).attr("rel");
-                $("#" + d_activeTab).fadeIn();
+            $(".tab_content").hide();
+            var d_activeTab = $(this).attr("rel");
+            $("#" + d_activeTab).fadeIn();
 
-                $(".tab_drawer_heading").removeClass("d_active");
-                $(this).addClass("d_active");
+            $(".tab_drawer_heading").removeClass("d_active");
+            $(this).addClass("d_active");
 
-                $("ul.tabs li").removeClass("active");
-                $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
-            });
+            $("ul.tabs li").removeClass("active");
+            $("ul.tabs li[rel^='" + d_activeTab + "']").addClass("active");
+        });
 
 
-            /* Extra class "tab_last"
-               to add border to right side
-               of last tab */
-            $('ul.tabs li').last().addClass("tab_last");
-        })
+        /* Extra class "tab_last"
+           to add border to right side
+           of last tab */
+        $('ul.tabs li').last().addClass("tab_last");
+    })
 
 </script>
 <script>
-        < script >
-                jQuery(document).ready(function ($) {
+    < script >
+    jQuery(document).ready(function ($) {
 
 
 
-            var main = function () {
-                    $('.btn').click(function () {
-                        var post = $('.status-box').val();
-                        $('<li>').text(post).prependTo('.posts');
-                        $('.status-box').val('');
-                        $('.counter').text('450');
-                        $('.btn').addClass('disabled');
-                    });
-                $('.status-box').keyup(function () {
-                    var postLength = $(this).val().length;
-                    var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
-                    $('.counter').text(charactersLeft);
-                    if (charactersLeft < 0) {
+        var main = function () {
+            $('.btn').click(function () {
+                var post = $('.status-box').val();
+                $('<li>').text(post).prependTo('.posts');
+                $('.status-box').val('');
+                $('.counter').text('450');
+                $('.btn').addClass('disabled');
+            });
+            $('.status-box').keyup(function () {
+                var postLength = $(this).val().length;
+                var charactersLeft = 450 - postLength + "   " + "CharacterLeft";
+                $('.counter').text(charactersLeft);
+                if (charactersLeft < 0) {
                     $('.btn').addClass('disabled');
-                    } else if (charactersLeft === 450) {
+                } else if (charactersLeft === 450) {
                     $('.btn').addClass('disabled');
-                    } else {
+                } else {
                     $('.btn').removeClass('disabled');
-                    }
-                });
-            }
-            $('.btn').addClass('disabled');
-            $(document).ready(main)
+                }
+            });
+        }
+        $('.btn').addClass('disabled');
+        $(document).ready(main)
 </script>
 <script>
             $('form').submit(function () {
@@ -2409,95 +2409,95 @@
 </script>
 <script>
 
-        window.onload = function () {
+    window.onload = function () {
 
-            var totalScore = 0;
-            var arr = [];
-            var obj = {y: "", legendText: "", label: "" }
-            //TechSkills actual weightage total
-            var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
-            var techTotal = 0;
-            for (i = 0; i < techItems.length; {
+        var totalScore = 0;
+        var arr = [];
+        var obj = { y: "", legendText: "", label: "" }
+        //TechSkills actual weightage total
+        var techItems = $('[id^="IreportModel_TechSkillReportCollection"][id$="WeightageActual"]');
+        var techTotal = 0;
+        for (i = 0; i < techItems.length; {
 
-                    techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            obj.y = parseInt(techTotal) / 4;
-            obj.label = "Tech Skills Score";
-            obj.legendText = "Tech Skills Score";
-            arr.push(obj);
-
-            //SkillsGeneral actual weightage total
-            var objGen = {y: "", legendText: "", label: "" }
-            var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
-            var genTotal = 0;
-            for (i = 0; i < genSkillsItems.length; {
-                var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
-                genTotal = parseInt(genTotal) + parseInt(weightage);
-
-            }
-
-            objGen.y = parseInt(genTotal) / 4;
-            objGen.label = "General Skills Score";
-            objGen.legendText = "General Skills Score";
-            arr.push(objGen);
-
-            //Joinability actual weightage total
-            var objJoin = {y: "", legendText: "", label: "" }
-            var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
-            var joinabilityTotal = 0;
-            for (i = 0; i < joinabilityItems.length; {
-
-                    joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            objJoin.y = parseInt(joinabilityTotal) / 4;
-            objJoin.label = "Joinability Score";
-            objJoin.legendText = "Joinability Score";
-            arr.push(objJoin);
-
-            //Selectability actual weightage total
-            var objSelect = {y: "", legendText: "", label: "" }
-            var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
-            var selectabilityTotal = 0;
-            for (i = 0; i < selectabilityItems.length; {
-
-                    selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
-
-            }
-            objSelect.y = parseInt(selectabilityTotal) / 4;
-            objSelect.label = "Selectability Score";
-            objSelect.legendText = "Selectability Score";
-            arr.push(objSelect);
-
-            totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
-            document.getElementById("totScore").innerHTML = totalScore;
-
-
-            var chart = new CanvasJS.Chart("scoreChart", {
-                    theme: "light2", // "light1", "light2", "dark1", "dark2"
-                width: 400,//in pixels
-                height: 200,//in pixels
-                animationEnabled: true,
-                title: {
-                    text: "Score Chart"
-                },
-                data: [{
-                    type: "column",
-                    //startAngle: 60,
-                    //innerRadius: 55,
-                    indexLabelFontSize: 8,
-                    indexLabel: "{label}  {y}",
-                    toolTipContent: "<b>{label} </b>({y})",
-                    dataPoints: arr
-
-                }]
-            });
-            chart.render();
-
-
+            techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
         }
+    obj.y = parseInt(techTotal) / 4;
+        obj.label = "Tech Skills Score";
+        obj.legendText = "Tech Skills Score";
+        arr.push(obj);
+
+        //SkillsGeneral actual weightage total
+        var objGen = { y: "", legendText: "", label: "" }
+        var genSkillsItems = $('[id^="IreportModel_SkillGeneralReportCollection"][id$="WeightageActual"]');
+        var genTotal = 0;
+        for (i = 0; i < genSkillsItems.length; {
+            var weightage = $("#IreportModel_SkillGeneralReportCollection_" + i + "__WeightageActual").val();
+            genTotal = parseInt(genTotal) + parseInt(weightage);
+
+        }
+
+    objGen.y = parseInt(genTotal) / 4;
+        objGen.label = "General Skills Score";
+        objGen.legendText = "General Skills Score";
+        arr.push(objGen);
+
+        //Joinability actual weightage total
+        var objJoin = { y: "", legendText: "", label: "" }
+        var joinabilityItems = $('[id^="IreportModel_JoinabilityHRReportCollection"][id$="WeightageActual"]');
+        var joinabilityTotal = 0;
+        for (i = 0; i < joinabilityItems.length; {
+
+            joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
+
+        }
+    objJoin.y = parseInt(joinabilityTotal) / 4;
+        objJoin.label = "Joinability Score";
+        objJoin.legendText = "Joinability Score";
+        arr.push(objJoin);
+
+        //Selectability actual weightage total
+        var objSelect = { y: "", legendText: "", label: "" }
+        var selectabilityItems = $('[id^="IreportModel_SelectabilityEvaluatorReportCollection"][id$="WeightageActual"]');
+        var selectabilityTotal = 0;
+        for (i = 0; i < selectabilityItems.length; {
+
+            selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
+
+        }
+    objSelect.y = parseInt(selectabilityTotal) / 4;
+        objSelect.label = "Selectability Score";
+        objSelect.legendText = "Selectability Score";
+        arr.push(objSelect);
+
+        totalScore = (techTotal + genTotal + joinabilityTotal + selectabilityTotal) / 4;
+        document.getElementById("totScore").innerHTML = totalScore;
+
+
+        var chart = new CanvasJS.Chart("scoreChart", {
+            theme: "light2", // "light1", "light2", "dark1", "dark2"
+            width: 400,//in pixels
+            height: 200,//in pixels
+            animationEnabled: true,
+            title: {
+                text: "Score Chart"
+            },
+            data: [{
+                type: "column",
+                //startAngle: 60,
+                //innerRadius: 55,
+                indexLabelFontSize: 8,
+                indexLabel: "{label}  {y}",
+                toolTipContent: "<b>{label} </b>({y})",
+                dataPoints: arr
+
+            }]
+        });
+        chart.render();
+
+
+
+    }
 </script>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -2622,73 +2622,73 @@
 
 </script>
 <script>
-        var candidate = "";
-        var span = document.getElementById("callPopUp");
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-                        hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-        $(document).ready(function () {
-                        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
-                            // Set up the Twilio Client Device with the token
-                            Twilio.Device.setup(data.token);
-                        });
+    var candidate = "";
+    var span = document.getElementById("callPopUp");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
+    $(document).ready(function () {
+        $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
+            // Set up the Twilio Client Device with the token
+            Twilio.Device.setup(data.token);
         });
+    });
 
-        /* Callback to let us know Twilio Client is ready */
-        Twilio.Device.ready(function (device) {
+    /* Callback to let us know Twilio Client is ready */
+    Twilio.Device.ready(function (device) {
 
-                    });
+    });
 
-        function callCandidate(phoneNumber) {
-            var params = {"phoneNumber": phoneNumber };
-            Twilio.Device.connect(params);
-        }
-        function hangUp() {
-                        Twilio.Device.disconnectAll();
-        }
+    function callCandidate(phoneNumber) {
+        var params = { "phoneNumber": phoneNumber };
+        Twilio.Device.connect(params);
+    }
+    function hangUp() {
+        Twilio.Device.disconnectAll();
+    }
 
-        Twilio.Device.connect(function (connection) {
-            var appendText = "In call with " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-        });
+    Twilio.Device.connect(function (connection) {
+        var appendText = "In call with " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+    });
 
-        function afterTimeOut() {
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
+    function afterTimeOut() {
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
-        Twilio.Device.disconnect(function (connection) {
-            var appendText = "Call disconnected! ";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            setTimeout(afterTimeOut, 2000);
+    Twilio.Device.disconnect(function (connection) {
+        var appendText = "Call disconnected! ";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        setTimeout(afterTimeOut, 2000);
 
-        });
+    });
 
-        function ModalButtonClick(mobileNumber, candidateName) {
-                        candidate = candidateName;
-            // Get the modal
-            var modal = document.getElementById("myModal");
-            // When the user clicks the button, open the modal
-            modal.style.display = "block";
-            var appendText = "Calling... " + "<b>" + candidate + "</b>";
-            document.getElementById("callingLabel").innerHTML = appendText;
-            callCandidate(mobileNumber);
-        }
-        function closeCallPopUp() {
-                        hangUp();
-            var modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
+    function ModalButtonClick(mobileNumber, candidateName) {
+        candidate = candidateName;
+        // Get the modal
+        var modal = document.getElementById("myModal");
+        // When the user clicks the button, open the modal
+        modal.style.display = "block";
+        var appendText = "Calling... " + "<b>" + candidate + "</b>";
+        document.getElementById("callingLabel").innerHTML = appendText;
+        callCandidate(mobileNumber);
+    }
+    function closeCallPopUp() {
+        hangUp();
+        var modal = document.getElementById("myModal");
+        modal.style.display = "none";
+    }
 
 
 </script>
 <script>
 
 
-        jQuery(document).ready(function ($) {
+    jQuery(document).ready(function ($) {
 
         $("#btnShare").on('click', function () {
             var modal = document.getElementById("MyShareModel");
@@ -2706,119 +2706,119 @@
                     }
                 });
 
-                            }
-                        });
-            $("#btnIntrest").on('click', function () {
-                if ($(this).attr('Shortvalue') == 1) {
-                    var modal = document.getElementById("myModalComment");
-                    modal.style.display = "block";
+            }
+        });
+        $("#btnIntrest").on('click', function () {
+            if ($(this).attr('Shortvalue') == 1) {
+                var modal = document.getElementById("myModalComment");
+                modal.style.display = "block";
 
-                }
-            });
-            $("#btnComment").on('click', function () {
-                if ($("#txtComment").val().trim() != "") {
+            }
+        });
+        $("#btnComment").on('click', function () {
+            if ($("#txtComment").val().trim() != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioComment",
+                    data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
+                    success: function (response) {
+                        $("#txtComment").val("");
                         $.ajax({
                             type: "POST",
-                            url: "/RiseTube/VedioComment",
-                            data: { comment: $("#txtComment").val(), vedioid: $("#txtVedioId").val() },
-                            success: function (response) {
-                                $("#txtComment").val("");
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/RiseTube/UpdateVedioComment",
-                                    data: { vedioid: $("#txtVedioId").val() },
-                                    success: function (data) {
-                                        var html = '';
-                                        html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
-                                        for (var i = 0; i < data.length; i++) {
+                            url: "/RiseTube/UpdateVedioComment",
+                            data: { vedioid: $("#txtVedioId").val() },
+                            success: function (data) {
+                                var html = '';
+                                html += '  <div class="chat"><div class="chat-history"><ul class="posts" >';
+                                for (var i = 0; i < data.length; i++) {
 
-                                            html += '                <li>';
-                                            html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
-                                            html += '    </li>';
-                                        }
+                                    html += '                <li>';
+                                    html += '  <div class="message-data"><span class="message-data-name"><b>' + data[i].userName + ' </b></span></div>  <div class="message my-message borders comment-tri-right left-tp"> ' + data[i].comment; '</div>'
+                                    html += '    </li>';
+                                }
 
-                                        html += '    </ul></div></div>';
-                                        $("#divcomments").empty().html(html);
-                                    }
-                                });
+                                html += '    </ul></div></div>';
+                                $("#divcomments").empty().html(html);
                             }
                         });
-                }
-            });
-            $('#btnSearch').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                        $(this).attr('data-click-state', 0);
-                    $(this).css('background-color', 'blue');
-                    $(this).val('Share');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VedioShare",
-                        data: {value: "Private", vedioid: $("#txtVedioId").val() },
-                        success: function (data) {
-
                     }
-                    });
-
-                }
-                else {
-                        $(this).attr('data-click-state', 1);
-                    $(this).css('background-color', 'green');
-                    $(this).val('Shared');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VedioShare",
-                        data: {value: "Public", vedioid: $("#txtVedioId").val() },
-                        success: function (data) {
-
-                    }
-                    });
-
-                }
-            });
-            $('#toggle-click').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                        $(this).attr('data-click-state', 0);
-
-
-                }
-                else {
-                        $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click1').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VedioLike",
-                        data: {value: "Liked", vedioid: $("#txtVedioId").val() },
-                        success: function (data) {
-                        $("#pTotalvediolike").text(data.totalVedioLike);
-                            $("#pTotalvediodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
-            $('#toggle-click1').on('click', function () {
-                if ($(this).attr('data-click-state') == 1) {
-                        $(this).attr('data-click-state', 0);
-
-                }
-                else {
-                        $(this).attr('data-click-state', 1);
-                    $(this).css('color', 'blue');
-                    $('#toggle-click').css('color', 'black');
-                    $.ajax({
-                        type: "POST",
-                        url: "/RiseTube/VedioLike",
-                        data: {value: "Disliked", vedioid: $("#txtVedioId").val() },
-                        success: function (data) {
-                        $("#pTotalvediolike").text(data.totalVedioLike);
-                            $("#pTotalvediodislike").text(data.totalVedioDisLike);
-
-                        }
-                    });
-                }
-            });
+                });
+            }
         });
+        $('#btnSearch').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
+                $(this).css('background-color', 'blue');
+                $(this).val('Share');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioShare",
+                    data: { value: "Private", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+
+                    }
+                });
+
+            }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('background-color', 'green');
+                $(this).val('Shared');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioShare",
+                    data: { value: "Public", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+
+                    }
+                });
+
+            }
+        });
+        $('#toggle-click').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
+
+
+            }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('color', 'blue');
+                $('#toggle-click1').css('color', 'black');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioLike",
+                    data: { value: "Liked", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+                        $("#pTotalvediolike").text(data.totalVedioLike);
+                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
+
+                    }
+                });
+            }
+        });
+        $('#toggle-click1').on('click', function () {
+            if ($(this).attr('data-click-state') == 1) {
+                $(this).attr('data-click-state', 0);
+
+            }
+            else {
+                $(this).attr('data-click-state', 1);
+                $(this).css('color', 'blue');
+                $('#toggle-click').css('color', 'black');
+                $.ajax({
+                    type: "POST",
+                    url: "/RiseTube/VedioLike",
+                    data: { value: "Disliked", vedioid: $("#txtVedioId").val() },
+                    success: function (data) {
+                        $("#pTotalvediolike").text(data.totalVedioLike);
+                        $("#pTotalvediodislike").text(data.totalVedioDisLike);
+
+                    }
+                });
+            }
+        });
+    });
 
     function SendNotification() {
         if ($("#txtintrestecomment").val().trim() != "") {
@@ -2851,7 +2851,7 @@
         $.ajax({
             type: "POST",
             url: "/RiseTube/VedioShared",
-            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(),Name:$("#txthiddenCandidate").val(),skills:$("#txthiddenSkill").val() },
+            data: { Emailids: $("#txtsharetext").val(), vedioid: $("#txtVedioId").val(), Name: $("#txthiddenCandidate").val(), skills: $("#txthiddenSkill").val() },
             success: function (data) {
                 closeSharePopUp();
             }
@@ -2859,16 +2859,16 @@
     }
     function switchtoquestionVedio(questiontime) {
 
-            var time = 1;
-            if (questiontime != '') {
-                        time = questiontime;
-                time = questiontime;
-                time = questiontime;
-            }
-            var vid = document.getElementsByClassName("vjs-tech");
-            vid[0].currentTime = time;
-            //time should be in seconds
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
         }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
 </script>
 @if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
 {
@@ -2881,95 +2881,193 @@
         <script>
 
 
-                        var enjoyhint_instance = new EnjoyHint({});
+            var enjoyhint_instance = new EnjoyHint({});
 
-                        var enjoyhint_script_steps = [
-                            {
-                                'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                                'nextButton': {className: "myNext", text: "Continue" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .btnvideo': 'Candidate Video',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .btn2': 'Click here to like the Candidate Video',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .btn3': 'Click here to unlike Candidate Video',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .item1': 'Interview Report Details',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn2': 'Click here to like the Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btn3': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item2': 'Candidate Details',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item3': 'Tech Skill Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item4': 'Questions Discussed during interview',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item4': 'Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item5': 'General Skill Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item6': 'Joinability Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item7': 'Selectability Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .post': 'Write your comment and click on Post',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .videosidelist': 'Same skill Candidates Video ',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                            }
+                },
+                {
+                    'next .post': 'Write your comment and click on Post',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+                }
 
-                        ];
-                        setTimeout(function () {
-                                enjoyhint_instance.set(enjoyhint_script_steps);
-                            enjoyhint_instance.run();
-                        }, 10000)
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
+        </script>
+    }
+}
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true")
+{
+    var pfName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
+    pfName = pfName.Replace("\"", "");
+    @if (pfName == "ExternalUser")
+    {
+        <script src="~/Newassets/js/enjoyhint.min.js"></script>
+        <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+        <script>
+            localStorage.setItem('risetube', true)
+            localStorage.setItem('subscribe', false)
+            var enjoyhint_instance = new EnjoyHint({});
+
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Shared Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .sharebtn1': 'Click here to share Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item4': 'Questions discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .videosidelist': 'Other Shared Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .supportmenu': 'Click on Support Menu to see its features'
+                },
+
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
         </script>
     }
 }
@@ -2982,87 +3080,87 @@
         <script src="~/Newassets/js/enjoyhint.min.js"></script>
         <link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
         <script>
-                        localStorage.setItem('risetube', true)
-                        localStorage.setItem('subscribe', false)
-                        var enjoyhint_instance = new EnjoyHint({});
+            localStorage.setItem('risetube', true)
+            localStorage.setItem('subscribe', false)
+            var enjoyhint_instance = new EnjoyHint({});
 
-                        var enjoyhint_script_steps = [
-                            {
-                                'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
-                                'nextButton': {className: "myNext", text: "Continue" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .btnvideo': 'Candidate Video',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .shortlist': 'Click here to Shortlist the Candidate',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .showinter': 'Click here to Send interest to the Candidate',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .item1': 'Interview Report Details',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+            var enjoyhint_script_steps = [
+                {
+                    'next .card-title': 'Selected Candidates Video will be playing over here and click on continue to know its features',
+                    'nextButton': { className: "myNext", text: "Continue" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .btnvideo': 'Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item1': 'Interview Report Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item2': 'Candidate Details',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item2': 'Candidate Details',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item3': 'Tech Skill Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item3': 'Tech Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item4': 'Questions discussed during interview',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item4': 'Questions discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item5': 'General Skill Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item5': 'General Skill Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item6': 'Joinability Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item6': 'Joinability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .item7': 'Selectability Report',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .item7': 'Selectability Report',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .videosidelist': 'Same skill Candidates Video ',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'click .skillchannelmenu': 'Click on Skill Channel menu and to see its remaining features',
-                            },
+                },
+                {
+                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel menu and to see its remaining features',
+                },
 
-                        ];
-                        setTimeout(function () {
-                                enjoyhint_instance.set(enjoyhint_script_steps);
-                            enjoyhint_instance.run();
-                        }, 10000)
+            ];
+            setTimeout(function () {
+                enjoyhint_instance.set(enjoyhint_script_steps);
+                enjoyhint_instance.run();
+            }, 10000)
         </script>
     }
 } 

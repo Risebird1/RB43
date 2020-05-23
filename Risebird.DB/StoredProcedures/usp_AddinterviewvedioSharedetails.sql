@@ -28,11 +28,11 @@ if(@Icount=0)
 Begin  
 Insert into UserList values(@profileid,@emailUser,@emailUser,@Email,null,null,1,null,null) 
 Select @id= Id from UserList where EmailId=@Email     
-Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress) 
+Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress,GETDATE())   
 END
 else 
 begin
-Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress) 
+Insert into tblsharedvideo values(@id,@VedioId,@EmailAddress,GETDATE())    
 Select @Email
 end 
 

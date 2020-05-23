@@ -8,12 +8,25 @@ CREATE TABLE [dbo].[tblsharedVideo](
 	[Userid] [int] NULL,
 	[VideoId] [int] NULL,
 	[WhoShare] [varchar](100) NULL,
- CONSTRAINT [PK_tblsharedVideo] PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+	[SharedOn] [datetime] NULL,
+ CONSTRAINT [pk_tblsharedVideo] PRIMARY KEY CLUSTERED 					
+(					
+	[id] ASC				
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)					
+)	
 
+END
+ELSE
+BEGIN
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name IN (N'SharedOn')
+      AND Object_ID = Object_ID(N'tblsharedVideo'))
+BEGIN
+    ALTER TABLE Client
+    Add [SharedOn] [datetime] NULL		
+END
 END
 GO
 

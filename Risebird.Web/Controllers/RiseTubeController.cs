@@ -489,10 +489,14 @@ namespace Risebird.Web.Controllers
                                 }
                             }
                         }
-                        //else if (profileName == "ExternalUser")
-                        //{
-                        //    modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
-                        //}
+                        else if (profileName == "ExternalUser")
+                        {
+                            modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
+                            if(id==0)
+                            {
+                                id = modelList1.OrderByDescending(x => x.SharedOn).Select(x => x.imid).FirstOrDefault();
+                            }
+                        }
                         else
                         {
                             modelList1 = _meetingService.GetRiseTubeMeetings(0, profileName, emailId).ToList();
@@ -543,7 +547,14 @@ namespace Risebird.Web.Controllers
                             return View(model);
 
                         }
-                        modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                        if (profileName == "ExternalUser")
+                        {
+                            modelList1 = modelList1.OrderByDescending(x => x.interviewDate).ToList();
+                        }
+                        else
+                        {
+                            modelList1 = modelList1.Where(c => c.JDTiltle.Contains(model.JDTiltle.Split("|")[0])).OrderByDescending(x => x.interviewDate).ToList();
+                        }
                         modelList1 = modelList1.Select(x =>
                         {
                             x.intervieweStatusStatDesc = x.InterviewStatus.HasValue ? ((InterviewStatus)Convert.ToInt32(x.InterviewStatus)).GetDescription() : string.Empty;
