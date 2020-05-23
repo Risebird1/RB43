@@ -515,19 +515,19 @@
 
                                                                     @if (@Model.VideoLink.Contains(".mp4"))
                                                                     {
-                                                                        <video controls class="vjs-tech video-width" class="btnvideo" autoplay>
+                                                                        <video controls class="vjs-tech video-width btnvideo" autoplay>
                                                                             <source src="@Model.VideoLink" type="video/mp4">
                                                                         </video>
                                                                     }
                                                                     else if (Model.VideoLink.Contains("/manifest"))
                                                                     {
-                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                                        <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered btnvideo" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
                                                                             <source src="@Model.VideoLink" type="application/vnd.ms-sstr+xml" />
                                                                         </video>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <iframe width="100%" class="vjs-tech" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
+                                                                        <iframe width="100%" class="vjs-tech btnvideo" height="315" src="@Model.VideoLink?autoplay=true" allowfullscreen></iframe>
                                                                     }
                                                                 }
                                                                 else
@@ -547,7 +547,7 @@
                                                                             @foreach (var videolist in Model.SubVideo_List)
                                                                             {
                                                                                 var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(videolist);
-                                                                                <div class="video-card video-card-list">
+                                                                                <div class="video-card video-card-list videosidelist">
                                                                                     <div class="video-card-image">
                                                                                         @if (videolist.VideoLink.Contains(".mp4"))
                                                                                         {
@@ -3001,17 +3001,7 @@
                     'next .sharebtn1': 'Click here to share Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
-                {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
-                    'nextButton': { className: "myNext", text: "Next" },
-                    'skipButton': { className: "mySkip", text: "Skip" }
-                },
+                },               
                 {
                     'next .item1': 'Interview Report Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3053,6 +3043,11 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
+                },
+                 {
+                    'next .post': 'Write your comment and click on Post',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
                     'next .videosidelist': 'Other Shared Candidates Video ',
