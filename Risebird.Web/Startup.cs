@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 
 namespace Risebird.Web
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IHostingEnvironment env)
         {
@@ -37,7 +37,7 @@ namespace Risebird.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-         
+
             //Configure session state
             services.AddDistributedRedisCache(options =>
             {
@@ -71,7 +71,8 @@ namespace Risebird.Web
                 options.Cookie.HttpOnly = true;
             });
             //Set this values according to your requirements  
-            services.Configure<FormOptions>(o => {
+            services.Configure<FormOptions>(o =>
+            {
                 o.ValueLengthLimit = int.MaxValue;
                 o.MultipartBodyLengthLimit = int.MaxValue;
                 o.MemoryBufferThreshold = int.MaxValue;
@@ -139,8 +140,8 @@ namespace Risebird.Web
             services.AddScoped<ISkillRepository, SkillRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
             services.AddScoped<IMeetingRespository, MeetingRespository>();
-            services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();          
-            services.AddScoped<IDashboarRepository, DashboardRepository>();          
+            services.AddScoped<IApplicationErrorLogger, ApplicationErrorLogger>();
+            services.AddScoped<IDashboarRepository, DashboardRepository>();
             services.AddScoped<IIRFRepository, IRFRepository>();
             services.AddScoped<IJoinabilityMatrixRepository, JoinabilityMatrixRepository>();
             services.AddScoped<IGeneralSkillMatrixRepository, GeneralSkillMatrixRepository>();
@@ -159,10 +160,10 @@ namespace Risebird.Web
             services.AddScoped<ISupportService, SupportService>();
             services.AddScoped<ISettingsRepository, SettingsRepository>();
             services.AddScoped<ISettingsService, SettingsService>();
-            
+            services.AddScoped<IAzureFaceApi, AzureFaceApi>();
         }
     }
-     //Global level antiforgery token security to stop malicious scripts
+    //Global level antiforgery token security to stop malicious scripts
     public static class ApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseAntiforgeryTokens(this IApplicationBuilder app)

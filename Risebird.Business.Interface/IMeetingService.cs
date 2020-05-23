@@ -51,7 +51,8 @@ namespace Risebird.Business.Interface
         string AddTotalViewCount(int id);
         //Task<string> VedioLikeAsync(string value, string vedioid, string email);
         string VedioShare(string value, string vedioid);
-         string VedioComment(string value, string vedioid, string email);
+        string VedioShared(string value, string vedioid,string Userid);
+        string VedioComment(string value, string vedioid, string email);
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);
         string CandidateSuitable(int id,string email,string Comment);

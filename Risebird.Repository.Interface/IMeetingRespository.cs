@@ -71,6 +71,7 @@ namespace Risebird.Repository.Interface
         Task<MeetingVM> VedioLikeAsync(string value, string vedioid, string email);
         string AddTotalViewCount(int id);
         Task<string> VedioShare(string value, string vedioid);
+        Task<string> VedioShared(string value, string vedioid,string Userid);
         Task<string> VedioComment(string value, string vedioid, string email);
         List<VedioComments> GetvedioComments(int id);
         EmailDetails GetvedioShortList(string vedioid, string email);

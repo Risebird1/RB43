@@ -5,317 +5,72 @@
     ViewData["Title"] = "Interview Report";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
-<style>
-
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    .multiple_row > h2 {
-        font-size: 16px;
-        background: #42a5f5 !important;
-        padding: 4px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 0px;
-        margin-bottom: 10px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-    .modal input, .modal .dropdown-toggle {
-        background: #99d1fc0f !important;
-    }
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size:13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .navbar .navbar-wrapper {
-        color: #143e67 !important;
-    }
-
-        .navbar .navbar-wrapper .navbar-brand {
-            margin-right: 0.5rem;
-         
-        }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control, .mdc-card .form-control[readonly], .mdc-card form-control:disabled {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-        }
-
-    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-        border-color: #53a5f5 !important;
-    }
-
-   
-
-
-  
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .table-responsive {
-        overflow: hidden;
-    }
-
-    #AudioFile {
-        margin: 0px 0px 15px 0px;
-    }
-
-
-
-    #PageVideoLink {
-        margin: 0px 0px 10px 0px;
-    }
-
-
-    #VideoFile {
-        margin: 0px 0px 10px 0px;
-    }
-
-    .top-gap {
-        padding-top: 40px;
-        display: block
-    }
-
-    #Clienform textarea {
-        min-height: 100px;
-        width: 100%;
-        display: inline-block;
-        position: relative;
-        /* width: 200px; */
-        height: auto;
-        border-radius: 10px;
-        margin: 5px 0px;
-        background-color: #eff7ff;
-        border: 0;
-        font-size: 13px;
-        padding: 10px;
-    }
-
-        #Clienform textarea:after {
-            content: ' ';
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: auto;
-            right: -20px;
-            top: 38px;
-            bottom: auto;
-            border: 12px solid;
-            border-color: #eff7ff transparent transparent #eff7ff;
-        }
-
-
-    .table {
-        white-space: nowrap;
-    }
-
-    .canvasjs-chart-credit {
-        display: none;
-    }
-
-    #ProctoringTable .label-type {
-        background: #e8f5ff;
-        padding: 8px 10px;
-        border: 0;
-    }
-    .video-choose {
-        position: relative;
-        top: -28px;
-    }
-    .trash-btn {
-        background: #d20505 !important;
-    }
-    .click {
-        color: #53a5f5;
-        text-decoration: underline;
-    }
-
-    .file-lable {
-        color: #000 !important;
-        font-size: 14px !important;
-    }
-    .card-text-label {
-        font-size: 13px !important;
-    }
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: normal !important;
-    }
-</style>
+<link href="//amp.azure.net/libs/amp/latest/skins/amp-default/azuremediaplayer.min.css" rel="stylesheet">
+<script src="//amp.azure.net/libs/amp/latest/azuremediaplayer.min.js"></script>
+
+<script>
+    amp.options.flashSS.swf = "//amp.azure.net/libs/amp/latest/techs/StrobeMediaPlayback.2.0.swf"
+    amp.options.flashSS.plugin = "//amp.azure.net/libs/amp/latest/techs/MSAdaptiveStreamingPlugin-osmf2.0.swf"
+    amp.options.silverlightSS.xap = "//amp.azure.net/libs/amp/latest/techs/SmoothStreamingPlayer.xap"
+</script>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
+<link href="~/Newassets/css/interview.css" rel="stylesheet" />
+<script src="~/Newassets/js/interview.js"></script>
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+
+
+
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 <div class="main-panel" id="main-panel">
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-          
+
             <div class="navbar-wrapper" style="width: 100%;
         float: left;
         display: block;
 ">
+
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
                         <span class="navbar-toggler-bar bar1"></span>
@@ -323,6 +78,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
+
                 <div class="pull-left">
                     <a class="navbar-brand">
                         Interview Report
@@ -335,9 +91,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content dataloading">
 
         <div class="row">
             <div class="col-md-12">
@@ -479,22 +238,29 @@
                                             {
                                                 if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
-                                                    <video width="320" height="240" controls style="width:100%">
+                                                    <video width="320" height="240" class="vjs-tech" controls style="width:100%">
                                                         <source src=@Url.Content(Model.VideoLink) type="video/mp4">
 
                                                         Your browser does not support the video tag.
                                                     </video>
                                                 }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
                                                 else
                                                 {
-                                                    <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
 
                                                 }
                                             }
                                         </p>
                                         @*<div class="col-md-6 col-sm-6">
 
-                            </div>*@
+                                            </div>*@
 
                                     </div><!--end of col-md-12-->
 
@@ -525,13 +291,13 @@
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 card-text-label" })
                                                     <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                        <div  class="talktext">
+                                                        <div class="talktext">
                                                             @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line  scrollbar" }, @style = "height: 86px; width:100%" })
                                                         </div>
                                                     </div>
-                                                        @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                                    </div>
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                </div>
                                                 <div class="form-group">
                                                     @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                                     @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
@@ -544,90 +310,112 @@
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6 ">
-                                        <div class="choose-file">
-                                            <label class="file-lable"> Upload Thumbnail Image File</label>
-                                          
-                                            @*<div class="form-group">*@
-                                            @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                            @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".jpeg, .png" })
-                                            @{
-                                                if (Model.AudioLink != null)
-                                                {
-                                                    <a id="audioId" target="_blank" title="Image" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Image</a>
-                                                }
-                                            }
-                                            @*</div>*@
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-sm-6 ">
-                                        <div class="choose-file video-choose">
-                                            <label class="file-lable"> Upload Video File</label>
+
+                                        <div class="card">
+
+                                            <div class="mdc-card-wrapper__text-section">
 
 
 
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
-                                                </div>
-                                            </div>
+                                                <div class="choose-file">
+                                                    <label class="file-lable"> Upload Thumbnail Image File</label>
 
-
-                                            <!---  <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">-->
-                                            Add a link
-
-                                            <!--  <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
-
-
-
-
-                                            <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
-                                                <div class="mdc-radio mdc-radio--touch">
-                                                    <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                                    <div class="mdc-radio__background">
-                                                        <div class="mdc-radio__outer-circle"></div>
-                                                        <div class="mdc-radio__inner-circle"></div>
-                                                    </div>
-                                                    <div class="mdc-radio__ripple"></div>
-                                                </div>
-                                            </div>
-
-
-
-
-
-
-
-                                            <div class="" style="display:none" id="linkDiv">
-                                                @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-
-                                                @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
-                                                @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
-                                            </div>
-
-                                            <div class="" id="uploadDiv">
-                                                @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-
-                                                @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
-
-
-                                                <div class="">
+                                                    @*<div class="form-group">*@
+                                                    @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".jpeg, .png" })
                                                     @{
-                                                        if (Model.VideoLink != null)
+                                                        if (Model.AudioLink != null)
                                                         {
-                                                            <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                            <a id="audioId" target="_blank" title="Image" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Image</a>
                                                         }
                                                     }
+                                                    @*</div>*@
                                                 </div>
                                             </div>
+
+
                                         </div>
 
+
+
+
+
+
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 ">
+                                        <div class="card">
+
+                                            <div class="mdc-card-wrapper__text-section">
+                                                <div class="choose-file ">
+                                                    <label class="file-lable"> Upload Video File</label>
+
+
+
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;
+    position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!---  <input id="Vid" name="Vid" value="Upload" checked="checked" type="radio" onclick="RadioChanged(this.value)">-->
+                                                    Add a link
+
+                                                    <!--  <input id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">-->
+
+
+
+
+                                                    <div class="mdc-touch-target-wrapper" style="top: 4px;
+    position: relative;">
+                                                        <div class="mdc-radio mdc-radio--touch">
+                                                            <input class="mdc-radio__native-control" id="Vid" name="Vid" value="Link" type="radio" onclick="RadioChanged(this.value)">
+                                                            <div class="mdc-radio__background">
+                                                                <div class="mdc-radio__outer-circle"></div>
+                                                                <div class="mdc-radio__inner-circle"></div>
+                                                            </div>
+                                                            <div class="mdc-radio__ripple"></div>
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+
+
+                                                    <div class="" style="display:none" id="linkDiv">
+                                                        @Html.LabelFor(model => model.PageVideoLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+
+                                                        @Html.EditorFor(model => model.PageVideoLink, new { htmlAttributes = new { @class = "form-control" } })
+                                                        @Html.ValidationMessageFor(model => model.PageVideoLink, "", new { @class = "text-danger" })
+                                                    </div>
+
+                                                    <div class="" id="uploadDiv">
+                                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+
+                                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control ", @accept = ".mp4" })
+
+
+                                                        <div class="mtop-15">
+                                                            @{
+                                                                if (Model.VideoLink != null)
+                                                                {
+                                                                    <a class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded " id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -650,7 +438,7 @@
                                                         <th width="50%">Questions</th>
                                                         <th width="20%">SkillName</th>
                                                         <th width="10%">Rating</th>
-                                                        <th width="10%">Time(Min)</th>
+                                                        <th width="10%">Time(In Second)</th>
                                                         <th width="10%">Action</th>
                                                     </tr>
                                                 </thead>
@@ -679,11 +467,11 @@
                                                             </td>
 
                                                             <td class="action text-center">
-                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
-                                                                </button>*@
+                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
+                                                                    </button>*@
 
 
 
@@ -710,9 +498,9 @@
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -721,7 +509,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new {  @class = "form-control" })
 
 
                                                                 </td>
@@ -733,7 +521,7 @@
                                                                 </td>
 
                                                                 <td class="action text-center">
-                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-default btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                     <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
                                                                         <span id="btnMinus" onclick="DeleteRow(this, 'QuestionsCollection', 'Comment', 'SkillName', 'RatingId', 'Timing')" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
@@ -836,9 +624,9 @@
 
 
 
-                                            </div><!--end of col-md-12-->
+                                    </div><!--end of col-md-12-->
 
-                                        </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -912,8 +700,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -990,8 +778,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1070,8 +858,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1409,7 +1197,7 @@
         <!-- end row -->
 
     </div>
-  
+
 </div>
 
 
@@ -1454,6 +1242,21 @@
             $(':submit', this).attr('disabled', 'disabled');
         }
     });
+    $("#btnUpload").click(function () {
+        ShowProgress();
+    });
+     var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+        $(window).scrollTop();
+    };
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
@@ -1489,7 +1292,18 @@
             $("#ProctoringCount").css("border-color", "#E3E3E3");
         }
     }
+      function switchtoquestionVedio(questiontime) {
 
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
     function CalculateOverAll(id, value) {
 
         value = parseInt(value);
@@ -1762,7 +1576,7 @@
                     var elem4 = document.getElementById(collectionName + "_" + i + "__" + tdFour);
                     elem4.id = collectionName + "_" + (i - 1) + "__" + tdFour;
                     elem4.name = collectionName + "[" + (i - 1) + "]." + tdFour;
-                    
+
 
 
                 }
@@ -1771,7 +1585,7 @@
 
         }
 
-        
+
 
 
     }
