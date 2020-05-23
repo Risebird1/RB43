@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers.AzureMediaservice
                     }
                 }
                 string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
-                RestClient _client = new RestClient("https://localhost:44310/");
+                RestClient _client = new RestClient(baseurl);
                 reservation.chunk = chunk1;
                 reservation.id = i + 1;
                 var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };

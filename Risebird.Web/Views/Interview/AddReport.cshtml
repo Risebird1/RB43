@@ -33,6 +33,7 @@
         float: left;
         display: block;
 ">
+
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
                         <span class="navbar-toggler-bar bar1"></span>
@@ -40,6 +41,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
+
                 <div class="pull-left">
                     <a class="navbar-brand">
                         Interview Report
@@ -52,9 +54,12 @@
         </div>
     </nav>
     <!-- End Navbar -->
+    <div class="loader text-center">
+        <img src="~/Newassets/img/lazyload.gif" />
+    </div>
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content dataloading">
 
         <div class="row">
             <div class="col-md-12">
@@ -1200,6 +1205,21 @@
             $(':submit', this).attr('disabled', 'disabled');
         }
     });
+    $("#btnUpload").click(function () {
+        ShowProgress();
+    });
+     var loader;
+    function ShowProgress() {
+        $(".dataloading").hide();
+        loader = document.getElementsByClassName("loader")[0];
+        loader.style.display = "block";
+        var top = Math.max(window.innerHeight / 2 - loader.offsetHeight / 2, 0);
+        var left = Math.max(window.innerWidth / 2 - loader.offsetWidth / 2, 0);
+        loader.style.top = top + "px";
+        loader.style.left = left + "px";
+        $(window).scrollTop();
+    };
+
     function RadioChanged(val) {
         if (val == 'Upload') {
             document.getElementById("uploadDiv").style.display = "block";
