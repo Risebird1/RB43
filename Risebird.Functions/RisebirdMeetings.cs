@@ -168,7 +168,7 @@ namespace Risebird.Functions
                                         currentEmployerName = ((JContainer)questions)["answer"].ToString();
                                     }
                                     else if (((JContainer)questions)["question"].ToString().ToLower()
-                                        .Contains("per hour rate"))
+                                        .Contains("expected salary"))
                                     {
                                         expectedPerHourRate = ((JContainer)questions)["answer"].ToString();
                                     }

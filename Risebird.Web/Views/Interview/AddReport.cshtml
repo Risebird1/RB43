@@ -223,48 +223,7 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
 
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <p style="min-height:20px;border:1px #1d181817 solid">
-                                            @Html.HiddenFor(x => Model.VideoLink)
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                {
-                                                    <video width="320" height="240" class="vjs-tech" controls style="width:100%">
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                }
-                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
-                                                {
-                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
-                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
-
-                                                    </video>
-                                                }
-                                                else
-                                                {
-                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                                }
-                                            }
-                                        </p>
-                                        @*<div class="col-md-6 col-sm-6">
-
-                                            </div>*@
-
-                                    </div><!--end of col-md-12-->
-
-                                </div>
 
 
                                 <div class="row">
@@ -419,7 +378,48 @@
                                     </div>
 
                                 </div>
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Video</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
 
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                            {
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                    <video width="320" height="320" class="vjs-tech" controls style="width:100%">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                }
+                                            }
+                                        </p>
+                                        @*<div class="col-md-6 col-sm-6">
+
+                </div>*@
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
@@ -438,7 +438,7 @@
                                                         <th width="50%">Questions</th>
                                                         <th width="20%">SkillName</th>
                                                         <th width="10%">Rating</th>
-                                                        <th width="10%">Time(In Second)</th>
+                                                        <th width="10%">Time(In Seconds)</th>
                                                         <th width="10%">Action</th>
                                                     </tr>
                                                 </thead>
@@ -470,8 +470,8 @@
                                                                 <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute"><i class="fas  fa fa-plus"></i></span>
 
                                                                 @*<button class="mdc-fab app-fab--absolute" aria-label="Add">
-                                                                        <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
-                                                                    </button>*@
+                                            <span id="btnPlus" onclick="AddRow()" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></svg></span>
+                                        </button>*@
 
 
 
@@ -509,7 +509,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new {  @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
 
                                                                 </td>

@@ -5814,7 +5814,7 @@ namespace Risebird.Web.Controllers
                 Mail _mail = new Mail();
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-               // var nameuser = _meetingService.Fetchusername(emailid);
+              
                 _mail.TO = Email.Comment;
                 if (Status == "Interest Accepted")
                 {
