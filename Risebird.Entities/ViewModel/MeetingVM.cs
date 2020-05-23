@@ -176,6 +176,7 @@ namespace Risebird.Entities.ViewModel
         public string ShortListstatus { get; set; }
         public int shared { get; set; }
         public string newprofielName { get; set; }
+        public DateTime? SharedOn { get; set; }
     }
     public class VedioComments
     {
