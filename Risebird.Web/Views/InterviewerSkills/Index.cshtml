@@ -196,12 +196,9 @@
                             </div>
                         </div>
                         <div class="col-auto">
-                            @if (Model.Profile != "Recruiter")
-                            {
-                                @*<button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-meetup" data-toggle="tooltip" data-placement="top" title="Interview Dashboard" onclick="location.href='@Url.Action("InterviewDashboard", "IRF" )'" data-original-title="Tooltip on top"> Interview Dashboard</span></button>*@
-                                <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"> Add Interviewer Skills</span></button>
-                            }
-                            <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                            <button type="button" style="margin-right: 6px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add IRF" onclick="location.href='@Url.Action("Add", "InterviewerSkills" )'" data-original-title="Tooltip on top"> Add Interviewer Skills</span></button>
+
+                            <button style="display:none" type="button" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
                         </div>
                     </div>
                     <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -435,171 +432,7 @@
         </div>
 
         <!-- End Card-->
-        <div id="myModal" class="modal" style="    display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    ">
-            <!-- Modal content -->
-            <div class="modal-content" style="        width: 70%;
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        font-size: 12px;
-        margin-top: -53px
-    ">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5>Invoice</h5>
-                    <span class="close" id="invoicePopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="stDate">
-                                    Start Date
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="stDateInvoice" name="stDateInvoice" type="date" class="form-control">
-                                    <label class="text-danger" id="stDate_Error" style="color:red"></label>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="EndDateInvoice">
-                                    End Date
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="EndDateInvoice" name="EndDateInvoice" type="date" class="form-control">
-                                    <label class="text-danger" id="endDate_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="srNumber">
-                                    SR Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="srNumberId" name="srNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="srNumber_Error" style="color:red"></label>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="poNumber">
-                                    PO Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="poNumberId" name="poNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="poNumber_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="requestNumber">
-                                    Request Number
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="requestNumberId" name="requestNumberId" type="text" class="form-control">
-                                    <label class="text-danger" id="requestNumber_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="projectCode">
-                                    Project Code
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="projectCodeId" name="projectCodeId" type="text" class="form-control">
-                                    <label class="text-danger" id="projectCode_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="clientAddress">
-                                    Client Address
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="clientAddressId" name="clientAddressId" type="text" class="form-control">
-                                    <label class="text-danger" id="clientAddressId_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="discount">
-                                    Discount
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="discountId" name="discountId" type="text" class="form-control">
-                                    <label class="text-danger" id="discount_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="currencyCode">
-                                    Currency Code
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="currencyCodeId" name="currencyCodeId" type="text" class="form-control" required>
-                                    <label class="text-danger" id="currencyCode_Error" style="color:red"></label>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-6 col-sm-4 desp-label" for="gstCheck" style="margin-top:26px">
-                                    Apply GST
-                                </label>
-                                <div class="col-md-6 col-sm-6">
-                                    <input id="gstCheckId" name="gstCheckId" type="checkbox" class="form-control" style="margin-top:-25px">
-                                    <label class="text-danger" id="gstCheck_Error" style="color:red"></label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <label class="text-danger" id="popUp_Error" style="color:red; margin-left:250px; font-size:16px"></label>
-
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Generate Invoice">
-                    </div>
-                </div>
-                <div class="modal-footer" style="padding: 2px 16px;
-                                 background-color: #14406e;
-                                                 color: white;">
-
-                </div>
-            </div>
-
-        </div>
+        
 
         <!-- end row -->
     </div>
@@ -811,7 +644,7 @@
             }
         })
 
-        changeColor('red');
+        //changeColor('red');
     }
 
     function PlayInterviewerSkills(InterviewerSkillId, InterviewerSkillName) {
@@ -862,22 +695,13 @@
                 )
             }
         })
-        changeColor("yellow");
+        //changeColor("yellow");
     }
 
 </script>
-<script>
+@*<script>
         $(document).ready(function () {
-            $("#stDateInvoice").val("");
-            $("#EndDateInvoice").val("");
-            $("#srNumberId").val("");
-            $("#poNumberId").val("");
-            $("#requestNumberId").val("");
-            $("#currencyCodeId").val("");
-            $("#projectCodeId").val("");
-            $("#discountId").val("");
-            $("#clientAddressId").val("");
-            document.getElementById("gstCheckId").checked = false;
+            
             $("#ResetFilter").click(function () {
                 ResetFilter();
             })
@@ -941,64 +765,11 @@
             });
         }
 
-</script>
-<script>
-    var irfId = "";
-    var irfName = "";
-    var span = document.getElementById("invoicePopUp");
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        var modal = document.getElementById("myModal");
-        modal.style.display = "none";
-    }
+</script>*@
+
+@*<script>
 
 
-</script>
-<script>
-    function InvoicePopUp(id, irfName) {
-
-        irfId = id;
-        irfName = irfName;
-
-
-        // Get the modal
-        var modal = document.getElementById("myModal");
-
-
-        // When the user clicks the button, open the modal
-        modal.style.display = "block";
-
-
-
-    }
-
-
-    function SavePopUp() {
-        var sDate = $("#stDateInvoice").val();
-        //var stDate = document.getElementById("stDateInvoice").value;
-        var endDate = document.getElementById("EndDateInvoice").value;
-
-        var srNumber = $("#srNumberId").val();
-        var poNumber = $("#poNumberId").val();
-        var reqNumber = $("#requestNumberId").val();
-        var currencyCode = $("#currencyCodeId").val();
-        var projectCode = $("#projectCodeId").val();
-        var discount = $("#discountId").val();
-        var clientAddress = $("#clientAddressId").val();
-        var isGST = document.getElementById("gstCheckId").checked
-        if (sDate == "" || endDate == "" || srNumber == "" || poNumber == "" || reqNumber == "" || currencyCode == "" || projectCode == "" || discount == "" || clientAddress == "") {
-            document.getElementById("popUp_Error").innerHTML = "Kindly fill all fields.";
-            return;
-        }
-        else {
-            document.getElementById("popUp_Error").innerHTML = "";
-
-        }
-
-
-        var url = '/IRF/Invoice?irfId=' + irfId + '&irfName=' + irfName + '&startDate=' + sDate + '&endDate=' + endDate + '&srNumber=' + srNumber + '&poNumber=' + poNumber + '&reqNumber=' + reqNumber + '&currencyCode=' + currencyCode + '&projectCode=' + projectCode + '&isGST=' + isGST + '&discount=' + discount + '&clientAddress=' + clientAddress;
-        window.location.href = url;
-    }
 
     function changeColor(tileColor) {
         localStorage.removeItem("localStorageforColorName");
@@ -1018,4 +789,4 @@
         //document.getElementById("divTile").style.backgroundColor = tileColor;
         // divTile.style.backgroundColor = color;
     }
-</script>
+</script>*@

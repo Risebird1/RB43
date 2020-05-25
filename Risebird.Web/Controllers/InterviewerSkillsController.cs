@@ -670,12 +670,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.PauseInterviewerSkills(InterviewerSkillId, InterviewerSkillName))
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer Skills paused Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer Skills pause Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -692,7 +690,6 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Interviewer Skills pause Failed";
                 return RedirectToAction("Index");
             }
 
@@ -710,12 +707,10 @@ namespace Risebird.Web.Controllers
                     {
                         if (_iInterviewerSkillsService.PlayInterviewerSkills(InterviewerSkillId, InterviewerSkillName))
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer Skills enabled Successfully";
                             return RedirectToAction("Index");
                         }
                         else
                         {
-                            TempData["SuccessErrorMessage"] = "Interviewer Skills enable Failed";
                             return RedirectToAction("Index");
                         }
                     }
@@ -732,7 +727,6 @@ namespace Risebird.Web.Controllers
             catch (Exception ex)
             {
                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                TempData["SuccessErrorMessage"] = "Interviewer Skills play Failed";
                 return RedirectToAction("Index");
             }
         }
