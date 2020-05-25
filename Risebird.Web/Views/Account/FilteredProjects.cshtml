@@ -86,8 +86,29 @@
                     </td>*@
                 <td class="text-center"> <a id="@("irflink_"+i)" target="_blank" title="Resume" href='@Url.Action("Edit", "Project", new { id = Model.AccountProjectMappings[i].ProjectId })'> @Model.AccountProjectMappings[i].ProjectName</a> </td>
                 <td class="text-center">@Model.AccountProjectMappings[i].Client</td>
-                <td class="text-right">
-                    @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "form-control" @*, @style = "margin-left:25%"*@})
+                <td class="text-center">
+                 
+
+
+                    <div class="mdc-form-field" style="margin-bottom: 10px;">
+                        <div class="mdc-checkbox">
+                         
+
+                            @Html.CheckBoxFor(m => m.AccountProjectMappings[i].IsAdded, new { @class = "mdc-checkbox__native-control" @*, @style = "margin-left:25%"*@})
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark"
+                                     viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path"
+                                          fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
+
+
+                        </div>
+                    </div>
 
                 </td>
                 @Html.HiddenFor(m => m.AccountProjectMappings[i].ProjectId)

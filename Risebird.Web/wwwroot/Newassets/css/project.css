@@ -466,6 +466,9 @@ table {
     background: #d20505 !important;
 }
 
+.unarchive-btn {
+    background: #848080eb !important;
+}
 
 .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
     border-color: #53a5f5 !important;
