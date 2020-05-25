@@ -23,8 +23,8 @@ textarea::-webkit-scrollbar-thumb {
     cursor: pointer !important;
   
 }
-    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
-        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {      
+        background: url("../../img/audio-button-set-4-transparent.png");
         background-size: 25px;
         background-repeat: no-repeat;
         background-position: 45%;
