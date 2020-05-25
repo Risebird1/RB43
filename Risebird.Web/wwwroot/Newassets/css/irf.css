@@ -626,6 +626,10 @@ background-color: rgba(0,0,0,0.4);
 .border-bottom {
     border-bottom: 1px #cccccc63 solid;
 }
+.unarchive-btn {
+    background: #848080eb !important;
+}
+
 
 .trash-btn {
     background:#d20505 !important;
