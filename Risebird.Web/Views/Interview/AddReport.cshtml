@@ -500,7 +500,7 @@
                                                         {
                                                             <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
