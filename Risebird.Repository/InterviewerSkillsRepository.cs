@@ -807,7 +807,7 @@ namespace Risebird.Repository
                 {
                     foreach (var item in model)
                     {
-                        string sqlAddInterviewer = "INSERT INTO TransInterviewerListInterviewerSkills Values (@UserId, @ISCId, @InterviewerProfileId);";
+                        string sqlAddInterviewer = "INSERT INTO TransInterviewerListInterviewerSkills (UserId, ISCId, InterviewerProfileId) Values (@UserId, @ISCId, @InterviewerProfileId);";
                         var result1 = con.ExecuteAsync(sqlAddInterviewer, new
                         {
                             UserId = item.UserId,
