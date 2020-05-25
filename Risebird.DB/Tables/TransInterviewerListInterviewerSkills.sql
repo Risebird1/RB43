@@ -6,10 +6,13 @@ BEGIN
 
 CREATE TABLE [dbo].[TransInterviewerListInterviewerSkills](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UserId] [int] NOT NULL,
-	[PrimarySkill] [int] NOT NULL,
-	[InterviewerSkillId] [int] NOT NULL,
-	[IsAdded] [bit] NULL,
+	[UserId] [int] NULL,
+	[ISCId] [int] NULL,
+	[InterviewerProfileId] [int] NULL,
+	[TotalInvites] [int] NOT NULL DEFAULT 0,
+	FOREIGN KEY([UserId]) REFERENCES [dbo].[UserList] ([id]),
+	FOREIGN KEY([ISCId]) REFERENCES [dbo].[InterviewerSkillsChannel] ([id]),
+	FOREIGN KEY([InterviewerProfileId]) REFERENCES [dbo].[InterviewerProfile] ([id]),
  CONSTRAINT [PK_TransInterviewerListInterviewerSkills] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
