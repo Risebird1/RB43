@@ -223,6 +223,38 @@ namespace Risebird.Business
             }
 
         }
+
+        public InterviewerProfileVM GetInterviewerProfileByEmailId(string emailId, string profile)
+        {
+            try
+            {
+                var interviewerProfile = _interviewerRepository.GetInterviewerProfileByEmailId(emailId, profile).Result;
+                InterviewerProfileVM ProfileModel = interviewerProfile.FirstOrDefault();
+
+                int ProfileId = ProfileModel.id;
+
+                // Get all the List from DB
+
+                List<TransInterviewerAvailability> AvailabilityList = _interviewerRepository.GetAvailabilityList(ProfileId).Result.ToList();
+                List<TransInterviewerAccDetails> AccDetailsList = _interviewerRepository.GetAccDetailsList(ProfileId).Result.ToList();
+
+                // Assign the Lists to model
+
+                
+                ProfileModel.InterviewerAvailabilityDetails = AvailabilityList;
+                ProfileModel.InterviewerAccDetails = AccDetailsList;
+
+                return ProfileModel;
+
+            }
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+
+        }
+
         public InterviewerProfessional GetEmployerById(int id)
         {
             try
@@ -291,6 +323,7 @@ namespace Risebird.Business
         {
             try
             {
+                interviewerProfile.InterviewerAvailabilityDetails = interviewerProfile.InterviewerAvailabilityDetails.Where(x => x.Weekday != null).ToList();
                 //Add Method
                 return _interviewerRepository.AddInterviewerMyProfile(interviewerProfile).Result;
             }

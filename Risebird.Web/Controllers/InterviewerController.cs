@@ -603,24 +603,35 @@ namespace Risebird.Web.Controllers
         #region Interviewer My Profile
 
         [HttpGet]
-        public async Task<IActionResult> MyProfile(int UserId)
+        public async Task<IActionResult> MyProfile()
         {
             try
             {
                 if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
                 {
-
-                    //InterviewerProfileVM model = new InterviewerProfileVM();
-                    InterviewerProfileVM model = _interviewerService.GetInterviewerMyProfileById(UserId);
-                    if (model == null)
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if (profileName=="Interviewer")
                     {
-                        TempData["MessageInterviewer"] = "No Information available in the System";
-                        return RedirectToAction("Index");
-                    }
-                    // Get all the select Lists
-                    GetAllSelectList(model);
+                        InterviewerProfileVM model = _interviewerService.GetInterviewerProfileByEmailId(emailid, profileName);
+                        if (model == null)
+                        {
+                            TempData["MessageInterviewer"] = "No Information available in the System";
+                            return RedirectToAction("Index");
+                        }
+                        // Get all the select Lists
+                        GetAllSelectList(model);
 
-                    return View("MyProfile", model);
+                        return View("MyProfile", model);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+
+                    }
+
                 }
                 else
                 {

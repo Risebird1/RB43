@@ -570,6 +570,34 @@ namespace Risebird.Repository
             }
         }
 
+        public async Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileByEmailId(string emailId, string profileName)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@EmailId", emailId);
+                parameters.Add("@Profile", profileName);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var ProfileList = await SqlMapper.QueryAsync<InterviewerProfileVM>(con, "usp_GetInterviewerProfileByEmailId",
+                        parameters, commandType: CommandType.StoredProcedure);
+                    return ProfileList;
+                }
+            }
+
+            catch (SqlException e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return null;
+            }
+        }
+
         public async Task<InterviewerProfessional> GetEmployerById(int id)
         {
             try

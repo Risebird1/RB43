@@ -28,5 +28,6 @@ namespace Risebird.Business.Interface
         Task<bool> AddInterviewerMyProfile(InterviewerProfileVM interviewerProfile);
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status);
+        InterviewerProfileVM GetInterviewerProfileByEmailId(string emailId, string profile);
     }
 }
