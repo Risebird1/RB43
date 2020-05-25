@@ -44,6 +44,10 @@ AS
 
 			delete from TransInterviewerCertificate where InterviewerProfileId=@v_ProfileId
 
+			delete from TransInterviewerListInterviewerSkills where UserId = @UserId
+
+			delete from TransInterviewerSkillsLeadInterviewer where UserId = @UserId
+
 		  -- Now delete from InterviewerProfile Table
 		  delete from InterviewerProfile where UserId = @UserId
 

@@ -1,7 +1,7 @@
 ﻿@model Risebird.Entities.ViewModel.InterviewerProfileVM
 
 @{
-    ViewData["Title"] = "Add Interviewer Profile";
+    ViewData["Title"] = "Edit Interviewer Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -792,7 +792,7 @@
                                 </div>
                                 <!-- Availabality Details end-->
                                 <!-- Account Details start-->
-                                <div class="row">
+                                <div class="row col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="multiple_row">
                                             <h2>Account Details</h2>
@@ -873,19 +873,18 @@
                                 <!-- Account Details End-->
                                 <div class="card-footer-button ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-6">
-                                            <input type="submit" value="Submit"  id="btnUpload" class="btn btn-fill btn-primary" />
-                                            @*<button type="submit"  value="Submit">Submit</button>*@
+                                        <div style="margin-left:20px">
+                                            <input type="submit" value="Submit" id="btnUpload" class="btn btn-fill btn-primary" />
+                                            @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
                         }
-                        <div class=" col-md-3">
+                        @*<div class=" col-md-3">
                             @Html.ActionLink("Back to List", "Index", "Interviewer", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                        </div>
+                        </div>*@
                     </div>
                 </div>
             </div>
@@ -975,6 +974,11 @@
         //====== Age CalculationFunctiopn======//
 
         $(document).ready(function () {
+            var BirthDate = $("#DOB").val();
+            var dob = new Date(BirthDate);
+            var today = new Date();
+            var age = Math.floor((today - dob) / (365.25 * 24 * 60 * 60 * 1000));
+            document.getElementById("txt_Age").value = age.toString();
             $("#DOB").change(function () {
                 var BirthDate = $("#DOB").val();
                 var dob = new Date(BirthDate);
@@ -1042,7 +1046,6 @@
        // For Certificate
 
         function addRowCertificateDetails() {
-            debugger;
         //var table = document.getElementById("certificateTable");
         //var rowCount = table.rows.length;
         //if (rowCount == 3) {
@@ -1142,7 +1145,6 @@
 
     // For Project 
         function addProjectTableRow() {
-            debugger;
         var table = document.getElementById("projectTable");
         var rowCount = table.rows.length;
         if (rowCount == 4) {
@@ -1153,7 +1155,7 @@
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#projectTable tr").length - 1;
 
-        $tr.find("input,select,hidden").attr("name", function () { // find name in the cloned row
+            $tr.find("input,select,hidden, textarea").attr("name", function () { // find name in the cloned row
             var parts = this.id.match(/(\D+)_(\d+)__(\D+)$/); // extract parts from id, including index
             return parts[1] + "[" + ++parts[2] + "]." + parts[3]; // build new name
         }).attr("id", function () { // change id also
@@ -1169,8 +1171,10 @@
 
         // reset fields in the new row
         $tr.find("select").val("");
-        $tr.find("input[type=text]").val("");
+        //$tr.find("input[type=text]").val("");
         $tr.find("input[type=hidden]").val("");
+        $tr.find("textarea").val("");
+
 
         $tr.find("a").val("");
 
@@ -1242,7 +1246,6 @@
         //===========================Begin of delete rows functions ====================//
 
         function deleteRowSkillDetails(element, collectionName, tdOne, tdTwo, tdThree, tdFour, tdFive, tdSix) {
-            debugger;
             if ($(element).parents('tbody').find('tr').length === 1) {
                 
                 alert('Must have atleast one Row');
@@ -1309,7 +1312,6 @@
         // for certficate and Project Lists
 
         function deleteRow(element, collectionName, tdOne, tdTwo, tdThree, tdFour) {
-            debugger;
             if ($(element).parents('tbody').find('tr').length === 1) {
 
                 alert('Must have atleast one Row');
