@@ -23,6 +23,18 @@ textarea::-webkit-scrollbar-thumb {
     border-radius: 2px;
 }
 
+#QuestionsTable .form-control[readonly], #QuestionsTable .form-control {
+    cursor: pointer!important;
+}
+
+    #QuestionsTable .form-control[readonly]:hover, #QuestionsTable .form-control:hover {
+        background: url("https://i.ya-webdesign.com/images/play-button-png-6.png");
+        background-size: 25px;
+        background-repeat: no-repeat;
+        background-position: 45%;
+        z-index: 1000;
+    }
+
 
 
 .no-sort::after {
@@ -121,7 +133,15 @@ table {
     padding-top: 65px;
     background: none !important;
 }
-
+.excel-file {
+    margin-right: 10px;
+    float: right;
+    color: green;
+    font-size: 35px;
+    margin-top: 3px;
+    margin-left: 3px;
+    border:0;
+}
 .btn-call {
     width: 30px !important;
     height: 30px;

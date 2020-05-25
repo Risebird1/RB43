@@ -595,11 +595,12 @@ namespace Risebird.Repository
         {
             try
             {
-                var query = "Update Candidate set TotalInvites=@TotalInvites where id = @id";
+                var InviteDate = DateTime.Now;
+                var query = "Update Candidate set TotalInvites=@TotalInvites, InviteDate=@InviteDate where id = @id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@id", id);
                 dynamicParameters.Add("@TotalInvites", totalInvites);
-
+                dynamicParameters.Add("@InviteDate", InviteDate);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     var results = con.Query<Candidate>(query, dynamicParameters);

@@ -34,6 +34,41 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
+
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -62,24 +97,24 @@
                         @if (ViewBag.ProfileName == "client" && (Model.InterviewStatus == 2 || Model.InterviewStatus == 4))
                         {
                             var jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model);
-                        <div class="clearfix text-right">
+                            <div class="clearfix text-right">
 
 
 
-                            <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
-                                <span class="fa fa-thumbs-up"  onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)" ><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
-                            </button>
+                                <button title="Approved For Next Round" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded btn-success" style="width:145px; margin-bottom:16px;background: #18ce0f!important;">
+                                    <span class="fa fa-thumbs-up" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+Model.InterviewId)"><font style="font-size:12px;    font-family: Roboto, sans-serif;"> Approve</font></span>
+                                </button>
 
 
-                            <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
-                                <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
-                            </button>
+                                <button title="Final Selection Status" type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="width:145px;margin-bottom:16px;">
+                                    <span class="fa fa-check-circle" onclick="ModalSelectionButtonClick(@jsonObject)" id="@("mySelectionBtn_"+Model.InterviewId)"><font style="font-size:12px; font-family: Roboto, sans-serif;"> Select</font></span>
+                                </button>
 
 
 
 
 
-                        </div>
+                            </div>
                         }
                         <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form" id="Clienform">
                             @Html.AntiForgeryToken()
@@ -280,49 +315,49 @@
 
 
                                         </div>
-                                        </div>
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                        <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
-                                                            <div class="talktext">
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
 
-                                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 86px; width:100%" })
-                                                            </div>
+                                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 86px; width:100%" })
                                                         </div>
+                                                    </div>
 
 
-                                                        @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                        @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <span>
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    <span>
 
-                                                        </span>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                        @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
-                                                    </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
-                                                    <div class="form-group">
-                                                        @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                        @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                    </div>
+                                                    </span>
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.ApprovalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.ApprovalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.FinalComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.FinalComments, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
 
                                 <div class="row">
-                                
+
 
 
                                 </div>
@@ -354,7 +389,7 @@
                                                             <td>
 
 
-                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+                                                                @Html.DropDownList("QuestionsCollection[0].Comment", (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
 
                                                             </td>
                                                             <td>
@@ -364,7 +399,7 @@
                                                             <td>
                                                                 @*<input class="form-control text-box single-line" id="QuestionsCollection_0__RatingId" name="QuestionsCollection[0].RatingId" readonly="readonly" type="text" value="@Model.QuestionsLevelList.FirstOrDefault().Text">*@
 
-                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control", @disabled = "disabled" })
+                                                                @Html.DropDownList("QuestionsCollection[0].RatingId", (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
 
                                                             </td>
 
@@ -390,7 +425,7 @@
                                                                     @*<input class="form-control text-box single-line" id="@("QuestionsCollection_"+i+"__Comment")" name="QuestionsCollection[@i].Comment" readonly="readonly" type="text" value="@Model.QuestionsList.Where(x=> x.Value == Model.QuestionsCollection[i].Comment).FirstOrDefault().Text">*@
 
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", @disabled = "disabled" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -509,9 +544,9 @@
 
 
 
-                                            </div><!--end of col-md-12-->
+                                    </div><!--end of col-md-12-->
 
-                                        </div>
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -589,8 +624,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -610,12 +645,12 @@
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th >Required Level</th>
+                                                        <th>Required Level</th>
                                                         <th>Type</th>
-                                                        <th >Value</th>
-                                                        <th >Actual Level</th>
+                                                        <th>Value</th>
+                                                        <th>Actual Level</th>
                                                         <th>Required Weightage</th>
-                                                        <th >Actual Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -670,8 +705,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -689,9 +724,9 @@
                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th >Required Level</th>
-                                                        <th >Type</th>
-                                                        <th >Value</th>
+                                                        <th>Required Level</th>
+                                                        <th>Type</th>
+                                                        <th>Value</th>
                                                         <th>Actual Level</th>
                                                         <th>Required Weightage</th>
                                                         <th>Actual Weightage</th>
@@ -748,8 +783,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1044,9 +1079,9 @@
 
             </div>
         </div>
-            <!-- end row -->
+        <!-- end row -->
 
-        </div>
+    </div>
     <footer class="footer">
         <div class=" container-fluid ">
 

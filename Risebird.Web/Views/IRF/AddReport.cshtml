@@ -7,329 +7,48 @@
 }
 
 
-<style>
 
-    body {
-        font-family: Roboto, sans-serif;
-    }
-
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-
-    textarea::-webkit-scrollbar {
-        width: 2px;
-        height: 6px;
-        background-color: var(--mdc-theme-primary, #018786) !important;
-    }
-
-    textarea::-webkit-scrollbar-thumb {
-        background-color: #56a9ff;
-        border: 1px solid #56a9ff;
-        margin: 2px;
-        border-radius: 2px;
-    }
-
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: normal !important;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    .multiple_row > h2 {
-        font-size: 16px;
-        background: #42a5f5 !important;
-        padding: 4px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 0px;
-        margin-bottom: 10px;
-    }
-
-
-
-    .panel-header-sm {
-        height: 85px;
-        padding-top: 65px;
-        background: none !important;
-    }
-
-
-
-    /* Modal */
-    .modal-header {
-        background: #42a5f5 !important;
-        padding-top: 10px !important;
-        padding-bottom: 10px !important;
-        color: #fff;
-    }
-
-
-    /* Modal */
-
-    .talktext {
-        padding: 8px 8px 4px 8px;
-        text-align: left;
-        line-height: 1.5em;
-    }
-
-
-
-    .card .card-header .card-title, .card .card-header h4.card-title {
-        margin: 0 0px 10px 0;
-    }
-
-
-
-
-    .mdc-card-wrapper__text-section {
-        padding: 16px;
-    }
-
-    .demo-card__title {
-        font-family: Roboto, sans-serif;
-        -moz-osx-font-smoothing: grayscale;
-        -webkit-font-smoothing: antialiased;
-        font-size: 1.25rem;
-        line-height: 2rem;
-        font-weight: 500;
-        letter-spacing: .0125em;
-        text-decoration: inherit;
-        text-transform: inherit;
-    }
-
-
-    .mdc-fab {
-        width: 30px !important;
-        height: 30px !important;
-        background-color: #53a5f5 !important;
-    }
-
-    .sidebar:after, .off-canvas-sidebar:after {
-        background: #42a5f5 !important;
-    }
-
-
-    .border-bubble {
-        border: 1px solid #620bee21;
-    }
-
-    .talk-bubble {
-        display: inline-block;
-        position: relative;
-        font-size: 13px;
-        height: auto;
-        border-radius: 7px;
-        margin: 5px 0px;
-        background-color: #fff;
-    }
-
-
-        .talk-bubble textarea {
-            resize: none;
-            border: 0;
-            background: #fff;
-            padding: 5px;
-        }
-
-    .mdc-card {
-        border-top: 3px #53a5f5 solid;
-    }
-
-    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
-        background: #42a5f5 !important;
-        font-family: Roboto, sans-serif;
-        font-size: 12px;
-        text-decoration: none;
-    }
-
-    .mdc-button--outlined:not(:disabled) {
-        border-color: #42a5f5 !important;
-        color: #42a5f5 !important;
-    }
-
-    .mdc-fab-secondary {
-        background: #fff !important;
-        color: #53a5f5 !important;
-    }
-
-    .navbar .navbar-wrapper {
-        color: #143e67 !important;
-    }
-
-        .navbar .navbar-wrapper .navbar-brand {
-            margin-right: 0.5rem;
-        }
-
-    .mc-button-area {
-        text-align: right;
-    }
-
-    .mdc-card .form-control, .mdc-card .form-control[disabled], .mdc-card .form-control[readonly] {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .mdc-card .form-control:focus {
-            border-bottom: 2px rgb(80, 158, 235) solid;
-            border-top: 0;
-            border-left: 0;
-            border-right: 0;
-        }
-
-    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
-        border-color: #53a5f5 !important;
-    }
-
-
-
-
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-
-    .table-responsive {
-        overflow: hidden;
-    }
-
-    #AudioFile {
-        margin: 0px 0px 15px 0px;
-    }
-
-
-
-    #PageVideoLink {
-        margin: 0px 0px 10px 0px;
-    }
-
-
-    #VideoFile {
-        margin: 0px 0px 10px 0px;
-    }
-
-    .top-gap {
-        padding-top: 40px;
-        display: block
-    }
-
-
-
-    .table {
-        white-space: nowrap;
-    }
-
-    .canvasjs-chart-credit {
-        display: none;
-    }
-
-    #ProctoringTable .label-type {
-        background: #e8f5ff;
-        padding: 8px 10px;
-        border: 0;
-    }
-
-    .video-choose {
-        position: relative;
-        top: -28px;
-    }
-
-    .trash-btn {
-        background: #d20505 !important;
-    }
-
-    .click {
-        color: #53a5f5;
-        text-decoration: underline;
-    }
-
-    .file-lable {
-        color: #000 !important;
-        font-size: 14px !important;
-    }
-
-    .card-text-label {
-        font-size: 13px !important;
-    }
-
-    .control-label {
-        color: #5f5c5c !important;
-        font-weight: normal !important;
-    }
-
-    .caret {
-        display: none !important;
-    }
-
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        border: 0;
-        border-radius: 4px 4px 0 0;
-        background: whitesmoke !important;
-        height: 40px;
-        font-size: 0.8rem;
-        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
-    }
-
-        .dropdown-toggle::after {
-            color: rgba(0, 0, 0, 0.29);
-            position: absolute;
-            right: 30px;
-            top: 14px;
-        }
-
-    .mdc-card button.dropdown-toggle:focus {
-        border-bottom: 2px rgb(80, 158, 235) solid !important;
-    }
-
-   
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 10px;
-    }
-
-        .modal .form-group .btn {
-            margin: 0px;
-        }
-</style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
 <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -485,42 +204,7 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
 
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <p style="min-height:20px;border:1px #1d181817 solid">
-                                            @Html.HiddenFor(x => Model.VideoLink)
-                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                            {
-                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                                {
-                                                    <video width="320" height="240" style="width:100%" controls>
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                        Your browser does not support the video tag.
-                                                    </video>
-                                                }
-                                                else
-                                                {
-                                                    <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                                }
-                                            }
-                                        </p>
-                                        @*<div class="col-md-6 col-sm-6">
-
-                </div>*@
-
-                                    </div><!--end of col-md-12-->
-
-                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -538,7 +222,7 @@
                                             </div>
                                         </div>
 
-                                        <div  id="uploadDiv">
+                                        <div id="uploadDiv">
                                             @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                             @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
 
@@ -584,15 +268,51 @@
                                     </div>
                                 </div>
 
-
-
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6 px-1">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Video</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
 
-                                    </div>
 
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
+                                            {
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
+                                                {
+                                                    <video width="320" height="320" style="width:100%" controls class="vjs-tech">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
+                                                }
+                                            }
+                                        </p>
+                                        @*<div class="col-md-6 col-sm-6">
+
+                </div>*@
+
+                                    </div><!--end of col-md-12-->
 
                                 </div>
+
+
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -610,7 +330,7 @@
                                                         <th>Questions</th>
                                                         <th>SkillName</th>
                                                         <th width="15%">Rating</th>
-                                                        <th>Time(Min)</th>
+                                                        <th>Time(In Seconds)</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -648,9 +368,10 @@
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -660,7 +381,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control droprating" })
 
 
                                                                 </td>
@@ -765,15 +486,16 @@
 
                                                     @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
-                                                    </div></div>
-                                                    @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                                 </div>
-
-
-
-                                            </div><!--end of col-md-12-->
-
+                                            </div>
+                                            @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                         </div>
+
+
+
+                                    </div><!--end of col-md-12-->
+
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -864,12 +586,12 @@
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th >Required Level</th>
-                                                        <th >Type</th>
+                                                        <th>Required Level</th>
+                                                        <th>Type</th>
                                                         <th>Value</th>
-                                                        <th >Actual Level</th>
+                                                        <th>Actual Level</th>
                                                         <th>Required Weightage</th>
-                                                        <th >Actual Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -924,8 +646,8 @@
                                             </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
 
@@ -1001,11 +723,11 @@
                                                     </div>
                                                 </div>
 
-                                                    </div>
+                                            </div>
 
 
-                                                </div>
-                                            </div><!--end of col-md-12-->
+                                        </div>
+                                    </div><!--end of col-md-12-->
 
                                 </div>
                                 <div class="row">
@@ -1711,7 +1433,18 @@
         $.validator.unobtrusive.parse(document);
 
     }
+      function switchtoquestionVedio(questiontime) {
 
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
     function AddRowInterviewer() {
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;

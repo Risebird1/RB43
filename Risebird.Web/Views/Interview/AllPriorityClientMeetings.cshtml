@@ -502,7 +502,7 @@
                                                 <td> @item.JDTiltle.Split("|")[0] </td>
                                                 <td> @item.confirmationStatus</td>
                                                 <td> @item.MeetingStatusStatusDesc</td>
-                                                @if (item.QCInterview > 0)
+                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                 {
                                                     <td> @item.intervieweStatusStatDesc</td>
                                                 }
@@ -510,7 +510,7 @@
                                                 {
                                                     <td></td>
                                                 }
-                                                @if (item.QCInterview > 0)
+                                                @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                 {
 
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
@@ -520,7 +520,7 @@
                                                     <td>No Report</td>
                                                 }
 
-                                                @if (item.VideoLink != null && item.VideoLink != "" && item.QCInterview > 0)
+                                                @if (item.VideoLink != null && item.VideoLink != "" && item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
                                                 {
                                                     <td> <a id="videoId" target="_blank" title="Resume" href=@item.VideoLink>Video</a> </td>
                                                 }

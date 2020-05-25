@@ -82,23 +82,9 @@ namespace Risebird.Business
         {
             try
             {
-                var meetings = _meetingRespository.GetClientInterviewMeetings().Result.OrderByDescending(x => x.interviewDate).ToList();
-                //Get client user details
-                var clientDetails = _meetingRespository.GetClientDetails(emailId).ToList().FirstOrDefault();
-                if (clientDetails.RoleId == 1)
-                {
-                    meetings = meetings.Where(x => x.ClientHrContact?.ToLower() == emailId?.ToLower()).ToList();
-                }
-
-                else if (clientDetails.RoleId == 4)
-                {
-                    meetings = meetings.Where(x => x.staffingAgency?.ToLower() == emailId?.ToLower()).ToList();
-                }
-                else if (clientDetails.RoleId == 2 || clientDetails.RoleId == 6)
-                {
-                    meetings = meetings.Where(x => x.ClientId == clientDetails.ClientId).ToList();
-                }
-                return meetings;
+                var meetings = _meetingRespository.GetClientMeetings(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+               
+                return meetings?? new List<MeetingVM>();
             }
             catch (Exception ex)
             {
@@ -1060,6 +1046,23 @@ namespace Risebird.Business
             {
                 var meeting = _meetingRespository.VedioShare(value, vedioid);
                 return "";
+
+            }
+
+            catch (Exception e)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+
+                return "";
+            }
+
+        }
+        public string VedioShared(string value, string vedioid,string Userid)
+        {
+            try
+            {
+                var meeting = _meetingRespository.VedioShared(value, vedioid, Userid);
+                return meeting.Result;
 
             }
 

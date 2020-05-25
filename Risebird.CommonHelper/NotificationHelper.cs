@@ -471,7 +471,7 @@ namespace Risebird.CommonHelper
                 {
                     mailMessage.Bcc.Add(new MailAddress(mails.ToLower(), null));
                 }
-                object[] parameters = new object[] { irf,primarySkill, codedName, meetingDate };
+                object[] parameters = new object[] { irf, primarySkill, codedName, meetingDate };
                 mailMessage.Subject = "New candidate selected!";
                 string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CuratedUserSelectedMail.html");
                 string msgBody = string.Format(rawEmail, parameters);
@@ -491,21 +491,24 @@ namespace Risebird.CommonHelper
             }
         }
 
-        public string SendInviteToInterviewer(string iscName, string jdTitle, string primarySkill, string calendlyLink, string interviewerMailId, string hrEmailId)
+        public string SharedVideoNofitication(Mail model, string UrlDetails,string skills)
         {
             try
             {
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Discussion Invite");
-                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
-                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
-
-                
-                object[] parameters = new object[] { iscName, primarySkill, calendlyLink };
-                mailMessage.Subject = "Discussion invitation";
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InviteInterviewerTemplate.html");
+                var UserType = "Dear";
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { UrlDetails, skills };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "InternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.Subject = model.Subject;
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
@@ -520,22 +523,24 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-
-        public string CancelInterviewerInvite(string iscName, string primarySkill,  string interviewerMailId, string hrEmailId)
+        public string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string url)
         {
             try
             {
                 var mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress(mailFrom, "Discussion cancelled!");
-                mailMessage.To.Add(new MailAddress(interviewerMailId, "Interviewer"));
-                mailMessage.CC.Add(new MailAddress(hrEmailId, null));
-
-               
-                object[] parameters = new object[] { iscName, primarySkill };
-                mailMessage.Subject = "Discussion Cancelled";
-                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "CancelInviteInterviewerTemplate.html");
+                var UserType = "Dear";
+                mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
+                mailMessage.CC.Add(new MailAddress(model.CC.ToLower(), null));
+                var toMails = model.TO.Split(";");
+                foreach (var mails in toMails)
+                {
+                    mailMessage.To.Add(new MailAddress(mails.ToLower(), null));
+                }
+                object[] parameters = new object[] { UrlDetails, url };
+                string rawEmail = _azureStorageHelper.GetBlobData("mailtemplate", "ExternalUserSharingTemplate.html");
                 string msgBody = string.Format(rawEmail, parameters);
 
+                mailMessage.Subject = model.Subject;
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Body = msgBody;
                 SmtpClient smtpClient = new SmtpClient("smtp.sendgrid.net", Convert.ToInt32(587));
@@ -550,7 +555,5 @@ namespace Risebird.CommonHelper
                 return "Failed to send mail. Please check all filled and try again.";
             }
         }
-
-
     }
 }

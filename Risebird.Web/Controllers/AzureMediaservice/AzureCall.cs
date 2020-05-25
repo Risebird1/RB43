@@ -69,7 +69,7 @@ namespace Risebird.Web.Controllers.AzureMediaservice
                     }
                 }
                 string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
-                RestClient _client = new RestClient("https://localhost:44310/");
+                RestClient _client = new RestClient(baseurl);
                 reservation.chunk = chunk1;
                 reservation.id = i + 1;
                 var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
@@ -83,15 +83,7 @@ namespace Risebird.Web.Controllers.AzureMediaservice
                     return response.Content;
                 }
             }
-            //string UserDetails = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(username + ":" + Password));
-            //RestClient _client = new RestClient(baseurl);
-            //var request1 = new RestRequest("api/Azure", Method.POST) { RequestFormat = DataFormat.Json };
-            //request1.AddHeader("Authorization", "Basic " + UserDetails);
-            //request1.AddBody(reservation);
-            //request1.AddHeader("content-type", "application/json");
-
-            //var response = _client.Execute(request1);
-            //return response.Content;
+          
             return "";
         }
     }

@@ -72,6 +72,19 @@ namespace Risebird.Repository
                         return result;
                     }
                 }
+                else if (profile == "ExternalUser")
+                {
+                    Emailid = Emailid.Replace("\"", "");
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var parameters = new DynamicParameters();
+                        parameters.Add("clientid", clientId);
+                        parameters.Add("Emailid", Emailid);
+                        var result = SqlMapper.Query<MeetingVM>(con, "usp_GetRiseTubeMeetingsForExternalUser", parameters,//create sp
+                                commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                }
                 else
                 {
                     using (SqlConnection con = new SqlConnection(connectionString))
@@ -855,6 +868,29 @@ namespace Risebird.Repository
             return null;
         }
 
+        /// <summary>
+        /// client meeting
+        /// </summary>
+        /// <param name="emailID"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<MeetingVM>> GetClientMeetings(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("EmailId", emailID);
+                    return await SqlMapper.QueryAsync<MeetingVM>(con, "usp_GetClientMeetings", parameters,
+                         commandType: CommandType.StoredProcedure);
+                } 
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
 
         public async Task<bool> AddInterviewReport(InterviewReport reportDetails)
         {
@@ -1685,7 +1721,7 @@ namespace Risebird.Repository
                 finaldynamicParameters.Add("@Id", vedioid);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
-                    var result=con.Query<VedioComments>(finalquery, finaldynamicParameters);
+                    var result = con.Query<VedioComments>(finalquery, finaldynamicParameters);
                     return (VedioComments)result.FirstOrDefault();
                 }
             }
@@ -1805,14 +1841,50 @@ namespace Risebird.Repository
             }
             catch (SqlException ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             catch (Exception ex)
             {
-                 _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return null;
 
+        }
+        public async Task<string> VedioShared(string Emailids, string vedioid, string Userid)
+        {
+            try
+            {
+                var emailidreturn = string.Empty;
+                var emails = Emailids.Split(";");
+                foreach (var item in emails)
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Email", item);
+                    parameters.Add("@VedioId", vedioid);
+                    parameters.Add("@@EmailAddress", Userid);
+                    using (SqlConnection con = new SqlConnection(connectionString))
+                    {
+                        var result = await SqlMapper.QueryFirstAsync<string>(con, "usp_AddinterviewvedioSharedetails", parameters,
+                            commandType: CommandType.StoredProcedure);
+                        if (String.IsNullOrEmpty(emailidreturn))
+                        {
+                            emailidreturn =  result;
+                        }
+                        else
+                        {
+                            emailidreturn = emailidreturn + ";" + result;
+                        }
+                    }
+                }
+                return emailidreturn;
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+
+            return "";
         }
     }
 }

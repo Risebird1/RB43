@@ -108,7 +108,7 @@
 
 
 
-                                                <i type="submit" class="fa fa-file-excel-o" style="margin-right:10px;float:right;color:green;font-size: 35px;margin-top:3px; margin-left:3px" data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
+                                                <i type="submit" class="fa fa-file-excel-o excel-file"  data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("InterviewsExporttoExcel", "Interview")'"></i>
 
                                             </div>
                                         </div>
@@ -398,7 +398,7 @@
                                                         <td> @item.candidateEmail</td>
                                                         <td> @item.JDTiltle.Split("|")[0] </td>
                                                         <td> @item.interviewer</td>
-                                                        <td> @item.confirmationStatus</td>
+                                                        <td class="text-center"> @item.confirmationStatus</td>
                                                         <td> @item.MeetingStatusStatusDesc</td>
                                                         <td> @item.intervieweStatusStatDesc</td>
                                                         @if (item.resumeLink != null && item.resumeLink != "")
