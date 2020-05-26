@@ -566,7 +566,7 @@
                 return new Promise(function (resolve, reject) {
                     //var IdIRF = dataID;
                     $.ajax({
-                        url: '/Interview/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&candidateEmail=' + obj.candidateEmail,
+                        url: '/Interviewer/CancelInterview?id=' + obj.id + '&interviewDate=' + obj.interviewDate + '&intervieweeEmail=' + obj.candidateEmail,
                         success: function (result) {
                             resolve(result)
 
@@ -590,7 +590,7 @@
                     confirmButtonText: 'Close!',
                     allowOutsideClick: false
                 }).then(function () {
-                    window.location = "/Interview/CandidateInterviews";
+                    window.location = "/Interviewer/MyScheduledDiscussions";
                 })
             }
             else if (result.dismiss === 'cancel') {

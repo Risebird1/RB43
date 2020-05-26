@@ -20,13 +20,18 @@ CREATE PROCEDURE [dbo].[usp_GetInterviewerDetails]
   
 AS
 BEGIN
-select Ipr.id as [id], Ipr.UserId, ul.FirstName,ul.LastName,ul.EmailId,Ul.MobileNumber, 
-Ipr.NickName,Ipr.AltEmailID,Ipr.DOB , Ipr.Gender, Ipr.AnnualSalary, Ipr.Country, 
-Ipr.City, Ipr.AltMobileNumber, Ipr.CurrentRole, Ipr.Experience, Ipr.PreferredDomain, Ipr.GitHubLink,
-Ipr.ResumeLink, Ipr.CodedResumeLink, Ipr.StackOverflowLink, Ipr.LinkedinLink, Ipr.Blog, Ipr.IsLeadInterviewer,
-Ipr.IsApproved, ul.IsActive
-from [InterviewerProfile] Ipr
-inner join [dbo].[UserList] ul on Ipr.UserId = ul.id
+select c.*, ul.FirstName, ul.LastName, ul.EmailId, ul.MobileNumber from (SELECT  Id as id, NickName, AltEmailID, DOB, Gender, AnnualSalary, Country, City, AltMobileNumber, CurrentRole, 
+Experience, PreferredDomain, GitHubLink, ResumeLink, CodedResumeLink, StackOverflowLink, LinkedinLink, Blog,
+IsLeadInterviewer, IsApproved,
+UserId, PrimarySkill = 
+			STUFF((SELECT ', ' + SkillName
+			FROM (select ipr.*, tis.SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id ) b 
+			WHERE b.Id = a.Id
+			FOR XML PATH('')), 1, 2, '')
+FROM (select ipr.*, tis.SkillName from InterviewerProfile ipr join TransInterviewerSkill tis on tis.InterviewerProfileId = ipr.id) a
+GROUP BY Id, UserId, NickName, AltEmailID, DOB, Gender, AnnualSalary, Country, City, AltMobileNumber, CurrentRole,
+Experience, PreferredDomain, GitHubLink, ResumeLink, CodedResumeLink, StackOverflowLink, LinkedinLink, Blog,
+IsLeadInterviewer, IsApproved) c join UserList ul on ul.id = c.UserId
 
 
 END

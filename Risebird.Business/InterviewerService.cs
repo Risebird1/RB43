@@ -351,12 +351,12 @@ namespace Risebird.Business
         }
 
 
-        public List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status)
+        public List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID)
         {
             try
             {
                 ///*.Where(x=>/*x.interviewDate.Date>DateTime.Now.Date &&*/ x.MeetingStatus==2)*/
-                var assignedMeeting = _interviewerRepository.GetUnapprovedInterviewerScheduledInterviews(emailID, status).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var assignedMeeting = _interviewerRepository.GetUnapprovedInterviewerScheduledInterviews(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
                 return assignedMeeting;
             }
             catch (Exception ex)

@@ -152,5 +152,8 @@ namespace Risebird.Entities.ViewModel
 
         [Display(Name = "Day Slot")]
         public string DaySlot { get; set; }
+
+        [Display(Name = "Skills")]
+        public string PrimarySkill { get; set; }
     }
 }

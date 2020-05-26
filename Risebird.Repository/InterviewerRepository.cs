@@ -977,7 +977,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID, string status)
+        public async Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID)
         {
             try
             {

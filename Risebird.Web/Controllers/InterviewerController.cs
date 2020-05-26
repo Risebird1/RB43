@@ -29,8 +29,10 @@ namespace Risebird.Web.Controllers
         private ISkillService _skillService;
         private IProfileService _profileService;
         private IInterviewerRepository _interviewerRepository;
+        private IMeetingService _meetingService;
+
         public InterviewerController(IInterviewerService interviewerService, IClientService clientService, IApplicationErrorLogger applicationErrorLogger, IAzureStorageHelper azureStorageHelper,
-                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository)
+                                ISkillService skillService, IProfileService profileService, IInterviewerRepository interviewerRepository, IMeetingService meetingService)
 
         {
             _interviewerService = interviewerService;
@@ -40,6 +42,7 @@ namespace Risebird.Web.Controllers
             _skillService = skillService;
             _profileService = profileService;
             _interviewerRepository = interviewerRepository;
+            _meetingService = meetingService;
         }
 
 
@@ -58,7 +61,7 @@ namespace Risebird.Web.Controllers
                         TempData.Remove("MessageInterviewer");
 
                     }
-
+                    
                     return View(_interviewerService.GetInterviewers());
                 }
                 else
@@ -730,7 +733,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyScheduledDiscussions(string status)
+        public async Task<IActionResult> MyScheduledDiscussions()
         {
             try
             {
@@ -742,7 +745,7 @@ namespace Risebird.Web.Controllers
                     {
                         var emailid = HttpContext.Session.GetString("email")?.Trim();
                         emailid = emailid.Replace("\"", "");
-                        var myInterview = _interviewerService.GetUnapprovedInterviewerScheduledInterviews(emailid, status);
+                        var myInterview = _interviewerService.GetUnapprovedInterviewerScheduledInterviews(emailid);
 
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
@@ -796,6 +799,47 @@ namespace Risebird.Web.Controllers
             }
         }
 
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> CancelInterview(int id, DateTime interviewDate, string intervieweeEmail)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        if (_meetingService.CancelInterview(id, interviewDate.ToString("dd MMM yyyy"), intervieweeEmail))
+                        {
+                            return Json(new { url = Url.Action("MyScheduledDiscussions", "Interviewer") });
+                        }
+                        else
+                        {
+                            return Json(new { url = Url.Action("MyScheduledDiscussions", "Interviewer") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("MyScheduledDiscussions");
+            }
+        }
         #endregion
 
 
