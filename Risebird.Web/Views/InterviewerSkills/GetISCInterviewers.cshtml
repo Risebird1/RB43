@@ -124,7 +124,7 @@
 
                                                     <td class="action" style="align-items:center">
                                                         <button class="mdc-fab app-fab--absolute" aria-label="Send Invite">
-                                                            <span onclick="location.href = '@Url.Action("SendInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId, endDate = item.EndDate})'" title="Send Invite" class="mdc-fab__icon material-icons">
+                                                            <span onclick="location.href = '@Url.Action("SendInvite", "InterviewerSkills", new { iscName = ViewBag.ISCName, iscId = ViewBag.ISCId, emailId = item.EmailId, endDate = item.EndDate, interviewerProfileId = item.InterviewerProfileId})'" title="Send Invite" class="mdc-fab__icon material-icons">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" /></svg>
                                                             </span>
                                                         </button>

@@ -47,6 +47,7 @@ namespace Risebird.Repository.Interface
         Task<bool> DeleteISCInterviewer(int id);
         Task<bool> UnArchiveISC(int id);
         InterviewerSkillsChannelModel GetISCbyId(int id);
+        bool UpdateInterviewerInvites(int iscId, int interviewerProfileId);
         //Task<IEnumerable<MeetingVM>> UpdateMeetingStatus(string InterviewerSkillId);
         // IEnumerable<JoinabilityMatrix> GetJoinabilityMatrix();
         //IEnumerable<Users> GetQualityController();

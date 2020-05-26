@@ -408,7 +408,7 @@ namespace Risebird.Business
             }
         }
 
-        public bool SendInvite(int iscId, string email)
+        public bool SendInvite(int iscId, string email, int interviewerProfileId)
         {
             try
             {
@@ -416,7 +416,13 @@ namespace Risebird.Business
                 
                 if (email != null && isc != null)
                 {
-                    _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId,isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    var result = _notificationHelper.SendInviteToInterviewer(isc.InterviewerSkillId,isc.JDTiltle, isc.SkillName, isc.CalendlyLink, email, isc.HREmailId);
+                    if(result.Contains("successfully"))
+                    {
+                        //update total invites count
+                        _interviewerSkillsRepository.UpdateInterviewerInvites(iscId, interviewerProfileId);
+
+                    }
                     return true;
                 }
                 return false;

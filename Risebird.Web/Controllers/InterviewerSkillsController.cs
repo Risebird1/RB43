@@ -733,7 +733,7 @@ namespace Risebird.Web.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult SendInvite(int iscId, string iscName, string emailId, DateTime endDate)
+        public IActionResult SendInvite(int iscId, string iscName, string emailId, DateTime endDate, int interviewerProfileId)
         {
             try
             {
@@ -750,7 +750,7 @@ namespace Risebird.Web.Controllers
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Sorry! Could not send invite! The requested ISC has been terminated.";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });
                         }
-                        if (_iInterviewerSkillsService.SendInvite(iscId, emailId))
+                        if (_iInterviewerSkillsService.SendInvite(iscId, emailId, interviewerProfileId))
                         {
                             TempData["SuccessErrorMessageISCInterviewerList"] = "Invitation sent successfully!";
                             return RedirectToAction("GetISCInterviewers", new { id = iscId, InterviewerSkillidName = iscName });

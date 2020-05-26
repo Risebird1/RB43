@@ -1014,5 +1014,29 @@ namespace Risebird.Repository
             }
         }
 
+        public bool UpdateInterviewerInvites(int iscId, int interviewerProfileId)
+        {
+            try
+            {
+                var query = "update TransInterviewerListInterviewerSkills set TotalInvites = TotalInvites+1 where ISCId=@ISCId and InterviewerProfileId = @InterviewerProfileId";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ISCId", iscId);
+                dynamicParameters.Add("@InterviewerProfileId", interviewerProfileId);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var results = con.Query(query, dynamicParameters);
+                    return true;
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+
+        }
+
     }
 }
