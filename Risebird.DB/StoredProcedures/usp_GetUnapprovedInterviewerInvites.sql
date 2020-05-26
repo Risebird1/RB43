@@ -9,9 +9,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-
-
 CREATE PROCEDURE [dbo].[usp_GetUnapprovedInterviewerInvites]
 
 @emailId varchar(200)
@@ -19,7 +16,10 @@ CREATE PROCEDURE [dbo].[usp_GetUnapprovedInterviewerInvites]
 AS
 Begin
 
-SELECT insk.InterviewerSkillId, insk.JDTiltle, insk.StartDate, insk.EndDate, insk.CalendlyLink from InterviewerSkills insk join UserList ul on ul.id = insk.UserId 
+SELECT isc.InterviewerSkillId, isc.JDTiltle, isc.StartDate, isc.EndDate, isc.CalendlyLink, Skill.[Name] as PrimarySkill from InterviewerSkillsChannel isc
+join TransInterviewerListInterviewerSkills tilis on isc.id = tilis.ISCId
+join UserList ul on ul.id = tilis.UserId 
+join Skill on isc.PrimarySkill = Skill.id
 where ul.EmailId = @emailId
 
 End
