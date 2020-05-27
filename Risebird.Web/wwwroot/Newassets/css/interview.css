@@ -373,7 +373,7 @@ color: #999;
 
 
 #AudioFile {
-    margin: 0px 0px 15px 0px;
+    margin: 0px 0px 10px 0px !important;
 }
 
 
@@ -384,7 +384,7 @@ color: #999;
 
 
 #VideoFile {
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px!important;
 }
 #Clienform textarea {
     min-height: 100px;
@@ -653,7 +653,9 @@ color: #999;
     width: calc(100% - 40px);
 }
 
-
+.interviewr-cmt .form-group .form-control, .interviewr-cmt .input-group .form-control {
+    width: 100%;
+}
 select.minimal {
     background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%), linear-gradient(to right, #ccc, #ccc);
     background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
@@ -841,9 +843,24 @@ select.minimal {
     width: auto !important;
 }
 
+.cmt-w {
+    width: 300px;
+}
+
+.cmt-ht {
+    height: 120px !important;
+    max-height: 120px !important;
+}
+
+
+
 @media screen and (max-width:991px) {
     #ProctoringTable .label-type {
         white-space: normal;
+    }
+    .mdc-radio {
+        padding:15px  0px !important;
+        margin: 0px !important;
     }
 }
     @media screen and (max-width: 767px) {
@@ -851,10 +868,7 @@ select.minimal {
             padding: 12px 5px !important;
         }
 
-        .mdc-radio {
-            padding: 0px !important;
-            margin: 0px !important;
-        }
+    
 
         .form-group .form-control, .input-group .form-control {
             padding: 10px 18px 10px 18px;

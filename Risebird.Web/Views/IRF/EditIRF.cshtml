@@ -170,18 +170,54 @@
                                         @Html.EditorFor(model => model.NoOfPosition, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfPosition, "", new { @class = "text-danger" })
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group  mb-0">
                                         @Html.LabelFor(model => model.NoOfIntterview, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                         @Html.EditorFor(model => model.NoOfIntterview, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.NoOfIntterview, "", new { @class = "text-danger" })
                                     </div>
                                     <div class="form-group">
                                         Upload Company Details
-                                        <input id="companydetails" name="companydetails" value="Upload" type="radio" onclick="RadioCompanyChanged(this.value)">
+                  
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="Upload" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+
                                         Provide Company Details
-                                        <input id="JcompanydetailsD" name="companydetails" value="Link" type="radio" onclick="RadioCompanyChanged(this.value)">
+                                    
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="JcompanydetailsD" name="companydetails" value="Link" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+
+
                                         None
-                                        <input id="companydetails" name="companydetails" value="None" type="radio" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                      
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
+                                            <div class="mdc-radio mdc-radio--touch">
+                                                <input class="mdc-radio__native-control" type="radio" id="companydetails" name="companydetails" value="None" checked="checked" onclick="RadioCompanyChanged(this.value)">
+                                                <div class="mdc-radio__background">
+                                                    <div class="mdc-radio__outer-circle"></div>
+                                                    <div class="mdc-radio__inner-circle"></div>
+                                                </div>
+                                                <div class="mdc-radio__ripple"></div>
+                                            </div>
+                                        </div>
+
+
+
                                     </div>
                                     <div class="form-group" style="display:none" id="linkcdDiv">
                                         @Html.LabelFor(model => model.CompanyDetails, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
@@ -231,11 +267,9 @@
                                     </div>
                                     <div class="form-group mb-0">
 
-
                                         Upload JD
 
-                                        <div class="mdc-touch-target-wrapper" style="top: 4px;
-    position: relative;">
+                                        <div class="mdc-touch-target-wrapper" style="top: 4px;  position: relative;">
                                             <div class="mdc-radio mdc-radio--touch">
                                                 <input class="mdc-radio__native-control" type="radio" id="JD" name="JD" value="Upload" onclick="RadioChanged(this.value)">
                                                 <div class="mdc-radio__background">
@@ -261,9 +295,6 @@
                                             </div>
                                         </div>
 
-
-
-
                                         None
 
                                         <div class="mdc-touch-target-wrapper" style="top: 4px; position: relative;">
@@ -277,18 +308,8 @@
                                             </div>
                                         </div>
 
-
-
-
-                                        <!--
-                                            Upload JD
-                                            <input id="JD" name="JD" value="Upload" type="radio" onclick="RadioChanged(this.value)">
-                                            Provide JD link
-                                            <input id="JD" name="JD" value="Link" type="radio" onclick="RadioChanged(this.value)">
-                                            None
-                                            <input id="JD" name="JD" value="None" type="radio" checked="checked" onclick="RadioChanged(this.value)">-->
                                     </div>
-                                    <div class="form-group" style="display:none" id="linkDiv">
+                                    <div class="form-group mb-0" style="display:none" id="linkDiv">
                                         @Html.LabelFor(model => model.JDLink, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12  desp-label" })
                                         @Html.EditorFor(model => model.JDLink, new { htmlAttributes = new { @class = "form-control text-box single-line" } })
                                         @Html.ValidationMessageFor(model => model.JDLink, "", new { @class = "text-danger" })
@@ -327,7 +348,7 @@
                                                     <th width="15%" class="table_heading">Level</th>
                                                     <th width="65%" class="table_heading">Skill Name</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -407,7 +428,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
 
@@ -490,7 +511,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
 
@@ -565,7 +586,7 @@
                                                     <th width="25%" class="table_heading">Type</th>
                                                     <th width="40%" class="table_heading">Value</th>
                                                     <th width="10%" class="table_heading">Weightage</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -639,7 +660,7 @@
                                                 <tr>
                                                     <th class="table_heading">User</th>
                                                     <th class="table_heading">Role</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -699,7 +720,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -761,7 +782,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -855,7 +876,7 @@
                                                 <tr>
                                                     <th width="20%" class="table_heading">User</th>
                                                     <th width="70%" class="table_heading">Skills</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -952,7 +973,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th width="10%"  class="table_heading">Action</th>
+                                                    <th width="10%"  class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1048,7 +1069,7 @@
                                             <thead>
                                                 <tr>
                                                     <th class="table_heading">User</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1136,7 +1157,7 @@
                                                 <tr>
                                                     <th class="table_heading">User</th>
                                                     <th class="table_heading">Domain</th>
-                                                    <th width="10%" class="table_heading">Action</th>
+                                                    <th width="10%" class="table_heading text-center">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
