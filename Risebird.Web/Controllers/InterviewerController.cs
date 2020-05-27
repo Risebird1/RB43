@@ -842,6 +842,200 @@ namespace Risebird.Web.Controllers
         }
         #endregion
 
+        #region lead interviewer
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> OpenInterviewerAssessment()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var meetings = _interviewerService.GetOpenInterviewerAssessment(emailid);
+                        meetings = meetings.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); return x; }).ToList();
+
+                        
+                        if (TempData["SuccessErrorMessageLeadInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageLeadInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageLeadInterviewer");
+                        }
+                        return View(meetings);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> MyInterviewerAssessment()
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    if (profileName == "Interviewer")
+                    {
+                        var emailid = HttpContext.Session.GetString("email")?.Trim();
+                        emailid = emailid.Replace("\"", "");
+                        var myInterview = _interviewerService.GetAssignedInterviewerAssessment(emailid);
+                        myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription();  return x; }).ToList();
+                        foreach (var item in myInterview)
+                        {
+                            if (!string.IsNullOrEmpty(item.resumeLink))
+                            {
+                                try
+                                {
+                                    item.resumeLink = new Uri(item.resumeLink, UriKind.Absolute).ToString();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    item.resumeLink = "";
+                                }
+                            }
+                            else
+                            {
+                                item.resumeLink = "";
+                            }
+
+                            if (item.InterviewStatus.HasValue)
+                            {
+                                item.InterviewStatusDesc = ((InterviewStatus)(item.InterviewStatus)).GetDescription();
+                            }
+                            if (item.MeetingStatus.HasValue)
+                            {
+                                item.MeetingStatusDesc = ((MeetingStatus)(item.MeetingStatus)).GetDescription();
+
+                            }
+                        }
+                        
+                        if (TempData["SuccessErrorMessageLeadInterviewer"] != null)
+                        {
+                            ViewBag.Message = TempData["SuccessErrorMessageLeadInterviewer"].ToString();
+                            TempData.Remove("SuccessErrorMessageLeadInterviewer");
+                        }
+                        return View(myInterview);
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        [Authorize]
+        //[HttpPost]
+        public async Task<IActionResult> AssignYourself(int id, DateTime InterviewDate)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var emailid = HttpContext.Session.GetString("email")?.Trim();
+                    emailid = emailid.Replace("\"", "");
+                    if ( profileName == "Interviewer")
+                    {
+                        var result = _interviewerService.AssignYourself(id, emailid.ToLower(), InterviewDate);
+                        TempData["SuccessErrorMessageLeadInterviewer"] = result;
+                        ViewBag.Message = result;
+                        return RedirectToAction("OpenInterviewerAssessment");
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("OpenInterviewerAssessment");
+            }
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> UnassignYourself(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
+                {
+                    var profileName = HttpContext.Session.GetString("profileName")?.Trim();
+                    profileName = profileName.Replace("\"", "");
+                    var email = HttpContext.Session.GetString("email");
+                    email = email.Replace("\"", "");
+                    if (profileName == "Interviewer")
+
+                    {
+                        if (_interviewerService.UnassignYourself(id, email.ToLower()))
+                        {
+                            //TempData["SuccessErrorMessageLeadInterviewer"] = "Unassigned Successfully";
+                            return Json(new { url = Url.Action("MyInterviewerAssessment", "Interviewer") });
+                        }
+                        else
+                        {
+                            //TempData["SuccessErrorMessageLeadInterviewer"] = "Unassignment has Failed";
+                            return Json(new { url = Url.Action("MyInterviewerAssessment", "Interviewer") });
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("SignOut", "Session");
+                    }
+
+                }
+                else
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                TempData["SuccessErrorMessageLeadInterviewer"] = "Unassignment is Failed";
+                return RedirectToAction("MyInterviewerAssessment");
+            }
+        }
+        #endregion
 
     }
 

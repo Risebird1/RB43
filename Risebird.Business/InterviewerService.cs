@@ -15,11 +15,17 @@ namespace Risebird.Business
     {
         private IInterviewerRepository _interviewerRepository;
         private IApplicationErrorLogger _applicationErrorLogger;
+        private IUserService _userService;
+        private IMeetingRespository _meetingRespository;
+        private readonly INotificationHelper _notificationHelper;
 
-        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger)
+        public InterviewerService(IInterviewerRepository interviewerRepository, IApplicationErrorLogger applicationErrorLogger, IUserService userService, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
         {
             _interviewerRepository = interviewerRepository;
             _applicationErrorLogger = applicationErrorLogger;
+            _userService = userService;
+            _meetingRespository = meetingRespository;
+            _notificationHelper = notificationHelper;
         }
 
         #region Interviewer Profile Service Functions
@@ -368,6 +374,88 @@ namespace Risebird.Business
 
         #endregion
 
+        #region  lead interviewers
+        public List<Meeting> GetOpenInterviewerAssessment(string emailId)
+        {
+            try
+            {
+                var openMeeting = _interviewerRepository.GetOpenInterviewerAssessment(emailId).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return openMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public List<Meeting> GetAssignedInterviewerAssessment(string emailID)
+        {
+            try
+            {
+                var assignedMeeting = _interviewerRepository.GetAssignedInterviewerAssessment(emailID).Result.OrderByDescending(x => x.interviewDate).ToList();
+                return assignedMeeting;
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate)
+        {
+            try
+            {
+                var assignedMeeting = _interviewerRepository.GetAssignedInterviewerAssessment(interviewerMail).Result.OrderByDescending(x => x.interviewDate).ToList();
+                var checkDateMeeting = assignedMeeting.Where(x => x.interviewDate == interviewDate);
+                if (checkDateMeeting.Count() > 0)
+                {
+                    return "Failed! You already have an interview scheduled for this Date. Please contact Risebird HR.";
+                }
+                return _interviewerRepository.AssignYourself(meetingid, interviewerMail);
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            
+        }
+
+        public bool UnassignYourself(int meetingid, string email)
+        {
+            try
+            {
+                var meeting = _interviewerRepository.GetMeetingById(meetingid);
+
+                if(_interviewerRepository.UnassignYourself(meetingid).Result)
+                {
+                    var hrs = _userService.GetAllHrsEmailld()?.ToList();
+                    _notificationHelper.SendAlertHRForUnassignedInterview(hrs, meeting.interviewDate.ToString(), meeting.candidateEmail, email);
+                    return true;
+                }
+                else
+                {
+                    return false;
+
+                }
+                //interviwers = _irfService.GetListOfInterviwerBasedOnIRFId(meeting.Result.IRFId);
+                //interviwers.Remove(email);
+                //_notificationHelper.SendIRFBasedInterviewerMail(interviwers, meeting.Result.interviewDate.ToString());
+
+
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+
+        #endregion
 
     }
 }

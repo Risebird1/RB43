@@ -956,7 +956,7 @@ namespace Risebird.Repository
         #endregion
 
         #region unapproved interviewer
-        //GetCandidateIRFInvites
+        //GetInterviewerInvites
         public IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId)
         {
             try
@@ -1004,5 +1004,128 @@ namespace Risebird.Repository
 
         #endregion
 
+        #region lead interviewer
+        public async Task<IEnumerable<Meeting>> GetOpenInterviewerAssessment(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_OpenInterviewerAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<IEnumerable<Meeting>> GetAssignedInterviewerAssessment(string emailID)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("emailID", emailID);
+                    return await SqlMapper.QueryAsync<Meeting>(con, "usp_MyInterviewerAssessment", parameters,
+                         commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+
+        }
+
+        public string AssignYourself(int meetingid, string interviewerMail)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "update [dbo].[InterviewMeetings] set interviewer=@value where id = @meetingid", new { value = interviewerMail, meetingid = meetingid }, commandType: Text);
+                    return "Interview assigned successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+            catch (Exception ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return "Failed to assigned interview, Please contact Risebird HR.";
+            }
+        }
+
+        public async Task<bool> UnassignYourself(int meetingid)
+        {
+            try
+            {
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@id", meetingid);
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    SqlMapper.Query<string>(
+                        con, "usp_UnAssignInterviewer", parameters, commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (SqlException ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+
+        public MeetingVM GetMeetingById(int meetingid)
+        {
+            try
+            {
+                var query = "select interviewDate, candidateEmail from InterviewMeetings where id = @meetingid";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@meetingid", meetingid);
+                dynamicParameters.Add("@value", 2);
+
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = con.Query<MeetingVM>(query, dynamicParameters);
+                    return result.FirstOrDefault();
+                }
+
+            }
+            catch (SqlException ex)
+            {
+                _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+
+        }
+
+        #endregion
     }
 }

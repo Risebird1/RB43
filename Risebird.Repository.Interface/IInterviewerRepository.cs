@@ -34,5 +34,10 @@ namespace Risebird.Repository.Interface
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         Task<IEnumerable<Meeting>> GetUnapprovedInterviewerScheduledInterviews(string emailID);
         Task<IEnumerable<InterviewerProfileVM>> GetInterviewerProfileByEmailId(string emailId, string profileName);
+        Task<IEnumerable<Meeting>> GetOpenInterviewerAssessment(string emailID);
+        Task<IEnumerable<Meeting>> GetAssignedInterviewerAssessment(string emailID);
+        string AssignYourself(int meetingid, string interviewerMail);
+        Task<bool> UnassignYourself(int meetingid);
+        MeetingVM GetMeetingById(int meetingid);
     }
 }

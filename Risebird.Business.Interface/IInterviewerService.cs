@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Risebird.Entities.Data;
 using Risebird.Entities.ViewModel;
@@ -29,5 +30,9 @@ namespace Risebird.Business.Interface
         IEnumerable<InterviewerInvites> GetInterviewerInvites(string emailId);
         List<Meeting> GetUnapprovedInterviewerScheduledInterviews(string emailID);
         InterviewerProfileVM GetInterviewerProfileByEmailId(string emailId, string profile);
+        List<Meeting> GetOpenInterviewerAssessment(string emailId);
+        List<Meeting> GetAssignedInterviewerAssessment(string emailID);
+        string AssignYourself(int meetingid, string interviewerMail, DateTime interviewDate);
+        bool UnassignYourself(int meetingid, string email);
     }
 }
