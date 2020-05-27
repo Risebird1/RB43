@@ -349,13 +349,16 @@ table {
     margin: 5px 0px;
     background-color: #fff;
 }
-
+.cmt-w {
+    width: 300px
+}
 
     .talk-bubble textarea {
         resize: none;
         border: 0;
         background: #fff;
         padding: 5px;
+        width: 100%;
     }
 
 .mdc-card {
@@ -444,19 +447,42 @@ table {
     border-radius: 3px;
     margin-top:0px;
 }
-
-
-@media screen and (max-width: 767px) {
-
-    .table > tbody > tr > td {
-        padding: 12px 5px !important;
-    }
-
-    #interviewer_length, #interviewer_filter {
-        margin: 7px 0px 0px 0px!important;
-    }
-    .upload {
-        margin:10px 0px;
-    }
-
+.uploadfile-txt{
+    padding:20px;
 }
+
+
+@media screen and (max-width: 980px) {
+    .uploadfile-txt {
+        padding: 0px;
+    }
+    .mdc-radio {
+        padding:15px  0px !important;
+        margin: 0px !important;
+    }
+}
+    @media screen and (max-width: 767px) {
+        .table > tbody > tr > td {
+            padding: 12px 5px !important;
+        }
+       
+
+        #interviewer_length, #interviewer_filter {
+            margin: 7px 0px 0px 0px !important;
+        }
+
+        .upload {
+            margin: 10px 0px;
+        }
+    }
+
+    @media screen and (max-width:640px) {
+
+        .cmt-w, .talk-bubble {
+            width: 100%;
+        }
+
+        .upload a {
+            width: 100%;
+        }
+    }
