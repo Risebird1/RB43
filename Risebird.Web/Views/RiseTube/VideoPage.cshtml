@@ -202,6 +202,11 @@
 
     }
 </script>
+<style>
+    .wrapper{
+        height:auto !important
+    }
+</style>
 <script src="~/RiseTube/vendor/jquery/jquery.min.js"></script>
 <!-- Custom styles for this template-->
 <link href="~/RiseTube/css/osahan.css" rel="stylesheet">
@@ -654,7 +659,7 @@
                                                                 </div>
                                                             }
                                                             else
-                                                            { <i class="fa fa-thumbs-up fa-5px" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px">
+                                                            { <i class="fa fa-thumbs-up fa-5px btn2" aria-hidden="true" id="toggle-click" style="margin-left: 25px;color: black;font-size: 24px; padding-right: 30px">
                                                                     &nbsp;
                                                                     <label id="pTotalvediolike">@Model.TotalVedioLike</label>
                                                                 </i> <i class="fa fa-thumbs-down fa-5px btn3" aria-hidden="true" id="toggle-click1" style="color: black;  font-size: 24px;padding-right:10px">
@@ -669,7 +674,7 @@
                                                             @if (ViewBag.ProfileName == "CuratedUser")
                                                             {
                                                                 <div class="col-md-3">
-                                                                    <input type="button" class="form-control btninterest showinter" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
+                                                                    <input type="button" class="form-control btninterest sharebtn1" id="btnShare" value="Share" Shortvalue="1" style="border:none;background-color:white; font-weight: bold;font-size: 13px !important;  padding: 0px 0px; height: 30px;" />
                                                                 </div>
                                                                 <div class="col-md-3 shortlist" style="text-align: end;">
                                                                     @if (Model.IsShortlisted > 0)
@@ -740,7 +745,7 @@
                                                                     <div class="row">
                                                                         <div class="left-chart">
 
-                                                                            <div class="chart-box">
+                                                                            <div class="chart-box graprh">
                                                                                 <p class="card-text">Overall Score: <span style="color: black" id="totScore"></span></p>
                                                                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                                                                     <div id="scoreChart" style="height: 200px; width: 100%;"></div>
@@ -754,7 +759,7 @@
                                                                                 @Html.LabelFor(model => model.IreportModel.InterviewerComment, htmlAttributes: new { @class = "control-label bolder col-md-12 col-sm-12 card-text-label" })
 
 
-                                                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                                                <div class="talk-bubble tri-right border-bubble right-in inComment" style="width:100%;">
                                                                                     <div class="talktext">
 
 
@@ -975,10 +980,10 @@
                                                                 <h3 class="tab_drawer_heading" rel="link4">  Questions Discussed</h3>
                                                                 <div id="link4" class="tab_content">
                                                                     <div>
-                                                                        <div class="table-responsive-sm">
+                                                                        <div class="table-responsive-sm ">
                                                                             @if (Model.IreportModel.QuestionsList != null)
                                                                             {
-                                                                                <table class="table table-bordered mbn" id="QuestionsTable">
+                                                                                <table class="table table-bordered mbn disQus" id="QuestionsTable">
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th width="40%">Questions</th>
@@ -2930,11 +2935,30 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
+                {
                     'next .item1': 'Interview Report Details',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
+                {
+                    'next .graprh': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .inComment': 'Check interviewer comments here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+            
                 {
                     'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -2949,6 +2973,12 @@
                 },
                 {
                     'next .item4': 'Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
@@ -3106,26 +3136,50 @@
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
+                    'next .btn1': 'Filter here based on available attributes or reset filter if applied earlier',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
                     'next .btnvideo': 'Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .shortlist': 'Click here to Shortlist the Candidate',
+                    'next .btn2': 'Click here to like the Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
                 {
-                    'next .showinter': 'Click here to Send interest to the Candidate',
+                    'next .btn3': 'Click here to unlike Candidate Video',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
                 },
+                {
+                    'next .sharebtn1': 'Click here to unlike Candidate Video',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+
                 {
                     'next .item1': 'Interview Report Details',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
                 },
+                {
+                    'next .graprh': 'Check candidate overall score here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .inComment': 'Check interviewer comments here',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+
                 {
                     'next .item2': 'Candidate Details',
                     'nextButton': { className: "myNext", text: "Next" },
@@ -3139,7 +3193,13 @@
 
                 },
                 {
-                    'next .item4': 'Questions discussed during interview',
+                    'next .item4': 'Questions Discussed during interview',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+
+                },
+                {
+                    'next .disQus': 'Watch the specific part of the video by clicking on the question that interests you',
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
