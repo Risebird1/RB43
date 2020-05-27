@@ -10915,6 +10915,22 @@ select.selectpicker {
     border-color: #4a93de;
 }
 
+svg {
+    touch-action: none;
+}
+
+
+.nav svg {
+    touch-action: none;
+    touch-action: none;
+    float: left;
+    margin: 0px 10px 0px 5px;
+    margin-top: 3px;
+    fill: #97d1f9;
+}
+}
+
+
 .video-choose {
     position: relative;
     top: -28px;
@@ -10992,7 +11008,9 @@ select.selectpicker {
     font-weight: bold;
     box-shadow: 0 3px #5794d4;
 }
-
+.mdc-radio {
+    padding: 10px 0 0 0px!important;
+}
 
 .action .btn-warning, .action .btn-warning:not([data-action]):not([class*="btn-outline-"]):hover {
     background: #fff;
@@ -11192,6 +11210,10 @@ div.dataTables_scrollFoot table {
 
 
 @media screen and (max-width: 768px) {
+    .mdc-radio {
+        padding: 10px 0px !important;
+        margin: 0px !important;
+    }
 
     .single-video-left .comment-area textarea {
         width: 87%;
@@ -11229,16 +11251,19 @@ div.dataTables_scrollFoot table {
 
 
 @media screen and (max-width: 767px) {
+    .mdc-radio {
+        padding:10px 0px !important;
+        margin: 0px !important;
+    }
+
+
     .card-blue .card-footer .stats-bttm-btn {
         padding: 0px 0px 0px 0px !important;
         text-align: center !important;
     }
 
 
-    .mdc-radio {
-        padding: 0px !important;
-        margin: 0px !important;
-    }
+   
   
 
 
@@ -11324,6 +11349,7 @@ div.dataTables_scrollFoot table {
 
     .mc-button-area {
         text-align: center !important;
+        padding:0px;
     }
 
     #AudioFile {

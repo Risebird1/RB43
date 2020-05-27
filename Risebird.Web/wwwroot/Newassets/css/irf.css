@@ -758,6 +758,7 @@ background-color: rgba(0,0,0,0.4);
     color: #2f5d8e;
     font-weight: normal;
 }
+.upload{margin-top:10px;}
 #resumeId, #zoomlinkId {
     background: #e2f0ff;
     color: #1d3b5e;

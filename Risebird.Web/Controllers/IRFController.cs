@@ -63,6 +63,13 @@ namespace Risebird.Web.Controllers
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
                         }
+
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
+                        }
+
                         else
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
@@ -115,6 +122,13 @@ namespace Risebird.Web.Controllers
                                 item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                                 item.IRFStatus = "Paused";
                             }
+
+                            else if (item.IsDeleted)
+                            {
+                                item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                                item.IRFStatus = "Archived";
+                            }
+
                             else if (item.EndDate >= DateTime.Now)
                             {
                                 item.ImageUrl = "/img/Cards_Png/01_Green-White.png";
@@ -204,6 +218,12 @@ namespace Risebird.Web.Controllers
                         {
                             item.ImageUrl = "/img/Cards_Png/01_Grey-White.png";
                             item.IRFStatus = "Paused";
+                        }
+
+                        else if (item.IsDeleted)
+                        {
+                            item.ImageUrl = "/img/Cards_Png/01_Black-White.png";
+                            item.IRFStatus = "Archived";
                         }
                         else if (item.EndDate >= DateTime.Now)
                         {
