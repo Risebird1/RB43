@@ -6,45 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-<style>
-    .canvasjs-chart-credit {
-        display: none;
-    }
-
-    .table-responsive {
-        overflow: hidden;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 45px;
-    }
-
-    #btnPlus, #btnMinus {
-        padding: 2px;
-    }
-
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
-    }
-
-    #btnPlus {
-        background-color: #4a89dc;
-    }
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-</style>
+    <link href="~/Newassets/css/admin.css" rel="stylesheet" />
 
 <div class="main-panel" id="main-panel">
 
@@ -73,8 +35,8 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <form action="/Settings/Edit" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -157,9 +119,9 @@
 
                             <div class="card-footer ">
                                 <div class="row">
-                                    <label class="col-md-2"></label>
-                                    <div class="col-md-9">
-                                        <button type="submit" class="btn btn-fill btn-primary" id="btnSave" disabled="disabled" value="Save">Save</button>
+                          
+                                    <div class="col-md-12 mc-button-area">
+                                        <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnSave" disabled="disabled" value="Save">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -176,35 +138,7 @@
         <!-- end row -->
 
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>

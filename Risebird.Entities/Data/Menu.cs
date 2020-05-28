@@ -11,6 +11,6 @@
         public int idParentFunction { get; set; }
         public string profileName { get; set; }
         public bool dAccess { get; set; }
-
+        public string NavigationShow { get; set; }
     }
 }

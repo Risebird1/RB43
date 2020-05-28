@@ -37,7 +37,7 @@ namespace Risebird.Business.Interface
         List<Meeting> GetQCOpenInterviews(string emailId);
         string QCAssignYourself(int meetingid, string interviewerMail);
         bool QCUnassignYourself(int meetingid, string email);
-        List<Meeting> GetCandidateInterviews(string emailID);
+        List<Meeting> GetCandidateInterviews(string emailID,string status);
         bool CancelInterview(int meetingid, string interviewDate, string candidateEmail);
         List<string> GetClientHRContactList(string emailId, List<MeetingVM> meetingList);
         List<string> GetEndClientList(string emailId, List<MeetingVM> meetingList);
@@ -45,7 +45,23 @@ namespace Risebird.Business.Interface
         VerifyCandidateAudio GetCandidateAudios(int candidateId, int irfId);
         string VerifyCandidateVoice(string userId, string fileUrl, string phrase, int meetingId, string type);
 
-        MeetingVM GetMeetingbyid(int id);
-        List<MeetingVM> GetRiseTubeMeetings();
+        MeetingVM GetMeetingbyid(int id, string Email);
+        List<MeetingVM> GetRiseTubeMeetings(int clientId, string profile, string Emailid);
+        MeetingVM VedioLike(string value, string vedioid,string email);
+        string AddTotalViewCount(int id);
+        //Task<string> VedioLikeAsync(string value, string vedioid, string email);
+        string VedioShare(string value, string vedioid);
+        string VedioShared(string value, string vedioid,string Userid);
+        string VedioComment(string value, string vedioid, string email);
+        List<VedioComments> GetvedioComments(int id);
+        EmailDetails GetvedioShortList(string vedioid, string email);
+        string CandidateSuitable(int id,string email,string Comment);
+        VedioComments Intrestreaction(string vedioid, string Status);
+        string ShortListreaction(string vedioid, string Status);
+        List<Meeting> ShortListedClient(string emailid, string IRFID);
+        List<Meeting> InterestListClient(string emailid, string IRFID);
+        string Fetchusername(string emailid);
+
+
     }
 }

@@ -4,7 +4,7 @@
 @using Risebird.Entities.ViewModel
 @inject IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Selected Candidate Priority View";
+    ViewData["Title"] = "Selected Candidates Priority View";
     Layout = "~/Views/Shared/_Layout.cshtml";
     dynamic filter = null;
     string strtDte = String.Empty;
@@ -35,74 +35,14 @@
     JoiningStatus = filter.JoiningStatus != null ? filter.JoiningStatus : new string[] { };
     OfferStatus = filter.OfferStatus != null ? filter.OfferStatus : new string[] { };
 }
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 200px !important;
-    }
 
 
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 200px !important;
-        min-width: 200px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-</style>
-
-
-
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/SelectedPriorityClientMeetings.css" rel="stylesheet" />
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
@@ -116,8 +56,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor">Selected Candidate Priority View</a>
-                @*<a class="navbar-brand">Client Interview Meetings</a>*@
+               
             </div>
 
         </div>
@@ -125,36 +64,52 @@
     <!-- End Navbar -->
     <div class="panel-header panel-header-sm">
     </div>
-    <div class="content">
+    <div class="content selected-priority client">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            Selected Candidate Priority View
-                        </h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
 
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
-
-
                             <div class="toolbar">
 
                                 <div class="row">
 
-                                    <div class="col-md-6 ml-md-auto">
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary "><span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> Meeting Details</span></button>
 
-                                        <button type="button" style="margin-top:3px" class="btn btn-primary " data-toggle="modal" data-target="#filterModal"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"> Filter</span></button>
+                                    <div class="card-header">
+                                        <div class="pull-left first"> <h4 class="card-title">  Selected Candidates Priority View</h4></div>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> Export Selected Candidate</span></button>
+                                        <div class="pull-right">
+                                            <div>
 
-                                        <button type="button" class="btn btn-primary " style="margin-top: 2px;"><span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> Support</span></button>
 
+                                                <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="margin-top: 2px;" data-toggle="modal" data-target="#filterModal">
+
+                                                    <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="modal" data-target="#filterModal"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                                    <div class="mdc-button__ripple"></div>
+                                                </button>
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded four" style="margin-top: 2px;">
+                                                    <span class="fa fa-meetup" data-toggle="tooltip" title="Click here to get all the priority meetings' details." onclick="location.href='@Url.Action("ClientSelectedMeetings", "Interview" , new { irfId=ViewBag.IRFId, irfName=ViewBag.IRFName})'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Meeting Details</font></span>
+                                                </button>
+
+
+
+                                                <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded exportfive" style="margin-top: 2px;">
+                                                    <span class="fa fa-file-excel-o" data-toggle="tooltip" data-placement="top" title="Export Selected Candidate" onclick="location.href='@Url.Action("SelectedPriorityExporttoExcel", "Interview" )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
+                                                </button>
+
+                                                <!-- <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 2px;">
+                                                      <span class="fa fa-life-ring" data-toggle="tooltip" data-placement="top" title="Support" onclick="location.href='@Url.Action("Index", "Support", new { controllerName = "Interview", actMethod ="SelectedPriorityClientMeetings" } )'" data-original-title="Tooltip on top"> <font style="font-family: Roboto, sans-serif; font-size:12px;">Export Selected Candidate</font></span>
+                                                  </button>-->
+
+
+                                            </div>
+                                        </div>
                                     </div>
 
 
@@ -166,7 +121,7 @@
                                 <div class="modal-dialog modal-lg" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header" style="border-bottom: 1px solid #e9ecef;">
-                                            <h5 class="modal-title" id="filterModalLabel">Advanced Filters</h5>
+                                            <h5 class="modal-title" id="filterModalLabel"> Filter</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -175,31 +130,31 @@
 
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="StartDate">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="StartDate">
                                                                 Start Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <input id="StartDate" name="StartDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 col-sm-6">
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for=" End Date">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for=" End Date">
                                                                 End Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <input id="EndDate" name="EndDate" type="date" class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6 col-sm-6">
+                                                    <div class="col-md-6 col-sm-6 border-rv">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="PrimarySkill">Primary Skill</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="PrimarySkill">Primary Skill</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="PrimarySkill" name="PrimarySkill" class="form-control multiselect" multiple="multiple">
 
                                                                     @foreach (var item in Model.Select(x => x.JDTiltle).Distinct().ToList())
@@ -215,10 +170,10 @@
 
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="MeetingStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="MeetingStatus">
                                                                 Interview Date
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="InterviewDate" name="InterviewDate" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.interviewDate).Distinct().ToList())
                                                                     {
@@ -231,10 +186,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="Interviewer">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="Interviewer">
                                                                 Candidate Name
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="CandidateName" name="CandidateName" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.candidateName).Distinct().ToList())
                                                                     {
@@ -247,11 +202,11 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ClientHR">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ClientHR">
                                                                 Client
                                                                 HR
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientHR" name="ClientHR" class="form-control multiselect" multiple="multiple">
                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                                                                     {
@@ -278,8 +233,8 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="RFID">End Client Name</label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="RFID">End Client Name</label>
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ClientName" name="ClientName" class="form-control multiselect" multiple="multiple">
                                                                     @if (HttpContextAccessor.HttpContext.Session.GetString("SelectedPriorityClientMeetingsfilters") != null)
                                                                     {
@@ -310,10 +265,10 @@
                                                     <div class="col-md-6 col-sm-6">
 
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="ApprovalStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="ApprovalStatus">
                                                                 Approval Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="ApprovalStatus" name="ApprovalStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.NextLevelApprovalStat).Distinct().ToList())
                                                                     {
@@ -326,10 +281,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="SelectionStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="SelectionStatus">
                                                                 Selection Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="SelectionStatus" name="SelectionStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.FinalSelectionStat).Distinct().ToList())
                                                                     {
@@ -342,10 +297,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="JoiningStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="JoiningStatus">
                                                                 Joining Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="JoiningStatus" name="JoiningStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.JoiningStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -358,10 +313,10 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label class="control-label col-md-6 col-sm-4 desp-label" for="OfferStatus">
+                                                            <label class="control-label col-md-12 col-sm-12 desp-label" for="OfferStatus">
                                                                 Offer Status
                                                             </label>
-                                                            <div class="col-md-6 col-sm-6">
+                                                            <div class="col-md-12 col-sm-12">
                                                                 <select id="OfferStatus" name="OfferStatus" class="form-control multiselect" multiple="multiple">
                                                                     @foreach (var item in Model.Select(x => x.OfferStatusStatDesc).Distinct().ToList())
                                                                     {
@@ -374,14 +329,29 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group col-md-12">
+
+
+
+
+
                                                             <div class="row">
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <button type="submit" style="margin-top: 40px; float:right" class="btn btn-primary">Apply Filter</button>
+                                                                <div class="col-md-12 col-sm-12">
+
+
+                                                                    <button type="button" id="ResetFilter" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right;margin-left:5px;">
+                                                                        <font style="font-size:12px;"> Reset Filter</font>
+                                                                    </button>
+
+
+                                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="margin-top: 30px;float:right">
+                                                                        <font style="font-size:12px;"> Apply Filter</font>
+                                                                    </button>
+
                                                                 </div>
-                                                                <div class="col-md-6 col-sm-6">
-                                                                    <button type="button" style="float:right;margin-top: 39px;" class="btn btn-primary" id="ResetFilter">Reset Filter</button>
-                                                                </div>
+
                                                             </div>
+
+
                                                         </div>
 
 
@@ -394,8 +364,11 @@
                                 </div>
 
                             </div>
+
+
+
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
-                                <div id="tableID">
+                                <div id="tableID" class="second">
                                     <table id="meeting" class="table table-striped table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
@@ -407,9 +380,9 @@
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
+
+
+
                                                 <th>Report Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -430,9 +403,9 @@
                                                 <th>Video</th>
                                                 <th>Interviewer Comment</th>
                                                 <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
-                                                <th class="no-sort"></th>
+
+
+
                                                 <th>Report Link</th>
                                                 <th>Approval Status</th>
                                                 <th>Final Selection Status</th>
@@ -464,29 +437,52 @@
                                                         <td>No Video</td>
                                                     }
                                                     <td>
-                                                        <textarea style="height: 100px; width:150%;">@item.InterviewerComment</textarea>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea style="height:40px;">@item.InterviewerComment</textarea>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td>  </td>
-                                                    <td>  </td>
-                                                    <td>  </td>
-                                                    <td>  </td>
+
+
                                                     <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "Interview", new {  interviewId = item.imid, irfId= item.irfIntId, isClient = true})'>Report</a> </td>
                                                     <td>@item.NextLevelApprovalStat</td>
                                                     <td>@item.FinalSelectionStat</td>
                                                     <td>@item.OfferStatusStatDesc</td>
                                                     <td>@item.JoiningStatusStatDesc</td>
-                                                    <td class="text-right">
-                                                        <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
+                                                    <td class="text-center action">
+
+
+                                                        <button class="mdc-fab app-fab--absolute" aria-label="Client Feedback">
+                                                            <span onclick="ModalButtonClick(@jsonObject)" id="@(" myBtn_"+item.imid)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" /></svg></span>
+                                                        </button>
+
                                                         @if (item.IsBiometricEnabled)
                                                         {
-                                                            <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fas fa-microphone"></i></span>
+
+                                                            <button class="mdc-fab app-fab--absolute" aria-label="Verify">
+                                                                <span onclick="location.href = '@Url.Action("VerifyJoiningAudio", "Interview", new { candidateId = item.CandidateId,CandidateName=item.candidateName, irfId= item.irfIntId, meetingId = item.imid})'" title="Upload audio for verification" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg></span>
+                                                            </button>
+
+
+
+
 
                                                         }
                                                     </td>
                                                     <td>
                                                         @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                         {
-                                                            <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>
+                                                            <!---  <button type="button" class="btn btn-success"><span class="fa fa-phone" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"> Call Candidate</span></button>-->
+
+
+                                                            <span class="call" data-toggle="tooltip" data-placement="top" title="Click here to call the candidate." onclick="CallButtonClick('@item.candidateName','@item.MobileNumber')" data-original-title="Tooltip on top"><span class="btn-call"><span class="fa fa-phone"></span></span><span class="call-txt"> Call Candidate</span></span>
+
+
+
+
+
                                                         }
 
                                                     </td>
@@ -498,6 +494,181 @@
 
                             </div>
 
+
+                            <div id="myModal" class="modal" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="        border-bottom: 1px solid #e9ecef;
+">
+                                            <h5 class="modal-title"> Client Feedback</h5>
+                                            <span class="close" id="feedbackPopUp" style="cursor:pointer;">&times;</span>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+
+
+
+                                                        <label class="control-labeled" for="approveDropdown">
+                                                            Approved For Next Round
+                                                        </label>
+
+
+                                                        <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div id="approvalComments">
+                                                        <div class="form-group">
+
+                                                            <label class="control-labeled">Approval Comments</label>
+
+                                                            <div class="form-control text-areadiv"><textarea name="appComments" class="text-box single-line" id="appComments"></textarea></div>
+
+
+                                                            @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+                                                        <label class="control-labeled" for="selectionDropdown">Final Selection</label>
+                                                        <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div id="selectionComments">
+                                                        <div class="form-group">
+                                                            <label class="control-labeled">Final Comments</label>
+
+                                                            <div class="form-control text-areadiv">
+                                                                <textarea name="selecComments" class="text-box single-line" id="selecComments"></textarea>
+                                                            </div>
+
+
+                                                            @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+
+                                                        <label class="control-labeled" for="offerDropdown">Offer Status</label>
+                                                        <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div id="offerComments">
+                                                        <div class="form-group">
+                                                            <label class="control-labeled">Offer Comments</label>
+
+                                                            <div class="form-control text-areadiv">
+                                                                <textarea name="offComments" class="text-box single-line" id="offComments"></textarea>
+                                                            </div>
+
+
+                                                        </div>
+
+                                                        @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-sm-6 border-rv">
+                                                    <div class="form-group">
+
+                                                        <label class="control-labeled" for="joiningDropdown"><b>Joining Status</b></label>
+                                                        <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div id="joiningComments">
+                                                        <div class="form-group">
+                                                            <label class="control-labeled">Joining Comments</label>
+
+                                                            <div class="form-control text-areadiv">
+                                                                <textarea name="joinComments" class="text-box single-line" id="joinComments"></textarea>
+                                                            </div>
+
+                                                            @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="text-center" style="margin:0px 0px 10px 0px;">
+                                                <input type="button" onclick="SavePopUp()" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="btnUpload" value="Save">
+                                            </div>
+                                        </div>
+                                     
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div id="myCallModal" class="modal modal-wrap" style="display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
+                                <!-- Modal content -->
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content ">
+                                        <div class="modal-header">
+                                            <h5 style="font-size:20px;margin-bottom:0px;">Call Candidate!</h5>
+                                            <span class="close" id="callPopUp" style="cursor:pointer;">&times;</span>
+                                        </div>
+                                        <div class="modal-body" style="padding: 2px 16px;">
+                                            <div class="row">
+                                                <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
+
+                                            </div>
+
+                                            <div class="">
+                                                <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer" style="padding: 10px 16px;
+        background-color: #fff;
+        color: white;">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
                         </div>
 
                     </div>
@@ -507,206 +678,11 @@
             </div>
             <!-- end col-md-12 -->
         </div>
-        <div id="myModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-            <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5>Client Feedback</h5>
-                    <span class="close" id="feedbackPopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-                                <label for="approveDropdown"><b>Approved For Next Round</b></label>
-                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                            </div>
 
-                        </div>
-
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="approvalComments" class="form-group">
-                                <label>Approval Comments</label>
-                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                @*<input type="text" name="appComments" class="form-control" id="appComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-                                <label for="selectionDropdown"><b>Final Selection</b></label>
-                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="selectionComments" class="form-group">
-                                <label>Final Comments</label>
-
-                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                @*<input type="text" name="selecComments" class="form-control" id="selecComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-
-                                <label for="offerDropdown"><b>Offer Status</b></label>
-                                <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="offerComments" class="form-group">
-                                <label>Offer Comments</label>
-                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                @*<input type="text" name="offComments" class="form-control" id="offComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-
-                                <label for="joiningDropdown"><b>Joining Status</b></label>
-                                <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="joiningComments" class="form-group">
-                                <label>Joining Comments</label>
-                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px;width:95%"></textarea><br>
-
-                                @*<input type="text" name="joinComments" class="form-control" id="joinComments" style="margin-left:6px"><br>*@
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
-                    </div>
-                </div>
-                <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
-
-                </div>
-            </div>
-
-        </div>
-
-        <div id="myCallModal" class="modal" style="display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */">
-            <!-- Modal content -->
-            <div class="modal-content" style="width:70%;position: relative; background-color: #fefefe; margin: auto; padding: 0;border: 1px solid #888;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);font-size: 12px;margin-top:-53px">
-                <div class="modal-header" style="padding: 2px 16px;background-color: #14406e;color: white;font-size: 10px;">
-                    <h5 style="margin-left:40%;font-size:20px">Call Candidate!</h5>
-                    <span class="close" id="callPopUp">&times;</span>
-                </div>
-                <div class="modal-body" style="padding: 2px 16px;">
-                    <div class="row">
-                        <label id="callingLabel" style="margin-top:23px;margin-left:38%; font-size:20px"><b>Calling...</b></label>
-
-                    </div>
-
-                    <div class="">
-                        <input type="button" onclick="closeCallPopUp()" id="hangUpButton" style="margin-left:43%" class="btn btn-fill btn-danger" value="Hang Up">
-                    </div>
-                </div>
-                <div class="modal-footer" style="padding: 2px 16px;
-        background-color: #14406e;
-        color: white;">
-
-                </div>
-            </div>
-
-        </div>
 
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
-</div>
-<style>
-    .caret {
-        display: none !important;
-    }
 
-    .multiselect-container {
-        width: 100% !important;
-    }
-
-    .modal-lg {
-        max-width: 690px !important;
-    }
-
-    .dropdown-toggle {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #ccc !important;
-    }
-
-    #StartDate, #EndDate {
-        width: 270px;
-    }
-
-    .modal-content .modal-body {
-        padding-top: 10px;
-    }
-</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
@@ -773,55 +749,55 @@
                 $("#PrimarySkill").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#CandidateName").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#ClientHR").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#InterviewDate").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#ClientName").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#ApprovalStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#SelectionStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#JoiningStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $("#OfferStatus").multiselect({
                     includeSelectAllOption: true,
                     selectedClass: 'active1',
-                    buttonWidth: '270px',
+                    buttonWidth: '100%',
                     maxHeight: 200
                 });
                 $('#meeting').DataTable({
@@ -914,7 +890,7 @@
         // Get the button that opens the modal
         var btn = document.getElementById("myBtn_" + item.imid);
 
-       
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -1009,10 +985,10 @@
             }
         });
 
-        
+
     }
 
-    
+
     function SavePopUp() {
 
         var approvalComment = document.getElementById("appComments").value;
@@ -1188,6 +1164,46 @@
 
 </script>
 <!-- Keep the Page Content Here.-->
+@if (HttpContextAccessor.HttpContext.Session.GetString("NavigationShow") == "true" && HttpContextAccessor.HttpContext.Session.GetString("profileName") != "Recruiter")
+{
+<script src="~/Newassets/js/enjoyhint.min.js"></script>
+<link href="~/Newassets/css/enjoyhint.css" rel="stylesheet" />
+<script>
+    var enjoyhint_instance = new EnjoyHint({});
+
+    var enjoyhint_script_steps = [
+       {
+            'next .first': 'Selected Candidate Priority View and click on continue to know its features',
+            'nextButton': { className: "myNext", text: "Continue" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .second': 'By default last 30 days interview details will be available here, prior of that click on filter and select date range',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .three': 'Filters here based on available attributes or reset filters if applied earlier',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'next .exportfive': 'Export the Selected Candidates Interview data over excel',
+            'nextButton': { className: "myNext", text: "Next" },
+            'skipButton': { className: "mySkip", text: "Skip" }
+        },
+        {
+            'click .four': "Click here to see detail view of Selected Candidates Interview"
+        }
+
+
+    ];
+    setTimeout(function () {
+        enjoyhint_instance.set(enjoyhint_script_steps);
+        enjoyhint_instance.run();
+    }, 5000)
+</script>
+}
 <loading></loading>
 
 <!-- PAGE CONTENT WRAPPER -->

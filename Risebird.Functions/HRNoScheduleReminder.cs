@@ -108,7 +108,7 @@ namespace Risebird.Functions
         {
             try
             {
-                var mailFrom = "hire@risebird.io";
+                var mailFrom = "notification@risebird.io";
                 var mailMessage = new MailMessage();
                 mailMessage.From = new MailAddress(mailFrom, "Risebird Notification");
                 mailMessage.To.Add(new MailAddress(mailFrom, "Risebird"));

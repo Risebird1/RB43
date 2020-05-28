@@ -8,34 +8,38 @@
 
 
 <style>
+
+    body {
+        font-family: Roboto, sans-serif;
+    }
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+    table {
+        white-space: nowrap !important;
+    }
+
     .canvasjs-chart-credit {
         display: none;
     }
 
-    .table-responsive {
-        overflow: hidden;
-    }
 
     .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
-
-    #btnPlus, #btnMinus {
-        padding: 2px;
-    }
-
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
-    }
-
-    #btnPlus {
-        background-color: #4a89dc;
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
     }
 
     .glyphicon {
@@ -44,6 +48,45 @@
         vertical-align: middle;
         line-height: 0;
     }
+    .mc-button-area {
+        text-align: right;
+    }
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .mdc-card .modal .form-control, .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
 </style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -53,6 +96,11 @@
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
 
@@ -81,8 +129,8 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <form action="/Interview/VerifyMyInterviewAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
@@ -120,7 +168,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
                                                 <thead>
                                                     <tr>
@@ -189,7 +237,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6">
+                                    <div class="col-md-12 col-sm-12">
 
                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
                                         @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav, .m4a" })
@@ -198,8 +246,8 @@
 
                                 </div>
 
-                                <ul>
-                                    <li style="color:red"><b>Kindly ensure the duration of the audio file for voice biometric verification is a minimum of 2 seconds and does not exceed 5 seconds.</b></li>
+                                <ul style="margin:0px; padding:0 15px;">
+                                    <li style="color:red;font-size: 13px;line-height: 18px;font-weight: normal;padding: 8px 0px 10px 0px;">Kindly ensure the duration of the audio file for voice biometric verification is a minimum of 2 seconds and does not exceed 5 seconds.</li>
                                 </ul>
                                 @Html.HiddenFor(m => m.IRFId)
                                 @Html.HiddenFor(m => m.CandidateId)
@@ -209,10 +257,10 @@
 
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
-                                            @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Verify</button>
+
+                                        <div class="col-md-12 mc-button-area">
+                                            @Html.ActionLink("Back to List", "MyInterview", "Interview", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Verify</button>
                                         </div>
                                     </div>
                                 </div>
@@ -230,35 +278,7 @@
         <!-- end row -->
 
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 

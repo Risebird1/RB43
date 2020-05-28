@@ -4,6 +4,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -23,7 +28,7 @@
                 <span class="navbar-toggler-bar navbar-kebab"></span>
                 <span class="navbar-toggler-bar navbar-kebab"></span>
             </button>
-           
+
         </div>
     </nav>
     <!-- End Navbar -->
@@ -32,23 +37,28 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Schedule Meeting for '@ViewBag.IRFName'</h4>
-                    </div>
-                    <div class="toolbar">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                        <div class="toolbar">
 
-                        <div class="row">
-                            
-                            <div class="col-md-3 ml-md-auto">
-                               @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                            <div class="row">
+                                <div class="card-header">
+                                    <div class="pull-left">
+                                        <h4 class="card-title">Schedule Meeting for '@ViewBag.IRFName'</h4>
+                                    </div>
+
+                                    <div class="pull-right">
+                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button", @style = "margin-top: 2px;" })
+                                    </div>
+                                </div>
+
+                              
+
+
                             </div>
-
 
                         </div>
 
-                    </div>
-                    <div class="card-body">
                         @if (ViewBag.CalendlyLink != null)
                         {
                             <div class="row">
@@ -70,44 +80,17 @@
                             </div>
                         }
 
+
+                        <!-- end content-->
                     </div>
-                    <!-- end content-->
-                </div>
+            </div>
                 <!--  end card  -->
             </div>
             <!-- end col-md-12 -->
         </div>
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+    
 </div>
 
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script>

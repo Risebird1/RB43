@@ -8,41 +8,238 @@
 
 
 <style>
-    .canvasjs-chart-credit {
-        display: none;
+    body {
+        font-family: Roboto, sans-serif;
     }
 
-    .table-responsive {
-        overflow: hidden;
+    #style-2::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 5px;
+    }
+
+
+    textarea::-webkit-scrollbar {
+        width: 2px;
+        height: 6px;
+        background-color: var(--mdc-theme-primary, #018786) !important;
+    }
+
+    textarea::-webkit-scrollbar-thumb {
+        background-color: #56a9ff;
+        border: 1px solid #56a9ff;
+        margin: 2px;
+        border-radius: 2px;
+    }
+
+
+
+
+    #style-2::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #style-2::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: darkgray;
     }
 
     .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
+        font-size: 16px;
+        background: #42a5f5 !important;
+        padding: 4px 10px;
         text-align: left;
         color: #ffffff;
-        margin-top: 45px;
+        margin-top: 0px;
+        margin-bottom: 10px;
     }
 
-    #btnPlus, #btnMinus {
-        padding: 2px;
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
     }
 
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
+
+
+
+    /* Modal */
+    .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
     }
 
-    #btnPlus {
-        background-color: #4a89dc;
+    .modal input, .modal .dropdown-toggle {
+        background: #99d1fc0f !important;
     }
+    /* Modal */
+
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+
+    .talk-bubble {
+        display: inline-block;
+        position: relative;
+        font-size: 13px;
+        height: auto;
+        border-radius: 7px;
+        margin: 5px 0px;
+        background-color: #fff;
+    }
+
+
+        .talk-bubble textarea {
+            resize: none;
+            border: 0;
+            background: #fff;
+            padding: 5px;
+        }
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+    .navbar .navbar-wrapper {
+        color: #143e67 !important;
+    }
+
+        .navbar .navbar-wrapper .navbar-brand {
+            margin-right: 0.5rem;
+        }
+
+    .mc-button-area {
+        text-align: right;
+    }
+
+    .mdc-card .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-radio .mdc-radio__native-control:enabled:checked + .mdc-radio__background .mdc-radio__outer-circle, .mdc-radio .mdc-radio__native-control:enabled + .mdc-radio__background .mdc-radio__inner-circle {
+        border-color: #53a5f5 !important;
+    }
+
+
+
+
+
 
     .glyphicon {
         top: -1px;
         right: -2px;
         vertical-align: middle;
         line-height: 0;
+    }
+
+    .table-responsive {
+        overflow: hidden;
+    }
+
+
+
+
+
+    .table {
+        white-space: nowrap;
+    }
+
+    .canvasjs-chart-credit {
+        display: none;
+    }
+
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: normal !important
+    }
+
+    .card-text-label {
+        font-size: 13px !important;
+    }
+
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background, .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: #53a5f5 !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .mdc-checkbox {
+        display: inline-block;
+        position: relative;
+        flex: 0 0 18px;
+        box-sizing: content-box;
+        width: 18px;
+        height: 18px;
+        line-height: 0;
+        white-space: nowrap;
+        cursor: pointer;
+        vertical-align: bottom;
+        padding: 15px 11px;
     }
 </style>
 
@@ -53,6 +250,11 @@
 <script src="~/assets/Validations/jquery.unobtrusive-ajax.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.min.js"></script>
 <script src="~/assets/Validations/jquery.validate.unobtrusive.min.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 <div class="main-panel" id="main-panel">
 
@@ -81,27 +283,27 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <form action="/IRF/UploadAudio" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                               
-                                <ul>
-                                    <li>Kindly ensure the duration of the audio file for voice biometric is a minimum of 2 seconds and does not exceed 5 seconds.</li>
+
+                                <ul style="padding:0px;">
+                                    <li style="list-style:none;font-size: 15px; line-height: 18px;">Kindly ensure the duration of the audio file for voice biometric is a minimum of 2 seconds and does not exceed 5 seconds.</li>
                                 </ul>
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.CandidateName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.CandidateName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
 
                                         </div>
                                     </div>
                                     <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.IRFName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.TextBoxFor(m => m.IRFName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
                                         </div>
@@ -111,16 +313,16 @@
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
-                                       
+
                                         @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav, .m4a" })
+                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control", @accept = ".mp3, .wav, .m4a" })
 
                                     </div>
                                     <div class="col-md-6 col-sm-6">
 
-                                        <div class="form-group" id="descText">
+                                        <div class="form-group" id="descText" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control text-box single-line", @style = "margin-top:10px; height:45px" })
+                                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control text-box single-line", @style = " height:45px" })
                                         </div>
                                         <div class="form-group" id="descDrop" style="display:none">
                                             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
@@ -131,16 +333,34 @@
 
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6" style="margin-top:10px">
-                                        @Html.LabelFor(model => model.IsVoiceBiometric, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                        @Html.CheckBoxFor(m => m.IsVoiceBiometric, new { @class = "form-control text-box single-line", @style = "margin-top:-21px;margin-bottom:21px; height:18px", @onclick = "checkBiometric()" })
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="mdc-form-field"   style="margin-bottom: 10px;">
+
+
+                                            <div class="mdc-checkbox">
+                                                @Html.CheckBoxFor(m => m.IsVoiceBiometric, new { @class = "mdc-checkbox__native-control",  @onclick = "checkBiometric()" })
+
+                                                <div class="mdc-checkbox__background">
+                                                    <svg class="mdc-checkbox__checkmark"
+                                                         viewBox="0 0 24 24">
+                                                        <path class="mdc-checkbox__checkmark-path"
+                                                              fill="none"
+                                                              d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                    </svg>
+                                                    <div class="mdc-checkbox__mixedmark"></div>
+                                                </div>
+                                                <div class="mdc-checkbox__ripple"></div>
+
+
+                                            </div>
+                                            @Html.LabelFor(model => model.IsVoiceBiometric, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; padding-top: 8px;"  })
+                                        </div>
+                                        </div>
 
                                     </div>
-                                   
-                                </div>
                                 <div class="row" id="idPhrase" style="display:none">
                                     <div class="col-md-6 col-sm-6">
-                                        <div class="form-group">
+                                        <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.PhraseDetail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
                                             @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
 
@@ -156,11 +376,11 @@
 
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
+                                       
+                                        <div class="col-md-12 mc-button-area">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                            <button type="submit" class="btn btn-fill btn-primary" id="btnUpload" value="Save">Upload</button>
+                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
 
                                         </div>
@@ -185,35 +405,7 @@
         <!-- end row -->
 
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+ 
 </div>
 
 

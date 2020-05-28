@@ -7,54 +7,55 @@
 }
 
 
-<style>
-    .canvasjs-chart-credit {
-        display: none;
-    }
 
-    .table-responsive {
-        overflow: hidden;
-    }
-
-    .multiple_row > h2 {
-        font-size: 18px;
-        background-color: #013855;
-        padding: 8px 10px;
-        text-align: left;
-        color: #ffffff;
-        margin-top: 45px;
-    }
-
-    #btnPlus, #btnMinus {
-        padding: 2px;
-    }
-
-    #btnMinus {
-        position: absolute;
-        margin-left: 12px;
-    }
-
-    #btnPlus {
-        background-color: #4a89dc;
-    }
-
-    .glyphicon {
-        top: -1px;
-        right: -2px;
-        vertical-align: middle;
-        line-height: 0;
-    }
-</style>
 
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script>
+    function dropDwnToolTips(id) {
+        if (id.value == 0) {
+            id.title = "";
+        }
+        else {
+            id.title = id.value;
+        }
+    }
+
+</script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('.dropques option').wrap('<span>');
+
+        var selectedOption = $('.dropques').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+    $(document).ready(function () {
+        $('.droprating option').wrap('<span>');
+
+        var selectedOption = $('.droprating').find("[selected]");
+        $(selectedOption).unwrap();
+
+
+    })
+
+</script>
 
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
         <div class="container-fluid">
-            <div class="navbar-wrapper">
+            <div class="top-gap">&nbsp;</div>
+            <div class="navbar-wrapper" style="width: 100%; float: left; display: block;">
                 <div class="navbar-toggle">
                     <button type="button" class="navbar-toggler">
                         <span class="navbar-toggler-bar bar1"></span>
@@ -62,9 +63,13 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand">
-                    Interview Report
-                </a>
+                <div class="pull-left">
+                    <a class="navbar-brand">
+                        Interview Report
+                    </a>
+                </div>
+
+                <div class="pull-right"> <input type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded pull-right" id="create_pdf" value="Generate PDF" onclick="getPDF()"></div>
             </div>
 
         </div>
@@ -75,9 +80,9 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <input type="button" class="btn btn-fill btn-primary pull-right" id="create_pdf" style="margin-top: -61px;" value="Generate PDF" onclick="getPDF()">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+
                         <form action="/IRF/AddReport" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid form">
                             @Html.AntiForgeryToken()
                             <div class="canvas_div_pdf">
@@ -199,42 +204,7 @@
 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="multiple_row">
-                                            <h2>Interview Video</h2>
-                                        </div><!--end of multiple location-->
-                                    </div><!--end of col-md-12-->
 
-
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                                        @Html.HiddenFor(x => Model.VideoLink)
-                                        @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
-                                        {
-                                            if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
-                                            {
-                                                <video width="320" height="240" style="width:100%" controls>
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/mp4">
-                                                    <source src=@Url.Content(Model.VideoLink) type="video/ogg">
-
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            }
-                                            else
-                                            {
-                                                <iframe width="420" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
-
-                                            }
-                                        }
-
-                                        @*<div class="col-md-6 col-sm-6">
-
-                </div>*@
-
-                                    </div><!--end of col-md-12-->
-
-                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -251,57 +221,98 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div id="uploadDiv">
+                                            @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
+                                            @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
+
+
+                                            <div class="">
+                                                @{
+                                                    if (Model.VideoLink != null)
+                                                    {
+                                                        <a class="mdc-button mdc-button--outlined" id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+
+
                                     </div>
                                     <div class="col-md-6 col-sm-6">
                                         <div class="card">
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                                @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 100px; width:100%" })
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.InterviewerComment, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
 
-                                                @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
-                                                @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
-                                            </div>
-                                            <div class="form-group">
-                                                @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                                @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
-                                                @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                    <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                        <div class="talktext">
+
+                                                            @Html.TextAreaFor(m => m.InterviewerComment, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "height: 86px; width:100%" })
+
+                                                        </div>
+                                                    </div>
+
+
+                                                    @*@Html.EditorFor(model => model.InterviewerComment, new { htmlAttributes = new { @class = "form-control" } })*@
+                                                    @Html.ValidationMessageFor(model => model.InterviewerComment, "", new { @class = "text-danger" })
+                                                </div>
+                                                <div class="form-group">
+                                                    @Html.LabelFor(model => model.JobLevelName, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
+                                                    @Html.TextBoxFor(m => m.JobLevelName, new { @class = "form-control text-box single-line", @readonly = "readonly" })
+                                                    @Html.ValidationMessageFor(model => model.JobLevelName, "", new { @class = "text-danger" })
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
 
                                 <div class="row">
-                                    <div class="col-md-6 col-sm-6 px-1">
-                                        @*<div class="form-group">*@
-                                        @Html.LabelFor(model => model.AudioFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.AudioFile, new { type = "file", @class = "form-control btn", @accept = ".mp3, .wav" })
-                                        @{
-                                            if (Model.AudioLink != null)
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="multiple_row">
+                                            <h2>Interview Video</h2>
+                                        </div><!--end of multiple location-->
+                                    </div><!--end of col-md-12-->
+
+
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p style="min-height:20px;border:1px #1d181817 solid">
+                                            @Html.HiddenFor(x => Model.VideoLink)
+                                            @if (Model.VideoLink != null && Url.Content(Model.VideoLink) != null)
                                             {
-                                                <a id="audioId" target="_blank" title="Audio" href=@Model.AudioLink.ToString().Replace(" ","%20")>Uploaded Audio</a>
-                                            }
-                                        }
-                                        @*</div>*@
-                                    </div>
-
-
-                                    <div class="col-md-6 col-sm-6 px-1" id="uploadDiv">
-                                        @Html.LabelFor(model => model.VideoFile, htmlAttributes: new { @class = "control-label col-md-12 col-sm-12 desp-label" })
-                                        @Html.TextBoxFor(model => model.VideoFile, new { type = "file", @class = "form-control btn ", @accept = ".mp4" })
-
-
-                                        <div class="">
-                                            @{
-                                                if (Model.VideoLink != null)
+                                                if (Url.Content(Model.VideoLink).Contains(".mp4") || Url.Content(Model.VideoLink).Contains(".org"))
                                                 {
-                                                    <a id="videoId" target="_blank" title="Video" href=@Model.VideoLink.ToString().Replace(" ","%20")>Uploaded Video</a>
+                                                    <video width="320" height="320" style="width:100%" controls class="vjs-tech">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/mp4">
+                                                        <source src=@Url.Content(Model.VideoLink) type="video/ogg">
+
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                }
+                                                else if (Url.Content(Model.VideoLink).Contains("manifest"))
+                                                {
+                                                    <video id="vid1" class="azuremediaplayer amp-default-skin amp-big-play-centered" width="320" height="240" style="width:100%" controls data-setup='{"logo": { "enabled": false }, "techOrder": ["azureHtml5JS", "flashSS", "silverlightSS", "html5"], "nativeControlsForTouch": false}'>
+                                                        <source src=@Url.Content(Model.VideoLink) type="application/vnd.ms-sstr+xml" />
+
+                                                    </video>
+                                                }
+                                                else
+                                                {
+                                                    <iframe width="420" class="vjs-tech" height="345" style="width:100%" src="@Url.Content(Model.VideoLink)"></iframe>
+
                                                 }
                                             }
-                                        </div>
-                                    </div>
+                                        </p>
+                                        @*<div class="col-md-6 col-sm-6">
+
+                </div>*@
+
+                                    </div><!--end of col-md-12-->
+
                                 </div>
+
+
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -312,15 +323,15 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="QuestionsTable">
                                                 <thead>
                                                     <tr>
-                                                        <th width="50%">Questions</th>
-                                                        <th width="20%">SkillName</th>
-                                                        <th width="10%">Rating</th>
-                                                        <th width="10%">Time(Min)</th>
-                                                        <th width="10%">Action</th>
+                                                        <th>Questions</th>
+                                                        <th>SkillName</th>
+                                                        <th width="15%">Rating</th>
+                                                        <th>Time(In Seconds)</th>
+                                                        <th>Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -346,8 +357,16 @@
                                                             </td>
 
                                                             <td>
-                                                                <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                                                               
+
+
+                                                                <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+
+                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+                                                                    
+                                                                </button>
+
 
                                                             </td>
 
@@ -357,9 +376,10 @@
                                                     {
                                                         for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                         {
-                                                            <tr>
+                                                            <tr onclick="switchtoquestionVedio(@Model.QuestionsCollection[i].Timing)" style="cursor:pointer">
+
                                                                 <td>
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { @class = "form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].Comment, (SelectList)Model.QuestionsList, new { ID = "drop", @class = "dropques form-control text-box single-line", @onchange = "QuestionChanged(this.id, this.value)", onmouseover = "dropDwnToolTips(this)" })
 
 
                                                                 </td>
@@ -369,7 +389,7 @@
                                                                 </td>
                                                                 <td>
 
-                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control" })
+                                                                    @Html.DropDownListFor(m => m.QuestionsCollection[i].RatingId, (SelectList)Model.QuestionsLevelList, new { @class = "form-control droprating" })
 
 
                                                                 </td>
@@ -382,8 +402,16 @@
 
                                                                 <td>
 
-                                                                    <span id="btnPlus" onclick="AddRow()" class="btn btn-round btn-primary btn-icon btn-sm "><i class="fas  fa fa-plus"></i></span>
-                                                                    <span id="btnMinus" onclick="DeleteRow(0)" class="btn btn-round btn-danger btn-icon btn-sm delete-row"><i class="far fa  fa-trash"></i></span>
+                                                                    <span id="btnPlus" onclick="AddRow()" class="mdc-fab app-fab--absolute "><i class="fas  fa fa-plus"></i></span>
+                             
+
+
+                                                                    <button class="mdc-fab app-fab--absolute trash-btn" aria-label="Delete">
+                                                                     <span id="btnMinus" onclick="DeleteRow(0)" class="mdc-fab__icon material-icons"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></span>
+
+                                                                    </button>
+
+
 
                                                                 </td>
 
@@ -413,15 +441,15 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillTable">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="40%">Skill Name</th>
-                                                        <th width="20%">Actual Level</th>
-                                                        <th width="15%">Required Weightage</th>
-                                                        <th width="15%">Actual Weightage</th>
+                                                        <th>Required Level</th>
+                                                        <th>Skill Name</th>
+                                                        <th>Actual Level</th>
+                                                        <th>Required Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
 
@@ -468,9 +496,14 @@
                                         <div class="form-group">
                                             @Html.LabelFor(model => model.TechSkillComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                            @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
 
+                                            <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                <div class="talktext">
 
+                                                    @Html.TextAreaFor(m => m.TechSkillComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%" })
+
+                                                </div>
+                                            </div>
                                             @*@Html.TextAreaFor(m => m.TechSkillComments, new { @class = "form-control text-box single-line", @style = "width:100%" })*@
                                         </div>
 
@@ -489,7 +522,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="SkillGeneralTable">
                                                 <thead>
                                                     <tr>
@@ -553,7 +586,7 @@
 
                                 </div>
 
-                               
+
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -564,17 +597,17 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="JoinabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="20%">Type</th>
-                                                        <th width="35%">Value</th>
-                                                        <th width="15%">Actual Level</th>
-                                                        <th width="10%">Required Weightage</th>
-                                                        <th width="10%">Actual Weightage</th>
+                                                        <th>Required Level</th>
+                                                        <th>Type</th>
+                                                        <th>Value</th>
+                                                        <th>Actual Level</th>
+                                                        <th>Required Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -620,7 +653,12 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.JoinabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+                                                        @Html.TextAreaFor(m => m.JoinabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
                                             </div>
 
 
@@ -638,17 +676,17 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
 
                                             <table class="table table-bordered mbn" id="SelectabilityTable">
                                                 <thead>
                                                     <tr>
-                                                        <th width="10%">Required Level</th>
-                                                        <th width="20%">Type</th>
-                                                        <th width="35%">Value</th>
-                                                        <th width="15%">Actual Level</th>
-                                                        <th width="10%">Required Weightage</th>
-                                                        <th width="10%">Actual Weightage</th>
+                                                        <th>Required Level</th>
+                                                        <th>Type</th>
+                                                        <th>Value</th>
+                                                        <th>Actual Level</th>
+                                                        <th>Required Weightage</th>
+                                                        <th>Actual Weightage</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -694,7 +732,13 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.SelectabilityComments, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
 
-                                                @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                <div class="talk-bubble tri-right border-bubble right-in" style="width:100%;">
+                                                    <div class="talktext">
+
+                                                        @Html.TextAreaFor(m => m.SelectabilityComments, new { htmlAttributes = new { @class = "form-control text-box single-line" }, @style = "width:100%", @readonly = "readonly" })
+                                                    </div>
+                                                </div>
+
                                             </div>
 
 
@@ -711,7 +755,7 @@
 
 
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="table-responsive">
+                                        <div class="table-responsive-sm">
                                             <table class="table table-bordered mbn" id="ProctoringTable">
                                                 <thead>
                                                     <tr>
@@ -921,18 +965,18 @@
                                 @Html.HiddenFor(m => m.IsEdited)
                                 <div class="card-footer ">
                                     <div class="row">
-                                        <label class="col-md-2"></label>
-                                        <div class="col-md-9">
+
+                                        <div class="col-md-12">
 
                                             @{
                                                 if (ViewBag.IsSelected)
                                                 {
-                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "SelectedInterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
 
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Back to List", "InterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
+                                                    @Html.ActionLink("Back to List", "InterviewMeetings", "IRF", new { id = Model.IRFId, irfId = Model.IRFName }, htmlAttributes: new { @class = "btn btn-fill btn-label pull-right", @role = "button" })
 
                                                 }
 
@@ -959,35 +1003,7 @@
         <!-- end row -->
 
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 
@@ -1028,8 +1044,6 @@
         html2canvas($(".canvas_div_pdf")[0], { allowTaint: true }).then(function (canvas) {
             canvas.getContext('2d');
 
-            console.log(canvas.height + "  " + canvas.width);
-
 
             var imgData = canvas.toDataURL("image/jpeg", 1.0);
             var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
@@ -1047,7 +1061,7 @@
 </script>
 
 <script>
-    
+
     function CountProctoring(value) {
 
         if (value == "" || value == null) {
@@ -1237,7 +1251,7 @@
                 $("#" + skillName + digit + "__ActualLevelId").css("border-color", "red");
 
             }
-                
+
         }
 
 
@@ -1258,7 +1272,7 @@
     });
 
     function AddRow() {
-        
+
         var $ttc = $("#QuestionsTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#QuestionsTable tr").length - 1;
@@ -1395,7 +1409,7 @@
     }
 
     function AddRowClient() {
-        
+
         var $ttc = $("#ClientTable").find("tbody tr:last");
         var $tr = $ttc.clone();
         var trIndexReplaced = $("#ClientTable tr").length - 1;
@@ -1435,7 +1449,18 @@
         $.validator.unobtrusive.parse(document);
 
     }
+      function switchtoquestionVedio(questiontime) {
 
+        var time = 1;
+        if (questiontime != '') {
+            time = questiontime;
+            time = questiontime;
+            time = questiontime;
+        }
+        var vid = document.getElementsByClassName("vjs-tech");
+        vid[0].currentTime = time;
+        //time should be in seconds
+    }
     function AddRowInterviewer() {
         var table = document.getElementById("InterviewerTable");
         var rowCount = table.rows.length;
@@ -1542,7 +1567,7 @@
     }
 
     function QuestionChanged(id , val ) {
-        
+
         var index = id.charAt(20);
         var skillElementid = 'QuestionsCollection_' + index + '__SkillName';
         $.ajax({
@@ -1573,7 +1598,7 @@
             });
 
         }
-        
+
 
     });
 

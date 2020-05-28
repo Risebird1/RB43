@@ -4,138 +4,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
 
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
 
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-</style>
-
-<style>
-    /* The Modal (background) */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Sit on top */
-        padding-top: 100px; /* Location of the box */
-        left: 0;
-        top: 0;
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgb(0,0,0); /* Fallback color */
-        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-
-    /* Modal Content */
-    .modal-content {
-        position: relative;
-        background-color: #fefefe;
-        margin: auto;
-        padding: 0;
-        border: 1px solid #888;
-        width: 40%;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-        /*-webkit-animation-name: animatetop;
-    -webkit-animation-duration: 0.4s;
-    animation-name: animatetop;
-    animation-duration: 0.4s*/
-    }
-
-    /* The Close Button */
-    .close {
-        color: #fefefe !important;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    table {
-        white-space: nowrap !important;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: #000;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .modal-header {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .no-sort::after {
-        display: none !important;
-    }
-
-    .no-sort {
-        pointer-events: none !important;
-        cursor: default !important;
-    }
-
-    .modal-body {
-        padding: 2px 16px;
-    }
-
-    .modal-footer {
-        padding: 2px 16px;
-        background-color: #14406e;
-        color: white;
-    }
-
-    .modal-content .modal-header {
-        font-size: 10px;
-    }
-</style>
 
 <script src="//static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -148,7 +26,7 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
                 <a class="navbar-brand">
                     Interview Selected Meetings
 
@@ -163,28 +41,32 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            Selected Candidate list for <b>@ViewBag.IRF</b>
-                        </h4>
-                    </div>
-                    <div class="card-body">
+                <div class="mdc-card card">
+
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
                             <div class="toolbar">
                                 <div class="row">
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">         Selected Candidate list for <b>@ViewBag.IRF</b></h4></div>
 
-                                    <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
-                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                        <div class="pull-right">
+                                            <div>
+                                                <div class="form-group" style="width:100px;float:left;">
+                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                                </div>
+                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    </div>
+
+
+
+
+
                                 </div>
 
                             </div>
@@ -285,7 +167,11 @@
                                                         @item.NextLevelApprovalStat
                                                     </td>
                                                     <td>
-                                                        <textarea style="height: 100px; width:100%;">@item.ApprovalComments</textarea>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.ApprovalComments</textarea>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td></td>
 
@@ -293,10 +179,14 @@
                                                         @item.FinalSelectionStat
                                                     </td>
                                                     <td>
-                                                        <textarea style="height: 100px; width:100%;">@item.FinalComments</textarea>
+                                                        <div class="talk-bubble tri-right border-bubble right-in">
+                                                            <div class="talktext">
+                                                                <textarea class="scrollbar" style="height: 50px; width:100%;" id="style-4">@item.FinalComments</textarea>
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                     <td></td>
-                                                    <td class="text-right">
+                                                    <td class="text-right action">
                                                         @if (ViewBag.ProfileName == "client")
                                                         {
                                                             <span title="Client Feedback" onclick="ModalButtonClick(@jsonObject)" id="@("myBtn_"+item.imid)" class="btn btn-round btn-info btn-icon btn-sm like"><i class="fa fa-thumbs-up"></i></span>
@@ -324,6 +214,7 @@
 
 
                     </div>
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -332,125 +223,113 @@
         </div>
         <div id="myModal" class="modal">
             <!-- Modal content -->
-            <div class="modal-content" style="width:60%">
-                <div class="modal-header">
-                    <h5>Client Feedback</h5>
-                    <span class="close" id="feedbackPopUp">&times;</span>
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="    font-size: 20px;">Client Feedback</h5>
+                        <span class="close" id="feedbackPopUp">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label" for="approveDropdown">Approved For Next Round</label>
+                                    <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="approvalComments" class="form-group">
+                                    <label class="control-label" style="display:block">Approval Comments</label>
+
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="appComments" class="form-control text-box single-line scrollbar" id="appComments" style="height:35px"></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+                                    <label class="control-label" for="selectionDropdown" style="display:block">Final Selection</label>
+                                    <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 pr-1">
+                                <div id="selectionComments" class="form-group">
+                                    <label class="control-label" style="display:block">Final Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="selecComments" class="form-control text-box single-line scrollbar" id="selecComments" style="height:35px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv ">
+                                <div class="form-group">
+
+                                    <label class="control-label" for="offerDropdown" style="display:block"><b>Offer Status</b></label>
+                                    <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 ">
+                                <div id="offerComments" class="form-group">
+                                    <label class="control-label" style="display:block">Offer Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="height:32px"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6 border-rv">
+                                <div class="form-group">
+
+                                    <label class="control-label" for="joiningDropdown" style="display:block">Joining Status</label>
+                                    <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div id="joiningComments" class="form-group">
+                                    <label class="control-label" style="display:block">Joining Comments</label>
+                                    <div class="talk-bubble tri-right border-bubble right-in">
+                                        <div class="talktext">
+                                            <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="height:35px"></textarea>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary pull-right" id="btnUpload" value="Save">
+                        </div>
+                    </div>
+
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-                                <label for="approveDropdown"><b>Approved For Next Round</b></label>
-                                <select class="form-control" id="approveDropdown" name="approveDropdown"></select>
-                            </div>
 
-                        </div>
-
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="approvalComments" class="form-group">
-                                <label>Approval Comments</label>
-                                <textarea name="appComments" class="form-control text-box single-line" id="appComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-                                <label for="selectionDropdown"><b>Final Selection</b></label>
-                                <select class="form-control" id="selectionDropdown" name="selectionDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="selectionComments" class="form-group">
-                                <label>Final Comments</label>
-
-                                <textarea name="selecComments" class="form-control text-box single-line" id="selecComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-
-                                <label for="offerDropdown"><b>Offer Status</b></label>
-                                <select class="form-control" id="offerDropdown" name="offerDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="offerComments" class="form-group">
-                                <label>Offer Comments</label>
-                                <textarea name="offComments" class="form-control text-box single-line" id="offComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div class="form-group">
-
-                                <label for="joiningDropdown"><b>Joining Status</b></label>
-                                <select class="form-control" id="joiningDropdown" name="joiningDropdown"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6 pr-1">
-                            <div id="joiningComments" class="form-group">
-                                <label>Joining Comments</label>
-                                <textarea name="joinComments" class="form-control text-box single-line" id="joinComments" style="margin-left:6px;border: 1px solid black;height:46px"></textarea><br>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="">
-                        <input type="button" onclick="SavePopUp()" class="btn btn-fill btn-primary" id="btnUpload" value="Save">
-                    </div>
-                </div>
-                <div class="modal-footer">
-
-                </div>
             </div>
-
         </div>
+
+
 
 
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+
 </div>
 
 
@@ -474,9 +353,9 @@
     });
 </script>
 <script>
-    
+
     $(document).ready(function () {
-       
+
         $.post("/TwilioCalls/Generate", { page: window.location.pathname }, function (data) {
             // Set up the Twilio Client Device with the token
             Twilio.Device.setup(data.token);
@@ -485,7 +364,7 @@
 
     /* Callback to let us know Twilio Client is ready */
     Twilio.Device.ready(function (device) {
-        console.log("ready!");
+
         //callCandidateButtons.prop("disabled", false);
 
     });
@@ -499,12 +378,12 @@
     }
 
     Twilio.Device.connect(function (connection) {
-        
+
 
     });
 
     Twilio.Device.disconnect(function (connection) {
-       
+
     });
 
 
@@ -533,7 +412,7 @@
 
         // Get the modal
         var modal = document.getElementById("myModal");
-        
+
         // When the user clicks the button, open the modal
         modal.style.display = "block";
 
@@ -627,11 +506,11 @@
 
             }
         });
-        
+
 
     }
 
-   
+
 
     function SavePopUp() {
 

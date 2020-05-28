@@ -7,66 +7,6 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-@*<div class="page-sidebar">
-
-        <ul class="x-navigation">
-            <li class="xn-logo">
-                <a href="#" style="padding:15px 0px 10px 0px">
-                    <img src="~/images/risebird.jpg" alt="RisebirdLogo" width="200px" height="50px" />
-                </a>
-                <a href="#" class="x-navigation-control"></a>
-            </li>
-            @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
-            {
-                var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
-                var adminMenuList = menuList.Where(a => a.idParentFunction == 6).ToList();
-                var menuList1 = menuList.Where(a => a.idParentFunction != 6).ToList();
-                foreach (var m in menuList1)
-                {
-
-                    if (!string.IsNullOrEmpty(m.sUrl))
-                    {
-                        <li>
-                            <a href="@m.sUrl">
-                                <i data-toggle="tooltip" data-placement="bottom" title="@m.functionName" data-original-title="Tooltip on bottom">
-                                    <span class="@m.sIcon"></span>
-                                </i>
-                                <span class="xn-text">@m.functionName</span>
-                            </a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="xn-openable">
-                            <a href="@m.sUrl">
-                                <i data-toggle="tooltip" data-placement="bottom" title="@m.functionName" data-original-title="Tooltip on bottom">
-                                    <span class="@m.sIcon"></span>
-                                </i>
-                                <span class="xn-text" style="color:#8b91a0;">@m.functionName</span>
-                            </a>
-                            <ul>
-                                @foreach (var item in adminMenuList)
-                                {
-                                    <li>
-                                        <a href="@item.sUrl">
-                                            <i data-toggle="tooltip" data-placement="bottom" title="@item.functionName" data-original-title="Tooltip on bottom">
-                                                <span class="@item.sIcon"></span>
-                                            </i>
-                                            @item.functionName
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </li>
-
-                    }
-                }
-            }
-        </ul>
-
-    </div>*@
-
-
 <div class="sidebar" data-color="blue">
     <!--
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
@@ -75,7 +15,7 @@
         <a href="#" class="simple-text logo-mini">
             Rb
         </a>
-        <a href="#" class="simple-text logo-normal">
+        <a href="#" class="simple-text logo-normal" >
             Risebird
         </a>
         <div class="navbar-minimize">
@@ -91,7 +31,7 @@
                 <img src="~/img/man.png" />
             </div>
             <div class="info">
-                <a data-toggle="collapse" href="#collapseExample" class="collapsed">
+                <a data-toggle="collapse" href="#collapseExample" class="collapsed" id="header">
                     @if (User.Identity.IsAuthenticated)
                     {
                         @if (@HttpContextAccessor.HttpContext.Session.GetString("email") != null)
@@ -146,7 +86,7 @@
         </div>
 
 
-        <ul class="nav">
+        <ul class="nav"  id="content">
             @if (JsonConvert.DeserializeObject<List<Menu>>(@HttpContextAccessor.HttpContext.Session.GetString("userMenus")) != null)
             {
                 var menuList = JsonConvert.DeserializeObject<List<Menu>>(HttpContextAccessor.HttpContext.Session.GetString("userMenus"));
@@ -156,12 +96,114 @@
                 {
                     if (!string.IsNullOrEmpty(m.sUrl))
                     {
-                        <li>
-                            <a href="@m.sUrl">
-                                <i class="now-ui-icons @m.sIcon"></i>
-                                <p>@m.functionName</p>
-                            </a>
-                        </li>
+                        if (m.sUrl == "/IRF/Index")
+                        {
+                            <li class="skillchannelmenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/RiseTube/Index")
+                        {
+                            <li class="risetubemenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Support/Index")
+                        {
+                            <li class="supportmenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/AllPriorityClientMeetings")
+                        {
+                            <li class="iacm">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/SelectedPriorityClientMeetings")
+                        {
+                            <li class="iscm">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/CandidateInterviews")
+                        {
+                            <li class="icimenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/MyInterview")
+                        {
+                            <li class="myint">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/OpenInterview")
+                        {
+                            <li class="inoi">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/MyQualityControlledInterviews")
+                        {
+                            <li class="inmqci">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Mail/Mail")
+                        {
+                            <li class="mailmenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else if (m.sUrl == "/Interview/QCOpenInterviews")
+                        {
+                            <li class="iqcomenu">
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a href="@m.sUrl">
+                                    <i class="now-ui-icons @m.sIcon"></i>
+                                    <p>@m.functionName</p>
+                                </a>
+                            </li>
+                        }
                     }
                     else
                     {
@@ -188,62 +230,6 @@
                                 </ul>
                             </div>
                         </li>
-                        @*<li>
-                                <a data-toggle="collapse" href="#componentsExamples">
-                                    <i class="now-ui-icons education_atom"></i>
-                                    <p>
-                                        Components
-                                        <b class="caret"></b>
-                                    </p>
-                                </a>
-                                <div class="collapse " id="componentsExamples">
-                                    <ul class="nav">
-                                        <li>
-                                            <a href="../../examples/components/buttons.html">
-                                                <span class="sidebar-mini-icon">B</span>
-                                                <span class="sidebar-normal"> Buttons </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/grid.html">
-                                                <span class="sidebar-mini-icon">G</span>
-                                                <span class="sidebar-normal"> Grid System </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/panels.html">
-                                                <span class="sidebar-mini-icon">P</span>
-                                                <span class="sidebar-normal"> Panels </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/sweet-alert.html">
-                                                <span class="sidebar-mini-icon">SA</span>
-                                                <span class="sidebar-normal"> Sweet Alert </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/notifications.html">
-                                                <span class="sidebar-mini-icon">N</span>
-                                                <span class="sidebar-normal"> Notifications </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/icons.html">
-                                                <span class="sidebar-mini-icon">I</span>
-                                                <span class="sidebar-normal"> Icons </span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="../../examples/components/typography.html">
-                                                <span class="sidebar-mini-icon">T</span>
-                                                <span class="sidebar-normal"> Typography </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>*@
-
 
                     }
 

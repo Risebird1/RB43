@@ -18,5 +18,11 @@ namespace Risebird.CommonHelper.Interface
         string SendCandidateOnboardedMail(List<string> mailIds, string candidateName, string irfName, string evaluator);
         string SendInterviewCancelledMail(string interviewer, string interviewDate);
         string SendInterviewCancelledMailtoCandidate(string candidateMail, string clientHRMail, string interviewDate);
+        string CuretatedNotification(Mail model, string UserType, string EmailParameter);
+        string SendCuratedUserMail(List<string> curatedUsers, string meetingDate, string irf, string primarySkill, string codedName);
+        string SharedVideoNofitication(Mail model,  string UrlDetails,string Skills);
+        string SharedVideoNofiticationExternal(Mail model, string UrlDetails, string Url);
+        string SharedVideoNofiticationExternal(Mail model, string name, string Url,string comment);
+
     }
 }

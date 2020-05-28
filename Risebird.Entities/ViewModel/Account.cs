@@ -35,6 +35,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Client")]
         public int ClientId { get; set; }
         public SelectList ClientList { get; set; }
+        public string AccountStatus { get; set; }
 
     }
 }

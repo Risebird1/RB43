@@ -311,7 +311,7 @@ namespace Risebird.Business
                     var clients = _irfRepository.GetTransClientUser(id);
                     foreach (var item in clients)
                     {
-                        if (item.EmailId == email)
+                        if (item.EmailId.ToLower() == email.ToLower())
                         {
                             role = item.ClientRoleId;
                             break;
@@ -1028,5 +1028,31 @@ namespace Risebird.Business
             }
         }
 
+        public async Task<bool> SubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+                return _irfRepository.SubscribeIRF(id, emailId, profile).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
+        public async Task<bool> UnSubscribeIRF(int id, string emailId, string profile)
+        {
+            try
+            {
+                return _irfRepository.UnSubscribeIRF(id, emailId, profile).Result;
+            }
+
+            catch (Exception e)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, e);
+                return false;
+            }
+        }
     }
 }

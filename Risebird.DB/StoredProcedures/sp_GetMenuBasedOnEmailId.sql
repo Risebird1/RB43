@@ -13,7 +13,13 @@ CREATE PROCEDURE [dbo].[sp_GetMenuBasedOnEmailId]
   @EmailId nvarchar(300)     
 AS  
 BEGIN  
-select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name from [dbo].[Function] fn  
+DECLARE @lastLogin AS varchar(200);
+select @lastLogin=LastLogin from [dbo].[UserList] where EmailId LIKE @EmailId
+update [dbo].[UserList]
+set LastLogin= getdate()
+where EmailId LIKE @EmailId
+select fn.functionname,fn.description,fn.idparentfunction,fn.sicon,fn.surl,fn.idisplayorder,pl.Name profileName,
+pf.dAccess,@lastLogin as NavigationShow from [dbo].[Function] fn  
 join [dbo].[ProfileFunction] pf on fn.id = pf.idfunction  
 join [dbo].[Profile] pl on pl.id = pf.idprofile  
 join [dbo].[UserList] ul on pl.id = ul.idprofile  

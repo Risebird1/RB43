@@ -41,5 +41,6 @@ namespace Risebird.Business.Interface
         bool EditRecruiter(Recruiter recruiter);
         Recruiter GetRecruiter(int id);
         bool DeleteRecruiter(int userId);
+        void UpdateUserSigInDetails(string emailId);
     }
 }

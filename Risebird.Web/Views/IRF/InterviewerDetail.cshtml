@@ -1,0 +1,458 @@
+﻿@model IEnumerable<Risebird.Entities.ViewModel.InterviewerVM>
+@{
+    ViewData["Title"] = "Interviewers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<style>
+
+
+
+    @@media (min-width: 1200px) {
+        .container {
+            width: 1125px;
+        }
+    }
+
+
+    @@media (max-width: 767px) {
+        #irf-card-footer {
+            padding-left: 0px !important;
+            padding-top: 5px;
+            padding-right: 0px !important;
+        }
+    }
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+    .spanclass {
+        color: black;
+        font-size: 11px;
+    }
+
+    .desc {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .multiple_row > h2 {
+        font-size: 18px;
+        background-color: #5f95b1;
+        padding: 8px 10px;
+        text-align: left;
+        color: #ffffff;
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+
+
+    .thumbnail {
+        border-top: 5px solid #443f3f;
+    }
+
+    .list-group-item-heading {
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+    }
+
+
+
+    /*.list-group-item-text span {
+        float: left;
+        font-weight: 700;
+        padding-right: 5px;
+    }*/
+
+    .icon span {
+        padding-top: 15px;
+        font-size: 19px;
+        color: #5f95b1;
+        padding-left: 5px;
+    }
+
+    .list-group {
+        margin-bottom: 150px;
+    }
+
+
+
+    .panel-header-sm {
+        height: 85px;
+        padding-top: 65px;
+        background: none !important;
+    }
+
+
+
+
+
+    .multiselect-selected-text {
+        text-transform: capitalize;
+        font-weight: normal;
+        letter-spacing: normal;
+        color: #807e7e;
+        font-size: 12px;
+    }
+
+
+
+
+    /* Modal */
+    .modal-wrap .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+    /* Modal */
+
+
+
+
+    .pagination .page-item.active > .page-link, .pagination .page-item.active > .page-link:focus, .pagination .page-item.active > .page-link:hover {
+        background-color: #4e9bea !important;
+        border-color: #4e9bea;
+        color: #FFFFFF;
+    }
+
+
+
+    .card .card-header .card-title, .card .card-header h4.card-title {
+        margin: 0 0px 10px 0;
+    }
+
+    .border-rv {
+        border-right: 1px dotted #ccc;
+    }
+
+    .control-label {
+        color: #5f5c5c !important;
+        font-weight: 500;
+    }
+
+
+    .mdc-card-wrapper__text-section {
+        padding: 16px;
+    }
+
+    .demo-card__title {
+        font-family: Roboto, sans-serif;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        font-size: 1.25rem;
+        line-height: 2rem;
+        font-weight: 500;
+        letter-spacing: .0125em;
+        text-decoration: inherit;
+        text-transform: inherit;
+    }
+
+
+    .mdc-fab {
+        width: 30px !important;
+        height: 30px !important;
+        background-color: #53a5f5 !important;
+    }
+
+    .sidebar:after, .off-canvas-sidebar:after {
+        background: #42a5f5 !important;
+    }
+
+
+
+
+    .mdc-card {
+        border-top: 3px #53a5f5 solid;
+    }
+
+    .mdc-button--raised:not(:disabled), .mdc-button--unelevated:not(:disabled) {
+        background: #42a5f5 !important;
+        font-family: Roboto, sans-serif;
+        font-size: 12px;
+        text-decoration: none;
+    }
+
+    .mdc-button--outlined:not(:disabled) {
+        border-color: #42a5f5 !important;
+        color: #42a5f5 !important;
+    }
+
+    .mdc-fab-secondary {
+        background: #fff !important;
+        color: #53a5f5 !important;
+    }
+
+
+    .mdc-card .modal .form-control:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid;
+    }
+</style>
+<style>
+    .caret {
+        display: none !important;
+    }
+
+    .multiselect-container {
+        width: 100% !important;
+    }
+
+    .modal-lg {
+        max-width: 690px !important;
+    }
+
+
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+
+
+
+    .card-header-buttons {
+        padding: 5px 5px 0px 0px;
+        text-align: right;
+    }
+
+    .card-blue .card-header {
+        padding: .5rem 1.25rem 0.3rem 1.25rem;
+    }
+
+        .card-blue .card-header .btn-info, .card-blue .card-header .btn-danger {
+            margin-top: 0px;
+            margin-bottom: 5px;
+        }
+
+    .card-content-holder {
+        background-color: white;
+    }
+
+    .list-group-item-text {
+        line-height: 80%;
+    }
+
+        .list-group-item-text span {
+            font-weight: bold;
+            padding-right: 7px;
+        }
+
+    .pskill {
+        display: inline-block;
+        width: 120px;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+    }
+
+    .clientName {
+        display: inline-block;
+        float: left;
+        padding-bottom: 3px;
+        width: 240px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+
+
+
+    .mdc-card .modal .modal-content .modal-body {
+        padding-top: 10px;
+    }
+
+    .mdc-card .modal .form-control, .modal .form-control {
+        border: 0;
+        border-radius: 4px 4px 0 0;
+        background: whitesmoke;
+        height: 40px;
+        font-size: 0.8rem;
+        border-bottom: 1px rgba(0, 0, 0, 0.29) solid;
+    }
+
+        .mdc-card .modal .form-control:focus, .modal .form-control:focus {
+            border-bottom: 2px rgb(80, 158, 235) solid;
+        }
+
+    .mdc-card .modal .modal-header, .mdc-card .modal .modal-header {
+        background: #42a5f5 !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        color: #fff;
+    }
+
+
+
+
+   
+    .mdc-card button.dropdown-toggle:focus {
+        border-bottom: 2px rgb(80, 158, 235) solid !important;
+    }
+
+    #StartDate, #EndDate {
+        width: 270px;
+    }
+
+    
+    .border-bottom {
+        border-bottom: 1px #cccccc63 solid;
+    }
+
+    *::-webkit-scrollbar,
+    *::-webkit-scrollbar-thumb {
+        width: 26px;
+        border-radius: 13px;
+        background-clip: padding-box;
+        border: 10px solid transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        box-shadow: inset 0 0 0 10px;
+    }
+
+    .detail:hover {
+        color: rgba(0, 0, 0, 0.3);
+        color: rgb(83, 165, 245);
+        box-shadow: 0 0 25px #134e8c45;
+    }
+
+    .detail {
+        background: white;
+        padding: 15px 20px;
+        height: 200px;
+        margin-bottom: 25px;
+        border-radius: 0px;
+        overflow: auto;
+        color: rgb(83, 165, 245);
+        text-shadow: 0 0 #21252900;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+        transition: color .3s ease;
+        border: 1px #6fb6ff59 solid !important;
+    }
+
+        .detail p {
+            margin-bottom: 5px;
+            color: #2c2c2c;
+            font-family: Roboto, sans-serif;
+        }
+
+        .detail h6 {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 20px;
+            color: #0c2642;
+            padding: 0;
+            margin: 0;
+        }
+
+    .loader {
+        font-family: Arial;
+        font-size: 10pt;
+        /*border: 5px solid #67CFF5;*/
+        /*width: 200px;
+            height: 100px;*/
+        display: none;
+        position: center !important;
+        background-color: White;
+        z-index: 999;
+        /*opacity: 0.5;*/
+        filter: alpha(opacity = 50);
+    }
+</style>
+
+
+<div class="main-panel" id="main-panel">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
+        <div class="container-fluid">
+            <div class="navbar-wrapper">
+                <div class="navbar-toggle">
+                    <button type="button" class="navbar-toggler">
+                        <span class="navbar-toggler-bar bar1"></span>
+                        <span class="navbar-toggler-bar bar2"></span>
+                        <span class="navbar-toggler-bar bar3"></span>
+                    </button>
+                </div>
+                <a class="navbar-brand">Interviewers</a>
+            </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="panel-header panel-header-sm">
+    </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
+                       
+
+                        <div class="loader text-center">
+                            <img src="~/Newassets/img/lazyload.gif" />
+                        </div>
+                        <div class="dataloading">
+                            <div class="toolbar">
+                                @*<div class="text-right">
+                <button type="button" style="margin-top:-108px;" class="btn btn-primary"><span class="fa fa-plus-square" data-toggle="tooltip" data-placement="top" title="Click here to add interviewer" onclick="location.href='@Url.Action("AddInterviewer","User")'" data-original-title="Tooltip on top"> Add Interviewer</span></button>
+            </div>*@
+                            </div>
+                            <div class="row">
+                                <div class="card-header">
+                                    <h4 class="card-title">Interviewers</h4>
+                                </div>
+
+                                <div style="width: 100%;">&nbsp;</div>
+                                @foreach (var item in Model)
+                                {<div class="col-lg-4 col-md-6 col-sm-6 col-xs-6">
+
+
+                                        <div class="detail" Onclick="callingfunction('@item.id')">
+                                            <h6>@item.FirstName @item.LastName</h6>
+                                            <p>@item.EmailId</p>
+                                            <p>Primary Skills:- @item.PrimarySkill</p>
+
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    //// script for loader starts here
+    function callingfunction(value) {
+        window.location.href = "/IRF/InterviewerDetailById?Id=" + value;
+
+
+    }
+</script>

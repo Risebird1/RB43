@@ -4,54 +4,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    #style-2::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        border-radius: 5px;
-    }
-
-    #style-2::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #style-2::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-        background-color: darkgray;
-    }
-    td.wordwrap {
-        display: inline-block !important;
-        max-width: 250px !important;
-        min-width: 250px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
-    }
-
-    td:hover.wordwrap {
-        text-overflow: clip !important;
-        white-space: normal !important;
-    }
-    /*CSS FOR Loader*/
-    .loader {
-        font-family: Arial;
-        font-size: 10pt;
-        /*border: 5px solid #67CFF5;*/
-        /*width: 200px;
-            height: 100px;*/
-        display: none;
-        position: center !important;
-        background-color: White;
-        z-index: 999;
-        /*opacity: 0.5;*/
-        filter: alpha(opacity = 50);
-    }
-    table.dataTable > thead > tr > th, table.dataTable > tbody > tr > th, table.dataTable > tfoot > tr > th, table.dataTable > thead > tr > td, table.dataTable > tbody > tr > td, table.dataTable > tfoot > tr > td {
-        max-width: 300px !important;
-    }
-</style>
-
+<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="~/Newassets/css/irf.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
 <div class="main-panel" id="main-panel">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-transparent  bg-primary  navbar-absolute">
@@ -64,8 +21,8 @@
                         <span class="navbar-toggler-bar bar3"></span>
                     </button>
                 </div>
-                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Interview Request Forms</a>
-                <a class="navbar-brand">Interview Meetings</a>
+                <a class="navbar-brand breadcrumscolor" href="/IRF/Index">Skills Channel</a>
+                <a class="navbar-brand">/ &nbsp; Interview Meetings</a>
             </div>
 
         </div>
@@ -76,34 +33,38 @@
     <div class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">
-                            Interview Meetings list for <b>@ViewBag.IRF</b>
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        
+                <div class="mdc-card card">
+                    <div class="mdc-card-wrapper__text-section">
                         <div class="loader text-center">
                             <img src="~/Newassets/img/lazyload.gif" />
                         </div>
                         <div class="dataloading">
 
-                           
+
                             <div class="toolbar">
 
                                 <div class="row">
 
-                                    <div class="col-md-3 ml-md-auto">
-                                        <div class="form-group">
-                                            @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+
+                                    <div class="card-header">
+                                        <div class="pull-left"> <h4 class="card-title">       Interview Meetings list for <b>@ViewBag.IRF</b></h4></div>
+
+                                        <div class="pull-right">
+                                            <div>
+                                                <div class="form-group" style="width:100px;float:left;    margin-right: 5px;">
+                                                    @Html.DropDownList("list", ViewData["list"] as SelectList, new { @class = "form-control", onchange = "FilterInterviews(this.value);" })
+                                                </div>
+                                                @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        @Html.ActionLink("Back to List", "Index", "IRF", htmlAttributes: new { @class = "btn btn-fill btn-label", @role = "button" })
-                                    </div>
+
+
+
+
+
                                 </div>
-                           
+
 
                             </div>
                             <div style="overflow-x:scroll" class="scrollbar" id="style-2">
@@ -118,10 +79,11 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
+                                                <th>Interview Link</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -136,10 +98,11 @@
                                                 <th>Candidate Contact</th>
                                                 <th>Client HR</th>
                                                 <th>Confirmation Status</th>
+                                                <th>Interview Link</th>
                                                 <th>Meeting Status</th>
                                                 <th>Selection Status</th>
                                                 <th>Current Employer</th>
-                                                <th>Expected Per Hour Rate</th>
+                                                <th>Expected Salary</th>
                                                 <th>Expected Joining Time</th>
                                                 <th>Preferred Location</th>
                                                 <th>Staffing Agency</th>
@@ -148,37 +111,59 @@
                                         <tbody>
                                             @foreach (var item in Model)
                                             {
-                                            <tr id=@item.imid>
-                                                <td> @item.interviewDate </td>
-                                                <td> @item.candidateName </td>
-                                                <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
-                                                @if (item.resumeLink != null && item.resumeLink != "")
-                                                {
-                                                    <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>No Resume</td>
-                                                }
-                                                @if (item.MobileNumber != null)
-                                                {
-                                                    <td>@item.MobileNumber</td>
+                                                <tr id=@item.imid>
+                                                    <td> @item.interviewDate </td>
+                                                    <td> @item.candidateName </td>
+                                                    @if (item.MeetingStatus != 4 || (item.QCInterview > 0 && item.MeetingStatus == 4))
+                                                    {
+                                                        <td> <a id="reportId" target="_blank" title="Report Link" href='@Url.Action("AddReport", "IRF", new {  interviewId = item.imid, irfId= ViewBag.IRFintId})'>Report</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Report</td>
+                                                    }
+                                                    @if (item.resumeLink != null && item.resumeLink != "")
+                                                    {
+                                                        <td> <a id="resumeId" target="_blank" title="Resume" href=@item.resumeLink>Resume</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Resume</td>
+                                                    }
+                                                    @if (item.MobileNumber != null)
+                                                    {
+                                                        <td>@item.MobileNumber</td>
 
-                                                }
-                                                else
-                                                {
-                                                    <td>No Contact</td>
-                                                }
-                                                <td> @item.ClientHrContact </td>
-                                                <td> @item.confirmationStatus</td>
-                                                <td> @item.MeetingStatusStatusDesc </td>
-                                                <td> @item.intervieweStatusStatDesc </td>
-                                                <td> @item.currentEmployerName </td>
-                                                <td> @item.expectedPerHourRate </td>
-                                                <td> @item.joiningTime </td>
-                                                <td> @item.preferredLocation </td>
-                                                <td>@item.staffingAgency</td>
-                                            </tr>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Contact</td>
+                                                    }
+                                                    <td> @item.ClientHrContact </td>
+                                                    @if (item.zoomLink != null && item.zoomLink != "")
+                                                    {
+                                                        <td> <a id="zoomlinkId" target="_blank" title="Interview Link" href=@item.zoomLink>Interview Link</a> </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>No Interview Link</td>
+                                                    }
+                                                    <td> @item.confirmationStatus</td>
+                                                    <td> @item.MeetingStatusStatusDesc </td>
+                                                    @if (item.QCInterview > 0)
+                                                    {
+                                                        <td> @item.intervieweStatusStatDesc </td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td></td>
+                                                    }
+                                                    <td> @item.currentEmployerName </td>
+                                                    <td> @item.expectedPerHourRate </td>
+                                                    <td> @item.joiningTime </td>
+                                                    <td> @item.preferredLocation </td>
+                                                    <td>@item.staffingAgency</td>
+                                                </tr>
                                             }
                                         </tbody>
                                     </table>
@@ -189,6 +174,7 @@
                         </div>
 
                     </div>
+
                     <!-- end content-->
                 </div>
                 <!--  end card  -->
@@ -198,35 +184,7 @@
 
         <!-- end row -->
     </div>
-    <footer class="footer">
-        <div class=" container-fluid ">
-            <nav>
-                <ul>
-                    <li>
-                        <a href="#">
-                            Risebird
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            About Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            Blog
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="copyright" id="copyright">
-                &copy;
-                <script>
-                    document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-                </script> Risebird All Rights Reserved.
-            </div>
-        </div>
-    </footer>
+  
 </div>
 
 <script>
@@ -278,7 +236,7 @@
 
 <script>
     function FilterInterviews(filterValue) {
-        
+
         var id = '@ViewBag.IRFintId';
         var irfId ='@ViewBag.IRF'
         $.ajax({
