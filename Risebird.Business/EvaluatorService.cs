@@ -515,7 +515,7 @@ namespace Risebird.Business
                 string voiceItUserId = string.Empty;
                 string finalStatus = "Successful!";
                 //check if the candidate is a  VoiceIt user already
-                if(candidateList != null && candidateList.First().VoiceItUserId == null)
+                if(candidateList != null && (candidateList.First().VoiceItUserId == null || candidateList.First().VoiceItUserId ==""))
                 {
                     //create user
                     var result = _voiceItRepository.CreateUser();

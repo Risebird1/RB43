@@ -27,7 +27,7 @@ namespace Risebird.Entities.ViewModel
         [DisplayName("Voice Biometric")]
         public bool IsVoiceBiometric { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please choose a file to upload.")]
         [DisplayName("Audio File")]
         public IFormFile AudioFile { get; set; }
         public string Description { get; set; }
@@ -37,5 +37,9 @@ namespace Risebird.Entities.ViewModel
         public bool IsEnrolled { get; set; }
         public SelectList PhraseList { get; set; }
         public SelectList EnrollmentList { get; set; }
+        public IList<CandidateAudio> CandidateAudios { get; set; }
+        public bool HasVoiceBiometricAudio { get; set; }
+        public bool ContainsUnEnrolled { get; set; }
+
     }
 }

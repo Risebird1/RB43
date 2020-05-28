@@ -334,11 +334,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 col-sm-6">
-                                        <div class="mdc-form-field"   style="margin-bottom: 10px;">
+                                        <div class="mdc-form-field" style="margin-bottom: 10px;">
 
 
                                             <div class="mdc-checkbox">
-                                                @Html.CheckBoxFor(m => m.IsVoiceBiometric, new { @class = "mdc-checkbox__native-control",  @onclick = "checkBiometric()" })
+                                                @Html.CheckBoxFor(m => m.IsVoiceBiometric, new { @class = "mdc-checkbox__native-control", @onclick = "checkBiometric()" })
 
                                                 <div class="mdc-checkbox__background">
                                                     <svg class="mdc-checkbox__checkmark"
@@ -353,16 +353,26 @@
 
 
                                             </div>
-                                            @Html.LabelFor(model => model.IsVoiceBiometric, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; padding-top: 8px;"  })
+                                            @Html.LabelFor(model => model.IsVoiceBiometric, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label", @style = "font-size: 13px; padding-top: 8px;" })
                                         </div>
-                                        </div>
-
                                     </div>
+
+                                </div>
                                 <div class="row" id="idPhrase" style="display:none">
                                     <div class="col-md-6 col-sm-6">
                                         <div class="form-group" style="margin-bottom:10px;">
                                             @Html.LabelFor(model => model.PhraseDetail, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
-                                            @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
+                                            @if (Model.HasVoiceBiometricAudio)
+                                            {
+                                                @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px", @disabled = "disabled" })
+                                                Model.PhraseDetail = Model.PhraseList.SelectedValue.ToString();
+                                                @Html.HiddenFor(m=>m.PhraseDetail)
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(m => m.PhraseDetail, Model.PhraseList, new { @class = "form-control", @style = "margin-top:10px; height:45px" })
+
+                                            }
 
                                         </div>
                                     </div>
@@ -376,10 +386,13 @@
 
                                 <div class="card-footer ">
                                     <div class="row">
-                                       
-                                        <div class="col-md-12 mc-button-area">
 
-                                            @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                        <div class="col-md-12 mc-button-area">
+                                            @if (Model.CandidateAudios == null || Model.CandidateAudios.Count() == 0)
+                                            {
+                                                @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+
+                                            }
                                             <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Save">Upload</button>
 
 
@@ -387,13 +400,130 @@
                                     </div>
                                 </div>
 
-
-
-
-
-
                             </div>
                         </form>
+                        @if (Model.CandidateAudios != null && Model.CandidateAudios.Count() > 0)
+                        {
+                            <form action="/IRF/EnrollVoiceItUser" enctype="multipart/form-data" method="post" class="ng-pristine ng-valid">
+                                @Html.AntiForgeryToken()
+                                <div class="canvas_div_pdf">
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="multiple_row">
+                                                <h2>Uploaded Audios for Voice Biometric</h2>
+                                            </div><!--end of multiple location-->
+                                        </div><!--end of col-md-12-->
+
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="table-responsive-sm">
+                                                <table class="table table-bordered mbn" id="AudioTable" style="text-align:center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">File</th>
+                                                            <th width="20%">Phrase</th>
+                                                            <th width="10%">Description</th>
+                                                            <th width="10%">Status</th>
+                                                            <th width="35%">Result</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (Model.CandidateAudios != null)
+                                                        {
+                                                            @for (int i = 0; i < Model.CandidateAudios.Count(); i++)
+                                                            {
+                                                        <tr>
+
+                                                            <td>
+                                                                <a class="audio-rec" href='@Model.CandidateAudios[i].AudioFileLink' download>
+                                                                    @Model.CandidateAudios[i].AudioFileLink.Split('/').Last()
+                                                                </a>
+                                                            </td>
+                                                            <td>@Model.CandidateAudios[i].PhraseDetail</td>
+                                                            <td>@Model.CandidateAudios[i].Description</td>
+                                                            @if (Model.CandidateAudios[i].IsEnrolled)
+                                                            {
+                                                                <td>Enrolled</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>Not Enrolled</td>
+
+                                                            }
+                                                            @if (Model.CandidateAudios[i].EnrollmentMessage != null)
+                                                            {
+                                                                if (Model.CandidateAudios[i].EnrollmentMessage.ToLower().Contains("success"))
+                                                                {
+                                                                    <td>Successful</td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td>@Model.CandidateAudios[i].EnrollmentMessage</td>
+
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>NA</td>
+
+                                                            }
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].id)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IRFId)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IRFName)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].CandidateId)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].IsEnrolled)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].AudioFileLink)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].PhraseDetail)
+                                                            @Html.HiddenFor(m => Model.CandidateAudios[i].VoiceItUserId)
+                                                            @*@if (Model.CandidateAudios[i].VoiceItUserId != null)
+        {
+
+        }*@
+
+                                                        </tr>
+
+                                                            }
+
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+
+
+                                            </div>
+                                        </div><!--end of col-md-12-->
+
+                                    </div>
+
+                                    <div class="card-footer ">
+                                        <div class="row">
+                                            <div class="col-md-12 mc-button-area">
+
+                                                @Html.ActionLink("Back to List", "Candidates", "IRF", new { id = Model.IRFId, irfName = Model.IRFName }, htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                                                @if (Model.ContainsUnEnrolled)
+                                                {
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Enroll">Enroll</button>
+
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" class="mdc-button mdc-button--raised mdc-ripple-upgraded" id="btnUpload" value="Enroll" disabled="disabled">Enroll</button>
+
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        }
+                        
+
+
                     </div>
 
                     <!-- end content-->
@@ -433,4 +563,76 @@
 
 </script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.css" integrity="sha256-Z8TW+REiUm9zSQMGZH4bfZi52VJgMqETCbPFlGRB1P8=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.js" integrity="sha256-ZvMf9li0M5GGriGUEKn1g6lLwnj5u+ENqCbLM5ItjQ0=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css" integrity="sha256-zuyRv+YsWwh1XR5tsrZ7VCfGqUmmPmqBjIvJgQWoSDo=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js" integrity="sha256-JirYRqbf+qzfqVtEE4GETyHlAbiCpC005yBTa4rj6xg=" crossorigin="anonymous"></script>
 
+
+
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+
+        function my_code() {
+            var msg = '@ViewBag.Message';
+
+
+
+            if (msg.toLowerCase().includes("success")) {
+                swal({
+                    title: 'Successful',
+                    text: '@ViewBag.Message',
+                    type: 'success',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.reload(true);
+                    }
+                )
+
+            }
+            else if (msg.toLowerCase().includes("kindly")) {
+                swal({
+                    title: 'Enrollment Status!',
+                    text: '@ViewBag.Message',
+                    type: 'info',
+                    showConfirmButton: true
+
+                },
+                    function (value) //confirm
+                    {
+                        //if Yes do this
+                        document.getElementsByClassName("sweet-overlay")[0].style.display = "none";
+                        document.getElementsByClassName("sweet-alert")[0].style.display = "none";
+                        //window.location.reload(true);
+                    }
+                )
+
+            }
+            else {
+                swal({
+                    title: 'Failed',
+                    text: '@ViewBag.Message',
+                    type: 'error',
+                    showConfirmButton: true
+
+                },
+                    function ()
+                    {
+                        window.location.reload(true);
+                    }
+                )
+            }
+
+        }
+
+        window.onload = my_code();
+    </script>
+
+}
