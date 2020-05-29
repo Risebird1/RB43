@@ -71,10 +71,10 @@
 </script>
 
 <script type="text/javascript">
-    
+
     function getOption(id) {
         selectElement = document.querySelector('#droplevel');
-         output =
+        output =
             selectElement.options[selectElement.selectedIndex].text;
 
 
@@ -621,11 +621,19 @@
                                             <div class=" col-md-8 video-contop">
                                                 @if (Model.JDTiltle != null)
                                                 {
-                                                <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
-                                                    @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
-                                                    <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
-                                                    <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
-                                                    <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
+                                                    <h1 class="title style-scope name-video-primary-info-renderer" style="margin-bottom:0;">
+                                                        @if (Model.IsOnline == 1)
+                                                        {
+                                                            <a onclick="directopenChat('@Model.candidateEmail')">   @Model.candidateName <span class="dot" style="background-color:green"></span></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a onclick="">   @Model.candidateName <span class="dot"></span></a>
+                                                        }
+                                                        @Model.candidateName <span style="color: #606060; font-weight: 500; font-size: 16px; "> (@Model.JDTiltle.Split("|")[0])</span> &nbsp;<i style="font-weight:normal" class="fas fa-calendar-alt"></i> <span style="color: #606060;font-weight: 500;padding-top:-50px;font-size:13px;">@Model.interviewDate</span>
+                                                        <input class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded item5 pull-right" type="button" id="1" value="THEATER-MODE-ON" onclick="toggle(this);">
+                                                        <input type="text" hidden value="@Model.candidateName" id="txthiddenCandidate" />
+                                                        <input type="text" hidden value="@Model.JDTiltle" id="txthiddenSkill" />
 
                                                     </h1>
                                                 }
@@ -934,7 +942,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new {ID="droplevel",  @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.TechSkillReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.LevelTech, new { ID = "droplevel", @class = "form-control", @onchange = "CalculateOverAll(this.id, this.value)", @value = "title", onmouseover = "getOption(this)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1109,7 +1117,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)"})
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SkillGeneralReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "dropques form-control", @onchange = "CalculateOverAll(this.id, this.value)" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1183,7 +1191,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new {ID="droplevel", @class = "form-control", @readonly = "readonly"})
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.JoinabilityHRReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1255,7 +1263,7 @@
                                                                                                 </td>
 
                                                                                                 <td>
-                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new {ID="droplevel", @class = "form-control", @readonly = "readonly" })
+                                                                                                    @Html.DropDownListFor(m => m.IreportModel.SelectabilityEvaluatorReportCollection[i].ActualLevelId, (SelectList)Model.IreportModel.Level, new { ID = "droplevel", @class = "form-control", @readonly = "readonly" })
 
                                                                                                 </td>
                                                                                                 <td>
@@ -1498,8 +1506,8 @@
 
 </script>
 <script>
-        < script >
-                jQuery(document).ready(function ($) {
+    < script >
+    jQuery(document).ready(function ($) {
 
 
 
@@ -1521,11 +1529,11 @@
                     $('.btn').addClass('disabled');
                 } else {
                     $('.btn').removeClass('disabled');
-                    }
-                });
-            }
-            $('.btn').addClass('disabled');
-            $(document).ready(main)
+                }
+            });
+        }
+        $('.btn').addClass('disabled');
+        $(document).ready(main)
 </script>
 <script>
             $('form').submit(function () {
@@ -2443,7 +2451,7 @@
             techTotal = parseInt(techTotal) + parseInt($("#IreportModel_TechSkillReportCollection_" + i + "__WeightageActual").val());
 
         }
-    obj.y = parseInt(techTotal) / 4;
+obj.y = parseInt(techTotal) / 4;
         obj.label = "Tech Skills Score";
         obj.legendText = "Tech Skills Score";
         arr.push(obj);
@@ -2458,7 +2466,7 @@
 
         }
 
-    objGen.y = parseInt(genTotal) / 4;
+objGen.y = parseInt(genTotal) / 4;
         objGen.label = "General Skills Score";
         objGen.legendText = "General Skills Score";
         arr.push(objGen);
@@ -2472,7 +2480,7 @@
             joinabilityTotal = parseInt(joinabilityTotal) + parseInt($("#IreportModel_JoinabilityHRReportCollection_" + i + "__WeightageActual").val());
 
         }
-    objJoin.y = parseInt(joinabilityTotal) / 4;
+objJoin.y = parseInt(joinabilityTotal) / 4;
         objJoin.label = "Joinability Score";
         objJoin.legendText = "Joinability Score";
         arr.push(objJoin);
@@ -2486,7 +2494,7 @@
             selectabilityTotal = parseInt(selectabilityTotal) + parseInt($("#IreportModel_SelectabilityEvaluatorReportCollection_" + i + "__WeightageActual").val());
 
         }
-    objSelect.y = parseInt(selectabilityTotal) / 4;
+objSelect.y = parseInt(selectabilityTotal) / 4;
         objSelect.label = "Selectability Score";
         objSelect.legendText = "Selectability Score";
         arr.push(objSelect);
@@ -2971,20 +2979,20 @@
                     'nextButton': { className: "myNext", text: "Next" },
                     'skipButton': { className: "mySkip", text: "Skip" }
 
-                            },
-                            {
-                                'next .post': 'Write your comment and click on Post',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'next .videosidelist': 'Same skill Candidates Video ',
-                                'nextButton': {className: "myNext", text: "Next" },
-                                'skipButton': {className: "mySkip", text: "Skip" }
-                            },
-                            {
-                                'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
-                            }
+                },
+                {
+                    'next .post': 'Write your comment and click on Post',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'next .videosidelist': 'Same skill Candidates Video ',
+                    'nextButton': { className: "myNext", text: "Next" },
+                    'skipButton': { className: "mySkip", text: "Skip" }
+                },
+                {
+                    'click .skillchannelmenu': 'Click on Skill Channel Menu to see its features',
+                }
 
             ];
             setTimeout(function () {
